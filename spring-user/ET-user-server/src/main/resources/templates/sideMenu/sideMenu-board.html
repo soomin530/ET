@@ -1,0 +1,60 @@
+<!-- 왼쪽 사이드 메뉴 조각(fragment) 
+  -> 필요한 곳에서
+   th:replace="~{조각경로}" / th:insert="~{조각경로}" 
+-->
+<aside class="sidebar">
+	<nav class="sidebar-nav">
+		<div class="nav-item">
+			<a href="/board/community/3" class="nav-link">공지사항</a>
+		</div>
+
+		<div class="nav-item">
+			<a href="/board/community/1" class="nav-link">자유 게시판</a>
+		</div>
+
+		<div class="nav-item">
+			<a href="/board/community/4" class="nav-link">문의 게시판</a>
+		</div>
+
+	</nav>
+</aside>
+
+<script>
+	const pageLink = document.querySelectorAll(".sidebar .nav-link");
+	const hrefAddress = Array.from(pageLink);
+	
+	let locationLink = location.pathname.split("/");
+	let locHref;
+	
+	if(locationLink[1] == 'editBoard') {
+		locHref = "/board";
+		
+	} else {
+		locHref = "/" + locationLink[1];
+		
+	}
+	
+	if(locationLink[2] == 'community') {
+		locHref += `/${locationLink[2]}/${locationLink[3]}`;
+	} else {
+		locHref += `/community/${locationLink[2]}`;
+	}
+	
+	// 사이드 메뉴의 a태그들 반복문 실행
+	hrefAddress.forEach(addr => {
+		
+		// a태그의 href 주소값 가져오기
+		const page = new URL(addr.href).pathname;
+		
+		// 현재 호출 주소와 a태그의 href주소가 일치하면
+		if(page == locHref) {
+			addr.style.backgroundColor = "#F3F4F6";
+			addr.style.color = "#4F46E5";
+			addr.style.transform = "translateX(5px)";
+			addr.style.fontWeight = "bold"; 
+			addr.style.borderLeft = "5px solid #fbbf24";
+			
+		}
+	})
+	
+</script>
