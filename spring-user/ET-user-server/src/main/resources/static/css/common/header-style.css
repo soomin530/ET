@@ -1,0 +1,83 @@
+:root {
+	--primary-color: #4F46E5;
+	--secondary-color: #6B7280;
+	--accent-color: #818CF8;
+	--light-bg: #F3F4F6;
+	--dark-text: #1F2937;
+	--sidebar-width: 280px;
+	--primary: #7C3AED;
+	--primary-light: #DDD6FE;
+	--text-primary: #1F2937;
+	--text-secondary: #6B7280;
+	--background: #F9FAFB;
+	--card-bg: #FFFFFF;
+}
+
+/* 헤더 Styles */
+header {
+	position: relative;
+	/* 기본값으로 설정하여 문서 흐름 유지 */
+	width: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: white;
+	padding: 1rem 2rem;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+	z-index: 100;
+}
+
+.logo {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--primary-color);
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.logo i {
+	font-size: 1.8rem;
+}
+
+.top-nav .nav-link {
+	color: var(--dark-text);
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	transition: all 0.3s ease;
+	border-radius: 8px;
+}
+
+.top-nav .nav-link:hover {
+	color: var(--primary-color);
+	background-color: var(--light-bg);
+}
+
+.login-btn {
+	background-color: var(--primary-color) !important;
+	color: white !important;
+	padding: 0.5rem 1.5rem !important;
+	border-radius: 8px;
+	transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+	background-color: var(--accent-color) !important;
+	color: black !important;
+	transform: translateY(-1px);
+}
+
+.sign-btn {
+	background-color: var(--primary-light) !important;
+	color: var(--text-primary) !important;
+	padding: 0.5rem 1.5rem !important;
+	border-radius: 8px;
+	transition: all 0.3s ease;
+}
+
+.sign-btn:hover {
+	background-color: var(--primary-color) !important;
+	color: white !important;
+	transform: translateY(-1px);
+}
