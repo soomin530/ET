@@ -42,10 +42,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
-<<<<<<< HEAD
-	
-=======
->>>>>>> 95b4f033aa7655a4d4fdd3c0eab4399f797f9fd8
 }
 
 tasks.named('test') {
