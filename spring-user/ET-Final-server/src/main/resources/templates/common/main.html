@@ -16,7 +16,97 @@
             overflow-x: hidden;
         }
 
-        header {
+         /* 헤더 스타일 */
+         header {
+            background: #ffffff;
+            padding: 10px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        /* 로고 스타일 */
+        .logo {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* 네비게이션 메뉴 */
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: inherit;
+            padding: 5px 10px;
+        }
+
+        .nav-menu a:hover {
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* 검색바 스타일 */
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            width: 200px;
+        }
+
+        .search-container button {
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 15px;
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .search-container button:hover {
+            background: #444;
+        }
+
+        /* 버튼 스타일 */
+        .header-buttons button {
+            background: none;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .header-buttons button:hover {
+            background: #f0f0f0;
+        }
+
+        .header-buttons .login-button {
+            background: #000;
+            color: #fff;
+            border: none;
+        }
+
+        .header-buttons .login-button:hover {
+            background: #444;
+        }
+
+        /* header {
             background: #283593;
             color: white;
             padding: 20px 40px;
@@ -51,7 +141,7 @@
 
         .search-container button:hover {
             background: #e68a00;
-        }
+        } */
 
         .section {
             height: auto;
@@ -61,6 +151,29 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .section button {
+            padding: 8px 20px;
+            margin: 0 5px;
+            border: 1px solid #e0e0e0;
+            background-color: transparent;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* 선택된 버튼 스타일 */
+        .section button:first-of-type {
+            background-color: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        /* 호버 효과 */
+        .section button:hover {
+            background-color: #f5f5f5;
         }
 
         .visible {
@@ -185,7 +298,7 @@
 
         .modal-header h2 {
             margin: 0;
-            color: #283593;
+            color: #004CFF;
             font-size: 1.5em;
         }
 
@@ -197,7 +310,7 @@
         }
 
         .close:hover {
-            color: #283593;
+            color: #004CFF;
         }
 
         .modal-body {
@@ -216,11 +329,11 @@
         }
 
         .modal input:focus {
-            border-color: #283593;
+            border-color: #004CFF;
         }
 
         .modal button {
-            background: #283593;
+            background: #004CFF;
             color: white;
             border: none;
             padding: 14px;
@@ -246,7 +359,7 @@
         }
 
         .modal-footer a {
-            color: #283593;
+            color: #004CFF;
             text-decoration: none;
         }
 
@@ -364,6 +477,22 @@
 <body>
 
     <header>
+        <div class="logo">ET e.ticket</div>
+        <div class="nav-menu">
+            <a href="#">뮤지컬</a>
+            <a href="#">연극</a>
+            <a href="#">클래식</a>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="검색어를 입력하세요">
+            <button>검색</button>
+        </div>
+        <div class="header-buttons">
+            <button class="login-button" onclick="openModal('loginModal')">로그인</button>
+            <button onclick="openModal('signupModal')">회원가입</button>
+        </div>
+    </header>
+    <!-- <header>
         <div class="logo" style="font-size: 1.5em; font-weight: bold;">티켓팅 시스템</div>
         <div class="search-container">
             <input type="text" placeholder="검색어를 입력하세요...">
@@ -373,7 +502,7 @@
             <button onclick="openModal('loginModal')">로그인</button>
             <button onclick="openModal('signupModal')">회원가입</button>
         </nav>
-    </header>
+    </header> -->
 
     <div class="section visible" id="hero">
         <div class="hero">
@@ -411,7 +540,8 @@
     </div>
 
     <div class="section" id="performances">
-        <h2>현재 진행 중인 공연</h2>
+        <h2>장르별 랭킹</h2>
+        <button>뮤지컬</button> <button>연극</button> <button>클래식</button>
         <div class="card-container">
             <div class="card">
                 <img src="https://source.unsplash.com/300x200/?concert" alt="콘서트">
