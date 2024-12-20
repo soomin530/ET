@@ -1,83 +1,206 @@
-:root {
-	--primary-color: #4F46E5;
-	--secondary-color: #6B7280;
-	--accent-color: #818CF8;
-	--light-bg: #F3F4F6;
-	--dark-text: #1F2937;
-	--sidebar-width: 280px;
-	--primary: #7C3AED;
-	--primary-light: #DDD6FE;
-	--text-primary: #1F2937;
-	--text-secondary: #6B7280;
-	--background: #F9FAFB;
-	--card-bg: #FFFFFF;
+/* 네비게이션 스타일 */
+.navbar {
+    background: #ffffff;
+    padding: 10px 40px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-/* 헤더 Styles */
-header {
-	position: relative;
-	/* 기본값으로 설정하여 문서 흐름 유지 */
-	width: 100%;
-	top: 0;
-	left: 0;
-	right: 0;
-	background: white;
-	padding: 1rem 2rem;
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-	z-index: 100;
+.container-fluid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
 }
 
+/* 로고 스타일 */
 .logo {
-	font-size: 1.5rem;
-	font-weight: 700;
-	color: var(--primary-color);
-	text-decoration: none;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #000;
 }
 
-.logo i {
-	font-size: 1.8rem;
+.logo img {
+    width: 30px;
+    height: 30px;
 }
 
-.top-nav .nav-link {
-	color: var(--dark-text);
-	font-weight: 500;
-	padding: 0.5rem 1rem;
-	transition: all 0.3s ease;
-	border-radius: 8px;
+/* 네비게이션 메뉴 */
+.nav-menu {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9em;
 }
 
-.top-nav .nav-link:hover {
-	color: var(--primary-color);
-	background-color: var(--light-bg);
+.nav-menu .nav-link {
+    text-decoration: none;
+    color: #666;
+    padding: 5px 10px;
 }
 
-.login-btn {
-	background-color: var(--primary-color) !important;
-	color: white !important;
-	padding: 0.5rem 1.5rem !important;
-	border-radius: 8px;
-	transition: all 0.3s ease;
+.nav-menu .nav-link:hover {
+    color: #000;
+    font-weight: bold;
 }
 
-.login-btn:hover {
-	background-color: var(--accent-color) !important;
-	color: black !important;
-	transform: translateY(-1px);
+/* 검색바 스타일 */
+.search-container {
+    display: flex;
+    align-items: center;
 }
 
-.sign-btn {
-	background-color: var(--primary-light) !important;
-	color: var(--text-primary) !important;
-	padding: 0.5rem 1.5rem !important;
-	border-radius: 8px;
-	transition: all 0.3s ease;
+.search-container input {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    width: 200px;
 }
 
-.sign-btn:hover {
-	background-color: var(--primary-color) !important;
-	color: white !important;
-	transform: translateY(-1px);
+.search-container button {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 15px;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+/* 버튼 스타일 */
+.header-buttons button {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+.header-buttons .login-button {
+    background: #000;
+    color: #fff;
+    border: none;
+}
+
+.header-buttons button:hover {
+    background: #f0f0f0;
+}
+
+.header-buttons .login-button:hover {
+    background: #444;
+}
+
+/* Updated Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    padding: 30px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #004CFF;
+    font-size: 1.5em;
+}
+
+.close {
+    color: #999;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #004CFF;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.modal input:focus {
+    border-color: #004CFF;
+}
+
+.modal button {
+    background: #004CFF;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+    margin-top: 10px;
+}
+
+.modal button:hover {
+    background: #1e88e5;
+}
+
+.modal button:active {
+    transform: scale(0.98);
+}
+
+.modal-footer {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.modal-footer a {
+    color: #004CFF;
+    text-decoration: none;
 }
