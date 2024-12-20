@@ -1,12 +1,13 @@
 package edu.kh.project.payment.controller;
 
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,15 +20,14 @@ import edu.kh.project.payment.service.paymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
+@Controller
 @RequestMapping("payment")
 @RequiredArgsConstructor
 @Slf4j
 public class paymentController {
 
-	
 	private final paymentService PaymentService;
-	
+
 	@Value("${iamport.api.key}")
 	private String apiKey;
 
@@ -49,7 +49,6 @@ public class paymentController {
 
 		String accessToken = (String) ((Map) tokenResponse.getBody().get("response")).get("access_token");
 
-		
 		// 결제 정보 검증
 		ResponseEntity<Map> paymentResponse = restTemplate
 				.getForEntity("https://api.iamport.kr/payments/" + impUid + "?_token=" + accessToken, Map.class);
@@ -58,6 +57,37 @@ public class paymentController {
 		response.put("success", paymentResponse.getStatusCode().is2xxSuccessful());
 		return ResponseEntity.ok(response);
 	}
-	
-	
+
+	/** 
+	 * @return
+	 */
+	@GetMapping("seatPage")
+	public String seatPage() {
+		return "payment/seatPage"; // seatPage.html 파일을 렌더링
+	}
+
+	/** 좌석 선택
+	 * @return
+	 */
+	@GetMapping("seat-selection")
+	public String seatSelection() {
+		return "payment/seat-selection";
+	}
+
+	/** 주문자 확인
+	 * @return
+	 */
+	@GetMapping("booking-info")
+	public String bookingInfo() {
+		return "payment/booking-info";
+	}
+
+	/** 결제 창
+	 * @return
+	 */
+	@GetMapping("payment")
+	public String payment() {
+		return "payment/payment";
+	}
+
 }

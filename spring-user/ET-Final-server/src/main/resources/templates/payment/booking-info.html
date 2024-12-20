@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>예매자 정보 확인</title>
+</head>
+<body>
+    <h2>예매자 정보 확인</h2>
+    <div>
+        <h3>선택된 좌석: <span id="seat-info"></span></h3>
+        <h3>총 가격: <span id="total-price"></span></h3>
+    </div>
+    <form id="booking-form">
+        <label>이름: <input type="text" id="name" required></label><br>
+        <label>연락처: <input type="tel" id="phone" required></label><br>
+        <button type="submit">다음 단계</button>
+    </form>
+
+    <script>
+         const seatInfo = JSON.parse(localStorage.getItem('selectedSeats')).join(', '); // localStorage에서 저장한 선택좌석, 총 가격
+         const totalPrice = localStorage.getItem('totalPrice');
+
+         document.getElementById('seat-info').textContent = seatInfo;
+         document.getElementById('total-price').textContent = totalPrice;
+
+        document.getElementById('booking-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const bookingInfo = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value
+            };
+            
+            // 예매자 정보 localStorage에 저장
+            localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));
+
+            // 결제 페이지로 이동
+            window.location.href = "/payment/payment";
+        });
+    </script>
+</body>
+</html>
