@@ -1,0 +1,24 @@
+<!-- 왼쪽 사이드 메뉴 조각(fragment) 
+  -> 필요한 곳에서
+   th:replace="~{조각경로}" / th:insert="~{조각경로}" 
+-->
+<aside class="sidebar admin-sidebar">
+	<nav class="sidebar-nav">
+		<div class="nav-item" th:classappend="${activeMenu == 'dashAdmin' ? 'active' : ''}">
+			<a href="/adminBoard/dashAdmin" class="nav-link">대쉬보드 홈</a>
+		</div>
+
+		<div class="nav-item" th:classappend="${activeMenu == 'bookManage' ? 'active' : ''}">
+			<a href="/adminBoard/bookManage" class="nav-link">도서 관리</a>
+		</div>
+
+		<div class="nav-item" th:classappend="${activeMenu == 'boardManage' ? 'active' : ''}">
+			<a href="/adminBoard/boardManage" class="nav-link">게시글 관리</a>
+		</div>
+		
+		<div class="nav-item" th:classappend="${activeMenu == 'memberManage' ? 'active' : ''}">
+			<a href="/adminBoard/memberManage" class="nav-link">회원 관리</a>
+		</div>
+
+	</nav>
+</aside>

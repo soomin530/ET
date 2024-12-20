@@ -1,0 +1,152 @@
+:root {
+	--primary-color: #4F46E5;
+	--secondary-color: #6B7280;
+	--accent-color: #818CF8;
+	--light-bg: #F3F4F6;
+	--dark-text: #1F2937;
+	--sidebar-width: 280px;
+}
+
+.sidebar {
+	position: fixed;
+	top: 106px;
+	left: 0;
+	width: var(--sidebar-width);
+	/* 고정 너비 */
+	max-width: var(--sidebar-width);
+	/* 최대 너비 고정 */
+	background: white;
+	box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+	height: calc(100vh - 230px);
+	overflow-x: hidden;
+	/* 가로 스크롤 방지 */
+	overflow-y: auto;
+	/* 세로 스크롤 가능하도록 */
+	padding: 1rem;
+	z-index: 1000;
+}
+
+.nav-item {
+	margin-bottom: 0.5rem;
+	width: 100%;
+	/* 전체 너비 사용 */
+}
+
+.sidebar .nav-link {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	/* 전체 너비 사용 */
+	padding: 1.175rem 1.25rem;
+	color: var(--secondary-color);
+	border-radius: 10px;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	/* 오버플로우 숨김 */
+	white-space: nowrap;
+	/* 텍스트 줄바꿈 방지 */
+	text-overflow: ellipsis;
+	/* 넘치는 텍스트 ... 처리 */
+}
+
+.sidebar .nav-link:hover {
+	background-color: var(--light-bg);
+	color: var(--primary-color);
+	transform: translateX(5px);
+	font-weight: bold;
+}
+
+.sidebar .nav-link i {
+	width: 24px;
+	margin-right: 1rem;
+	font-size: 1.1rem;
+}
+
+.sidebar .nav-link a {
+	text-decoration: none;
+	color: black;
+	flex-grow: 1;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.sidebar .nav-link.active::after {
+	transform: rotate(180deg);
+}
+
+.submenu {
+	margin-left: 1rem;
+	/* 서브메뉴 들여쓰기 조정 */
+	display: none;
+	width: calc(100% - 1rem);
+	/* 부모 요소 너비에 맞춤 */
+}
+
+.submenu.active {
+	display: block;
+	animation: slideDown 0.3s ease-out;
+}
+
+.submenu a {
+	display: block;
+	padding: 0.75rem 1.25rem;
+	color: var(--secondary-color);
+	text-decoration: none;
+	transition: all 0.3s ease;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.submenu a:hover {
+	background-color: var(--light-bg);
+	color: var(--primary-color);
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.mobile-menu-btn {
+	display: none;
+}
+
+@media (max-width: 1024px) {
+	.sidebar {
+		position: fixed;
+		left: -280px;
+		transition: left 0.3s ease;
+	}
+
+	.sidebar.active {
+		left: 0;
+	}
+
+	.mobile-menu-btn {
+		display: block;
+		position: fixed;
+		top: 20px;
+		left: 20px;
+		z-index: 1100;
+		background: var(--primary-color);
+		color: white;
+		border: none;
+		padding: 10px;
+		border-radius: 5px;
+	}
+
+	.top-nav {
+		display: none;
+	}
+}
