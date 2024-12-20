@@ -19,7 +19,7 @@
 
 			<div class="header-buttons">
 				<button class="login-button" onclick="openModal('loginModal')">로그인</button>
-				<button onclick="openModal('signupModal')">회원가입</button>
+				<button onclick="openModal('selectModal')">회원가입</button>
 			</div>
 		</div>
 	</nav>
@@ -38,27 +38,84 @@
 			<button>로그인</button>
 		</div>
 		<div class="modal-footer">
-			<p>아직 계정이 없으신가요? <a href="#" onclick="openModal('signupModal'); closeModal('loginModal')">회원가입</a></p>
+			<p>아직 계정이 없으신가요? <a href="#" onclick="openModal('selectModal'); closeModal('loginModal')">회원가입</a></p>
 		</div>
 	</div>
 </div>
 
-<!-- Modal for Signup -->
-<div id="signupModal" class="modal">
+<!-- select for Signup -->
+<div id="selectModal" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
-			<h2>회원가입</h2>
-			<span class="close" onclick="closeModal('signupModal')">&times;</span>
+			<h2>회원 선택</h2>
 		</div>
 		<div class="modal-body">
+			<button onclick="openModal('userSignupModal'); closeModal('selectModal')">사용자</button>
+			<button onclick="openModal('peradmSignupModal'); closeModal('selectModal')">공연관리자</button>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for user Signup -->
+<div id="userSignupModal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<a href="#" class="back-button" onclick="openModal('selectModal'); closeModal('userSignupModal')"></a>
+			<h2>회원가입</h2>
+			<span class="close" onclick="closeModal('userSignupModal')">&times;</span>
+		</div>
+		<div class="modal-body">
+			<input type="text" id="email" placeholder="이메일" required>
+			<button onclick="sendEmailVerification()">인증번호 받기</button>
+
+			<div class="verification-container">
+				<input type="text" id="verificationCode" placeholder="인증번호 입력" required>
+				<button onclick="verifyCode()">인증하기</button>
+			</div>
+
+			<input type="password" placeholder="비밀번호" required>
+			<input type="password" placeholder="비밀번호 확인" required>
+			<input type="text" placeholder="전화번호 (예: 010-1234-5678)" required>
+			<input type="text" placeholder="주소" required>
+			<input type="text" placeholder="닉네임" required>
+
+			<div class="gender-radio-container">
+			    <label for="maleRadio" class="gender-radio">
+			        <input type="radio" id="maleRadio" name="gender" value="male">
+			        남자
+			    </label>
+			    <label for="femaleRadio" class="gender-radio">
+			        <input type="radio" id="femaleRadio" name="gender" value="female">
+			        여자
+			    </label>
+			</div>
+
+			<button>회원가입</button>
+		</div>
+		<div class="modal-footer">
+			<p>이미 계정이 있으신가요?
+				<a href="#" onclick="openModal('loginModal'); closeModal('userSignupModal')">로그인</a>
+			</p>
+		</div>
+	</div>
+</div>
+
+<div id="peradmSignupModal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<a href="#" class="back-button" onclick="openModal('selectModal'); closeModal('peradmSignupModal')"></a>
+			<h2>회원가입</h2>
+			<span class="close" onclick="closeModal('peradmSignupModal')">&times;</span>
+		</div>
+		<div class="modal-body">
+
 			<input type="text" placeholder="이메일" required>
 			<input type="password" placeholder="비밀번호" required>
 			<input type="password" placeholder="비밀번호 확인" required>
 			<button>회원가입</button>
 		</div>
 		<div class="modal-footer">
-			<p>이미 계정이 있으신가요? <a href="#" onclick="openModal('loginModal'); closeModal('signupModal')">로그인</a></p>
+			<p>이미 계정이 있으신가요? <a href="#" onclick="openModal('loginModal'); closeModal('peradmSignupModal')">로그인</a></p>
 		</div>
 	</div>
 </div>
-
