@@ -6,503 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>티켓팅 시스템</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #eef2f3;
-            color: #333;
-            overflow-x: hidden;
-        }
-
-         /* 헤더 스타일 */
-         header {
-            background: #ffffff;
-            padding: 10px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        /* 로고 스타일 */
-        .logo {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #000;
-        }
-
-        /* 네비게이션 메뉴 */
-        .nav-menu {
-            display: flex;
-            gap: 20px;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: inherit;
-            padding: 5px 10px;
-        }
-
-        .nav-menu a:hover {
-            color: #000;
-            font-weight: bold;
-        }
-
-        /* 검색바 스타일 */
-        .search-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .search-container input {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 0.9em;
-            width: 200px;
-        }
-
-        .search-container button {
-            background: #000;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 15px;
-            margin-left: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .search-container button:hover {
-            background: #444;
-        }
-
-        /* 버튼 스타일 */
-        .header-buttons button {
-            background: none;
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-left: 10px;
-        }
-
-        .header-buttons button:hover {
-            background: #f0f0f0;
-        }
-
-        .header-buttons .login-button {
-            background: #000;
-            color: #fff;
-            border: none;
-        }
-
-        .header-buttons .login-button:hover {
-            background: #444;
-        }
-
-        /* header {
-            background: #283593;
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-container {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-container input {
-            width: 300px;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .search-container button {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background: #ff9800;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .search-container button:hover {
-            background: #e68a00;
-        } */
-
-        .section {
-            height: auto;
-            width: 100vw;
-            padding: 60px 20px;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .section button {
-            padding: 8px 20px;
-            margin: 0 5px;
-            border: 1px solid #e0e0e0;
-            background-color: transparent;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        /* 선택된 버튼 스타일 */
-        .section button:first-of-type {
-            background-color: #333;
-            color: white;
-            border-color: #333;
-        }
-
-        /* 호버 효과 */
-        .section button:hover {
-            background-color: #f5f5f5;
-        }
-
-        .visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .hero {
-            background-image: url('https://source.unsplash.com/1600x900/?concert,show');
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            position: relative;
-            padding: 20px;
-        }
-
-        .hero h1 {
-            font-size: 3.5em;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        }
-
-        .hero button {
-            padding: 15px 30px;
-            font-size: 1.2em;
-            background: #ff9800;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .hero button:hover {
-            background: #e68a00;
-        }
-
-        .card-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            width: 300px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card img {
-            width: 100%;
-            border-radius: 10px;
-        }
-
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 30px 20px;
-            margin-top: 40px;
-        }
-
-        .social-icons a {
-            color: white;
-            margin: 0 15px;
-            font-size: 1.5em;
-        }
-
-        /* Updated Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 450px;
-            padding: 30px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-            position: relative;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .modal.show .modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            color: #000000;
-            font-size: 1.5em;
-        }
-
-        .close {
-            color: #999;
-            font-size: 24px;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close:hover {
-            color: #004CFF;
-        }
-
-        .modal-body {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .modal input {
-            width: 94%;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .modal input:focus {
-            border-color: #004CFF;
-        }
-
-        .modal button {
-            background: #004CFF;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.1s ease;
-            margin-top: 10px;
-        }
-
-        .modal button:hover {
-            background: #1e88e5;
-        }
-
-        .modal button:active {
-            transform: scale(0.98);
-        }
-
-        .modal-footer {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .modal-footer a {
-            color: #004CFF;
-            text-decoration: none;
-        }
-
-        .carousel-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .carousel {
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
-            height: 500px;
-            margin: 0 auto;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        .carousel-inner {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-            height: 100%;
-        }
-
-        .carousel-item {
-            min-width: 100%;
-            height: 100%;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-        }
-
-        .carousel-caption {
-            background: rgba(0,0,0,0.6);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 80%;
-            backdrop-filter: blur(5px);
-        }
-
-        .carousel-caption h3 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .carousel-caption p {
-            font-size: 1.2em;
-        }
-
-        .carousel-control {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.5);
-            color: white;
-            padding: 15px;
-            text-decoration: none;
-            z-index: 10;
-            border-radius: 50%;
-            transition: background 0.3s ease;
-        }
-        
-        .carousel-control:hover {
-            background: rgba(0,0,0,0.7);
-        }
-
-        .carousel-control.prev {
-            left: 20px;
-        }
-
-        .carousel-control.next {
-            right: 20px;
-        }
-
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .carousel {
-                height: 300px;
-            }
-            .carousel-caption h3 {
-                font-size: 1.5em;
-            }
-            .carousel-caption p {
-                font-size: 1em;
-            }
-            .carousel-control {
-                padding: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .carousel {
-                height: 200px;
-            }
-            .carousel-caption {
-                padding: 10px;
-            }
-            .carousel-caption h3 {
-                font-size: 1.2em;
-            }
-            .carousel-caption p {
-                font-size: 0.9em;
-            }
-        }
-    </style>
+	
+	<link rel="stylesheet" href="/css/main-style.css">
+	
+	<th:block th:replace="~{common/common}"></th:block>
 </head>
 
 <body>
 
-    <header>
-        <div class="logo">ET e.ticket</div>
-        <div class="nav-menu">
-            <a href="#">뮤지컬</a>
-            <a href="#">연극</a>
-            <a href="#">클래식</a>
-        </div>
-        <div class="search-container">
-            <input type="text" placeholder="검색어를 입력하세요">
-            <button>검색</button>
-        </div>
-        <div class="header-buttons">
-            <button class="login-button" onclick="openModal('loginModal')">로그인</button>
-            <button onclick="openModal('signupModal')">회원가입</button>
-        </div>
-    </header>
-    <!-- <header>
-        <div class="logo" style="font-size: 1.5em; font-weight: bold;">티켓팅 시스템</div>
-        <div class="search-container">
-            <input type="text" placeholder="검색어를 입력하세요...">
-            <button>검색</button>
-        </div>
-        <nav>
-            <button onclick="openModal('loginModal')">로그인</button>
-            <button onclick="openModal('signupModal')">회원가입</button>
-        </nav>
-    </header> -->
+    <th:block th:replace="~{common/header}"></th:block>
 
     <div class="section visible" id="hero">
         <div class="hero">
@@ -511,33 +23,33 @@
         </div>
     </div>
     
-    <div class="section carousel-section" id="performances-carousel">
-        <h2>주요 공연 소개</h2>
-        <div class="carousel" id="mainCarousel">
-            <div class="carousel-inner" id="carouselInner">
-                <div class="carousel-item" style="background-image: url('https://source.unsplash.com/1600x900/?concert,music')">
-                    <div class="carousel-caption">
-                        <h3>여름 페스티벌 콘서트</h3>
-                        <p>최고의 아티스트들과 함께하는 멋진 여름 축제!</p>
-                    </div>
-                </div>
-                <div class="carousel-item" style="background-image: url('https://source.unsplash.com/1600x900/?musical,theater')">
-                    <div class="carousel-caption">
-                        <h3>브로드웨이 뮤지컬</h3>
-                        <p>세계적인 뮤지컬의 감동을 직접 느껴보세요!</p>
-                    </div>
-                </div>
-                <div class="carousel-item" style="background-image: url('https://source.unsplash.com/1600x900/?rock,concert')">
-                    <div class="carousel-caption">
-                        <h3>록 밴드 라이브</h3>
-                        <p>열정의 록 콘서트, 모든 팬들을 위한 무대!</p>
-                    </div>
-                </div>
-            </div>
-            <a href="#" class="carousel-control prev" onclick="changeSlide(-1, event)">&#10094;</a>
-            <a href="#" class="carousel-control next" onclick="changeSlide(1, event)">&#10095;</a>
-        </div>
-    </div>
+	<div class="section carousel-section" id="performances-carousel">
+	    <h2>주요 공연 소개</h2>
+	    <div class="carousel" id="mainCarousel">
+	        <div class="carousel-inner" id="carouselInner">
+	            <div class="carousel-item" style="background-image: url('http://www.kopis.or.kr/upload/pfmPoster/PF_PF254599_241126_091729.jpg')">
+	                <div class="carousel-caption">
+	                    <h3>여름 페스티벌 콘서트</h3>
+	                    <p>최고의 아티스트들과 함께하는 멋진 여름 축제!</p>
+	                </div>
+	            </div>
+	            <div class="carousel-item" style="background-image: url('http://www.kopis.or.kr/upload/pfmPoster/PF_PF253823_241115_164813.JPG')">
+	                <div class="carousel-caption">
+	                    <h3>브로드웨이 뮤지컬</h3>
+	                    <p>세계적인 뮤지컬의 감동을 직접 느껴보세요!</p>
+	                </div>
+	            </div>
+	            <div class="carousel-item" style="background-image: url('http://www.kopis.or.kr/upload/pfmPoster/PF_PF248171_241126_093047.gif')">
+	                <div class="carousel-caption">
+	                    <h3>록 밴드 라이브</h3>
+	                    <p>열정의 록 콘서트, 모든 팬들을 위한 무대!</p>
+	                </div>
+	            </div>
+	        </div>
+	        <a href="#" class="carousel-control prev" onclick="changeSlide(-1, event)">&#10094;</a>
+	        <a href="#" class="carousel-control next" onclick="changeSlide(1, event)">&#10095;</a>
+	    </div>
+	</div>
 
     <div class="section" id="performances">
         <h2>장르별 랭킹</h2>
@@ -615,42 +127,6 @@
         </div>
     </footer>
 
-    <!-- Modal for Login -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>로그인</h2>
-                <span class="close" onclick="closeModal('loginModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="text" placeholder="이메일" required>
-                <input type="password" placeholder="비밀번호" required>
-                <button>로그인</button>
-            </div>
-            <div class="modal-footer">
-                <p>아직 계정이 없으신가요? <a href="#" onclick="openModal('signupModal'); closeModal('loginModal')">회원가입</a></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Signup -->
-    <div id="signupModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>회원가입</h2>
-                <span class="close" onclick="closeModal('signupModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="text" placeholder="이메일" required>
-                <input type="password" placeholder="비밀번호" required>
-                <input type="password" placeholder="비밀번호 확인" required>
-                <button>회원가입</button>
-            </div>
-            <div class="modal-footer">
-                <p>이미 계정이 있으신가요? <a href="#" onclick="openModal('loginModal'); closeModal('signupModal')">로그인</a></p>
-            </div>
-        </div>
-    </div>
 
     <!-- Chart.js 라이브러리 추가 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -780,31 +256,10 @@
             section.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Updated Modal functionality
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modal.classList.add('show');
-            }, 10);
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function (event) {
-            if (event.target.classList.contains('modal')) {
-                closeModal('loginModal');
-                closeModal('signupModal');
-            }
-        }
     </script>
+	
+	<script src="/js/main.js"></script>
+	
 </body>
 
 </html>
