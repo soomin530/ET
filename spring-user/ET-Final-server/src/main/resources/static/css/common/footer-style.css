@@ -1,35 +1,13 @@
-/* 푸터 ( 하단 ) */
-.footer {
-	background-color: #1f2937;
-	/* 진한 네이비 색상 */
-	color: #ffffff;
-	padding: 1rem 0;
-	width: 100%;
-	position: relative;
-	bottom: 0;
-	margin-top: 3rem;
-}
-
-.footer-content {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 0 1rem;
+footer {
+	background: #333;
+	color: white;
 	text-align: center;
+	padding: 30px 20px;
+	margin-top: 40px;
 }
 
-.copyright {
-	font-size: 0.875rem;
-	margin: 0;
-	opacity: 0.8;
-}
-
-/* 반응형 디자인을 위한 미디어 쿼리 */
-@media (max-width: 768px) {
-  .footer {
-      padding: 0.75rem 0;
-  }
-  
-  .copyright {
-      font-size: 0.75rem;
-  }
+.social-icons a {
+	color: white;
+	margin: 0 15px;
+	font-size: 1.5em;
 }
