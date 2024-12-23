@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
+    <title>주문 내역</title>
+</head>
+<body>
+    <h2>주문 내역</h2>
+    <div id="order-details"></div>
+
+    <script>
+        // 서버에서 주문 내역 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+
+        fetch(`/api/orders/${orderId}`)
+            .then(response => response.json())
+            .then(order => {
+                document.getElementById('order-details').innerHTML = `
+                    <p>주문 번호: ${order.id}</p>
+                    <p>좌석: ${order.seatInfo}</p>
+                    <p>총 금액: ${order.totalPrice} 원</p>
+                    <p>예매자: ${order.buyerName} (${order.buyerTel})</p>
+                `;
+            })
+            .catch(error => console.error('Error fetching order:', error));
+    </script>
+</body>
+</html>
