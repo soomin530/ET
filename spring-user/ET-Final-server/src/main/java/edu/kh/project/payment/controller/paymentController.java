@@ -1,21 +1,23 @@
 package edu.kh.project.payment.controller;
 
-import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import edu.kh.project.payment.model.dto.Payment;
+import edu.kh.project.payment.model.dto.Seat;
 import edu.kh.project.payment.service.paymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class paymentController {
 
-	private final paymentService PaymentService;
+	private final paymentService service;
 
 	@Value("${iamport.api.key}")
 	private String apiKey;
@@ -58,7 +60,7 @@ public class paymentController {
 		return ResponseEntity.ok(response);
 	}
 
-	/** 
+	/**
 	 * @return
 	 */
 	@GetMapping("seatPage")
@@ -66,15 +68,20 @@ public class paymentController {
 		return "payment/seatPage"; // seatPage.html 파일을 렌더링
 	}
 
-	/** 좌석 선택
+	/**
+	 * 좌석 선택
+	 * 
 	 * @return
 	 */
 	@GetMapping("seat-selection")
 	public String seatSelection() {
+
 		return "payment/seat-selection";
 	}
 
-	/** 주문자 확인
+	/**
+	 * 주문자 확인
+	 * 
 	 * @return
 	 */
 	@GetMapping("booking-info")
@@ -82,12 +89,86 @@ public class paymentController {
 		return "payment/booking-info";
 	}
 
-	/** 결제 창
+	/**
+	 * 결제 창
+	 * 
 	 * @return
 	 */
 	@GetMapping("payment")
 	public String payment() {
 		return "payment/payment";
+	}
+
+	/**
+	 * 좌석 정보 제공
+	 * 
+	 * @param showDate
+	 * @param showTime
+	 * @return
+	 */
+	@GetMapping("seats")
+	public ResponseEntity<List<Seat>> getSeats(@RequestParam(name = "showDate") String showDate,
+			@RequestParam(name = "showTime") String showTime) {
+		try {
+			List<Seat> seats = service.getSeats(showDate, showTime);
+			return ResponseEntity.ok(seats);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+
+	}
+
+	/**
+	 * 좌석 예약
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("book-seat")
+	public ResponseEntity<String> reserveSeat(@RequestBody Map<String, String> request) {
+		String seatId = request.get("seatId");
+		boolean success = paymentService.bookSeat(seatId);
+
+		if (success) {
+			return ResponseEntity.ok("좌석이 성공적으로 예약되었습니다.");
+		} else {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좌석 예약에 실패했습니다.");
+		}
+	}
+
+	/**
+	 * 결제 내역 저장
+	 * 
+	 * @param paymentData
+	 * @return
+	 */
+	@PostMapping("save-payment")
+	public ResponseEntity<String> savePayment(@RequestBody Payment paymentData) {
+
+		// 전달된 데이터를 로그로 출력
+		log.info("수신된 결제 데이터: {}", paymentData);
+
+		try {
+			boolean success = service.savePayment(paymentData);
+
+			if (success) {
+	            // 여러 좌석 업데이트
+	            for (String seatId : paymentData.getSeatIds()) {
+	                boolean seatReserved = service.reserveSeat(seatId);
+	                if (!seatReserved) {
+	                    log.warn("좌석 상태 업데이트 실패: {}", seatId);
+	                }
+	            }
+	            return ResponseEntity.ok("결제가 성공적으로 저장되었고 좌석 상태가 업데이트되었습니다.");
+	        } else {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 저장에 실패했습니다.");
+	        }
+	    } catch (Exception e) {
+	        log.error("결제 처리 중 오류 발생", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 처리 중 오류가 발생했습니다.");
+	    }
 	}
 
 }

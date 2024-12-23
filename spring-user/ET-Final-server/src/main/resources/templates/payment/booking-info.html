@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>예매자 정보 확인</title>
+
+
 </head>
+
 <body>
     <h2>예매자 정보 확인</h2>
     <div>
@@ -17,19 +21,50 @@
     </form>
 
     <script>
-         const seatInfo = JSON.parse(localStorage.getItem('selectedSeats')).join(', '); // localStorage에서 저장한 선택좌석, 총 가격
-         const totalPrice = localStorage.getItem('totalPrice');
+        const seatInfo = JSON.parse(localStorage.getItem('selectedSeats')).map(seatId => {
+            const parts = seatId.split('-');
+            const gradeName = parts[1]; // R석, VIP석 등급
+            const seatNumber = parts[2]; // A1, A2 등 좌석 번호
+            return `${gradeName}석 ${seatNumber}`; // R석 A1 형식으로 변환
+        }).join(', ');
 
-         document.getElementById('seat-info').textContent = seatInfo;
-         document.getElementById('total-price').textContent = totalPrice;
+        const totalPrice = localStorage.getItem('totalPrice');
+        document.getElementById('seat-info').textContent = seatInfo;
+        document.getElementById('total-price').textContent = totalPrice;
+
+
+
+        // 전화번호 입력 시 자동으로 '-' 추가
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', () => {
+            let value = phoneInput.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+
+            if (value.length > 3 && value.length <= 7) {
+                value = `${value.slice(0, 3)}-${value.slice(3)}`;
+            } else if (value.length > 7) {
+                value = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7)}`;
+            }
+
+            phoneInput.value = value; // 입력값 업데이트
+        });
 
         document.getElementById('booking-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const bookingInfo = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value
-            };
-            
+
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!name || !phone) {
+                alert("모든 필드를 입력해주세요.");
+                return;
+            }
+
+            if (!/^\d{3}-\d{3,4}-\d{4}$/.test(phone)) {
+                alert("연락처는 000-0000-0000 형식으로 입력해주세요.");
+                return;
+            }
+
+            const bookingInfo = { name, phone };
             // 예매자 정보 localStorage에 저장
             localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));
 
@@ -38,4 +73,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -45,10 +45,12 @@
     /* 좌석 배치 */
     .seat-map {
       display: grid;
+      grid-template-columns: repeat(auto-fill, 25px);
+      /* 자동으로 너비에 맞게 채움 */
       gap: 5px;
       justify-content: center;
-      margin-bottom: 30px;
     }
+
 
     .seat {
       width: 25px;
@@ -121,11 +123,6 @@
       border-radius: 5px;
     }
   </style>
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
 </head>
 
 <body>
@@ -136,13 +133,7 @@
     <div class="seat-container">
       <div class="stage">STAGE</div>
 
-      <!-- 1층 좌석 -->
-      <h3>1층 좌석</h3>
-      <div class="seat-map" id="floor1" style="grid-template-columns: repeat(15, 1fr);"></div>
 
-      <!-- 2층 좌석 -->
-      <h3>2층 좌석</h3>
-      <div class="seat-map" id="floor2" style="grid-template-columns: repeat(10, 1fr);"></div>
     </div>
 
     <!-- 우측 정보 영역 -->
@@ -157,127 +148,140 @@
         <span id="total-price">0 원</span>
       </div>
       <button class="confirm-btn" id="confirm-btn">좌석 선택 완료</button>
-       <button class="confirm-btn" id="reset-btn" >좌석 다시 선택</button> <!-- 버튼 추가 -->
-
-
+      <button class="confirm-btn" id="reset-btn">좌석 다시 선택</button>
     </div>
   </div>
 
   <script>
-    const seatPrices = {
-      vip: 150000,
-      r: 120000,
-      s: 90000,
-      a: 60000
-    };
+    document.addEventListener("DOMContentLoaded", () => {
+      const seatContainer = document.createElement("div"); // 전체 좌석을 감쌀 컨테이너
+      seatContainer.classList.add("seat-map");
+      seatContainer.style.gridTemplateColumns = "repeat(10, 1fr)"; // 10열로 정렬
+      document.querySelector(".seat-container").appendChild(seatContainer); // 기존 좌석 컨테이너에 추가
 
-    const bookedSeats = ["1F-A1", "1F-B2", "2F-D3", "2F-E5"]; // 예약된 좌석
-    const selectedSeats = new Set();
 
-    // 좌석 생성 함수
-    function createSeats(floorId, rows, cols, prefix) {
-      const seatMap = document.getElementById(floorId);
-      for (let row = 0; row < rows; row++) {
-        for (let col = 1; col <= cols; col++) {
-          const seat = document.createElement('div');
-          const seatNum = `${prefix}-${String.fromCharCode(65 + row)}${col}`;
-          seat.classList.add('seat');
+      const selectedSeats = new Set();
 
-          if (bookedSeats.includes(seatNum)) {
-            seat.classList.add('booked');
-            seat.textContent = "X";
-          } else {
-            seat.textContent = seatNum.split('-')[1];
-            seat.dataset.price = getSeatPrice(row);
-            seat.addEventListener('click', () => toggleSeat(seat, seatNum));
+      // 좌석 데이터를 백엔드에서 가져오는 함수
+      async function fetchSeats(showDate, showTime) {
+        try {
+          const response = await fetch(`/payment/seats?showDate=${showDate}&showTime=${showTime}`);
+          if (!response.ok) {
+            throw new Error("좌석 데이터를 가져오는데 실패했습니다.");
           }
-
-          seat.classList.add(getSeatClass(row));
-          seatMap.appendChild(seat);
+          const seatData = await response.json();
+          renderSeats(seatData); // 좌석 생성
+          console.log("좌석 데이터:", seatData);
+        } catch (error) {
+          console.log(error.message);
+          alert("좌석 데이터를 불러오는데 실패했습니다.");
         }
       }
-    }
 
-    // 좌석 등급 클래스 설정
-    function getSeatClass(row) {
-      if (row < 2) return 'vip';
-      if (row < 4) return 'r';
-      if (row < 6) return 's';
-      return 'a';
-    }
+      // 좌석 데이터를 기반으로 좌석 생성
+      function renderSeats(seatData) {
+        seatContainer.innerHTML = ""; // 기존 좌석 초기화
 
-    // 좌석 가격 설정
-    function getSeatPrice(row) {
-      if (row < 2) return seatPrices.vip;
-      if (row < 4) return seatPrices.r;
-      if (row < 6) return seatPrices.s;
-      return seatPrices.a;
-    }
+        seatData.forEach((seat, index) => {
+          const seatElement = document.createElement("div");
+          seatElement.classList.add("seat", getSeatClass(seat.gradeId));
+          seatElement.textContent = seat.seatId ? seat.seatId.split("-")[2] : `좌석 ${index + 1}`; // 좌석 번호 표시
 
-    // 좌석 선택/해제
-    function toggleSeat(seat, seatNum) {
-      if (seat.classList.contains('booked')) return;
+          // 좌석 데이터 확인
+          console.log(`생성된 좌석 ${index}:`, seatElement);
 
-      seat.classList.toggle('selected');
-      if (selectedSeats.has(seatNum)) {
-        selectedSeats.delete(seatNum);
-      } else {
-        selectedSeats.add(seatNum);
+         // 좌석 상태에 따른 스타일 설정
+        if (seat.status === "BOOKED") { // 결제 완료된 좌석
+            seatElement.classList.add("booked");
+            seatElement.textContent = "X";
+        } else if (seat.status === "RESERVED") { // 예약된 좌석
+            seatElement.classList.add("reserved");
+            seatElement.textContent = "예약";
+        } else {
+            seatElement.dataset.price = seat.price;
+            seatElement.addEventListener("click", () => toggleSeat(seatElement, seat.seatId));
+        }
+
+          seatContainer.appendChild(seatElement); // 좌석 추가
+        });
       }
-      updateInfo();
-    }
 
-    // 선택된 좌석 및 가격 업데이트
-    function updateInfo() {
-      const seatNumbers = [...selectedSeats].join(', ');
-      document.getElementById('seat-numbers').textContent = seatNumbers || "없음";
 
-      let totalPrice = 0;
-      document.querySelectorAll('.seat.selected').forEach(seat => {
-        totalPrice += parseInt(seat.dataset.price);
+      // 좌석 등급 클래스 설정
+      function getSeatClass(gradeId) {
+        switch (gradeId.toString()) { // 숫자일 경우 문자열로 변환
+          case "1": return "vip";
+          case "2": return "r";
+          case "3": return "s";
+          case "4": return "a";
+          default: return "";
+        }
+      }
+
+      // 좌석 선택/해제
+      function toggleSeat(seat, seatId) {
+        if (seat.classList.contains("booked")) return;
+
+        seat.classList.toggle("selected");
+        if (selectedSeats.has(seatId)) {
+          selectedSeats.delete(seatId);
+        } else {
+          selectedSeats.add(seatId);
+        }
+        updateInfo();
+      }
+
+      // 선택된 좌석 및 가격 업데이트
+      function updateInfo() {
+        const selectedSeatDetails = []; // 배열 선언
+        let totalPrice = 0;
+
+        // 선택된 좌석들 처리
+        document.querySelectorAll(".seat.selected").forEach(seat => {
+          const gradeClass = seat.classList.contains("vip") ? "VIP" :
+            seat.classList.contains("r") ? "R" :
+              seat.classList.contains("s") ? "S" :
+                seat.classList.contains("a") ? "A" : "전좌석";
+          const seatNumber = seat.textContent.trim(); // 좌석 번호 추출
+          selectedSeatDetails.push(`${gradeClass}석 ${seatNumber}`); // "R석 A1" 형식으로 저장
+          totalPrice += parseInt(seat.dataset.price); // 가격 합산
+        });
+
+        // 우측 정보 영역에 업데이트
+        document.getElementById("seat-numbers").textContent = selectedSeatDetails.length > 0
+          ? selectedSeatDetails.join(", ") // 쉼표로 구분하여 표시
+          : "없음"; // 선택된 좌석이 없으면 "없음" 표시
+        document.getElementById("total-price").textContent = `${totalPrice.toLocaleString()} 원`;
+      }
+
+      // 좌석 초기화 함수
+      document.getElementById("reset-btn").addEventListener("click", () => {
+        selectedSeats.clear();
+        document.querySelectorAll(".seat.selected").forEach(seat => {
+          seat.classList.remove("selected");
+        });
+        updateInfo();
       });
-      document.getElementById('total-price').textContent = `${totalPrice.toLocaleString()} 원`;
-    }
 
-    // 1층과 2층 좌석 생성
-    createSeats("floor1", 6, 15, "1F");
-    createSeats("floor2", 5, 10, "2F");
+      // 좌석 선택 완료 버튼 이벤트
+      document.getElementById("confirm-btn").addEventListener("click", () => {
+        const selectedSeatsArray = [...selectedSeats];
+        if (selectedSeatsArray.length === 0) {
+          alert("좌석을 선택해주세요.");
+          return;
+        }
 
-    // 좌석 선택 완료 버튼 이벤트
-    document.getElementById('confirm-btn').addEventListener('click', () => {
-      const selectedSeatsArray = [...selectedSeats];
+        const totalPrice = document.getElementById("total-price").textContent;
+        localStorage.setItem("selectedSeats", JSON.stringify(selectedSeatsArray));
+        localStorage.setItem("totalPrice", totalPrice);
 
-      if (selectedSeatsArray.length === 0) {
-        // 좌석 선택 X
-        alert("좌석을 선택해주세요");
-      } else {
-        const totalPrice = document.getElementById('total-price').textContent;
-        
-         // 선택된 좌석과 총 가격을 localStorage에 저장
-      localStorage.setItem('selectedSeats', JSON.stringify(selectedSeatsArray));
-      localStorage.setItem('totalPrice', totalPrice);
+        // 다음 단계로 이동
+        window.location.href = "/payment/booking-info";
+      });
 
-      // 다음 단계로 이동
-      window.location.href = "/payment/booking-info"; // 다음 단계 페이지 경로 설정
-      }
-
-     
+      // 기본 좌석 데이터 가져오기
+      fetchSeats("2024-12-25", "19:30"); // 기본적으로 2024년 12월 25일 19:30의 좌석 데이터를 가져옴
     });
-
-    // 좌석 초기화 함수
-    function resetSeats() {
-      selectedSeats.clear();
-
-      document.querySelectorAll('.seat.selected').forEach(seat => {
-        seat.classList.remove('selected');
-      });
-
-      // 정보 초기화
-      updateInfo();
-
-     
-    }
-    document.getElementById('reset-btn').addEventListener('click', resetSeats);
 
   </script>
 </body>
