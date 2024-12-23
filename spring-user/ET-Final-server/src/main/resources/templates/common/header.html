@@ -22,16 +22,17 @@
 			    <th:block th:if="${session.loginMember == null}">
 			        <button class="login-button" onclick="openModal('loginModal')">로그인</button>
 			        <button class="signup-button" onclick="openModal('selectModal')">회원가입</button>
+					<button class="login-button" onclick="location.href='/mypage/memberInfo'">계정 닉네임</button>
 			    </th:block>
 
-			    <!-- 세션이 있을 때: 마이페이지, 로그아웃 -->
+			    <!-- 세션이 있을 때: 계정 닉네임, 마이페이지, 로그아웃 -->
 			    <th:block th:if="${session.loginMember != null}" th:object="${session.loginMember}">
 			        <th:block th:if="${session.loginMember.memberAuth == 1}">
-			            <button class="login-button" th:text="*{memberNickname}">계정 닉네임</button>
+			            <!-- <button class="login-button" onclick="location.href='/mypage/memberInfo'" th:text="*{memberNickname}">계정 닉네임</button> -->
 			            <button class="mypage-button">마이페이지</button>
 			        </th:block>
 			        <th:block th:if="${session.loginMember.memberAuth == 2}">
-			            <button class="login-button" th:text="*{memberNickname}" >계정 닉네임</button>
+			            <button class="login-button" th:text="*{memberNickname}">계정 닉네임</button>
 			            <a href="/adminBoard/dashAdmin" class="login-button" th:text="*{memberNickname}">계정 닉네임</a>
 			        </th:block>
 			        <button class="logout-button" onclick="logoutSession()">로그아웃</button>
