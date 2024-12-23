@@ -210,6 +210,16 @@
 	/* 중앙 정렬 */
 }
 
+#signUpForm {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* 간격을 크게 조정 */
+	align-items: center;
+	/* 중앙 정렬 */
+}
+
 .modal-body input,
 .modal-body button {
 	width: 100%;
@@ -426,6 +436,15 @@
 	width: auto;
 	padding: 10px 15px;
 }
+
+.signUp-message{
+  display: block;  /* 추가 */
+  font-size: 14px;
+  letter-spacing: -1px;
+}
+
+.confirm{ color : green; }
+.error{ color : red; }
 
 @media (max-width: 768px) {
 	.nav-menu {
