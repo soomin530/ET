@@ -18,3 +18,10 @@ const getCookie = (key) => {
 	return obj[key]; // 매개변수로 전달받은 key와
 
 }
+
+
+function sendEmailVerification() {
+	
+	console.log(11);
+	
+}
