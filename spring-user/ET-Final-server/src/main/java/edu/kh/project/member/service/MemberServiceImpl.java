@@ -1,5 +1,7 @@
 package edu.kh.project.member.service;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceImpl implements MemberService {
 
 	private final MemberMapper mapper;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder bcrypt;
 
+	// 로그인 진행
 	@Override
 	public Member login(Member inputMember) {
 		// 암호화 진행
@@ -47,6 +50,55 @@ public class MemberServiceImpl implements MemberService {
 		loginMember.setMemberPw(null);
 
 		return loginMember;
+	}
+
+	// 이메일 중복 체큰
+	@Override
+	public int checkEmail(String memberEmail) {
+		return mapper.checkEmail(memberEmail);
+	}
+
+	// 아이디 중복 체크
+	@Override
+	public int checkId(String memberId) {
+		return mapper.checkId(memberId);
+	}
+
+	// 닉네임 중복체크
+	@Override
+	public int checkNickname(String memberNickname) {
+		return mapper.checkNickname(memberNickname);
+	}
+
+	// 회원가입 서비스
+	@Override
+	public int signup(Member inputMember, String[] memberAddress) {
+		// 주소가 입력된 경우
+		if (!inputMember.getMemberAddress().equals(",,")) {
+
+			String address = String.join("^^^", memberAddress);
+			inputMember.setMemberAddress(address);
+
+		} else {
+			// 주소가 입력되지 않은 경우
+			inputMember.setMemberAddress(null); // null 저장
+		}
+
+		String encPw = bcrypt.encode(inputMember.getMemberPw());
+		inputMember.setMemberPw(encPw);
+
+		// 회원 가입 매퍼 메서드 호출
+		return mapper.signup(inputMember);
+	}
+
+	@Override
+	public void insertVenue(Map<String, Object> venue) {
+		mapper.insertVenue(venue);
+	}
+
+	@Override
+	public void insertSubVenue(Map<String, Object> subVenue) {
+		mapper.insertSubVenue(subVenue);
 	}
 
 }
