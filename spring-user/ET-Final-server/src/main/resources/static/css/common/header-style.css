@@ -74,28 +74,70 @@
 
 /* 버튼 스타일 */
 .header-buttons button {
-	background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
-	border: 1px solid #ccc;
-	padding: 5px 10px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 0.9em;
-	margin-left: 10px;
+    background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-left: 10px;
 }
+
+/* 회원가입 버튼 스타일 */
+.header-buttons .signup-button {
+    background: linear-gradient(135deg, #ff9900, #ff7f00); /* 오렌지 톤 그라디언트 */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* 회원가입 버튼 호버 색상 */
+.header-buttons .signup-button:hover {
+    background: linear-gradient(135deg, #e68900, #e57300); /* 호버 시 더 어두운 오렌지 톤 */
+}
+
 
 .header-buttons .login-button {
-	background: linear-gradient(135deg, #004CFF, #0039e5);
-	color: #fff;
-	border: none;
+    background: linear-gradient(135deg, #004CFF, #0039e5);
+    color: #fff;
+    border: none;
 }
 
+.header-buttons .logout-button {
+    background: linear-gradient(135deg, #CC0033, #CC0033);
+    color: #fff;
+    border: none;
+}
+
+/* 일반 버튼 호버 색상 */
 .header-buttons button:hover {
-	background: #f0f0f0;
+    background: #eaeaea; /* 새로운 호버 색상 */
 }
 
+/* 로그인 버튼 호버 색상 */
 .header-buttons .login-button:hover {
-	background: #444;
+    background: linear-gradient(135deg, #002eb3, #001f80); /* 파란색 톤 */
 }
+
+/* 로그아웃 버튼 호버 색상 */
+.header-buttons .logout-button:hover {
+    background: linear-gradient(135deg, #990026, #66001a); /* 진한 빨간색 톤 */
+}
+
+.header-buttons .mypage-button {
+    background: linear-gradient(135deg, #28a745, #218838); /* 밝은 초록에서 진한 초록 */
+    color: #fff;
+    border: none;
+}
+
+.header-buttons .mypage-button:hover {
+    background: linear-gradient(135deg, #218838, #19692c); /* 호버 시 더 진한 초록색 */
+}
+
 
 /* 모달 스타일 */
 .modal {
