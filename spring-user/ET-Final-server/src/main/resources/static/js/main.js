@@ -19,6 +19,7 @@ const getCookie = (key) => {
 
 }
 
+<<<<<<< HEAD
 const testFinal = document.querySelector("#testFinal");
 testFinal.addEventListener("click", () => {
     // 실제 이동
@@ -199,4 +200,11 @@ function getStarHTML(starPoint) {
 	starPointHTML += `&nbsp;<span>${starPoint}점</span>`;
 
 	return starPointHTML;
+=======
+
+function sendEmailVerification() {
+	
+	console.log(11);
+	
+>>>>>>> c8feb10748d0cd6a766df7627d7d63c789d7d994
 }

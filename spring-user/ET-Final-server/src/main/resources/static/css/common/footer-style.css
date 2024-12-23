@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* 푸터 ( 하단 ) */
 .footer {
 	background-color: #1f2937;
@@ -32,4 +33,18 @@
   .copyright {
       font-size: 0.75rem;
   }
+=======
+footer {
+	background: #333;
+	color: white;
+	text-align: center;
+	padding: 30px 20px;
+	margin-top: 40px;
+}
+
+.social-icons a {
+	color: white;
+	margin: 0 15px;
+	font-size: 1.5em;
+>>>>>>> c8feb10748d0cd6a766df7627d7d63c789d7d994
 }
