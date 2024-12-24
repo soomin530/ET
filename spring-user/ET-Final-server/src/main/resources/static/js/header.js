@@ -663,6 +663,6 @@ document.querySelectorAll('#cancelButton').forEach(button => {
 
 function fetchProtectedResource() {
 	
-	window.location.href = "/member/fetch-and-save";
+	window.location.href = "/member/perform-and-save";
 	
 }
