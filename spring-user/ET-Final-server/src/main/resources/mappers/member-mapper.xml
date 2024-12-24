@@ -100,5 +100,48 @@
 	</insert>
 	
 	
+	<insert id="insertPerfTime">
+		INSERT INTO "TB_PERFORMANCE_TIME"
+		VALUES(#{mt20id},
+			#{dayOfWeek},
+			#{performanceTime}
+		)
+	</insert>
+	
+	<insert id="insertTicketInto">
+    	INSERT INTO "TB_PERFORMANCE_SEAT_PRICE"
+		(PRICE_ID, MT20ID, GRADE_ID, PRICE)
+		VALUES
+		    (SEQ_PRICE_ID.NEXTVAL,
+		    #{mt20id},
+		    #{seatGradeId},
+		    #{price}
+	    )
+	</insert>
+	
+	<insert id="insertVenueSeat">
+    	INSERT INTO "TB_VENUE_SEAT_INFO"
+		(VENUE_SEAT_ID, MT10ID, GRADE_ID, SEAT_COUNT)
+		VALUES
+		    (SEAT_ID_SEQ.NEXTVAL,
+		    #{mt10id},
+		    #{gradeId},
+		    #{seatCount}
+	    )
+	</insert>
+	
+	
+	<select id="performanceDetails">
+		SELECT 
+			MT20ID, 
+			PCSEGUIDANCE,
+			MT10ID,
+			SEATSCALE
+		FROM TB_PERFORMANCES_DETAIL
+		JOIN TB_VENUE USING(MT10ID)
+		WHERE MT20ID NOT IN('PF001', 'PF253358')
+	</select>
+	
+	
 
 </mapper>

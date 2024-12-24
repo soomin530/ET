@@ -1,5 +1,6 @@
 package edu.kh.project.member.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,10 @@ public class MemberServiceImpl implements MemberService {
 
 		String bcryptPassword = bcrypt.encode(inputMember.getMemberPw());
 
-		// 1. 이메일이 일치하면서 탈퇴하지 않은 회원 조회
+		// 1. 아이디 일치하면서 탈퇴하지 않은 회원 조회
 		Member loginMember = mapper.login(inputMember.getMemberId());
 
-		// 2. 만약에 일치하는 이메일이 없어서 조회 결과가 null 인 경우
+		// 2. 만약에 일치하는 아이디가 없어서 조회 결과가 null 인 경우
 		if (loginMember == null)
 			return null;
 
@@ -52,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
 		return loginMember;
 	}
 
-	// 이메일 중복 체큰
+	// 이메일 중복 체크
 	@Override
 	public int checkEmail(String memberEmail) {
 		return mapper.checkEmail(memberEmail);
@@ -99,6 +100,26 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void insertPerf(Map<String, Object> perfMap) {
 		mapper.insertPerf(perfMap);
+	}
+
+	@Override
+	public void insertPerfTime(Map<String, Object> perfTime) {
+		mapper.insertPerfTime(perfTime);
+	}
+
+	@Override
+	public void insertTicketInto(Map<String, Object> ticketInfo) {
+		mapper.insertTicketInto(ticketInfo);
+	}
+
+	@Override
+	public List<Map<String, String>> performanceDetails() {
+		return mapper.performanceDetails();
+	}
+
+	@Override
+	public void insertVenueSeat(Map<String, Object> seat) {
+		mapper.insertVenueSeat(seat);
 	}
 
 }

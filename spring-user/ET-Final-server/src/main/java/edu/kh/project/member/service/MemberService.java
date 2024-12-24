@@ -1,5 +1,6 @@
 package edu.kh.project.member.service;
 
+import java.util.List;
 import java.util.Map;
 
 import edu.kh.project.member.model.dto.Member;
@@ -40,5 +41,13 @@ public interface MemberService {
 	void insertVenue(Map<String, Object> venue);
 
 	void insertPerf(Map<String, Object> perfMap);
+
+	void insertPerfTime(Map<String, Object> perfTime);
+
+	void insertTicketInto(Map<String, Object> ticketInfo);
+
+	List<Map<String, String>> performanceDetails();
+
+	void insertVenueSeat(Map<String, Object> seat);
 
 }

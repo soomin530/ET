@@ -3,8 +3,10 @@ package edu.kh.project.member.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -217,153 +219,24 @@ public class MemberController {
 	}
 
 
-	@GetMapping("fetch-and-save")
-	public String fetchAndSaveVenues() {
-		try {
-
-			// API URL과 서비스 키 설정
-			String serviceKey = "65293f6ed44e4a2fbc5498ef280710f0"; // 발급받은 서비스 키
-			String apiUrl = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + serviceKey
-					+ "&cpage=1&rows=10&fcltychartr=2&signgucode=11";
-
-			// XML 응답 파싱
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(apiUrl);
-
-			// XML 구조 확인
-			doc.getDocumentElement().normalize();
-
-			// dbs -> db 태그 추출
-			NodeList nodeList = doc.getElementsByTagName("db");
-
-			// 각 db 정보 출력
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				Node node = nodeList.item(i);
-
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element element = (Element) node;
-					String mt10id = element.getElementsByTagName("mt10id").item(0).getTextContent(); // 공연시설 ID
-
-					// ID를 이용하여 추가 API 호출
-					String detailsApiUrl = "http://www.kopis.or.kr/openApi/restful/prfplc/" + mt10id + "?service="
-							+ serviceKey;
-
-					DocumentBuilderFactory deFactory = DocumentBuilderFactory.newInstance();
-					DocumentBuilder deBuilder = deFactory.newDocumentBuilder();
-					Document deDoc = deBuilder.parse(detailsApiUrl);
-
-					// XML 구조 확인
-					deDoc.getDocumentElement().normalize();
-
-					// dbs -> db 태그 추출
-					NodeList deNodeList = deDoc.getElementsByTagName("db");
-
-					// 각 db 정보 출력
-					for (int j = 0; j < deNodeList.getLength(); j++) {
-						Node dbNode = deNodeList.item(j);
-
-						if (dbNode.getNodeType() == Node.ELEMENT_NODE) {
-							Element dbElement = (Element) dbNode;
-
-							// db 정보 추출 및 출력
-							String defcltynm = getTagValue(dbElement, "fcltynm");
-							String demt10id = getTagValue(dbElement, "mt10id");
-							String mt13cnt = getTagValue(dbElement, "mt13cnt");
-							String fcltychartr = getTagValue(dbElement, "fcltychartr");
-							String deopende = getTagValue(dbElement, "opende");
-							String relateurl = getTagValue(dbElement, "relateurl");
-							String seatscale = getTagValue(dbElement, "seatscale").trim(); // 공백 제거
-							String adres = getTagValue(dbElement, "adres");
-							String telno = getTagValue(dbElement, "telno");
-							String la = getTagValue(dbElement, "la");
-							String lo = getTagValue(dbElement, "lo");
-							
-							Map<String, Object> venue = new HashMap<>();
-							
-							// 개관연도 처리 (빈 문자열은 null로 처리)
-							if (deopende != null && !deopende.isEmpty()) {
-							    try {
-							        venue.put("opende", Integer.parseInt(deopende)); // 개관 연도 (NUMBER(4, 0))
-							    } catch (NumberFormatException e) {
-							        venue.put("opende", null); // 예외 발생 시 null 처리
-							    }
-							} else {
-							    venue.put("opende", null); // 빈 값은 null 처리
-							}
-							
-							venue.put("fcltynm", defcltynm);
-							venue.put("mt10id", demt10id);
-							venue.put("mt13cnt", mt13cnt);
-							venue.put("fcltychartr", fcltychartr);
-							venue.put("seatscale", seatscale);
-							venue.put("telno", telno);
-							venue.put("relateurl", relateurl);
-							venue.put("adres", adres);
-							venue.put("fcltla", la);
-							venue.put("fcltlo", lo);
-							
-//							service.insertVenue(venue);
-
-							System.out.println("시설명: " + defcltynm);
-							System.out.println("시설 ID: " + demt10id);
-							System.out.println("상위 공연장 수: " + mt13cnt);
-							System.out.println("시설 종류: " + fcltychartr);
-							System.out.println("개관 연도: " + deopende);
-							System.out.println("홈페이지: " + relateurl);
-							System.out.println("좌석 수: " + seatscale);
-							System.out.println("주소: " + adres);
-							System.out.println("전화번호: " + telno);
-							System.out.println("위도: " + la);
-							System.out.println("경도: " + lo);
-
-							// mt13s -> mt13 태그 추출
-							NodeList mt13NodeList = dbElement.getElementsByTagName("mt13");
-
-							for (int k = 0; k < mt13NodeList.getLength(); k++) {
-								Node mt13Node = mt13NodeList.item(k);
-
-								if (mt13Node.getNodeType() == Node.ELEMENT_NODE) {
-									Element mt13Element = (Element) mt13Node;
-
-									// mt13 정보 추출 및 출력
-									String prfplcnm = getTagValue(mt13Element, "prfplcnm");
-									String mt13id2 = getTagValue(mt13Element, "mt13id");
-									String mt13seatscale = getTagValue(mt13Element, "seatscale");
-									
-									Map<String, Object> subVenue = new HashMap<>();
-									
-									subVenue.put("mt13id", mt13id2);
-									subVenue.put("seatscale", mt13seatscale);
-									subVenue.put("prfplcnm", prfplcnm);
-									subVenue.put("mt10id", demt10id);
-									
-									System.out.println("\n  공연장명: " + prfplcnm);
-									System.out.println("  시설 ID: " + demt10id);
-									System.out.println("  공연장 ID: " + mt13id2);
-									System.out.println("  좌석 수: " + mt13seatscale);
-								}
-							}
-
-							System.out.println("\n---------------------------------------\n");
-						}
-					}
-
-				}
-			}
-
-			return "";
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
 
 	@GetMapping("perform-and-save")
 	public String performAndSaveVenues() {
 		try {
+			
+			// 공연 좌석 등록 분류
+			List<Map<String, String>> performanceDetails = service.performanceDetails();
+			
+			List<Map<String, Object>> venueSeatList = parseVenueSeatInfo(performanceDetails);
+		    
+		    // 결과 확인
+		    for (Map<String, Object> seat : venueSeatList) {
+		        System.out.printf("공연장ID: %s, 좌석등급: %d, 좌석수: %d%n", 
+		            seat.get("mt10id"), seat.get("gradeId"), seat.get("seatCount"));
+		        
+		       // service.insertVenueSeat(seat);
+		    }
+			// processAllTicketPrices(performanceDetails);
 
 			// API URL과 서비스 키 설정
 			String serviceKey = "65293f6ed44e4a2fbc5498ef280710f0"; // 발급받은 서비스 키
@@ -454,40 +327,55 @@ public class MemberController {
 							
 							// service.insertPerf(perfMap);
 
+							// 정규식 패턴을 수정하여 단일 요일도 포함하도록 함
 							String[] performanceSlots = dtguidance.split("\\)");
 							String regex = "^(월요일|화요일|수요일|목요일|금요일|토요일|일요일)( ~ (월요일|화요일|수요일|목요일|금요일|토요일|일요일))?$";
 
 							Pattern pattern = Pattern.compile(regex);
 
 							for (String slot : performanceSlots) {
-
-								String days = extractDays(slot);
-								String times = extractTimes(slot);
-
-								List<String> dayss = new ArrayList<>();
-
-								// 범위 형식이 "화요일 ~ 목요일"이라면
-								Matcher matcher = pattern.matcher(days);
-								if (matcher.matches()) {
-									if (days.contains(" ~ ")) {
-										String[] parts = days.split(" ~ ");
-										String startDay = parts[0].trim();
-										String endDay = parts[1].trim();
-
-										List<String> daysList = extractDayss(days); // 요일 목록 추출
-					                    List<String> timesList = Arrays.asList(times.split(",")); // 시간 목록 추출
-
-										
-										for (String day : daysList) {
-					                        for (String time : timesList) {
-					                        	System.out.println(deMt20id + " : " + day + "  " + time);
-					                        }
-					                    }
-									}
-								}
-
-								//System.out.println(deMt20id + " : " + days + "  " + times);
+							    if (slot.trim().isEmpty()) continue; // 빈 슬롯 건너뛰기
+							    
+							    String days = extractDays(slot);
+							    String times = extractTimes(slot);
+							    
+							    // 단일 요일이나 범위 모두 처리할 수 있도록 수정
+							    if (days != null && !days.trim().isEmpty()) {
+							        List<String> daysList;
+							        if (days.contains(" ~ ")) {
+							            // 범위 형식 처리 ("화요일 ~ 목요일")
+							            daysList = extractDayss(days);
+							        } else {
+							            daysList = new ArrayList<>();
+						                int dayIndex = WEEKDAYS.indexOf(days.trim());
+						                if (dayIndex != -1) {
+						                    daysList.add(String.valueOf(dayIndex + 1));
+						                }
+							        }
+							        
+							        // 시간 처리
+							        List<String> timesList = Arrays.asList(times.split(","));
+							        
+							        // 각 요일과 시간 조합에 대해 처리
+							        for (String day : daysList) {
+							            for (String time : timesList) {
+							                // System.out.println(deMt20id + " : " + day + " " + time);
+							                
+							                Map<String, Object> perfTime = new HashMap<>();
+							                perfTime.put("mt20id", deMt20id);
+							                perfTime.put("dayOfWeek", day);
+							                perfTime.put("performanceTime", time);
+							                
+							                if(deMt20id.equals("PF253358")) {
+							                    continue;
+							                }
+							                
+							                // service.insertPerfTime(perfTime);
+							            }
+							        }
+							    }
 							}
+							
 
 							// styurls 태그 추출
 							NodeList styurls = dbElement.getElementsByTagName("styurls");
@@ -498,6 +386,8 @@ public class MemberController {
 					        // styurls 태그 추출 (예시 데이터로 대체)
 					        // NodeList styurls = dbElement.getElementsByTagName("styurls");
 
+					        
+					        /*
 					        for (int k = 0; k < styurls.getLength(); k++) {
 					            Node styurlsNode = styurls.item(k);
 
@@ -518,12 +408,13 @@ public class MemberController {
 					                }
 					            }
 					        }
+					        */
 
 					        // URL을 "^^^" 구분자로 연결
 					        String concatenatedUrls = String.join("^^^", urlList);
 
 					        // 연결된 URL 출력
-					        System.out.println("최종 연결된 URL: " + concatenatedUrls);
+					        // System.out.println("최종 연결된 URL: " + concatenatedUrls);
 							
 							
 
@@ -540,6 +431,156 @@ public class MemberController {
 		}
 
 		return null;
+	}
+	
+	public static List<Map<String, Object>> parseVenueSeatInfo(List<Map<String, String>> performanceDetails) {
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        Set<String> processedMt10ids = new HashSet<>();
+        
+        for (Map<String, String> detail : performanceDetails) {
+            String mt10id = String.valueOf(detail.get("MT10ID"));
+            
+            if (processedMt10ids.contains(mt10id)) {
+                continue;
+            }
+            
+            String guidance = String.valueOf(detail.get("PCSEGUIDANCE"));
+            int totalSeats = Integer.parseInt(String.valueOf(detail.get("SEATSCALE")));
+            
+            // 전석인 경우
+            if (guidance.contains("전석")) {
+                Map<String, Object> seatInfo = new HashMap<>();
+                seatInfo.put("mt10id", mt10id);
+                seatInfo.put("gradeId", 6);
+                seatInfo.put("seatCount", totalSeats);
+                resultList.add(seatInfo);
+                processedMt10ids.add(mt10id);
+                continue;
+            }
+            
+            // 여러 등급이 있는 경우
+            List<String> sections = new ArrayList<>();
+            for(String grade : guidance.split(",")) {
+                if(grade.contains("석")) {
+                    sections.add(grade.trim());
+                }
+            }
+            
+            int seatPerGrade = totalSeats / sections.size();
+            int remainingSeats = totalSeats % sections.size();  // 나머지 좌석
+            
+            for (int i = 0; i < sections.size(); i++) {
+                String section = sections.get(i).trim();
+                int gradeId = getGradeId(section);
+                if (gradeId > 0) {
+                    Map<String, Object> seatInfo = new HashMap<>();
+                    seatInfo.put("mt10id", mt10id);
+                    seatInfo.put("gradeId", gradeId);
+                    
+                    // 마지막 등급에 남은 좌석 추가
+                    if (i == sections.size() - 1) {
+                        seatInfo.put("seatCount", seatPerGrade + remainingSeats);
+                    } else {
+                        seatInfo.put("seatCount", seatPerGrade);
+                    }
+                    resultList.add(seatInfo);
+                }
+            }
+            processedMt10ids.add(mt10id);
+        }
+        
+        return resultList;
+    }
+    
+    private static int getGradeId(String section) {
+        if (section.contains("VIP")) return 1;
+        if (section.contains("R석")) return 2;
+        if (section.contains("S석")) return 3;
+        if (section.contains("A석")) return 4;
+        if (section.contains("B석")) return 5;
+        if (section.contains("전석")) return 6;
+        return -1;
+    }
+	
+	public void processAllTicketPrices(List<Map<String, String>> performanceDetails) {
+	    for (Map<String, String> detail : performanceDetails) {
+	        String mt20id = detail.get("MT20ID");
+	        String pcseguidance = detail.get("PCSEGUIDANCE");
+	        
+	        // 각 공연의 가격 정보 처리
+	        insertTicketPrices(mt20id, pcseguidance);
+	    }
+	}
+
+	public List<Map<String, Object>> insertTicketPrices(String mt20id, String pcseguidance) {
+		List<Map<String, Object>> ticketPrices = new ArrayList<>();
+
+		// 좌석 등급 매핑
+		Map<String, Integer> seatGradeMap = new HashMap<>();
+		seatGradeMap.put("VIP", 1);
+		seatGradeMap.put("R", 2);
+		seatGradeMap.put("S", 3);
+		seatGradeMap.put("A", 4);
+		seatGradeMap.put("B", 5);
+		seatGradeMap.put("전석", 6);
+
+		// 일반 좌석 처리
+		String regex = "([A-Za-z가-힣]+석)\\s*(\\d+,\\s*\\d+)원";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(pcseguidance);
+
+		while (matcher.find()) {
+		    String seatGrade = matcher.group(1).replace("석", "");
+		    String priceStr = matcher.group(2).replaceAll("[,\\s]", "");
+
+		    try {
+		        int price = Integer.parseInt(priceStr);
+		        Integer gradeId = seatGradeMap.get(seatGrade);
+
+		        if (gradeId != null) {
+		            Map<String, Object> ticketInfo = new HashMap<>();
+		            ticketInfo.put("mt20id", mt20id);
+		            ticketInfo.put("seatGradeId", gradeId);
+		            ticketInfo.put("price", price);
+
+		            // PF253558이 아닐 경우에만 DB에 삽입
+		            if (!mt20id.equals("PF253558")) {
+		                //service.insertTicketInto(ticketInfo);
+		            }
+		            
+		            ticketPrices.add(ticketInfo);
+		        }
+		    } catch (NumberFormatException e) {
+		        System.out.println("가격 파싱 오류: " + priceStr);
+		    }
+		}
+
+		// 전석 처리
+		String allSeatsRegex = "전석\\s*(\\d+,\\s*\\d+)원";
+		Pattern allSeatsPattern = Pattern.compile(allSeatsRegex);
+		Matcher allSeatsMatcher = allSeatsPattern.matcher(pcseguidance);
+
+		if (allSeatsMatcher.find()) {
+		    String priceStr = allSeatsMatcher.group(1).replaceAll("[,\\s]", "");
+		    try {
+		        int price = Integer.parseInt(priceStr);
+		        Map<String, Object> ticketInfo = new HashMap<>();
+		        ticketInfo.put("mt20id", mt20id);
+		        ticketInfo.put("seatGradeId", 6);
+		        ticketInfo.put("price", price);
+
+		        // PF253558이 아닐 경우에만 DB에 삽입
+		        if (!mt20id.equals("PF253558")) {
+		            //service.insertTicketInto(ticketInfo);
+		        }
+		        
+		        ticketPrices.add(ticketInfo);
+		    } catch (NumberFormatException e) {
+		        System.out.println("전석 가격 파싱 오류: " + priceStr);
+		    }
+		}
+	    
+	    return ticketPrices;
 	}
 
 	// 특정 태그의 값을 반환하는 메서드
@@ -592,19 +633,20 @@ public class MemberController {
 	}
 	
 	// 요일 추출 함수
-    private static List<String> extractDayss(String range) {
-        List<String> days = new ArrayList<>();
-        if (range.contains(" ~ ")) {
-            String[] parts = range.split(" ~ ");
-            int startIndex = WEEKDAYS.indexOf(parts[0].trim());
-            int endIndex = WEEKDAYS.indexOf(parts[1].trim());
-            for (int i = startIndex; i <= endIndex; i++) {
-                days.add(WEEKDAYS.get(i));
-            }
-        } else {
-            days.add(range.trim());
-        }
-        return days;
-    }
+	private static List<String> extractDayss(String range) {
+	    List<String> days = new ArrayList<>();
+	    if (range.contains(" ~ ")) {
+	        String[] parts = range.split(" ~ ");
+	        int startIndex = WEEKDAYS.indexOf(parts[0].trim());
+	        int endIndex = WEEKDAYS.indexOf(parts[1].trim());
+	        for (int i = startIndex; i <= endIndex; i++) {
+	            days.add(String.valueOf(i + 1)); // 인덱스가 0부터 시작하므로 1을 더해줍니다
+	        }
+	    } else {
+	        int dayIndex = WEEKDAYS.indexOf(range.trim());
+	        days.add(String.valueOf(dayIndex + 1));
+	    }
+	    return days;
+	}
 	
 }

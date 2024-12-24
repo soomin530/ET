@@ -138,6 +138,22 @@
     background: linear-gradient(135deg, #218838, #19692c); /* 호버 시 더 진한 초록색 */
 }
 
+/* 닉네임 버튼 스타일 */
+.header-buttons .nickname-button {
+    background: linear-gradient(135deg, #6B66FF, #5D54E6); /* 보라색 계열 */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* 닉네임 버튼 호버 색상 */
+.header-buttons .nickname-button:hover {
+    background: linear-gradient(135deg, #5D54E6, #4A41E3);
+}
 
 /* 모달 스타일 */
 .modal {
@@ -210,7 +226,19 @@
 	/* 중앙 정렬 */
 }
 
+/* 사용자 회원가입 폼 */
 #signUpForm {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* 간격을 크게 조정 */
+	align-items: center;
+	/* 중앙 정렬 */
+}
+
+/* 공연 관리자 회원가입 폼 */
+#managerSignUpForm {
 	width: 100%;
 	display: flex;
 	flex-direction: column;

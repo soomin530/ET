@@ -1,5 +1,6 @@
 package edu.kh.project.member.model.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -42,5 +43,13 @@ public interface MemberMapper {
 	void insertVenue(Map<String, Object> venue);
 
 	void insertPerf(Map<String, Object> perfMap);
+
+	void insertPerfTime(Map<String, Object> perfTime);
+
+	void insertTicketInto(Map<String, Object> ticketInfo);
+
+	List<Map<String, String>> performanceDetails();
+
+	void insertVenueSeat(Map<String, Object> seat);
 
 }
