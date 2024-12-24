@@ -1,5 +1,6 @@
 package edu.kh.project.member.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,26 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void insertPerf(Map<String, Object> perfMap) {
 		mapper.insertPerf(perfMap);
+	}
+
+	@Override
+	public void insertPerfTime(Map<String, Object> perfTime) {
+		mapper.insertPerfTime(perfTime);
+	}
+
+	@Override
+	public void insertTicketInto(Map<String, Object> ticketInfo) {
+		mapper.insertTicketInto(ticketInfo);
+	}
+
+	@Override
+	public List<Map<String, String>> performanceDetails() {
+		return mapper.performanceDetails();
+	}
+
+	@Override
+	public void insertVenueSeat(Map<String, Object> seat) {
+		mapper.insertVenueSeat(seat);
 	}
 
 }
