@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>클래식</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>티켓팅 시스템</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	
 	<link rel="stylesheet" href="/css/main-style.css">
+	
+	<th:block th:replace="~{common/common}"></th:block>
 </head>
+
 <body>
-  <form action="/performance/genre" name="genre" id="genre"></form>
-  <div class="section" id="performances">
-    <h2>장르별 둘러보기</h2>
-    <div class="card-container">
-        <div class="card">
-            <img src="https://source.unsplash.com/300x200/?concert" alt="콘서트">
-            <h3>라이브 콘서트</h3>
-            <p>최고의 아티스트와 함께하는 라이브 공연!</p>
-            <button>예매하기</button>
-        </div>
-        <div class="card">
-            <img src="https://source.unsplash.com/300x200/?theater" alt="연극">
-            <h3>뮤지컬</h3>
-            <p>환상적인 뮤지컬 공연을 놓치지 마세요!</p>
-            <button>예매하기</button>
-        </div>
-        <div class="card">
-            <img src="https://source.unsplash.com/300x200/?festival" alt="축제">
-            <h3>여름 축제</h3>
-            <p>다양한 공연과 먹거리가 가득한 축제!</p>
-            <button>예매하기</button>
-        </div>
-    </div>
-</div>
+
+    <th:block th:replace="~{common/header}"></th:block>
+
+	
+	
+	<!-- 장르별 목록 뿌리기 -->
+	
+	
+	<!-- common/footer 추가-->
+	<th:block th:replace="~{common/footer}"></th:block>
+
+
+    <script>
+
+    </script>
+	
+	<script src="/js/main.js"></script>
+	
 </body>
+
 </html>
