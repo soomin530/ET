@@ -18,10 +18,9 @@
 				</div>
 
 				<div class="nav-menu">
-					<a href="#" class="nav-link">뮤지컬</a>
-					<a href="#" class="nav-link">연극</a>
-					<a href="#" class="nav-link">클래식</a>
-					<!--<a href="#" class="nav-link" onclick="fetchProtectedResource();">임시버튼</a>-->
+					<a href="/performance/genre" class="nav-link">뮤지컬</a>
+					<a href="/performance/genre" class="nav-link">연극</a>
+					<a href="/performance/genre" class="nav-link">클래식</a>
 				</div>
 
 				<div class="search-container">
@@ -92,110 +91,107 @@
 		</div>
 	</div>
 
-		<!-- select for Signup -->
-		<div id="selectModal" class="modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h2>회원 선택</h2>
-				</div>
-				<div class="modal-body">
-					<button onclick="openModal('userSignupModal'); closeModal('selectModal')">사용자</button>
-					<button onclick="openModal('peradmSignupModal'); closeModal('selectModal')">공연관리자</button>
-				</div>
+	<!-- select for Signup -->
+	<div id="selectModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>회원 선택</h2>
+			</div>
+			<div class="modal-body">
+				<button onclick="openModal('userSignupModal'); closeModal('selectModal')">사용자</button>
+				<button onclick="openModal('peradmSignupModal'); closeModal('selectModal')">공연관리자</button>
 			</div>
 		</div>
+	</div>
 
-		<!-- Modal for user Signup -->
-		<div id="userSignupModal" class="modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<a href="#" class="back-button"
-						onclick="openModal('selectModal'); closeModal('userSignupModal')"></a>
-					<h2>회원가입</h2>
-					<span class="close" onclick="closeModal('userSignupModal')">&times;</span>
-				</div>
-				<div class="modal-body">
-					<form id="signUpForm" action="/member/signup" method="POST">
-						<input type="text" name="memberEmail" id="memberEmail" placeholder="이메일을 입력하세요">
-						<span class="signUp-message" id="emailMessage"></span>
-						<button type="button" id="sendAuthKeyBtn">인증번호 받기</button>
+	<!-- Modal for user Signup -->
+	<div id="userSignupModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a href="#" class="back-button" onclick="openModal('selectModal'); closeModal('userSignupModal')"></a>
+				<h2>회원가입</h2>
+				<span class="close" onclick="closeModal('userSignupModal')">&times;</span>
+			</div>
+			<div class="modal-body">
+				<form id="signUpForm" action="/member/signup" method="POST">
+					<input type="text" name="memberEmail" id="memberEmail" placeholder="이메일을 입력하세요">
+					<span class="signUp-message" id="emailMessage"></span>
+					<button type="button" id="sendAuthKeyBtn">인증번호 받기</button>
 
-						<div class="verification-container" style="margin-top : 10px;">
-							<input type="text" id="authKey" placeholder="인증번호 입력">
-							<button type="button" id="checkAuthKeyBtn">인증하기</button>
-						</div>
-						<span class="signUp-message" id="authKeyMessage"></span>
+					<div class="verification-container" style="margin-top : 10px;">
+						<input type="text" id="authKey" placeholder="인증번호 입력">
+						<button type="button" id="checkAuthKeyBtn">인증하기</button>
+					</div>
+					<span class="signUp-message" id="authKeyMessage"></span>
 
-						<input id="memberId" name="memberId" type="text" placeholder="아이디 입력">
-						<span class="signUp-message" id="idMessage"></span>
+					<input id="memberId" name="memberId" type="text" placeholder="아이디 입력">
+					<span class="signUp-message" id="idMessage"></span>
 
-						<input id="memberPw" name="memberPw" type="password" placeholder="비밀번호 입력">
-						<span class="signUp-message" id="pwMessage"></span>
+					<input id="memberPw" name="memberPw" type="password" placeholder="비밀번호 입력">
+					<span class="signUp-message" id="pwMessage"></span>
 
-						<input id="memberPwConfirm" type="password" placeholder="비밀번호 확인 입력">
-						<span class="signUp-message" id="confirmPwMessage"></span>
+					<input id="memberPwConfirm" type="password" placeholder="비밀번호 확인 입력">
+					<span class="signUp-message" id="confirmPwMessage"></span>
 
-						<input id="memberNickname" name="memberNickname" type="text" placeholder="닉네임">
-						<span class="signUp-message" id="nickMessage"></span>
+					<input id="memberNickname" name="memberNickname" type="text" placeholder="닉네임">
+					<span class="signUp-message" id="nickMessage"></span>
 
-						<input id="memberTel" name="memberTel" type="text" placeholder="전화번호 (예: 010-1234-5678)">
-						<span class="signUp-message" id="telMessage"></span>
+					<input id="memberTel" name="memberTel" type="text" placeholder="전화번호 (예: 010-1234-5678)">
+					<span class="signUp-message" id="telMessage"></span>
 
-						<div class="verification-container">
-							<input type="text" name="memberAddress" placeholder="우편번호" maxlength="6" id="postcode">
-							<button type="button" id="searchAddress">검색</button>
-						</div>
+					<div class="verification-container">
+						<input type="text" name="memberAddress" placeholder="우편번호" maxlength="6" id="postcode">
+						<button type="button" id="searchAddress">검색</button>
+					</div>
 
-						<input type="text" name="memberAddress" placeholder="도로명/지번 주소" id="address">
-						<input type="text" name="memberAddress" placeholder="상세 주소" id="detailAddress">
+					<input type="text" name="memberAddress" placeholder="도로명/지번 주소" id="address">
+					<input type="text" name="memberAddress" placeholder="상세 주소" id="detailAddress">
 
-						<div class="gender-radio-container">
-							<label for="maleRadio" class="gender-radio">
-								<input type="radio" id="maleRadio" name="gender" value="male">
-								남자
-							</label>
-							<label for="femaleRadio" class="gender-radio">
-								<input type="radio" id="femaleRadio" name="gender" value="female">
-								여자
-							</label>
-						</div>
+					<div class="gender-radio-container">
+						<label for="maleRadio" class="gender-radio">
+							<input type="radio" id="maleRadio" name="gender" value="male">
+							남자
+						</label>
+						<label for="femaleRadio" class="gender-radio">
+							<input type="radio" id="femaleRadio" name="gender" value="female">
+							여자
+						</label>
+					</div>
 
-						<button type="submit">회원가입</button>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<p>이미 계정이 있으신가요?
-						<a href="#" onclick="openModal('loginModal'); closeModal('userSignupModal')">로그인</a>
-					</p>
-				</div>
+					<button type="submit">회원가입</button>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<p>이미 계정이 있으신가요?
+					<a href="#" onclick="openModal('loginModal'); closeModal('userSignupModal')">로그인</a>
+				</p>
 			</div>
 		</div>
+	</div>
 
-		<div id="peradmSignupModal" class="modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<a href="#" class="back-button"
-						onclick="openModal('selectModal'); closeModal('peradmSignupModal')"></a>
-					<h2>회원가입</h2>
-					<span class="close" onclick="closeModal('peradmSignupModal')">&times;</span>
-				</div>
-				<div class="modal-body">
+	<div id="peradmSignupModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a href="#" class="back-button" onclick="openModal('selectModal'); closeModal('peradmSignupModal')"></a>
+				<h2>회원가입</h2>
+				<span class="close" onclick="closeModal('peradmSignupModal')">&times;</span>
+			</div>
+			<div class="modal-body">
 
-					<input type="text" placeholder="이메일" required>
-					<input type="password" placeholder="비밀번호" required>
-					<input type="password" placeholder="비밀번호 확인" required>
-					<button>회원가입</button>
-				</div>
-				<div class="modal-footer">
-					<p>이미 계정이 있으신가요? <a href="#"
-							onclick="openModal('loginModal'); closeModal('peradmSignupModal')">로그인</a>
-					</p>
-				</div>
+				<input type="text" placeholder="이메일" required>
+				<input type="password" placeholder="비밀번호" required>
+				<input type="password" placeholder="비밀번호 확인" required>
+				<button>회원가입</button>
+			</div>
+			<div class="modal-footer">
+				<p>이미 계정이 있으신가요? <a href="#" onclick="openModal('loginModal'); closeModal('peradmSignupModal')">로그인</a>
+				</p>
 			</div>
 		</div>
+	</div>
 
-		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-		<script src="/js/header.js"></script>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="/js/header.js"></script>
 </body>
 
 </html>
