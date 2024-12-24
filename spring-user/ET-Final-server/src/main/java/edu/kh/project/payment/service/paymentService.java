@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.kh.project.payment.model.dto.Payment;
+import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
 
 public interface paymentService {
@@ -21,6 +22,11 @@ public interface paymentService {
 
 	// 좌석 예약
 	boolean reserveSeat(String seatId);
+	
+	// 상세정보 조회
+	PerformanceDetail getPerformanceDetail(String performanceId);
+
+	
 
 	
 	

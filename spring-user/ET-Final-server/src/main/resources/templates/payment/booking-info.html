@@ -105,6 +105,20 @@
             border-bottom: 1px solid #eee;
         }
 
+        .btn-group {
+            display: flex;
+            /* 플렉스 컨테이너로 설정 */
+            justify-content: center;
+            /* 버튼을 중앙 정렬 */
+            gap: 10px;
+            /* 버튼 간격 */
+        }
+
+        /*이전 단계 버튼 색상*/
+        .prev-btn {
+            background-color: #b6b2b0;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -181,7 +195,10 @@
                 <label for="phone">연락처</label>
                 <input type="tel" id="phone" required placeholder="000-0000-0000">
             </div>
-            <button type="submit">다음 단계</button>
+            <div class="btn-group">
+                <button type="button" class="prev-btn" id="prev-btn">이전 단계</button> <!-- 이전 단계 버튼 -->
+                <button type="submit" class="next-btn">다음 단계</button>
+            </div>
         </form>
     </div>
 
@@ -197,18 +214,30 @@
         document.getElementById('seat-info').textContent = seatInfo;
         document.getElementById('total-price').textContent = totalPrice;
 
+        // '이전 단계' 버튼 클릭 시 처리
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            // 이전 단계로 이동 (좌석 선택 페이지로 이동)
+            window.location.href = '/payment/seat-selection';
+        });
+
 
 
         // 전화번호 입력 시 자동으로 '-' 추가
         const phoneInput = document.getElementById('phone');
+        // 초기값 '010' 설정
+        phoneInput.value = '010';   // 추후에 로그인된 아이디로 예매하기 떄문에 전화번호 이름은 미리 값이 설정 되도록 할 예정
+
         phoneInput.addEventListener('input', () => {
             let value = phoneInput.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
 
+            // '010'로 시작하도록 강제
+            if (!value.startsWith('010')) {
+                value = '010' + value.slice(3); // '010' 유지
+            }
+
             // 11자 이상 입력 방지
             if (value.length > 11) {
-                value = value.slice(0, 11); // 11자리까지만 유지
-
-                value.length 
+                value = value.slice(0, 11); // 11자리까지만 유지    
             }
 
 
@@ -227,13 +256,23 @@
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
 
+             // 이름 유효성 검사 (최대 6글자, 특수문자 제외)
+            const nameRegex = /^[가-힣a-zA-Z]{1,6}$/; // 한글 또는 영문 최대 6글자
+            if(!nameRegex.test(name)){
+                alert("이름은 최대 6글자 입력 가능하며, 특수문자는 사용할 수 없습니다.");
+                return;
+            }
+
             if (!name || !phone) {
                 alert("모든 필드를 입력해주세요.");
                 return;
             }
 
+
+
+            // 전화번호 유효성 검사
             if (!/^\d{3}-\d{3,4}-\d{4}$/.test(phone)) {
-                alert("연락처는 000-0000-0000 형식으로 입력해주세요.");
+                alert("연락처는 010-0000-0000 형식으로 입력해주세요.");
                 return;
             }
 
