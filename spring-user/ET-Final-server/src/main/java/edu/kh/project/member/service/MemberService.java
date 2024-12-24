@@ -39,6 +39,6 @@ public interface MemberService {
 
 	void insertVenue(Map<String, Object> venue);
 
-	void insertSubVenue(Map<String, Object> subVenue);
+	void insertPerf(Map<String, Object> perfMap);
 
 }
