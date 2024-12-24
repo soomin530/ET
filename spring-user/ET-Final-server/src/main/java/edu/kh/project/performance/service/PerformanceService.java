@@ -13,4 +13,11 @@ public interface PerformanceService {
 	 */
 	List<Performance> getPerformancesByGenre(String genre);
 
+	/** 공연 상세페이지 조회
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
+	Performance getPerformanceById(String mt20id);
+
 }

@@ -18,6 +18,7 @@ public class Performance {
 	private String prfnm; 		// 공연이름
 	private String prfpdfrom; 	// 공연시작날짜
 	private String prfpdto; 	// 공연종료날짜
-	private String fclitynm; 	// 공연장소
+	private String fcltynm;  	// 공연장소
+	private String poster;		// 공연포스터
 
 }
