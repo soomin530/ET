@@ -20,4 +20,11 @@ public class PerformanceServiceImpl implements PerformanceService {
     public List<Performance> getPerformancesByGenre(String genre) {
         return mapper.genre(genre);
     }
+
+
+    // 공연 상세페이지 조회
+	@Override
+	public Performance getPerformanceById(String mt20id) {
+		return mapper.detail(mt20id);
+	}
 }
