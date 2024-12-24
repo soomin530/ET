@@ -1,6 +1,7 @@
 package edu.kh.project.payment.model.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,4 +25,7 @@ public interface paymentMapper {
 	// 결제 정보 저장
 	int insertPayment(Payment paymentData);
 
+	// 공연 상세 정보 조회
+	Map<String, Object> getPerformanceDetail(@Param("performanceId") String performanceId);
+	
 }

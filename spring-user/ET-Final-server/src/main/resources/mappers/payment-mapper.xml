@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.project.payment.model.mapper.paymentMapper">
+	
+	
+	<!-- 결제 내역 저장 -->
+	<insert id="insertPayment">
+		 INSERT INTO TB_PAYMENT (
+	        PAY_NO, IMP_UID, MERCHANT_UID, PAY_METHOD, PG_PROVIDER, PG_TYPE, PG_TID, NAME,
+	        PAID_AMOUNT, CURRENCY, BUYER_NAME, BUYER_TEL, BUYER_ADDR,
+	        BUYER_POSTCODE, BUYER_EMAIL, STATUS, PAID_AT, RECEIPT_URL
+	    ) VALUES (
+	        PAY_NO_SEQ.NEXTVAL, #{impUid}, #{merchantUid}, #{payMethod}, #{pgProvider}, #{pgType}, #{pgTid},
+	        #{name}, #{paidAmount}, #{currency}, #{buyerName}, #{buyerTel},
+	        #{buyerAddr}, #{buyerPostcode}, #{buyerEmail},
+	        #{status}, #{paidAt}, #{receiptUrl}
+	    )
+	</insert>
+	
+	
+
+
+</mapper>
