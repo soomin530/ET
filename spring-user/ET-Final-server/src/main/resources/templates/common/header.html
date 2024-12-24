@@ -12,15 +12,16 @@
 	<header th:fragment="header">
 		<nav class="navbar">
 			<div class="container-fluid">
-				<div class="logo">
+				<a href="/" class="logo" style="text-decoration-line: none;">
 					<img th:src="@{/apple-touch-icon.png}" alt="ET e.ticket Logo">
 					ET e.ticket
-				</div>
+				</a>
 
 				<div class="nav-menu">
 					<a href="/performance/genre/musical" class="nav-link">뮤지컬</a>
 					<a href="/performance/genre/theater" class="nav-link">연극</a>
 					<a href="/performance/genre/classic" class="nav-link">클래식</a>
+					<a href="/member/perform-and-save" class="nav-link">임시버튼</a>
 				</div>
 
 				<div class="search-container">
@@ -37,14 +38,27 @@
 
 					<!-- 세션이 있을 때: 마이페이지, 로그아웃 -->
 					<th:block th:if="${session.loginMember != null}" th:object="${session.loginMember}">
-						<th:block th:if="${session.loginMember.memberAuth == 1}">
-							<button class="login-button" th:text="*{memberNickname}">계정 닉네임</button>
-							<button class="mypage-button">마이페이지</button>
+
+						<!-- 일반 회원 (memberAuth가 있는 경우) -->
+						<th:block th:if="*{memberAuth != null}">
+							<!-- 일반 회원 -->
+							<th:block th:if="*{memberAuth == 1}">
+								<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
+								<button class="mypage-button">마이페이지</button>
+							</th:block>
+
+							<!-- 시스템 관리자 -->
+							<th:block th:if="*{memberAuth == 2}">
+								<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
+							</th:block>
 						</th:block>
-						<th:block th:if="${session.loginMember.memberAuth == 2}">
-							<button class="login-button" th:text="*{memberNickname}">계정 닉네임</button>
-							<a href="/adminBoard/dashAdmin" class="login-button" th:text="*{memberNickname}">계정 닉네임</a>
+
+						<!-- 공연 관리자 (memberAuth가 없는 경우) -->
+						<th:block th:if="*{memberAuth == 3}">
+							<button class="nickname-button" th:text="*{concertManagerNickname}">공연관리자 닉네임</button>
+							<button class="performance-manage-button">공연관리</button>
 						</th:block>
+
 						<button class="logout-button" onclick="logoutSession()">로그아웃</button>
 					</th:block>
 				</div>
@@ -66,27 +80,27 @@
 			</div>
 			<div class="modal-footer">
 				<p>아직 계정이 없으신가요? <a href="#" onclick="openModal('selectModal'); closeModal('loginModal')">회원가입</a></p>
-				<div class="header-buttons">
-					<!-- 세션이 없을 때: 로그인, 회원가입 -->
-					<th:block th:if="${session.loginMember == null}">
-						<button class="login-button" onclick="openModal('loginModal')">로그인</button>
-						<button class="signup-button" onclick="openModal('selectModal')">회원가입</button>
-						<button class="login-button" onclick="location.href='/mypage/memberInfo'">계정 닉네임</button>
-					</th:block>
+				<p>공연 관리자 이신가요? <a href="#" onclick="openModal('adminLoginModal'); closeModal('loginModal')">공연 관리자
+						로그인</a></p>
+			</div>
+		</div>
+	</div>
 
-					<!-- 세션이 있을 때: 계정 닉네임, 마이페이지, 로그아웃 -->
-					<th:block th:if="${session.loginMember != null}" th:object="${session.loginMember}">
-						<th:block th:if="${session.loginMember.memberAuth == 1}">
-							<!-- <button class="login-button" onclick="location.href='/mypage/memberInfo'" th:text="*{memberNickname}">계정 닉네임</button> -->
-							<button class="mypage-button">마이페이지</button>
-						</th:block>
-						<th:block th:if="${session.loginMember.memberAuth == 2}">
-							<button class="login-button" th:text="*{memberNickname}">계정 닉네임</button>
-							<a href="/adminBoard/dashAdmin" class="login-button" th:text="*{memberNickname}">계정 닉네임</a>
-						</th:block>
-						<button class="logout-button" onclick="logoutSession()">로그아웃</button>
-					</th:block>
-				</div>
+	<!-- Modal for Perf Admin Login -->
+	<div id="adminLoginModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>공연 관리자 로그인</h2>
+				<span class="close" onclick="closeModal('adminLoginModal')">&times;</span>
+			</div>
+			<div class="modal-body">
+				<input type="text" id="concertManagerLoginId" placeholder="공연 관리자 아이디" required>
+				<input type="password" id="concertManagerLoginPw" placeholder="공연 관리자 비밀번호" required>
+				<button type="submit" id="perf-login-Btn">공연 관리자 로그인</button>
+			</div>
+			<div class="modal-footer">
+				<p>일반 회원이신가요? <a href="#" onclick="openModal('loginModal'); closeModal('adminLoginModal')">회원 로그인</a>
+				</p>
 			</div>
 		</div>
 	</div>
@@ -169,22 +183,58 @@
 		</div>
 	</div>
 
+	<!-- Modal for Performance Manager Signup -->
 	<div id="peradmSignupModal" class="modal">
 		<div class="modal-content">
 			<div class="modal-header">
 				<a href="#" class="back-button" onclick="openModal('selectModal'); closeModal('peradmSignupModal')"></a>
-				<h2>회원가입</h2>
+				<h2>공연 관리자 회원가입</h2>
 				<span class="close" onclick="closeModal('peradmSignupModal')">&times;</span>
 			</div>
 			<div class="modal-body">
+				<form id="managerSignUpForm" action="/perfmgr/signup" method="POST">
+					<!-- 이메일 인증 부분 -->
+					<input type="text" name="concertManagerEmail" id="managerEmail" placeholder="이메일을 입력하세요">
+					<span class="signUp-message" id="managerEmailMessage"></span>
+					<button type="button" id="managerSendAuthKeyBtn">인증번호 받기</button>
 
-				<input type="text" placeholder="이메일" required>
-				<input type="password" placeholder="비밀번호" required>
-				<input type="password" placeholder="비밀번호 확인" required>
-				<button>회원가입</button>
+					<div class="verification-container" style="margin-top : 10px;">
+						<input type="text" id="managerAuthKey" placeholder="인증번호 입력">
+						<button type="button" id="managerCheckAuthKeyBtn">인증하기</button>
+					</div>
+					<span class="signUp-message" id="managerAuthKeyMessage"></span>
+
+					<!-- 기본 정보 입력 -->
+					<input id="concertManagerId" name="concertManagerId" type="text" placeholder="아이디 입력">
+					<span class="signUp-message" id="managerIdMessage"></span>
+
+					<input id="concertManagerPw" name="concertManagerPw" type="password" placeholder="비밀번호 입력">
+					<span class="signUp-message" id="managerPwMessage"></span>
+
+					<input id="concertManagerPwConfirm" type="password" placeholder="비밀번호 확인 입력">
+					<span class="signUp-message" id="managerConfirmPwMessage"></span>
+
+					<input id="concertManagerNickname" name="concertManagerNickname" type="text" placeholder="닉네임">
+					<span class="signUp-message" id="managerNickMessage"></span>
+
+					<input id="concertManagerTel" name="concertManagerTel" type="text"
+						placeholder="전화번호 (예: 010-1234-5678)">
+					<span class="signUp-message" id="managerTelMessage"></span>
+
+					<!-- 사업체 정보 -->
+					<input id="concertManagerCompany" name="concertManagerCompany" type="text" placeholder="사업체명">
+					<span class="signUp-message" id="managerCompanyMessage"></span>
+
+					<textarea id="concertManagerCompanyComment" name="concertManagerCompanyComment"
+						placeholder="사업체 소개 (500자 이내)" maxlength="500" style="height : 120px; width: 87%;"></textarea>
+					<span class="signUp-message" id="managerCompanyCommentMessage"></span>
+
+					<button type="submit">회원가입</button>
+				</form>
 			</div>
 			<div class="modal-footer">
-				<p>이미 계정이 있으신가요? <a href="#" onclick="openModal('loginModal'); closeModal('peradmSignupModal')">로그인</a>
+				<p>이미 계정이 있으신가요?
+					<a href="#" onclick="openModal('loginModal'); closeModal('peradmSignupModal')">로그인</a>
 				</p>
 			</div>
 		</div>
@@ -192,6 +242,7 @@
 
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script src="/js/header.js"></script>
+	<script src="/js/perfmgr/perfmgr.js"></script>
 </body>
 
 </html>
