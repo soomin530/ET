@@ -1,80 +1,80 @@
 /* 네비게이션 스타일 */
 .navbar {
-    background: #ffffff;
-    padding: 10px 40px;
-    border-bottom: 1px solid #e0e0e0;
+	background: #ffffff;
+	padding: 10px 40px;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 .container-fluid {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 1800px;
-    margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	max-width: 1800px;
+	margin: 0 auto;
 }
 
 /* 로고 스타일 */
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #000;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #000;
 }
 
 .logo img {
-    width: 30px;
-    height: 30px;
+	width: 30px;
+	height: 30px;
 }
 
 /* 네비게이션 메뉴 */
 .nav-menu {
-    display: flex;
-    gap: 20px;
-    font-size: 0.9em;
+	display: flex;
+	gap: 20px;
+	font-size: 0.9em;
 }
 
 .nav-menu .nav-link {
-    text-decoration: none;
-    color: #666;
-    padding: 5px 10px;
+	text-decoration: none;
+	color: #666;
+	padding: 5px 10px;
 }
 
 .nav-menu .nav-link:hover {
-    color: #000;
-    font-weight: bold;
+	color: #000;
+	font-weight: bold;
 }
 
 /* 검색바 스타일 */
 .search-container {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .search-container input {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px 10px;
-    font-size: 0.9em;
-    width: 200px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 5px 10px;
+	font-size: 0.9em;
+	width: 200px;
 }
 
 .search-container button {
-    background: #000;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 15px;
-    margin-left: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
+	background: #000;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	padding: 5px 15px;
+	margin-left: 5px;
+	cursor: pointer;
+	font-size: 0.9em;
 }
 
 /* 버튼 스타일 */
 .header-buttons button {
-    background: none;
+    background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
     border: 1px solid #ccc;
     padding: 5px 10px;
     border-radius: 4px;
@@ -83,124 +83,389 @@
     margin-left: 10px;
 }
 
+/* 회원가입 버튼 스타일 */
+.header-buttons .signup-button {
+    background: linear-gradient(135deg, #ff9900, #ff7f00); /* 오렌지 톤 그라디언트 */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* 회원가입 버튼 호버 색상 */
+.header-buttons .signup-button:hover {
+    background: linear-gradient(135deg, #e68900, #e57300); /* 호버 시 더 어두운 오렌지 톤 */
+}
+
+
 .header-buttons .login-button {
-    background: #000;
+    background: linear-gradient(135deg, #004CFF, #0039e5);
     color: #fff;
     border: none;
 }
 
+.header-buttons .logout-button {
+    background: linear-gradient(135deg, #CC0033, #CC0033);
+    color: #fff;
+    border: none;
+}
+
+/* 일반 버튼 호버 색상 */
 .header-buttons button:hover {
-    background: #f0f0f0;
+    background: #eaeaea; /* 새로운 호버 색상 */
 }
 
+/* 로그인 버튼 호버 색상 */
 .header-buttons .login-button:hover {
-    background: #444;
+    background: linear-gradient(135deg, #002eb3, #001f80); /* 파란색 톤 */
 }
 
-/* Updated Modal Styles */
+/* 로그아웃 버튼 호버 색상 */
+.header-buttons .logout-button:hover {
+    background: linear-gradient(135deg, #990026, #66001a); /* 진한 빨간색 톤 */
+}
+
+.header-buttons .mypage-button {
+    background: linear-gradient(135deg, #28a745, #218838); /* 밝은 초록에서 진한 초록 */
+    color: #fff;
+    border: none;
+}
+
+.header-buttons .mypage-button:hover {
+    background: linear-gradient(135deg, #218838, #19692c); /* 호버 시 더 진한 초록색 */
+}
+
+
+/* 모달 스타일 */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.6);
+	justify-content: center;
+	align-items: center;
+	backdrop-filter: blur(5px);
 }
 
 .modal-content {
-    background-color: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 450px;
-    padding: 30px;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-    position: relative;
-    transform: scale(0.9);
-    opacity: 0;
-    transition: all 0.3s ease;
+	background-color: white;
+	border-radius: 12px;
+	width: 30% !important;
+	max-height: 80vh;
+	/* 화면 높이의 80%로 제한 */
+	overflow-y: auto;
+	/* 내용이 넘칠 경우 스크롤 */
+	padding: 30px;
+	box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+	position: relative;
+	transform: scale(0.9);
+	opacity: 0;
+	transition: all 0.3s ease;
 }
 
 .modal.show .modal-content {
-    transform: scale(1);
-    opacity: 1;
+	transform: translateY(0);
+	opacity: 1;
+	transition: transform 0.4s ease-out, opacity 0.3s ease;
 }
 
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
 }
 
 .modal-header h2 {
-    margin: 0;
-    color: #004CFF;
-    font-size: 1.5em;
+	margin: 0;
+	color: #004CFF;
+	font-size: 1.5em;
 }
 
 .close {
-    color: #999;
-    font-size: 24px;
-    cursor: pointer;
-    transition: color 0.3s ease;
+	color: #999;
+	font-size: 24px;
+	cursor: pointer;
+	transition: color 0.3s ease;
 }
 
 .close:hover {
-    color: #004CFF;
+	color: #004CFF;
 }
 
 .modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* 간격을 크게 조정 */
+	align-items: center;
+	/* 중앙 정렬 */
 }
 
-.modal input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    outline: none;
-    transition: border-color 0.3s ease;
+#signUpForm {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* 간격을 크게 조정 */
+	align-items: center;
+	/* 중앙 정렬 */
 }
 
-.modal input:focus {
-    border-color: #004CFF;
+.modal-body input,
+.modal-body button {
+	width: 100%;
+	max-width: 400px;
+	/* 최대 너비 설정 */
 }
 
-.modal button {
-    background: #004CFF;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.1s ease;
-    margin-top: 10px;
+.modal-body input {
+	padding: 12px 14px;
+	/* 여백 추가 */
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	/* 둥근 모서리 */
+	font-size: 1em;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+	/* 약간의 그림자 */
 }
 
-.modal button:hover {
-    background: #1e88e5;
+.modal-body input:focus {
+	border-color: #004CFF;
+	box-shadow: 0 1px 6px rgba(0, 76, 255, 0.2);
+	/* 초점 효과 */
 }
 
-.modal button:active {
-    transform: scale(0.98);
+.modal-body button {
+	padding: 12px 14px;
+	background: linear-gradient(135deg, #004CFF, #0039E5);
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	font-size: 1em;
+	cursor: pointer;
+	transition: background 0.3s ease, transform 0.1s ease;
+	font-weight: bold;
 }
+
+.modal-body button:hover {
+	background: #1E88E5;
+	transform: scale(1.02);
+	/* 살짝 커지는 효과 */
+}
+
+.modal-body button:active {
+	transform: scale(0.98);
+	/* 클릭 효과 */
+}
+
+.modal-body .verification-container {
+	display: flex;
+	gap: 10px;
+	/* 필드와 버튼 간격 */
+	width: 100%;
+	/* 부모 요소의 너비에 맞춤 */
+	max-width: 400px;
+	/* 최대 너비 설정 */
+	justify-content: space-between;
+	align-items: center;
+	/* 세로 중앙 정렬 */
+}
+
+.modal-body .verification-container input {
+	flex: 1;
+	/* 입력 필드가 버튼과 균형을 이루도록 설정 */
+	padding: 10px 14px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 0.9em;
+}
+
+.modal-body .verification-container button {
+	flex-shrink: 0;
+	/* 버튼이 작아지지 않도록 고정 */
+	width: auto;
+	/* 버튼의 너비를 내용에 맞춤 */
+	padding: 10px 15px;
+	background: #004CFF;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.3s ease, transform 0.1s ease;
+	font-size: 0.9em;
+}
+
+.modal-body .verification-container button:hover {
+	background: #1E88E5;
+	transform: scale(1.02);
+	/* 살짝 커지는 효과 */
+}
+
+/* 성별 선택 라디오 버튼 컨테이너 */
+.gender-radio-container {
+	display: flex;
+	gap: 30px;
+	/* 버튼 간 간격 */
+	justify-content: center;
+	align-items: center;
+	margin-top: 15px;
+}
+
+/* 라디오 버튼과 텍스트 정렬 */
+.gender-radio {
+	display: flex;
+	align-items: center;
+	/* 버튼과 텍스트를 세로로 정렬 */
+	gap: 10px;
+	/* 버튼과 텍스트 간 간격 */
+	font-size: 1em;
+	color: #333;
+	cursor: pointer;
+}
+
+.gender-radio input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #004CFF;
+	/* 라디오 버튼 강조 색상 */
+	cursor: pointer;
+	margin: 0;
+}
+
+/* '이전' 버튼 스타일 */
+.back-button {
+	font-size: 20px;
+	/* 아이콘 크기 */
+	color: #333;
+	/* 어두운 색 텍스트 */
+	text-decoration: none;
+	/* 링크 스타일 제거 */
+	padding: 8px;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.8);
+	/* 배경색 */
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.back-button:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+	/* 호버 시 색 변화 */
+	transform: scale(1.1);
+	/* 호버 시 크기 약간 커짐 */
+}
+
+/* 아이콘 화살표 스타일 */
+.back-button::before {
+	content: '\21D0';
+	/* Unicode로 왼쪽 화살표 추가 */
+	font-size: 20px;
+	/* 아이콘 크기 */
+}
+
 
 .modal-footer {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 0.9em;
-    color: #666;
+	margin-top: 20px;
+	/* 간격 증가 */
+	text-align: center;
+	font-size: 0.9em;
+	color: #666;
 }
 
 .modal-footer a {
-    color: #004CFF;
-    text-decoration: none;
+	color: #004CFF;
+	text-decoration: none;
+	font-weight: bold;
 }
+
+.modal-footer a:hover {
+	text-decoration: underline;
+}
+
+/* 성별 선택 영역 */
+.modal-body .gender-container {
+	display: flex;
+	gap: 20px;
+	justify-content: center;
+	align-items: center;
+}
+
+.modal-body .gender-container label {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	/* 텍스트와 버튼 간격 */
+	font-size: 0.95em;
+	color: #333;
+}
+
+.modal-body .gender-container input {
+	accent-color: #004CFF;
+	/* 라디오 버튼 색상 */
+}
+
+/* 인증번호 입력 필드 */
+.modal-body .verification-container {
+	display: flex;
+	gap: 10px;
+	/* 필드와 버튼 간격 */
+	width: 100%;
+	justify-content: space-between;
+}
+
+.modal-body .verification-container input {
+	flex: 1;
+	/* 입력 필드가 버튼과 균형을 이루도록 설정 */
+}
+
+.modal-body .verification-container button {
+	flex-shrink: 0;
+	width: auto;
+	padding: 10px 15px;
+}
+
+.signUp-message{
+  display: block;  /* 추가 */
+  font-size: 14px;
+  letter-spacing: -1px;
+}
+
+.confirm{ color : green; }
+.error{ color : red; }
+
+@media (max-width: 768px) {
+	.nav-menu {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	.search-container input {
+		width: 100%;
+	}
+
+	.modal-content {
+		width: 90%;
+		/* 모바일 화면에서 더 작은 너비 */
+	}
+
+	.modal-body input,
+	.modal-body button {
+		max-width: 100%;
+		/* 모바일 화면에서는 너비 제한 해제 */
+	}
+}
+

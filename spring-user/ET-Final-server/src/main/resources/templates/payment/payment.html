@@ -1,58 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카카오페이 결제</title>
-    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <title>Payment Page</title>
+    <!-- jQuery CDN 추가 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- 아임포트 스크립트 추가 -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 </head>
+
 <body>
-    <h1>카카오페이 결제</h1>
+
+    <div>
+        <h3>좌석 정보: <span id="seat-info"></span></h3>
+        <h3>예매자: <span id="booking-info"></span></h3>
+        <h3>총 결제 금액: <span id="total-price"></span></h3>
+    </div>
+    <!-- 버튼들 -->
+    <button id="cardPay" onclick="handlePayment('html5_inicis.INIpayTest', 'card')">카드 결제</button>
     <button id="kakaoPay" onclick="handlePayment('kakaopay', 'card')">카카오페이 결제</button>
 
-    <script>
-        // 포트원 가맹점 식별코드 초기화
-        IMP.init("imp00237821"); // 가맹점 식별코드
+    <script th:inline="javascript">
 
-        // 결제 버튼 클릭 이벤트
-        document.getElementById("pay-button").addEventListener("click", function () {
+        const impCode = 'imp00237821'; // 아임포트 가맹점 코드
+
+        const seatInfo = JSON.parse(localStorage.getItem('selectedSeats')).map(seatId => {
+            const parts = seatId.split('-');
+            const gradeName = parts[1]; // R석, VIP석 등급
+            const seatNumber = parts[2]; // A1, A2 등 좌석 번호
+            return `${gradeName}석 ${seatNumber}`; // R석 A1 형식으로 변환
+        }).join(', ');
+
+        const bookingInfo = JSON.parse(localStorage.getItem('bookingInfo'));
+        const totalPrice = localStorage.getItem('totalPrice');
+        document.getElementById('seat-info').textContent = seatInfo;
+        document.getElementById('booking-info').textContent = `${bookingInfo.name} (${bookingInfo.phone})`;
+        document.getElementById('total-price').textContent = totalPrice;
+
+        // 결제 처리 함수
+        function handlePayment(pg, payMethod) {
+            console.log(`PG: ${pg}, Payment Method: ${payMethod}`);
+
+            // 아임포트 초기화
+            IMP.init(impCode);
+
+            // 결제 요청
             IMP.request_pay({
-                pg: "kakaopay",
-                pay_method: "card",
-                amount: 5000,
-                name: "테스트 상품",
-                merchant_uid: `ORD-${Date.now()}`, // 유니크한 주문 번호
-                buyer_email: "test@example.com",
-                buyer_name: "홍길동",
-                buyer_tel: "010-1234-5678",
-                buyer_addr: "서울특별시 강남구 역삼동",
-                buyer_postcode: "12345"
+                pg: pg, // PG사
+                pay_method: payMethod, // 결제 방식
+                merchant_uid: `ORD-${new Date().getTime()}`, // 주문번호
+                name: `좌석: ${seatInfo}`, // 상품명
+                amount: parseInt(totalPrice), // 결제 금액
+                buyer_name: bookingInfo.name, // 구매자 이름
+                buyer_tel: bookingInfo.phone // 구매자 연락처
+
             }, function (rsp) {
                 if (rsp.success) {
-                    alert("결제가 성공적으로 완료되었습니다.");
-                    // 결제 성공 시 서버로 요청
-                    fetch('/payment/verify', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
+                    // 결제 성공 시 처리
+                    console.log("결제 성공:", rsp);
+
+                    alert(`결제가 성공적으로 완료되었습니다.\n고유ID: ${rsp.imp_uid}`);
+
+                    // 결제 데이터 생성
+                    const paymentData = {
+                        impUid: rsp.imp_uid || null,
+                        merchantUid: rsp.merchant_uid || null,
+                        payMethod: rsp.pay_method || 'unknown',
+                        pgProvider: rsp.pg_provider || null,
+                        pgType: rsp.pg_type || null,
+                        pgTid: rsp.pg_tid || null,
+                        name: rsp.name || `좌석: ${seatInfo}`,
+                        paidAmount: rsp.paid_amount || 0,
+                        currency: rsp.currency || 'KRW',
+                        buyerName: rsp.buyer_name || bookingInfo.name || 'Unknown',
+                        buyerTel: rsp.buyer_tel || bookingInfo.phone || '000-0000-0000',
+                        buyerAddr: rsp.buyer_addr || 'N/A',
+                        buyerPostcode: rsp.buyer_postcode || '00000',
+                        buyerEmail: rsp.buyer_email || 'unknown',
+                        status: rsp.status || 'unknown',
+                        paidAt: rsp.paid_at ? new Date(rsp.paid_at * 1000).toISOString() : null,
+                        receiptUrl: rsp.receipt_url || null,
+                        seatIds: JSON.parse(localStorage.getItem('selectedSeats')), // 좌석 ID 배열 추가
+                    };
+                    console.log("전송할 결제 데이터:", paymentData);
+
+
+
+
+                    // 서버로 결제 검증 요청
+                    $.ajax({
+                        type: 'POST',
+                        url: '/payment/save-payment',
+                        contentType: 'application/json',
+                        data: JSON.stringify(paymentData), // paymentData를 바로 사용
+
+                        success: function () {
+                            alert('결제가 성공적으로 저장되었습니다.');
+                            //window.location.href = `/payment/order-summary?orderId=${rsp.merchant_uid}`;
+                            window.location.href = `/payment/seat-selection`;
                         },
-                        body: JSON.stringify({
-                            imp_uid: rsp.imp_uid,
-                            merchant_uid: rsp.merchant_uid
-                        }),
-                    }).then(response => response.json())
-                      .then(data => {
-                          if (data.success) {
-                              alert("서버 검증 완료!");
-                          } else {
-                              alert("서버 검증 실패!");
-                          }
-                      });
+                        error: function () {
+                            console.error('Error during payment save:', textStatus, errorThrown);
+                            alert(`결제 저장에 실패했습니다: ${jqXHR.responseText || textStatus}`);
+                        }
+                    });
                 } else {
-                    alert("결제에 실패하였습니다: " + rsp.error_msg);
+                    console.error("결제 실패:", rsp.error_msg);
+                    alert(`결제에 실패했습니다. 사유: ${rsp.error_msg}`);
                 }
             });
-        });
+        }
     </script>
 </body>
+
 </html>

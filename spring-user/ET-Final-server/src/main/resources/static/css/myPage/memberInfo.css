@@ -1,0 +1,35 @@
+.mypage-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.mypage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.mypage-item {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mypage-item:hover {
+    background: #f5f5f5;
+    transform: translateY(-2px);
+}
+
+.mypage-item h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.hidden {
+    display: none;
+}
