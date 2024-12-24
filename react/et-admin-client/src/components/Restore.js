@@ -7,6 +7,18 @@ export default function Restore() {
   const [deleteBoards, setDeleteBoards] = useState([]); // 삭제 게시글 목록
   const [loading, setLoading] = useState(true); // 로딩 상태
 
+  // 필요한 것들?
+  // 유저관리 
+
+  // 유저 리스트를 위한 정보
+  const getUserManagemnetList = async() => {
+    try {
+      
+    } catch (error) {
+      console.log("회원 : " + error);
+    }
+  }
+
   // 탈퇴한 회원 목록 조회용 비동기 요청 함수
   const getWithdrawnMemberList =  async() => {
     try {
@@ -91,13 +103,37 @@ export default function Restore() {
   } else {
     return (
       <div className="menu-box">
-        <RestoreMember withdrawMembers={withdrawMembers} restoreMember={restoreMember}/>
-        <RestoreBoard deleteBoards={deleteBoards} restoreBoard={restoreBoard}/>
+        {/* <RestoreMember withdrawMembers={withdrawMembers} restoreMember={restoreMember}/> */}
+         {/* <RestoreBoard deleteBoards={deleteBoards} restoreBoard={restoreBoard}/> */}
+         <div className="main-title-container"><h1>header</h1></div>
+         <div className="main-select-container">
+            <select>
+              <option>넘버1</option>
+              <option>넘버2</option>
+              <option>넘버3</option>
+              <option>넘버4</option>
+            </select>
+            <input></input>
+
+         </div>
       </div>
     );
   }
   
 }
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 const RestoreMember = ({withdrawMembers, restoreMember}) => {
   return (
@@ -152,3 +188,4 @@ const RestoreBoard = ({deleteBoards,restoreBoard}) => {
       </section>
   );
 };
+

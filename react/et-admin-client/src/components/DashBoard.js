@@ -18,25 +18,32 @@ export default function DashBoard() {
 
   return (
       <div className='dash-board-container'>
-        <h1>관리자 페이지</h1>
+          <h1>관리자 페이지</h1>
 
-        <div className='admin-info'>
-          <p>현재 접속 관리자 : {globalState.user.memberNickname}</p>
-          <button onClick={globalState.handleLogout}>로그아웃</button>
-        </div>
+          <div className='admin-info'>
+            <p>현재 접속 관리자 : {globalState.user.memberNickname}</p>
+            <button onClick={globalState.handleLogout}>로그아웃</button>
+          </div>
 
-        <div className='router-tab-box'>
-          <NavLink to="/restore">복구</NavLink>
-          <NavLink to="/statistics">통계</NavLink>
-          <NavLink to="/manager">관리자</NavLink>
-        </div>
+          <div className='main-show-container'>
+            <div className='router-tab-box'>
+              <NavLink to="/restore">유저관리</NavLink>
+              <NavLink to="/statistics">공연관리</NavLink>
+              <NavLink to="/manager">예매 좌석 관리</NavLink>
+              <NavLink to="/announcement">공지사항 관리</NavLink>
+              <NavLink to="/tourManagerEnroll">업체계정 신청</NavLink>
+            </div>
 
-        <Routes>
-          <Route path='/' element={<h1>DashBoard 메인</h1>}/>
-          <Route path='/restore' element={<Restore/>}/>
-          <Route path='/statistics' element={<Statistics/>}/>
-          <Route path='/manager' element={<Manager/>}/>
-        </Routes>
+            
+            <Routes>
+              <Route path='/' element={<h1>DashBoard 메인</h1>}/>
+              <Route path='/restore' element={<Restore/>}/>
+              <Route path='/statistics' element={<Statistics/>}/>
+              <Route path='/manager' element={<Manager/>}/>
+              <Route path='/announcement' element={<Manager/>}/>
+              <Route path='/tourManagerEnroll' element={<Manager/>}/>
+            </Routes>
+          </div>
       </div>
   )
 }
