@@ -4,21 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <title>예매자 정보 확인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
+        /* 진행 단계 헤더 스타일 */
+        .progress-header {
+            width: 100%;
+            background-color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .progress-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .progress-step.active .step-number {
+            background-color: #ff4500;
+            color: white;
+        }
+
+        .progress-step.active .step-text {
+            color: #ff4500;
+            font-weight: bold;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            right: 70px;
+            height: 2px;
+            background-color: #e8e8e8;
+            z-index: 0;
+        }
+
+        .progress-line-active {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            width: 50%;
+            /* 2단계이므로 50% */
+            height: 2px;
+            background-color: #ff4500;
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        /* 폼 스타일 */
+        .booking-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .btn-group {
+            display: flex;
+            /* 플렉스 컨테이너로 설정 */
+            justify-content: center;
+            /* 버튼을 중앙 정렬 */
+            gap: 10px;
+            /* 버튼 간격 */
+        }
+
+        /*이전 단계 버튼 색상*/
+        .prev-btn {
+            background-color: #b6b2b0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #ff5722;
+        }
+    </style>
 
 </head>
 
-<body>
-    <h2>예매자 정보 확인</h2>
-    <div>
-        <h3>선택된 좌석: <span id="seat-info"></span></h3>
-        <h3>총 가격: <span id="total-price"></span></h3>
+<body data-step="2">
+    <!-- 진행 단계 헤더 -->
+    <div class="progress-header">
+        <div class="progress-container">
+            <div class="progress-line"></div>
+            <div class="progress-line-active" id="progressBar"></div>
+
+            <div class="progress-step active">
+                <div class="step-number">1</div>
+                <div class="step-text">좌석 선택</div>
+            </div>
+
+            <div class="progress-step active">
+                <div class="step-number">2</div>
+                <div class="step-text">주문자 정보</div>
+            </div>
+
+            <div class="progress-step">
+                <div class="step-number">3</div>
+                <div class="step-text">결제</div>
+            </div>
+        </div>
     </div>
-    <form id="booking-form">
-        <label>이름: <input type="text" id="name" required></label><br>
-        <label>연락처: <input type="tel" id="phone" required></label><br>
-        <button type="submit">다음 단계</button>
-    </form>
+
+    <div class="booking-container">
+        <div class="info-section">
+            <h2>예매자 정보 확인</h2>
+            <h3>선택된 좌석: <span id="seat-info"></span></h3>
+            <h3>총 가격: <span id="total-price"></span></h3>
+        </div>
+
+        <form id="booking-form">
+            <div class="form-group">
+                <label for="name">이름</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">연락처</label>
+                <input type="tel" id="phone" required placeholder="000-0000-0000">
+            </div>
+            <div class="btn-group">
+                <button type="button" class="prev-btn" id="prev-btn">이전 단계</button> <!-- 이전 단계 버튼 -->
+                <button type="submit" class="next-btn">다음 단계</button>
+            </div>
+        </form>
+    </div>
 
     <script>
         const seatInfo = JSON.parse(localStorage.getItem('selectedSeats')).map(seatId => {
@@ -32,12 +214,32 @@
         document.getElementById('seat-info').textContent = seatInfo;
         document.getElementById('total-price').textContent = totalPrice;
 
+        // '이전 단계' 버튼 클릭 시 처리
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            // 이전 단계로 이동 (좌석 선택 페이지로 이동)
+            window.location.href = '/payment/seat-selection';
+        });
+
 
 
         // 전화번호 입력 시 자동으로 '-' 추가
         const phoneInput = document.getElementById('phone');
+        // 초기값 '010' 설정
+        phoneInput.value = '010';   // 추후에 로그인된 아이디로 예매하기 떄문에 전화번호 이름은 미리 값이 설정 되도록 할 예정
+
         phoneInput.addEventListener('input', () => {
             let value = phoneInput.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+
+            // '010'로 시작하도록 강제
+            if (!value.startsWith('010')) {
+                value = '010' + value.slice(3); // '010' 유지
+            }
+
+            // 11자 이상 입력 방지
+            if (value.length > 11) {
+                value = value.slice(0, 11); // 11자리까지만 유지    
+            }
+
 
             if (value.length > 3 && value.length <= 7) {
                 value = `${value.slice(0, 3)}-${value.slice(3)}`;
@@ -54,13 +256,23 @@
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
 
+             // 이름 유효성 검사 (최대 6글자, 특수문자 제외)
+            const nameRegex = /^[가-힣a-zA-Z]{1,6}$/; // 한글 또는 영문 최대 6글자
+            if(!nameRegex.test(name)){
+                alert("이름은 최대 6글자 입력 가능하며, 특수문자는 사용할 수 없습니다.");
+                return;
+            }
+
             if (!name || !phone) {
                 alert("모든 필드를 입력해주세요.");
                 return;
             }
 
+
+
+            // 전화번호 유효성 검사
             if (!/^\d{3}-\d{3,4}-\d{4}$/.test(phone)) {
-                alert("연락처는 000-0000-0000 형식으로 입력해주세요.");
+                alert("연락처는 010-0000-0000 형식으로 입력해주세요.");
                 return;
             }
 

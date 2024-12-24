@@ -338,8 +338,6 @@ public class MemberController {
 									subVenue.put("prfplcnm", prfplcnm);
 									subVenue.put("mt10id", demt10id);
 									
-									service.insertSubVenue(subVenue);
-
 									System.out.println("\n  공연장명: " + prfplcnm);
 									System.out.println("  시설 ID: " + demt10id);
 									System.out.println("  공연장 ID: " + mt13id2);
@@ -370,7 +368,7 @@ public class MemberController {
 			// API URL과 서비스 키 설정
 			String serviceKey = "65293f6ed44e4a2fbc5498ef280710f0"; // 발급받은 서비스 키
 			String apiUrl = "https://www.kopis.or.kr/openApi/restful/pblprfr?service=" + serviceKey
-					+ "&stdate=20240101&eddate=20241218&cpage=2&rows=10&prfstate=02&shcate=AAAA&signgucode=11";
+					+ "&stdate=20230101&eddate=20241218&cpage=2&rows=10&prfstate=02&shcate=GGGA&signgucode=11";
 
 			// XML 응답 파싱
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -428,7 +426,33 @@ public class MemberController {
 							String dePoster = getTagValue(dbElement, "poster"); // 포스터 이미지 경로
 							String deGenrenm = getTagValue(dbElement, "genrenm"); // 공연 장르
 							String mt10id = getTagValue(dbElement, "mt10id"); // 시설 아이디
+							String area = getTagValue(dbElement, "area");
+							String prfstate = getTagValue(dbElement, "prfstate");
 							String dtguidance = getTagValue(dbElement, "dtguidance"); // 공연 시간
+							
+							Map<String, Object> perfMap = new HashMap<>();
+							
+							if(deMt20id.equals("PF253358")) {
+								continue;
+							}
+							
+							perfMap.put("mt20id", deMt20id);
+							perfMap.put("prfnm", dePrfnm);
+							perfMap.put("prfpdfrom", dePrfpdfrom);
+							perfMap.put("prfpdto", fcltychartr);
+							perfMap.put("fcltynm", deFcltynm);
+							perfMap.put("prfcast", prfcast);
+							perfMap.put("prfruntime", prfruntime);
+							perfMap.put("entrpsnm", null);
+							perfMap.put("pcseguidance", pcseguidance);
+							perfMap.put("poster", dePoster);
+							perfMap.put("dtguidance", dtguidance);
+							perfMap.put("area", area);
+							perfMap.put("genrenm", deGenrenm);
+							perfMap.put("prfstate", prfstate);
+							perfMap.put("mt10id", mt10id);
+							
+							// service.insertPerf(perfMap);
 
 							String[] performanceSlots = dtguidance.split("\\)");
 							String regex = "^(월요일|화요일|수요일|목요일|금요일|토요일|일요일)( ~ (월요일|화요일|수요일|목요일|금요일|토요일|일요일))?$";

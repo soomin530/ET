@@ -97,8 +97,8 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void insertSubVenue(Map<String, Object> subVenue) {
-		mapper.insertSubVenue(subVenue);
+	public void insertPerf(Map<String, Object> perfMap) {
+		mapper.insertPerf(perfMap);
 	}
 
 }

@@ -77,15 +77,27 @@
 		)
 	</insert>
 	
-	<insert id="insertSubVenue">
-		INSERT INTO "TB_VENUE_HOLE"
-		VALUES(#{mt13id}, 
+	
+	<insert id="insertPerf">
+		INSERT INTO "TB_PERFORMANCES_DETAIL"
+		VALUES(#{mt20id}, 
+			 #{prfnm},
+			 #{prfpdfrom},
+			 #{prfpdto},
+			 #{fcltynm},
+			 #{prfcast},
+			 #{prfruntime},
+			 #{entrpsnm},
+			 #{pcseguidance},
+			 #{poster},
+			 #{dtguidance},
+			 #{area},
+			 #{genrenm},
+			 #{prfstate},
 			 #{mt10id},
-			 #{prfplcnm},
-			 #{seatscale}
+			 null
 		)
 	</insert>
-	
 	
 	
 
