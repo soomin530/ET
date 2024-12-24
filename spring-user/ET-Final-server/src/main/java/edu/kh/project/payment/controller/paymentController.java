@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.RestTemplate;
 
 import edu.kh.project.payment.model.dto.Payment;
+import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
 import edu.kh.project.payment.service.paymentService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("payment")
+@SessionAttributes({"loginMember"}) // 로그인된 멤버 유지
 @RequiredArgsConstructor
 @Slf4j
 public class paymentController {
@@ -119,6 +122,33 @@ public class paymentController {
 		}
 
 	}
+	
+	/** 공연 상세 정보 조회
+	 * @param performanceId
+	 * @return
+	 */
+	@GetMapping("performance-detail")
+	public ResponseEntity<PerformanceDetail> getPerformanceDetail(@RequestParam("performanceId") String performanceId){
+		
+		if (performanceId == null || performanceId.trim().isEmpty()) {
+	        log.warn("performanceId가 제공되지 않았습니다.");
+	        return ResponseEntity.badRequest().body(null);
+	    }
+		
+		try {
+	        PerformanceDetail detail = service.getPerformanceDetail(performanceId);
+	        return ResponseEntity.ok(detail);
+	        
+	    } catch (RuntimeException e) {
+	        log.error("공연 상세 정보 조회 실패: {}", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	        
+	    } catch (Exception e) {
+	        log.error("서버 오류 발생", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
+	
 
 	/**
 	 * 좌석 예약

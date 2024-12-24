@@ -21,31 +21,30 @@
 	
 	<!-- 좌석 업데이트 -->
 	<update id="updateSeatStatus">
-	    UPDATE TB_TICKET_SEAT
+		UPDATE TB_TICKET_SEAT
 	    SET SEAT_STATUS = #{status}
 	    WHERE SEATS_ID = #{seatId}
 	</update>
 
+	<!-- 좌석 가격 -->
 	<select id="selectSeatPrice" resultType="int">
 	    SELECT PRICE
 	    FROM TB_PERFORMANCE_SEAT_PRICE
 	    WHERE GRADE_ID = #{gradeId}
 	</select>
 	
+	<!-- 공연 상세 정보 출력 -->
+	<select id="getPerformanceDetail" resultType="map">
+		SELECT PD.PRFNM AS performanceName,
+		   PD.PRFPDFROM AS performanceFrom,
+		   PD.PRFPDTO AS performanceTo,
+		   PD.FCLTYNM AS facilityName,
+		   PD.PRFRUNTIME AS performanceRuntime,
+		   PD.POSTER AS poster
+		FROM "TB_PERFORMANCES_DETAIL" PD
+		WHERE PD.MT20ID = #{performanceId}
+	</select>
 	
-	<!-- 결제 내역 저장 -->
-	<insert id="insertPayment">
-		 INSERT INTO TB_PAYMENT (
-	        PAY_NO, IMP_UID, MERCHANT_UID, PAY_METHOD, PG_PROVIDER, PG_TYPE, PG_TID, NAME,
-	        PAID_AMOUNT, CURRENCY, BUYER_NAME, BUYER_TEL, BUYER_ADDR,
-	        BUYER_POSTCODE, BUYER_EMAIL, STATUS, PAID_AT, RECEIPT_URL
-	    ) VALUES (
-	        PAY_NO_SEQ.NEXTVAL, #{impUid}, #{merchantUid}, #{payMethod}, #{pgProvider}, #{pgType}, #{pgTid},
-	        #{name}, #{paidAmount}, #{currency}, #{buyerName}, #{buyerTel},
-	        #{buyerAddr}, #{buyerPostcode}, #{buyerEmail},
-	        #{status}, #{paidAt}, #{receiptUrl}
-	    )
-	</insert>
 
 
 </mapper>

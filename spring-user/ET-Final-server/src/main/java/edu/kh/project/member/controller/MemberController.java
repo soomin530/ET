@@ -100,7 +100,6 @@ public class MemberController {
 			JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
 			// Refresh Token을 Redis에 저장
-			// redisService.saveRefreshToken(tokenInfo.refreshToken(), memberNo, jwtTokenUtil.getRefreshTokenValidityInMilliseconds());
 
 			// Access Token을 HttpOnly 쿠키에 저장
 			Cookie accessTokenCookie = new Cookie("Access-token", tokenInfo.accessToken());
