@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="/css/main-style.css">
 	
 	<th:block th:replace="~{common/common}"></th:block>
-</head>
+</head> 
 
 <body>
 
@@ -25,6 +25,9 @@
     
 	<div class="section carousel-section" id="performances-carousel">
 	    <h2>주요 공연 소개</h2>
+
+        <button onclick="location.href='/payment/seatPage'">예매하기(결제)</button>
+
 	    <div class="carousel" id="mainCarousel">
 	        <div class="carousel-inner" id="carouselInner">
 	            <div class="carousel-item" style="background-image: url('http://www.kopis.or.kr/upload/pfmPoster/PF_PF254599_241126_091729.jpg')">
@@ -118,14 +121,8 @@
         <p>운영 시간: 월요일 - 금요일, 9:00 - 18:00</p>
     </div>
 
-    <footer>
-        <p>© 2024 티켓팅 시스템</p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-        </div>
-    </footer>
+	<!-- common/footer 추가-->
+	<th:block th:replace="~{common/footer}"></th:block>
 
 
     <!-- Chart.js 라이브러리 추가 -->
@@ -259,6 +256,7 @@
     </script>
 	
 	<script src="/js/main.js"></script>
+    <script src="/js/memberInfo.js"></script>
 	
 </body>
 

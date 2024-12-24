@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.project.payment.model.mapper.paymentMapper">
+
+	<!-- 특정 공연 좌석 조회 -->
+	<select id="selectSeatsByShow">
+		SELECT TS.SEATS_ID AS seatId,
+			TS.GRADE_ID AS gradeId,
+			SG.GRADE_NAME AS gradeName,
+			PSP.PRICE AS price,
+			TS.SEAT_STATUS AS status,
+			TS.SHOW_DATE AS showDate,
+			TS.SHOW_TIME AS showTime
+		FROM TB_TICKET_SEAT TS
+		JOIN TB_SEAT_GRADE SG ON TS.GRADE_ID = SG.GRADE_ID
+		JOIN TB_PERFORMANCE_SEAT_PRICE PSP
+		ON TS.GRADE_ID = PSP.GRADE_ID AND TS.MT20ID = PSP.MT20ID
+		WHERE TS.SHOW_DATE = TO_DATE(#{showDate}, 'YYYY-MM-DD')
+		AND TS.SHOW_TIME = #{showTime}
+	</select>
+	
+	<!-- 좌석 업데이트 -->
+	<update id="updateSeatStatus">
+		UPDATE TB_TICKET_SEAT
+	    SET SEAT_STATUS = #{status}
+	    WHERE SEATS_ID = #{seatId}
+	</update>
+
+	<!-- 좌석 가격 -->
+	<select id="selectSeatPrice" resultType="int">
+	    SELECT PRICE
+	    FROM TB_PERFORMANCE_SEAT_PRICE
+	    WHERE GRADE_ID = #{gradeId}
+	</select>
+	
+	<!-- 공연 상세 정보 출력 -->
+	<select id="getPerformanceDetail" resultType="map">
+		SELECT PD.PRFNM AS performanceName,
+		   PD.PRFPDFROM AS performanceFrom,
+		   PD.PRFPDTO AS performanceTo,
+		   PD.FCLTYNM AS facilityName,
+		   PD.PRFRUNTIME AS performanceRuntime,
+		   PD.POSTER AS poster
+		FROM "TB_PERFORMANCES_DETAIL" PD
+		WHERE PD.MT20ID = #{performanceId}
+	</select>
+	
+
+
+</mapper>

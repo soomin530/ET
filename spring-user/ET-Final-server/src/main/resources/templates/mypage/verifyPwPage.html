@@ -1,0 +1,97 @@
+<!-- verify-password.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>비밀번호 인증</title>
+    <style>
+        .verify-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .verify-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .verify-title {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .input-group input {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .verify-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .verify-btn:hover {
+            background-color: #45a049;
+        }
+
+        .cancel-btn:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <div class="verify-box">
+            <div class="verify-title">정보 보호를 위해<br>비밀번호를 다시 한 번 확인합니다</div>
+            <div class="input-group">
+                <input type="password" id="userPw" placeholder="비밀번호를 입력하세요">
+            </div>
+            <div class="error-message" id="errorMsg">비밀번호가 일치하지 않습니다.</div>
+            <div class="button-group">
+                <button onclick="cancelVerification()" class="btn cancel-btn">취소</button>
+                <button onclick="verifyPassword()" class="btn verify-btn">확인</button>
+            </div>
+        </div>
+    </div>
+    <script src="/js/verify-password.js"></script>
+</body>
+</html>

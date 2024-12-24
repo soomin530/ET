@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>좌석 선택</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 20px 0;
+    }
+
+    /* 메인 레이아웃 */
+    .container {
+      display: flex;
+      width: 90%;
+      margin: 10px;
+    }
+
+    .seat-container {
+      flex: 3;
+      margin-right: 20px;
+    }
+
+    .stage {
+      background-color: #444;
+      color: white;
+      text-align: center;
+      line-height: 50px;
+      font-size: 18px;
+      font-weight: bold;
+      height: 50px;
+      margin-bottom: 20px;
+    }
+
+    /* 좌석 컨테이너 스타일 */
+    .seat-map {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      /* 등급 간 간격 */
+      margin-top: 10px;
+    }
+
+    /* 좌석 등급 라벨 */
+    .grade-label {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #333;
+    }
+
+    /* 행 컨테이너 */
+    .row-container {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      /* 열 간 간격 */
+    }
+
+
+    .seat {
+      width: 30px;
+      height: 30px;
+      border-radius: 5px;
+      text-align: center;
+      line-height: 30px;
+      font-size: 10px;
+      background-color: #e8e8e8;
+      cursor: pointer;
+    }
+
+    /* 좌석 등급별 색상 */
+    .vip {
+      background-color: #b19cd9;
+    }
+
+    .r {
+      background-color: #85c1e9;
+    }
+
+    .s {
+      background-color: #82e0aa;
+    }
+
+    .a {
+      background-color: #f5b041;
+    }
+
+    .booked {
+      background-color: #e74c3c;
+      color: white;
+      cursor: not-allowed;
+    }
+
+    .selected {
+      background-color: #535a5c !important;
+      color: white;
+    }
+
+    /* 우측 UI 스타일 */
+    .info-container {
+      flex: 1;
+      background-color: white;
+      border: 1px solid #ddd;
+      padding: 20px;
+      text-align: center;
+      border-radius: 5px;
+
+      display: flex;
+      flex-direction: column;
+      /* 수직 정렬 */
+    }
+
+    .info-container h2 {
+      margin-bottom: 20px;
+    }
+
+    .info-item {
+      margin-bottom: 15px;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+
+    .seat-grade-info {
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+
+    .reservation-info {
+      flex: 1;
+      /* 상단 좌석 정보와 하단 버튼 그룹 사이 여유 공간 확보 */
+      display: flex;
+      align-items: center;
+      /* 중앙 정렬 */
+      justify-content: center;
+      /* 중앙 정렬 */
+      color: #888;
+      /* 임시 텍스트 색상 */
+    }
+
+    .btn-group {
+      display: flex;
+      /* 플렉스 컨테이너로 설정 */
+      justify-content: center;
+      /* 버튼을 중앙 정렬 */
+      gap: 10px;
+      /* 버튼 간격 */
+    }
+
+
+    .confirm-btn {
+      flex: 1;
+      /* 버튼을 같은 크기로 설정 */
+      background-color: #ff5722;
+      /* 대비가 강한 색상 */
+      color: white;
+      text-align: center;
+      border: none;
+      padding: 10px 20px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .reset-btn {
+      flex: 1;
+      /* 버튼을 같은 크기로 설정 */
+      background-color: #757575;
+      /* 중간 톤의 대비 */
+      color: white;
+      text-align: center;
+      border: none;
+      padding: 10px 20px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+
+    /* 진행 단계 헤더 스타일 */
+    .progress-header {
+      width: 100%;
+      background-color: white;
+      padding: 20px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .progress-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .step-text {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .progress-step.active .step-number {
+      background-color: #ff4500;
+      color: white;
+    }
+
+    .progress-step.active .step-text {
+      color: #ff4500;
+      font-weight: bold;
+    }
+
+    /* 진행 바 스타일 */
+    .progress-line {
+      position: absolute;
+      top: 20px;
+      left: 70px;
+      right: 70px;
+      height: 2px;
+      background-color: #e8e8e8;
+      z-index: 0;
+    }
+
+    .progress-line-active {
+      position: absolute;
+      top: 20px;
+      left: 70px;
+      width: 0%;
+      height: 2px;
+      background-color: #ff4500;
+      transition: width 0.3s ease;
+      z-index: 0;
+    }
+
+    /* 각 단계 너비 설정 */
+    body.step-1 .progress-line-active {
+      width: 33.3%;
+    }
+
+    body.step-2 .progress-line-active {
+      width: 66.6%;
+    }
+
+    body.step-3 .progress-line-active {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body data-step="1" data-performance-id="PF001">
+  <div class="progress-header">
+    <div class="progress-container">
+      <div class="progress-line"></div>
+      <div class="progress-line-active" id="progressBar"></div>
+
+      <div class="progress-step active">
+        <div class="step-number">1</div>
+        <div class="step-text">좌석 선택</div>
+      </div>
+
+      <div class="progress-step">
+        <div class="step-number">2</div>
+        <div class="step-text">주문자 정보</div>
+      </div>
+
+      <div class="progress-step">
+        <div class="step-number">3</div>
+        <div class="step-text">결제</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 좌석 배치 영역 -->
+    <div class="seat-container">
+      <div class="stage">STAGE</div>
+
+
+    </div>
+
+    <!-- 우측 정보 영역 -->
+    <div class="info-container">
+      <h2>선택된 좌석</h2>
+      <div id="selected-seats" class="info-item">
+        <span>좌석 번호</span>
+        <span id="seat-numbers">없음</span>
+      </div>
+      <div class="info-item">
+        <span>가격</span>
+        <span id="total-price">0 원</span>
+      </div>
+
+      <!-- 중간 영역: 좌석 예매 정보 -->
+      <div class="reservation-info" style="flex: 1; margin-top: 20px; padding-top: 20px;">
+        <p id="loading-message">공연 정보를 불러오는 중입니다...</p>
+      </div>
+
+      <!-- 좌석 등급/잔여석 -->
+      <div id="seat-grade-info">
+        <h3 style="text-align: left; font-size: 14px; margin-bottom: 10px;">좌석등급 / 잔여석</h3>
+        <!-- 좌석 등급 정보 추가 -->
+      </div>
+
+      <div class="btn-group">
+        <button class="confirm-btn" id="confirm-btn">좌석 선택 완료</button>
+        <button class="reset-btn" id="reset-btn">좌석 다시 선택</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const seatContainer = document.createElement("div"); // 전체 좌석을 감쌀 컨테이너
+      seatContainer.classList.add("seat-map");
+      seatContainer.style.gridTemplateColumns = "repeat(10, 1fr)"; // 10열로 정렬
+      document.querySelector(".seat-container").appendChild(seatContainer); // 기존 좌석 컨테이너에 추가
+
+      document.querySelector('.reservation-info').textContent = '예매 정보를 여기에 표시합니다.';
+
+
+      const body = document.body;
+
+      const currentStep = parseInt(body.dataset.step, 10) || 1;
+
+      body.classList.add(`step-${currentStep}`);
+
+      // 진행 단계 표시 업데이트
+      const steps = document.querySelectorAll('.progress-step');
+      const progressBar = document.getElementById('progressBar');
+
+
+      steps.forEach((step, index) => {
+        if (index + 1 <= currentStep) {
+          step.classList.add('active');
+        } else {
+          step.classList.remove('active');
+        }
+      });
+
+
+      const selectedSeats = new Set();
+
+      // 좌석 데이터를 백엔드에서 가져오는 함수
+      async function fetchSeats(showDate, showTime) {
+        try {
+          const response = await fetch(`/payment/seats?showDate=${showDate}&showTime=${showTime}`);
+
+          if (!response.ok) {
+            throw new Error("좌석 데이터를 가져오는데 실패했습니다.");
+          }
+          const seatData = await response.json();
+          renderSeats(seatData); // 좌석 생성
+          updateSeatGradeInfo(seatData);
+          console.log("좌석 데이터:", seatData);
+        } catch (error) {
+          console.log(error.message);
+          alert("좌석 데이터를 불러오는데 실패했습니다.");
+        }
+      }
+
+      // 좌석 데이터를 기반으로 좌석 생성
+      function renderSeats(seatData) {
+        seatContainer.innerHTML = ""; // 기존 좌석 초기화
+
+        // 좌석 데이터를 등급별로 그룹화
+        const seatsByGrade = {
+          "1": [], // VIP석
+          "2": [], // R석
+          "3": [], // S석
+          "4": []  // A석
+        };
+
+        seatData.forEach(seat => {
+          seatsByGrade[seat.gradeId]?.push(seat); // 등급별로 분류
+        });
+
+        // 등급별로 좌석을 표시
+        Object.entries(seatsByGrade).forEach(([gradeId, seats]) => {
+          if (seats.length > 0) {
+            // 등급 이름 추가
+            const gradeLabel = document.createElement("div");
+            gradeLabel.classList.add("grade-label");
+            gradeLabel.textContent = getGradeName(gradeId);
+            seatContainer.appendChild(gradeLabel);
+
+            // 행(Row) 기준으로 좌석 정렬
+            const rows = groupSeatsByRow(seats);
+
+            rows.forEach(row => {
+              const rowContainer = document.createElement("div");
+              rowContainer.classList.add("row-container");
+
+              row.forEach(seat => {
+                const seatElement = document.createElement("div");
+                seatElement.classList.add("seat", getSeatClass(seat.gradeId));
+                seatElement.textContent = seat.seatId.split("-")[2]; // 좌석 번호만 표시
+
+                if (seat.status === "BOOKED") {
+                  seatElement.classList.add("booked");
+                  seatElement.textContent = "X";
+                } else {
+                  seatElement.dataset.price = seat.price;
+                  seatElement.addEventListener("click", () => toggleSeat(seatElement, seat.seatId));
+                }
+
+                rowContainer.appendChild(seatElement);
+              });
+
+              seatContainer.appendChild(rowContainer); // 한 행 추가
+            });
+          }
+        });
+      }
+
+      // 행별로 좌석 분류 함수
+      function groupSeatsByRow(seats) {
+        const rows = {};
+
+        seats.forEach(seat => {
+          const rowLabel = seat.seatId.split("-")[2].charAt(0); // A, B, C 등
+          if (!rows[rowLabel]) rows[rowLabel] = [];
+          rows[rowLabel].push(seat);
+        });
+
+        // 행 이름 알파벳 순 정렬 및 좌석 번호 정렬
+        const sortedRowLabels = Object.keys(rows).sort(); // A, B, C, D 순 정렬
+        const sortedRows = sortedRowLabels.map(rowLabel => {
+          // 각 행 내부 좌석 정렬
+          rows[rowLabel].sort((a, b) => {
+            const seatNumberA = parseInt(a.seatId.split("-")[2].slice(1), 10); // 숫자 부분 비교
+            const seatNumberB = parseInt(b.seatId.split("-")[2].slice(1), 10);
+            return seatNumberA - seatNumberB;
+          });
+          return rows[rowLabel];
+        });
+
+        return sortedRows; // 정렬된 행 배열 반환
+      }
+
+      // 좌석 등급 이름 반환
+      function getGradeName(gradeId) {
+        switch (gradeId) {
+          case "1": return "VIP석";
+          case "2": return "R석";
+          case "3": return "S석";
+          case "4": return "A석";
+          default: return "일반석";
+        }
+      }
+
+
+      // 좌석 등급 클래스 설정
+      function getSeatClass(gradeId) {
+        switch (gradeId.toString()) { // 숫자일 경우 문자열로 변환
+          case "1": return "vip";
+          case "2": return "r";
+          case "3": return "s";
+          case "4": return "a";
+          default: return "";
+        }
+      }
+
+      // 좌석 선택/해제
+      function toggleSeat(seat, seatId) {
+
+        // 이미 선택된 좌석 수가 2개이고 추가로 선택하려고 하면 제한
+        if (selectedSeats.size >= 2 && !seat.classList.contains("selected")) {
+          alert("1인당 최대 2개의 좌석만 예매할 수 있습니다.");
+          return;
+        }
+
+        seat.classList.toggle("selected");
+        if (selectedSeats.has(seatId)) {
+          selectedSeats.delete(seatId); // 선택 해제
+        } else {
+          selectedSeats.add(seatId); // 선택
+        }
+
+        updateInfo();
+      }
+
+      // 선택된 좌석 및 가격 업데이트
+      function updateInfo() {
+        const selectedSeatDetails = []; // 배열 선언
+        let totalPrice = 0;
+
+        // 선택된 좌석들 처리
+        document.querySelectorAll(".seat.selected").forEach(seat => {
+          const gradeClass = seat.classList.contains("vip") ? "VIP" :
+            seat.classList.contains("r") ? "R" :
+              seat.classList.contains("s") ? "S" :
+                seat.classList.contains("a") ? "A" : "전좌석";
+          const seatNumber = seat.textContent.trim(); // 좌석 번호 추출
+          selectedSeatDetails.push(`${gradeClass}석 ${seatNumber}`); // "R석 A1" 형식으로 저장
+          totalPrice += parseInt(seat.dataset.price); // 가격 합산
+        });
+
+        // 우측 정보 영역에 업데이트
+        document.getElementById("seat-numbers").textContent = selectedSeatDetails.length > 0
+          ? selectedSeatDetails.join(", ") // 쉼표로 구분하여 표시
+          : "없음"; // 선택된 좌석이 없으면 "없음" 표시
+        document.getElementById("total-price").textContent = `${totalPrice.toLocaleString()} 원`;
+      }
+
+      // 좌석 초기화 함수
+      document.getElementById("reset-btn").addEventListener("click", () => {
+        selectedSeats.clear();
+        document.querySelectorAll(".seat.selected").forEach(seat => {
+          seat.classList.remove("selected");
+        });
+        updateInfo();
+      });
+
+      /* 공연 상세 정보 조회*/
+      const performanceId = document.body.dataset.performanceId;
+      if (!performanceId) {
+        console.error("performanceId가 정의되지 않았습니다.");
+        alert("공연 정보를 가져올 수 없습니다. 다시 시도해주세요.");
+        return; // 더 이상 진행하지 않음
+      }
+
+
+      fetch(`/payment/performance-detail?performanceId=${performanceId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("공연 정보를 가져오는 데 실패했습니다.");
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (!data || Object.keys(data).length === 0) {
+            throw new Error("공연 정보를 불러올 수 없습니다.");
+          }
+          renderPerformanceInfo(data);
+        })
+        .catch(error => {
+          console.error(error);
+          document.querySelector(".reservation-info").innerHTML = `
+            <p style="color: red;">공연 정보를 불러올 수 없습니다. 다시 시도해 주세요.</p>
+          `;
+        });
+
+      function renderPerformanceInfo(data) {
+        const reservationInfo = document.querySelector(".reservation-info");
+        reservationInfo.innerHTML = ""; // 초기화
+
+        if (!data) {
+          reservationInfo.innerHTML = `<p style="color: red;">공연 정보를 불러올 수 없습니다.</p>`;
+          return;
+        }
+
+        reservationInfo.innerHTML = `
+          <h3>${data.performanceName}</h3>
+          <img src="${data.poster}" alt="${data.performanceName}" style="max-width: 100%; height: auto;" />
+          <p>공연 기간: ${data.performanceFrom} ~ ${data.performanceTo}</p>
+          <p>공연 시설: ${data.facilityName}</p>
+          <p>공연 런타임: ${data.performanceRuntime}분</p>
+        `;
+      }
+
+
+      function updateSeatGradeInfo(seatData) {
+        const seatGradeInfoContainer = document.getElementById("seat-grade-info");
+        seatGradeInfoContainer.innerHTML = `
+        <h3 style="text-align: left; font-size: 14px; margin-bottom: 10px;">좌석등급 / 잔여석</h3>`; // 제목 추가
+
+        // 좌석 데이터를 등급별로 그룹화 및 잔여석 계산
+        const seatgradeSummary = seatData.reduce((summary, seat) => {
+          const gradeName = getGradeName(seat.gradeId);   // 등급 이름
+          const gradeColor = getGradeColor(seat.gradeId); // 등급 색상
+          if (!summary[gradeName]) {
+            summary[gradeName] = { count: 0, price: seat.price, color: gradeColor };
+          }
+          if (seat.status !== "BOOKED") {
+            summary[gradeName].count++;
+          }
+          return summary;
+        }, {});
+
+        // 좌석 등급 정보 출력
+        Object.entries(seatgradeSummary).forEach(([gradeName, data]) => {
+          const gradeElement = document.createElement("div");
+          gradeElement.classList.add("info-item");
+          gradeElement.style.display = "flex";
+          gradeElement.style.alignItems = "center";
+
+          gradeElement.innerHTML = `
+            <span style="display: flex; align-items: center;">
+                <span style="width: 12px; height: 12px; background-color: ${data.color}; display: inline-block; margin-right: 10px; border-radius: 2px;"></span>
+                ${gradeName} ${data.count}석
+            </span>
+            <span>${data.price.toLocaleString()} 원</span>
+          `;
+          seatGradeInfoContainer.appendChild(gradeElement);
+        });
+      }
+
+      // 우측 컨테이너 정보 - 좌석 등급 색상 반환
+      function getGradeColor(gradeId) {
+        switch (gradeId.toString()) {
+          case "1": return "#b19cd9"; // VIP석 색상
+          case "2": return "#85c1e9"; // R석 색상
+          case "3": return "#82e0aa"; // S석 색상
+          case "4": return "#f5b041"; // A석 색상
+          default: return "#e8e8e8"; // 기본 색상
+        }
+      }
+
+
+      // 좌석 선택 완료 버튼 이벤트
+      document.getElementById("confirm-btn").addEventListener("click", () => {
+        const selectedSeatsArray = [...selectedSeats];
+        if (selectedSeatsArray.length === 0) {
+          alert("좌석을 선택해주세요.");
+          return;
+        }
+
+        const totalPrice = document.getElementById("total-price").textContent;
+        localStorage.setItem("selectedSeats", JSON.stringify(selectedSeatsArray));
+        localStorage.setItem("totalPrice", totalPrice);
+
+        // 다음 단계로 이동
+        window.location.href = "/payment/booking-info";
+      });
+
+      // 기본 좌석 데이터 가져오기
+      //fetchSeats("2024-12-25", "19:30"); // 기본적으로 2024년 12월 25일 19:30의 좌석 데이터를 가져옴
+      fetchSeats("2024-12-30", "20:00"); // 기본적으로 2024년 12월 30일 20:00의 좌석 데이터를 가져옴
+    });
+
+  </script>
+</body>
+
+</html>
