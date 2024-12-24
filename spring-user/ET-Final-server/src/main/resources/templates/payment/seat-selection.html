@@ -122,11 +122,119 @@
       cursor: pointer;
       border-radius: 5px;
     }
+
+
+    /* 진행 단계 헤더 스타일 */
+    .progress-header {
+      width: 100%;
+      background-color: white;
+      padding: 20px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .progress-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .step-text {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .progress-step.active .step-number {
+      background-color: #ff4500;
+      color: white;
+    }
+
+    .progress-step.active .step-text {
+      color: #ff4500;
+      font-weight: bold;
+    }
+
+    /* 진행 바 스타일 */
+    .progress-line {
+      position: absolute;
+      top: 20px;
+      left: 70px;
+      right: 70px;
+      height: 2px;
+      background-color: #e8e8e8;
+      z-index: 0;
+    }
+
+    .progress-line-active {
+      position: absolute;
+      top: 20px;
+      left: 70px;
+      width: 0%;
+      height: 2px;
+      background-color: #ff4500;
+      transition: width 0.3s ease;
+      z-index: 0;
+    }
+     /* 각 단계 너비 설정 */
+     body.step-1 .progress-line-active {
+      width: 33.3%;
+    }
+
+    body.step-2 .progress-line-active {
+      width: 66.6%;
+    }
+
+    body.step-3 .progress-line-active {
+      width: 100%;
+    }
   </style>
 </head>
 
-<body>
-  <h1>좌석 선택</h1>
+<body data-step="1">
+  <div class="progress-header">
+    <div class="progress-container">
+      <div class="progress-line"></div>
+      <div class="progress-line-active" id="progressBar"></div>
+
+      <div class="progress-step active">
+        <div class="step-number">1</div>
+        <div class="step-text">좌석 선택</div>
+      </div>
+
+      <div class="progress-step">
+        <div class="step-number">2</div>
+        <div class="step-text">주문자 정보</div>
+      </div>
+
+      <div class="progress-step">
+        <div class="step-number">3</div>
+        <div class="step-text">결제</div>
+      </div>
+    </div>
+  </div>
 
   <div class="container">
     <!-- 좌석 배치 영역 -->
@@ -159,6 +267,25 @@
       seatContainer.style.gridTemplateColumns = "repeat(10, 1fr)"; // 10열로 정렬
       document.querySelector(".seat-container").appendChild(seatContainer); // 기존 좌석 컨테이너에 추가
 
+      const body = document.body;
+
+      const currentStep =  parseInt(body.dataset.step, 10) || 1;
+
+      body.classList.add(`step-${currentStep}`);
+
+      // 진행 단계 표시 업데이트
+      const steps = document.querySelectorAll('.progress-step');
+      const progressBar = document.getElementById('progressBar');
+     
+
+      steps.forEach((step, index) => {
+        if (index + 1 <= currentStep) {
+          step.classList.add('active');
+        } else {
+          step.classList.remove('active');
+        }
+      });
+
 
       const selectedSeats = new Set();
 
@@ -166,6 +293,7 @@
       async function fetchSeats(showDate, showTime) {
         try {
           const response = await fetch(`/payment/seats?showDate=${showDate}&showTime=${showTime}`);
+          
           if (!response.ok) {
             throw new Error("좌석 데이터를 가져오는데 실패했습니다.");
           }
@@ -185,22 +313,23 @@
         seatData.forEach((seat, index) => {
           const seatElement = document.createElement("div");
           seatElement.classList.add("seat", getSeatClass(seat.gradeId));
+
           seatElement.textContent = seat.seatId ? seat.seatId.split("-")[2] : `좌석 ${index + 1}`; // 좌석 번호 표시
 
           // 좌석 데이터 확인
           console.log(`생성된 좌석 ${index}:`, seatElement);
 
-         // 좌석 상태에 따른 스타일 설정
-        if (seat.status === "BOOKED") { // 결제 완료된 좌석
+          // 좌석 상태에 따른 스타일 설정
+          if (seat.status === "BOOKED") { // 결제 완료된 좌석
             seatElement.classList.add("booked");
             seatElement.textContent = "X";
-        } else if (seat.status === "RESERVED") { // 예약된 좌석
+          } else if (seat.status === "RESERVED") { // 예약된 좌석
             seatElement.classList.add("reserved");
             seatElement.textContent = "예약";
-        } else {
+          } else {
             seatElement.dataset.price = seat.price;
             seatElement.addEventListener("click", () => toggleSeat(seatElement, seat.seatId));
-        }
+          }
 
           seatContainer.appendChild(seatElement); // 좌석 추가
         });

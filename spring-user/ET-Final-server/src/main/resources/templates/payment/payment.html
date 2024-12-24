@@ -8,18 +8,180 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- 아임포트 스크립트 추가 -->
     <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 진행 단계 헤더 스타일 */
+        .progress-header {
+            width: 100%;
+            background-color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .progress-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .progress-step.active .step-number {
+            background-color: #ff4500;
+            color: white;
+        }
+
+        .progress-step.active .step-text {
+            color: #ff4500;
+            font-weight: bold;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            right: 70px;
+            height: 2px;
+            background-color: #e8e8e8;
+            z-index: 0;
+        }
+
+        .progress-line-active {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            width: 100%;  /* 3단계이므로 100% */
+            height: 2px;
+            background-color: #ff4500;
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        /* 결제 페이지 스타일 */
+        .payment-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-section h3 {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .payment-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #cardPay {
+            background-color: #ff4500;
+            color: white;
+        }
+
+        #kakaoPay {
+            background-color: #FEE500;
+            color: #000000;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
 
-<body>
-
-    <div>
-        <h3>좌석 정보: <span id="seat-info"></span></h3>
-        <h3>예매자: <span id="booking-info"></span></h3>
-        <h3>총 결제 금액: <span id="total-price"></span></h3>
+<body data-step="3">
+     <!-- 진행 단계 헤더 -->
+     <div class="progress-header">
+        <div class="progress-container">
+            <div class="progress-line"></div>
+            <div class="progress-line-active" id="progressBar"></div>
+            
+            <div class="progress-step active">
+                <div class="step-number">1</div>
+                <div class="step-text">좌석 선택</div>
+            </div>
+            
+            <div class="progress-step active">
+                <div class="step-number">2</div>
+                <div class="step-text">주문자 정보</div>
+            </div>
+            
+            <div class="progress-step active">
+                <div class="step-number">3</div>
+                <div class="step-text">결제</div>
+            </div>
+        </div>
     </div>
-    <!-- 버튼들 -->
-    <button id="cardPay" onclick="handlePayment('html5_inicis.INIpayTest', 'card')">카드 결제</button>
-    <button id="kakaoPay" onclick="handlePayment('kakaopay', 'card')">카카오페이 결제</button>
+
+    <div class="payment-container">
+        <div class="info-section">
+            <h3>좌석 정보: <span id="seat-info"></span></h3>
+            <h3>예매자: <span id="booking-info"></span></h3>
+            <h3>총 결제 금액: <span id="total-price"></span></h3>
+        </div>
+        
+        <div class="payment-buttons">
+            <button id="cardPay" onclick="handlePayment('html5_inicis.INIpayTest', 'card')">카드 결제</button>
+            <button id="kakaoPay" onclick="handlePayment('kakaopay', 'card')">카카오페이 결제</button>
+        </div>
+    </div>
 
     <script th:inline="javascript">
 
