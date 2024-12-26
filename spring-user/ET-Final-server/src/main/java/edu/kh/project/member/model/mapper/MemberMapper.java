@@ -39,6 +39,22 @@ public interface MemberMapper {
 	 * @return
 	 */
 	int signup(Member inputMember);
+	
+	/** 기존 네이버 회원 조회
+	 * @param memberId
+	 * @return
+	 */
+	Member selectNaverMember(String memberId);
+
+	/** 신규 네이버 회원 등록
+	 * @param naverMember
+	 */
+	void insertNaverMember(Member naverMember);
+
+	/** 네이버 회원 수정
+	 * @param naverMember
+	 */
+	void updateNaverMember(Member naverMember);
 
 	void insertVenue(Map<String, Object> venue);
 

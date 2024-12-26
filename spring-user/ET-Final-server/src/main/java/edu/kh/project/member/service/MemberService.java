@@ -38,6 +38,11 @@ public interface MemberService {
 	 */
 	int signup(Member inputMember, String[] memberAddress);
 
+	/** 네이버 로그인
+	 * @param naverMember
+	 */
+	Member loginNaver(Member naverMember);
+	
 	void insertVenue(Map<String, Object> venue);
 
 	void insertPerf(Map<String, Object> perfMap);
@@ -49,5 +54,6 @@ public interface MemberService {
 	List<Map<String, String>> performanceDetails();
 
 	void insertVenueSeat(Map<String, Object> seat);
+
 
 }
