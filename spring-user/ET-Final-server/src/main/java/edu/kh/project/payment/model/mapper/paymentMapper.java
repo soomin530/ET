@@ -6,7 +6,9 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
+import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
 
 @Mapper
@@ -25,7 +27,12 @@ public interface paymentMapper {
 	// 결제 정보 저장
 	int insertPayment(Payment paymentData);
 
-	// 공연 상세 정보 조회
-	Map<String, Object> getPerformanceDetail(@Param("performanceId") String performanceId);
+	// 공연 정보 조회
+	PerformanceDetail getPerformanceDetail(String performanceId);
+
+	// 예약 정보 저장
+	int insertBooking(Booking bookingData);
+
+	
 	
 }
