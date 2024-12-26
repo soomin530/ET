@@ -44,9 +44,9 @@
 
 
 	<!-- 비밀번호 확인 모달 -->
-	<div id="passwordModal" class="modal">
-	    <div class="modal-content">
-	        <span class="modal-close" id="closeModal">&times;</span>
+	<div id="passwordModal" class="pwModal">
+	    <div class="modalContent">
+	        <span class="modal-cls" id="clsModal">&times;</span>
 	        <div class="verify-box">
 	            <div class="verify-title">정보 보호를 위해<br>비밀번호를 다시 한 번 확인합니다</div>
 	            <div class="input-group">
@@ -54,8 +54,8 @@
 	            </div>
 	            <div class="error-message" id="errorMsg">비밀번호가 일치하지 않습니다.</div>
 	            <div class="button-group">
-	                <button onclick="closeModal()" class="btn cancel-btn">취소</button>
-	                <button id="verifyBtn" class="btn verify-btn">확인</button>
+	                <button onclick="closeModal()" class="btn-cancel">취소</button>
+	                <button id="verifyBtn" class="btn-verify">확인</button>
 	            </div>
 	        </div>
 	    </div>
