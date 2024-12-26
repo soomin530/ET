@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공연 예매 사이트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/performance/detail.css">
+</head>
+
+<body>
+    <div class="performance-container">
+        <div class="performance-content">
+            <!-- 왼쪽: 공연 정보 -->
+            <div class="performance-info">
+                 <img th:src="${performance.poster}" th:alt="${performance.prfnm}"
+                    class="performance-image">
+                <table class="info-table">
+                    <tr>
+                        <th>공연명</th>
+                        <td class="performance-title" th:text="${performance.prfnm}"></td>
+                    </tr>
+                    <tr>
+                        <th>장소</th>
+                        <td class="performance-venue" th:text="${performance.fcltynm}"></td>
+                    </tr>
+                    <tr>
+                        <th>공연기간</th>
+						<td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}"></td>
+                    </tr>
+                    <tr>
+                        <th>공연시간</th>
+                        <td class="performance-runtime" th:text="${performance.prfruntime}"></td>
+                    </tr>
+                    <tr>
+                        <th>출연진</th>
+                        <td class="performance-actor" th:text="${performance.prfcast}"></td>
+                    </tr>
+                    <tr>
+                        <th>가격</th>
+                        <td class="performance-price" th:text="${performance.pcseguidance}"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 오른쪽: 예매 영역 -->
+            <div class="performance-booking">
+                <div class="datepicker">
+                    <div class="calendar-header">
+                        <button class="month-nav" id="prevMonth">‹</button>
+                        <span class="current-month" id="currentMonth"></span>
+                        <button class="month-nav" id="nextMonth">›</button> 
+                    </div>
+                    <div class="weekdays">
+                        <span>일</span>
+                        <span>월</span>
+                        <span>화</span>
+                        <span>수</span>
+                        <span>목</span>
+                        <span>금</span>
+                        <span>토</span>
+                    </div>
+                    <div class="days" id="calendar-days"></div>
+                </div>
+                <div class="schedule-box" id="schedule-info">
+                    <h3 class="text-lg font-bold mb-2">선택한 날짜의 공연 시간</h3>
+                    <div class="selected-date" id="selected-date">날짜를 선택해주세요</div>
+                    <div class="time-slots" id="time-slots">
+                    </div>
+                </div>
+                <button class="booking-btn" id="booking-btn" disabled>예매하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
+    <script src="/js/performance/detail.js"></script>
+</body>
+
+</html>

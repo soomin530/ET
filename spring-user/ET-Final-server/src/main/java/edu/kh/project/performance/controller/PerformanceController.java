@@ -59,6 +59,7 @@ public class PerformanceController {
      * @param mt20id
      * @param model
      * @return
+     * @author 우수민
      */
     @GetMapping("/detail/{mt20id}")
     public String detail(@PathVariable("mt20id") String mt20id, Model model) {
@@ -68,7 +69,7 @@ public class PerformanceController {
         // 공연 정보 추가
         model.addAttribute("performance", performance);
 
-        return "performance/detail"; 
+        return "performance/performance-detail-calander"; 
     }
 
 }
