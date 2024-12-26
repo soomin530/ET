@@ -11,7 +11,9 @@
 	
 	<!-- 공연 상세페이지 조회 -->
 	<select id="detail">
-
+		SELECT POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE
+		FROM TB_PERFORMANCES_DETAIL
+		WHERE MT20ID = #{mt20id}
 	</select>
 	
 </mapper>
