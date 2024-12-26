@@ -50,7 +50,7 @@ const memberLoginPw = document.getElementById("memberLoginPw");
 
 // 로그인
 const performLogin = () => {
-	
+
 	if (memberLoginId.value.length === 0) {
 		alert("아이디를 입력해주세요.");
 		memberLoginId.focus();
@@ -105,8 +105,9 @@ memberLoginPw.addEventListener("keydown", (event) => {
 	}
 });
 
-// JWT 토큰을 사용한 로그아웃
+// JWT 토큰을 사용한 회원 로그아웃
 function logoutSession() {
+	
 	fetch("/member/logout", {
 		method: "POST"
 	})
@@ -118,7 +119,25 @@ function logoutSession() {
 			console.error("로그아웃 중 오류 발생:", error);
 			alert("로그아웃 중 문제가 발생했습니다.");
 			window.location.href = "/";
-			
+
+		});
+}
+
+// JWT 토큰을 사용한 네이버 로그아웃
+function naverLogoutSession() {
+	
+	fetch("/naver/logout", {
+		method: "POST"
+	})
+		.then(response => {
+			// 메인 페이지로 이동
+			window.location.href = "/";
+		})
+		.catch(error => {
+			console.error("로그아웃 중 오류 발생:", error);
+			alert("로그아웃 중 문제가 발생했습니다.");
+			window.location.href = "/";
+
 		});
 }
 
@@ -651,18 +670,3 @@ signUpForm.addEventListener("submit", e => {
 		}
 	}
 });
-
-// 취소버튼 눌렀을때 로그인 페이지로 돌아가기
-document.querySelectorAll('#cancelButton').forEach(button => {
-	button.addEventListener('click', function() {
-		if (confirm("회원가입을 취소하고 로그인 페이지로 이동 하시겠습니까?")) {
-			window.location.href = '/member/login';
-		}
-	});
-});
-
-function fetchProtectedResource() {
-	
-	window.location.href = "/member/perform-and-save";
-	
-}

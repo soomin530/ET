@@ -29,5 +29,8 @@ public class Member {
 	private Boolean memberEmailAlarm;
 	private String memberEmail;
 	
+	// 네이버 로그인 구분 필드 추가
+    private String naverFl; // 'Y' 또는 'N'
+	
 	
 }

@@ -21,7 +21,7 @@ public class JwtTokenUtil {
     private final byte[] secretKeyBytes;
     
     // 토큰 유효 시간 설정
-    private final long accessTokenValidityInMilliseconds = 1000 * 60 * 15;    // Access Token: 15분
+    private final long accessTokenValidityInMilliseconds = 1000 * 60 * 1;    // Access Token: 15분
     private final long refreshTokenValidityInMilliseconds = 1000 * 60 * 60 * 24 * 14; // Refresh Token: 2주
 
     /**

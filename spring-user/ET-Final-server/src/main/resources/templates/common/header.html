@@ -5,6 +5,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>ET e.ticket</title>
+
+	<script>
+		// babel-polyfill이 이미 있는지 확인
+		if (!window._babelPolyfill) {
+			document.write('<script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js"><\/script>');
+		}
+	</script>
 </head>
 
 <body>
@@ -21,7 +28,6 @@
 					<a href="/performance/genre/musical" class="nav-link">뮤지컬</a>
 					<a href="/performance/genre/theater" class="nav-link">연극</a>
 					<a href="/performance/genre/classic" class="nav-link">클래식</a>
-					<a href="/member/perform-and-save" class="nav-link">임시버튼</a>
 				</div>
 
 				<div class="search-container">
@@ -39,27 +45,38 @@
 					<!-- 세션이 있을 때: 마이페이지, 로그아웃 -->
 					<th:block th:if="${session.loginMember != null}" th:object="${session.loginMember}">
 
-						<!-- 일반 회원 (memberAuth가 있는 경우) -->
-						<th:block th:if="*{memberAuth != null}">
-							<!-- 일반 회원 -->
-							<th:block th:if="*{memberAuth == 1}">
-								<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
-								<button class="mypage-button">마이페이지</button>
+						<!-- 네이버 로그인 회원 -->
+						<th:block th:if="*{naverFl == 'Y'}">
+							<button class="nickname-button" th:text="*{memberNickname}">네이버 닉네임</button>
+							<button class="mypage-button">마이페이지</button>
+							<button class="logout-button" onclick="naverLogoutSession()">로그아웃</button>
+						</th:block>
+
+						<!-- 일반 회원 -->
+						<th:block th:if="*{naverFl == 'N'}">
+							<th:block th:if="*{memberAuth != null}">
+								<!-- 일반 회원 -->
+								<th:block th:if="*{memberAuth == 1}">
+									<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
+									<button class="mypage-button">마이페이지</button>
+									<button class="logout-button" onclick="logoutSession()">로그아웃</button>
+								</th:block>
+
+								<!-- 시스템 관리자 -->
+								<th:block th:if="*{memberAuth == 2}">
+									<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
+									<button class="logout-button" onclick="logoutSession()">로그아웃</button>
+								</th:block>
 							</th:block>
 
-							<!-- 시스템 관리자 -->
-							<th:block th:if="*{memberAuth == 2}">
-								<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
+							<!-- 공연 관리자 -->
+							<th:block th:if="*{memberAuth == 3}">
+								<button class="nickname-button" th:text="*{concertManagerNickname}">공연관리자 닉네임</button>
+								<button class="performance-manage-button">공연관리</button>
+								<button class="logout-button" onclick="perfLogoutSession()">로그아웃</button>
 							</th:block>
 						</th:block>
 
-						<!-- 공연 관리자 (memberAuth가 없는 경우) -->
-						<th:block th:if="*{memberAuth == 3}">
-							<button class="nickname-button" th:text="*{concertManagerNickname}">공연관리자 닉네임</button>
-							<button class="performance-manage-button">공연관리</button>
-						</th:block>
-
-						<button class="logout-button" onclick="logoutSession()">로그아웃</button>
 					</th:block>
 				</div>
 			</div>
@@ -77,6 +94,11 @@
 				<input type="text" id="memberLoginId" placeholder="아이디" required>
 				<input type="password" id="memberLoginPw" placeholder="비밀번호" required>
 				<button type="submit" id="login-Btn">로그인</button>
+
+				<a href="/naver/login">
+					<img src="/images/naver_login_button.png" alt="네이버 로그인" style="width: 45px; height: 45px;">
+				</a>
+
 			</div>
 			<div class="modal-footer">
 				<p>아직 계정이 없으신가요? <a href="#" onclick="openModal('selectModal'); closeModal('loginModal')">회원가입</a></p>
