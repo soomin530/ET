@@ -19,6 +19,6 @@ public class PerformanceDetail {
 	private String performanceFrom;
 	private String performanceTo;
 	private String facilityName;
-	private int performanceRuntime;
+	private String performanceRuntime;
 	private String poster;
 }

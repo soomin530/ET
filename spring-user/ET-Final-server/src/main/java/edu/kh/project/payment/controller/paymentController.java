@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.RestTemplate;
 
+import edu.kh.project.member.model.dto.Member;
+import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
 import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
@@ -26,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("payment")
-@SessionAttributes({"loginMember"}) // 로그인된 멤버 유지
+@SessionAttributes({ "loginMember" }) // 로그인된 멤버 유지
 @RequiredArgsConstructor
 @Slf4j
 public class paymentController {
@@ -122,33 +125,34 @@ public class paymentController {
 		}
 
 	}
-	
-	/** 공연 상세 정보 조회
+
+	/**
+	 * 공연 상세 정보 조회
+	 * 
 	 * @param performanceId
 	 * @return
 	 */
 	@GetMapping("performance-detail")
-	public ResponseEntity<PerformanceDetail> getPerformanceDetail(@RequestParam("performanceId") String performanceId){
-		
+	public ResponseEntity<PerformanceDetail> getPerformanceDetail(@RequestParam("performanceId") String performanceId) {
+
 		if (performanceId == null || performanceId.trim().isEmpty()) {
-	        log.warn("performanceId가 제공되지 않았습니다.");
-	        return ResponseEntity.badRequest().body(null);
-	    }
-		
+			log.warn("performanceId가 제공되지 않았습니다.");
+			return ResponseEntity.badRequest().body(null);
+		}
+
 		try {
-	        PerformanceDetail detail = service.getPerformanceDetail(performanceId);
-	        return ResponseEntity.ok(detail);
-	        
-	    } catch (RuntimeException e) {
-	        log.error("공연 상세 정보 조회 실패: {}", e.getMessage());
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        
-	    } catch (Exception e) {
-	        log.error("서버 오류 발생", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
+			PerformanceDetail detail = service.getPerformanceDetail(performanceId);
+			return ResponseEntity.ok(detail);
+
+		} catch (RuntimeException e) {
+			log.error("공연 상세 정보 조회 실패: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+		} catch (Exception e) {
+			log.error("서버 오류 발생", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
 	}
-	
 
 	/**
 	 * 좌석 예약
@@ -175,30 +179,53 @@ public class paymentController {
 	 * @return
 	 */
 	@PostMapping("save-payment")
-	public ResponseEntity<String> savePayment(@RequestBody Payment paymentData) {
-
-		// 전달된 데이터를 로그로 출력
-		log.info("수신된 결제 데이터: {}", paymentData);
+	public ResponseEntity<String> savePayment(@RequestBody Payment paymentData,
+			@SessionAttribute("loginMember") Member loginMember ) {
 
 		try {
+			// 1. TB_PAYMENT에 데이터 삽입
 			boolean success = service.savePayment(paymentData);
 
-			if (success) {
-	            // 여러 좌석 업데이트
-	            for (String seatId : paymentData.getSeatIds()) {
-	                boolean seatReserved = service.reserveSeat(seatId);
-	                if (!seatReserved) {
-	                    log.warn("좌석 상태 업데이트 실패: {}", seatId);
-	                }
-	            }
-	            return ResponseEntity.ok("결제가 성공적으로 저장되었고 좌석 상태가 업데이트되었습니다.");
-	        } else {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 저장에 실패했습니다.");
-	        }
-	    } catch (Exception e) {
-	        log.error("결제 처리 중 오류 발생", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 처리 중 오류가 발생했습니다.");
-	    }
+			if (!success) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 저장 실패");
+			}
+			
+			// 2. 예약 정보 생성
+	        Booking bookingData = Booking.builder()
+	                .bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
+	                .bookingDate(new Timestamp(System.currentTimeMillis())) // 현재 시간
+	                .totalPrice(paymentData.getPaidAmount())
+	                .memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
+	                .mt20id(paymentData.getMt20id()) // 공연 ID
+	                .merchantUid(paymentData.getMerchantUid())
+	                .bookingStatus("BOOKED") // 기본 예약 상태
+	                .build();
+			
+			
+			
+			
+			
+
+			// 2. TB_TICKET_BOOKING에 데이터 삽입
+			boolean bookingSaved = service.saveBooking(bookingData);
+
+			if (!bookingSaved) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 정보 저장 실패");
+			}
+
+			// 3.여러 좌석 업데이트
+			for (String seatId : paymentData.getSeatIds()) {
+				boolean seatReserved = service.reserveSeat(seatId);
+				if (!seatReserved) {
+					log.warn("좌석 상태 업데이트 실패: {}", seatId);
+				}
+			}
+			return ResponseEntity.ok("결제가 성공적으로 저장되었고 좌석 상태가 업데이트되었습니다.");
+
+		} catch (Exception e) {
+			log.error("결제 처리 중 오류 발생", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 처리 중 오류가 발생했습니다.");
+		}
 	}
 
 }

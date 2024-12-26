@@ -1,15 +1,14 @@
-document.addEventListener('DOMContentLoaded', function () {
     // "회원 정보 수정" 버튼 클릭 이벤트
     document.querySelector('.updateInfo').addEventListener('click', function (e) {
 
         // 비밀번호 인증 모달 표시
-        const modal = document.getElementById('passwordModal');
-        modal.style.display = 'flex'; // 모달을 화면에 보이도록 설정
+        const modalvf = document.getElementById('passwordModal');
+        modalvf.style.display = 'flex'; // 모달을 화면에 보이도록 설정
     });
 
     // "취소" 버튼 클릭 이벤트
-    document.getElementById('closeModal').addEventListener('click', function () {
-        closeModal();
+    document.getElementById('clsModal').addEventListener('click', function () {
+        clsModal();
     });
 
     // 비밀번호 입력 필드에서 엔터 키 이벤트
@@ -21,36 +20,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 모달 배경을 클릭하면 모달 닫기
     document.getElementById('passwordModal').addEventListener('click', function () {
-        closeModal();
+		console.log("ehla");
+        //closeModal();
     });
 
     // 모달 내부 클릭 시 닫히지 않도록 방지
-    document.querySelector('.modal-content').addEventListener('click', function (e) {
+    document.querySelector('.modalContent').addEventListener('click', function (e) {
         e.stopPropagation();
     });
 
     // 모달 닫기 함수
-    function closeModal() {
-        const modal = document.getElementById('passwordModal');
-        modal.style.display = 'none'; // 모달을 숨김
+    function clsModal() {
+        const modalvf = document.getElementById('passwordModal');
+        modalvf.style.display = 'none'; // 모달을 숨김
         document.getElementById('passwordInput').value = ''; // 입력 필드 초기화
         document.getElementById('errorMsg').style.display = 'none'; // 오류 메시지 숨김
     }
 
     // 비밀번호 확인 함수
-    function verifyPassword() {
-        const password = document.getElementById('passwordInput').value;
+	async function verifyPassword() {
+	    const password = passwordInput.value;
+	    
+	    if (!password) {
+	        errorMsg.textContent = '비밀번호를 입력해주세요.';
+	        errorMsg.style.display = 'block';
+	        return;
+	    }
 
-        // 비밀번호 인증 요청 (예제용: 실제로는 서버에 요청)
-        if (password === 'test1234') { // 비밀번호가 맞다면
-            alert('비밀번호 인증 성공');
-            closeModal();
+	    try {
+	        const formData = new FormData();
+	        formData.append("memberPw", password);
 
-            // 여기에서 페이지 이동 처리 (회원 정보 수정 페이지로 이동)
-            window.location.href = '/mypage/updateInfo';
-        } else { // 비밀번호가 틀리다면
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.style.display = 'block'; // 오류 메시지 표시
-        }
-    }
-});
+	        const response = await fetch('/mypage/verifyPassword', {
+	            method: 'POST',
+	            body: formData
+	        });
+
+	        const result = await response.json();
+	        
+	        if (result === 1) {
+	            // 비밀번호 일치
+	            window.location.href = '/mypage/updateInfo';
+	        } else {
+	            // 비밀번호 불일치
+	            errorMsg.textContent = '비밀번호가 일치하지 않습니다.';
+	            errorMsg.style.display = 'block';
+	            passwordInput.value = '';
+	            passwordInput.focus();
+	        }
+	    } catch (error) {
+	        console.error('비밀번호 확인 중 오류 발생:', error);
+	        errorMsg.textContent = '서버 통신 중 오류가 발생했습니다.';
+	        errorMsg.style.display = 'block';
+	    }
+	}

@@ -43,7 +43,7 @@
 						<th:block th:if="*{memberAuth != null}">
 							<!-- 일반 회원 -->
 							<th:block th:if="*{memberAuth == 1}">
-								<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
+								<button class="nickname-button" th:text="*{memberNickname}" onclick="location.href='/mypage/memberInfo'">계정 닉네임</button>
 								<button class="mypage-button">마이페이지</button>
 							</th:block>
 
