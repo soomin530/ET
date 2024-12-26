@@ -63,7 +63,7 @@ concertManagerLoginPw.addEventListener("keydown", (event) => {
 });
 
 // JWT 토큰을 사용한 로그아웃
-function logoutSession() {
+function perfLogoutSession() {
 	fetch("/perfmgr/logout", {
 		method: "POST"
 	})

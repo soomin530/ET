@@ -12,4 +12,117 @@
 	const message =  /*[[${message}]]*/ "전달 받은 message";
 
 	if (message != null) alert(message);
+
+	class TokenRefresher {
+		constructor() {
+			this.refreshInterval = null;
+			this.tokenRefreshTime = 5 * 15 * 1000; // 5분마다 검사
+			this.isRefreshing = false;
+			this.initializeTokenRefresh();
+		}
+
+		initializeTokenRefresh() {
+			// 페이지 로드시 토큰 갱신 시작
+			this.startTokenRefresh();
+
+			// API 요청 실패 시 토큰 갱신 처리
+			this.setupRequestInterceptor();
+		}
+
+		startTokenRefresh() {
+			this.refreshInterval = setInterval(() => {
+				this.checkAndRefreshToken();
+			}, this.tokenRefreshTime);
+		}
+
+		stopTokenRefresh() {
+			if (this.refreshInterval) {
+				clearInterval(this.refreshInterval);
+				this.refreshInterval = null;
+			}
+		}
+
+		async checkAndRefreshToken() {
+			if (this.isRefreshing) return;
+
+			try {
+				this.isRefreshing = true;
+				const response = await fetch('/member/reissue', {
+					method: 'POST',
+					credentials: 'include', // 쿠키 포함
+				});
+
+				if (response.ok) {
+					console.log('Token refreshed successfully');
+				} else {
+					throw new Error('Token refresh failed');
+				}
+			} catch (error) {
+				console.error('Token refresh error:', error);
+				this.handleRefreshError();
+			} finally {
+				this.isRefreshing = false;
+			}
+		}
+
+		setupRequestInterceptor() {
+			// API 요청 실패 시 처리
+			document.addEventListener('tokenError', async (event) => {
+				if (event.detail?.status === 401) {
+					await this.handleTokenRefresh();
+				}
+			});
+		}
+
+		async handleTokenRefresh() {
+			try {
+				const response = await fetch('/member/reissue', {
+					method: 'POST',
+					credentials: 'include',
+				});
+
+				if (!response.ok) {
+					throw new Error('Token refresh failed');
+				}
+			} catch (error) {
+				console.error('Token refresh error:', error);
+				this.handleRefreshError();
+			}
+		}
+
+		handleRefreshError() {
+			// 토큰 갱신 실패 시 메인 페이지 이동
+			window.location.href = '/';
+		}
+	}
+
+	// 토큰 리프레셔 인스턴스 생성 및 시작
+	document.addEventListener('DOMContentLoaded', () => {
+		window.tokenRefresher = new TokenRefresher();
+	});
+
+	// API 요청 시 사용할 함수
+	async function makeApiRequest(url, options = {}) {
+		try {
+			const response = await fetch(url, {
+				...options,
+				credentials: 'include',
+			});
+
+			if (response.status === 401) {
+				// 토큰 에러 이벤트 발생
+				document.dispatchEvent(new CustomEvent('tokenError', {
+					detail: {status: 401}
+				}));
+				// 토큰 갱신 후 재시도
+				return await fetch(url, options);
+			}
+
+			return response;
+		} catch (error) {
+			console.error('API request error:', error);
+			throw error;
+		}
+	}
+
 </script>

@@ -26,5 +26,7 @@ public class PerfMgr {
 	private String concertManagerCompanyComment;
 	private String concertManagerEmail;
 	private int memberAuth;
+
+	private String naverFl;
 	
 }
