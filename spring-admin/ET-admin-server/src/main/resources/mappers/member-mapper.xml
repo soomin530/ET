@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="edu.kh.admin.main.model.mapper.AdminMapper">
-	
+
+	<!-- 모든 회원 조회 -->
+	<select id="showMemberList" >
+		SELECT MEMBER_NO, MEMBER_NICKNAME ,MEMBER_ADDRESS ,MEMBER_TEL 
+		FROM "TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_AUTH = '1'
+		ORDER BY MEMBER_NO ASC
+	</select>
 
 	
 

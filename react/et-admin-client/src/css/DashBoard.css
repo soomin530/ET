@@ -121,21 +121,24 @@
     display: flex;
     flex-direction: column;
     width: 10%;
+
     
     padding: 0;
 }
 .router-tab-box a {
+    width: 130px;
+    height: 100px;
     text-decoration: none;
     color: black;
-    flex-basis: calc(100%/3);
     border: 1px solid #ddd;
     padding: 30px;
     text-align: center;
     border-radius: 0 0 10px 10px;
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     transition: all 0.3s;
 }
+
 /* Link 태그는 html상 a태그 */
 .router-tab-box a.active {
     color : #fff;
@@ -156,3 +159,34 @@
 
     border: 1px solid black;
 }
+
+.main-table-container {
+    width: 90%;
+    height: 80%;
+    border: 1px solid black;
+
+    margin: auto;
+}
+
+.table-border {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+.table-border th,td{
+    padding: 10px; /* 셀 안쪽 여백 */
+    border: 1px solid #ccc; /* 셀 경계선 */
+    text-align: center; /* 글씨 중앙 정렬 */
+}
+
+.table-border tr {
+    transition: all 0.3s ease; 
+  }
+
+.table-border tbody tr:hover {
+    background-color: rgba(255, 0, 0, 0.1); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+    transform: translateY(-5px); 
+}
+
