@@ -47,36 +47,37 @@
 
 						<!-- 네이버 로그인 회원 -->
 						<th:block th:if="*{naverFl == 'Y'}">
-							<button class="nickname-button" th:text="*{memberNickname}">네이버 닉네임</button>
+							<button class="nickname-button" th:text="*{memberNickname}"
+								onclick="location.href='/mypage/memberInfo'">네이버 닉네임</button>
 							<button class="mypage-button">마이페이지</button>
 							<button class="logout-button" onclick="naverLogoutSession()">로그아웃</button>
 						</th:block>
 
 						<!-- 일반 회원 -->
-						<th:block th:if="*{naverFl == 'N'}">
-							<th:block th:if="*{memberAuth != null}">
-								<!-- 일반 회원 -->
-								<th:block th:if="*{memberAuth == 1}">
-									<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
-									<button class="mypage-button">마이페이지</button>
-									<button class="logout-button" onclick="logoutSession()">로그아웃</button>
-								</th:block>
+						<th:block th:if="*{naverFl == 'N' && memberAuth != null}">
+							<!-- 일반 회원 -->
+							<th:block th:if="*{memberAuth == 1}">
+								<button class="nickname-button" th:text="*{memberNickname}"
+									onclick="location.href='/mypage/memberInfo'">계정 닉네임</button>
+								<button class="mypage-button">마이페이지</button>
+								<button class="logout-button" onclick="logoutSession()">로그아웃</button>
+							</th:block>
 
-								<!-- 시스템 관리자 -->
-								<th:block th:if="*{memberAuth == 2}">
-									<button class="nickname-button" th:text="*{memberNickname}">계정 닉네임</button>
-									<button class="logout-button" onclick="logoutSession()">로그아웃</button>
-								</th:block>
+							<!-- 시스템 관리자 -->
+							<th:block th:if="*{memberAuth == 2}">
+								<button class="nickname-button" th:text="*{memberNickname}"
+									onclick="location.href='/mypage/memberInfo'">계정 닉네임</button>
+								<button class="logout-button" onclick="logoutSession()">로그아웃</button>
 							</th:block>
 
 							<!-- 공연 관리자 -->
 							<th:block th:if="*{memberAuth == 3}">
-								<button class="nickname-button" th:text="*{concertManagerNickname}">공연관리자 닉네임</button>
+								<button class="nickname-button" th:text="*{concertManagerNickname}"
+									onclick="location.href='/mypage/memberInfo'">공연관리자 닉네임</button>
 								<button class="performance-manage-button">공연관리</button>
 								<button class="logout-button" onclick="perfLogoutSession()">로그아웃</button>
 							</th:block>
 						</th:block>
-
 					</th:block>
 				</div>
 			</div>

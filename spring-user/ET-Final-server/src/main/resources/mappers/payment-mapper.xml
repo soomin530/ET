@@ -17,6 +17,14 @@
 	    )
 	</insert>
 	
+	<!-- 예약 정보 저장 -->
+	<insert id="insertBooking">
+		 INSERT INTO TB_TICKET_BOOKING (
+            BOOKING_ID, BOOKING_DATE, TOTAL_PRICE, MEMBER_NO, MT20ID, MERCHANT_UID, BOOKING_STATUS
+        ) VALUES (
+            #{bookingId}, SYSDATE, #{totalPrice}, #{memberNo}, #{mt20id}, #{merchantUid}, 'BOOKED'
+        )	
+	</insert>
 	
 
 

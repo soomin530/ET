@@ -34,7 +34,7 @@
 	</select>
 	
 	<!-- 공연 상세 정보 출력 -->
-	<select id="getPerformanceDetail" resultType="map">
+	<select id="getPerformanceDetail" resultType="edu.kh.project.payment.model.dto.PerformanceDetail">
 		SELECT PD.PRFNM AS performanceName,
 		   PD.PRFPDFROM AS performanceFrom,
 		   PD.PRFPDTO AS performanceTo,

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
 import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
@@ -61,22 +62,14 @@ public class paymentServiceImpl implements paymentService{
 	// 공연 상세 정보 조회
 	@Override
 	public PerformanceDetail getPerformanceDetail(String performanceId) {
-	    Map<String, Object> resultMap = mapper.getPerformanceDetail(performanceId);
-	    if (resultMap == null || resultMap.isEmpty()) {
-	        throw new RuntimeException("공연 상세 정보를 찾을 수 없습니다.");
-	    }
+		  return mapper.getPerformanceDetail(performanceId);
+	}
 
-	    PerformanceDetail dto = new PerformanceDetail();
-	    dto.setPerformanceName((String) resultMap.get("performanceName"));
-	    dto.setPerformanceFrom((String) resultMap.get("performanceFrom"));
-	    dto.setPerformanceTo((String) resultMap.get("performanceTo"));
-	    dto.setFacilityName((String) resultMap.get("facilityName"));
-	    dto.setPerformanceRuntime(resultMap.get("performanceRuntime") != null 
-	        ? ((Number) resultMap.get("performanceRuntime")).intValue() 
-	        : 0);
-	    dto.setPoster((String) resultMap.get("poster"));
-
-	    return dto;
+	// 예약 정보 저장
+	@Override
+	public boolean saveBooking(Booking bookingData) {
+		int result = mapper.insertBooking(bookingData);
+		return result > 0;
 	}
 
 	

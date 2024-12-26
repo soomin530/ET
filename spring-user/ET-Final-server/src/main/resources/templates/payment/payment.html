@@ -121,8 +121,8 @@
             margin-top: 20px;
         }
 
-         /*이전 단계 버튼 색상*/
-         .prev-btn {
+        /*이전 단계 버튼 색상*/
+        .prev-btn {
             background-color: #b6b2b0;
         }
 
@@ -198,6 +198,10 @@
             const parts = seatId.split('-');
             const gradeName = parts[1]; // R석, VIP석 등급
             const seatNumber = parts[2]; // A1, A2 등 좌석 번호
+            // "전석"일 경우 "석"을 붙이지 않음
+            if (gradeName === "전석") {
+                return `${gradeName} ${seatNumber}`; // 전석 A1 형식으로 변환
+            }
             return `${gradeName}석 ${seatNumber}`; // R석 A1 형식으로 변환
         }).join(', ');
 

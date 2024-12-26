@@ -3,6 +3,7 @@ package edu.kh.project.payment.service;
 import java.util.List;
 import java.util.Map;
 
+import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
 import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
@@ -25,6 +26,9 @@ public interface paymentService {
 	
 	// 상세정보 조회
 	PerformanceDetail getPerformanceDetail(String performanceId);
+
+	// 예약 정보 저장
+	boolean saveBooking(Booking bookingData);
 
 	
 
