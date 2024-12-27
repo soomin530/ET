@@ -214,7 +214,7 @@ class Calendar {
 // 기존의 예매 버튼 클릭 이벤트를 수정
 document.getElementById('booking-btn').onclick = function() {
 	const calendar = window.calendarInstance;
-	if (calendar.selectedDate && calendar.selectedTime && calendar.selectedRound) {
+	if (calendar.selectedDate && calendar.selectedTime) {
 
 		// mt20id 값 가져오기
 		const mt20id = document.getElementById('mt20id')?.value;
