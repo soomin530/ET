@@ -31,16 +31,6 @@ public class paymentServiceImpl implements paymentService{
 	@Value("${iamport.api.secret}")
 	private String apiSecret;
 
-	@Override
-	public List<Seat> getSeats(String showDate, String showTime) {
-		
-		// 파라미터 null 체크
-        if (showDate == null || showTime == null) {
-            throw new IllegalArgumentException("showDate와 showTime은 null일 수 없습니다.");
-        }
-        
-		return mapper.selectSeatsByShow(showDate,showTime);
-	}
 	
 	 // 좌석 상태 업데이트 (예약)
     public boolean reserveSeat(String seatId) {
@@ -70,6 +60,12 @@ public class paymentServiceImpl implements paymentService{
 	public boolean saveBooking(Booking bookingData) {
 		int result = mapper.insertBooking(bookingData);
 		return result > 0;
+	}
+
+	@Override
+	public List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime) {
+		// TODO Auto-generated method stub
+		return mapper.selectSeatsByShow(mt20id, selectedDate, selectedTime );
 	}
 
 	

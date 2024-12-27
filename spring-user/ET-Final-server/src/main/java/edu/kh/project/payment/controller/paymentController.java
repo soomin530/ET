@@ -126,10 +126,26 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("seats")
-	public ResponseEntity<List<Seat>> getSeats(@RequestParam(name = "showDate") String showDate,
-			@RequestParam(name = "showTime") String showTime) {
+	public ResponseEntity<List<Seat>> getSeats(@RequestParam("mt20id") String mt20id,
+			@RequestParam("selectedDate") String selectedDate, @RequestParam("selectedTime") String selectedTime,
+			Model model) {
+
+		log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate, selectedTime);
+		
+		if (mt20id == null || selectedDate == null || selectedTime == null) {
+			log.error("필수 파라미터가 누락되었습니다: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate,
+					selectedTime);
+			return ResponseEntity.badRequest().build(); // 400 Bad Request 반환
+		}
+
 		try {
-			List<Seat> seats = service.getSeats(showDate, showTime);
+			List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime);
+
+			if (seats.isEmpty()) {
+				log.warn("좌석 데이터가 없습니다: 공연 ID={}, 날짜={}, 시간={}", mt20id, selectedDate, selectedTime);
+				return ResponseEntity.noContent().build();
+			}
+
 			return ResponseEntity.ok(seats);
 
 		} catch (Exception e) {

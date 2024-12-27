@@ -82,11 +82,7 @@
 		</div>
 	</div>
 
-    <form action="/payment/seat-selection" method="get" class="seatSelection" id="bookingForm"> 
-        <input type="hidden" name="mt20id" th:value="${performance.mt20id}">
-        <input type="hidden" name="selectedDate" value=""> 
-        <input type="hidden" name="selectedTime" value=""> 
-    </form>
+  <input type="hidden" id="mt20id" name="mt20id" th:value="${performance.mt20id}">
 
 	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
 

@@ -11,7 +11,7 @@ import edu.kh.project.performance.model.dto.Performance;
 public interface paymentService {
 
 	// 특정 공연 좌석 정보 조회
-	List<Seat> getSeats(String showDate, String showTime);
+	//List<Seat> getSeats(String showDate, String showTime);
 
 	// 좌석 상태 업데이트(예약)
 	static boolean bookSeat(String seatId) {	
@@ -29,6 +29,9 @@ public interface paymentService {
 
 	// 예약 정보 저장
 	boolean saveBooking(Booking bookingData);
+
+	// 특정 공연 좌석 정보 조회
+	List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime);
 
 	
 

@@ -15,7 +15,7 @@ import edu.kh.project.performance.model.dto.Performance;
 public interface paymentMapper {
 
 	// 특정 공연 좌석 조회
-	List<Seat> selectSeatsByShow(@Param("showDate") String showDate, @Param("showTime") String showTime);
+	//List<Seat> selectSeatsByShow(@Param("showDate") String showDate, @Param("showTime") String showTime);
 
 	// 좌석 상태 업데이트(예약)
 	int updateSeatStatus(@Param("seatId") String seatId, @Param("status") String status);
@@ -32,6 +32,9 @@ public interface paymentMapper {
 
 	// 예약 정보 저장
 	int insertBooking(Booking bookingData);
+
+	// 특정 공연 좌석 조회
+	List<Seat> selectSeatsByShow(String mt20id, String selectedDate, String selectedTime);
 
 	
 	
