@@ -15,7 +15,8 @@
 		JOIN TB_SEAT_GRADE SG ON TS.GRADE_ID = SG.GRADE_ID
 		JOIN TB_PERFORMANCE_SEAT_PRICE PSP
 		ON TS.GRADE_ID = PSP.GRADE_ID AND TS.MT20ID = PSP.MT20ID
-		WHERE TS.SHOW_DATE = TO_DATE(#{showDate}, 'YYYY-MM-DD')
+		WHERE TS.MT20ID = #{mt20id}
+		AND TS.SHOW_DATE = TO_DATE(#{showDate}, 'YYYY-MM-DD')
 		AND TS.SHOW_TIME = #{showTime}
 	</select>
 	
@@ -34,12 +35,15 @@
 	</select>
 	
 	<!-- 공연 상세 정보 출력 -->
-	<select id="getPerformanceDetail" resultType="edu.kh.project.payment.model.dto.PerformanceDetail">
-		SELECT PD.PRFNM AS performanceName,
-		   PD.PRFPDFROM AS performanceFrom,
-		   PD.PRFPDTO AS performanceTo,
-		   PD.FCLTYNM AS facilityName,
-		   PD.PRFRUNTIME AS performanceRuntime,
+	<select id="getPerformanceDetail" resultType="edu.kh.project.performance.model.dto.Performance">
+		SELECT 
+		   PD.MT20ID AS mt20id,
+	  	   PD.MT10ID AS mt10id, 	
+		   PD.PRFNM AS prfnm,
+		   PD.PRFPDFROM AS prfpdfrom,
+		   PD.PRFPDTO AS prfpdto,
+		   PD.FCLTYNM AS fcltynm,
+		   PD.PRFRUNTIME AS prfruntime,
 		   PD.POSTER AS poster
 		FROM "TB_PERFORMANCES_DETAIL" PD
 		WHERE PD.MT20ID = #{performanceId}

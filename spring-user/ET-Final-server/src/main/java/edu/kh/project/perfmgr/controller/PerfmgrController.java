@@ -147,6 +147,7 @@ public class PerfmgrController {
 			refreshTokenCookie.setPath("/");
 			response.addCookie(refreshTokenCookie);
 
+
 			status.setComplete();
 
 			return ResponseEntity.ok().body(Map.of("message", "로그아웃 되었습니다.", "redirectUrl", "/"));

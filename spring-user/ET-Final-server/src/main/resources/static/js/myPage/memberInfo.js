@@ -5,6 +5,25 @@
         const modalvf = document.getElementById('passwordModal');
         modalvf.style.display = 'flex'; // 모달을 화면에 보이도록 설정
     });
+	
+	/*
+    // "비밀번호" 버튼 클릭 이벤트
+    document.querySelector('.changePw').addEventListener('click', function (e) {
+
+        // 비밀번호 인증 모달 표시
+        const modalvf = document.getElementById('passwordModal');
+        modalvf.style.display = 'flex'; // 모달을 화면에 보이도록 설정
+    });
+
+    // "회원탈퇴" 버튼 클릭 이벤트
+    document.querySelector('.membershipOut').addEventListener('click', function (e) {
+
+        // 비밀번호 인증 모달 표시
+        const modalvf = document.getElementById('passwordModal');
+        modalvf.style.display = 'flex'; // 모달을 화면에 보이도록 설정
+    });  */
+
+
 
     // "취소" 버튼 클릭 이벤트
     document.getElementById('clsModal').addEventListener('click', function () {
@@ -61,6 +80,11 @@
 	        if (result === 1) {
 	            // 비밀번호 일치
 	            window.location.href = '/mypage/updateInfo';
+				
+				/*
+                window.location.href = '/mypage/changePw';
+                window.location.href = '/mypage/membershipOut'; */
+			
 	        } else {
 	            // 비밀번호 불일치
 	            errorMsg.textContent = '비밀번호가 일치하지 않습니다.';

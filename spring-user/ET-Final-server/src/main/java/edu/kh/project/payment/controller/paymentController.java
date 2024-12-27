@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +22,9 @@ import org.springframework.web.client.RestTemplate;
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
-import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
 import edu.kh.project.payment.service.paymentService;
+import edu.kh.project.performance.model.dto.Performance;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -91,7 +92,19 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("booking-info")
-	public String bookingInfo() {
+	public String bookingInfo(@SessionAttribute("loginMember") Member loginMember, Model model) {
+
+		String phone = loginMember.getMemberTel();
+
+		// 전화번호를 010-0000-0000 형식으로 포맷팅
+		if (phone != null && phone.length() == 11) {
+			phone = phone.replaceFirst("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
+		}
+
+		model.addAttribute("nickname", loginMember.getMemberNickname());
+		model.addAttribute("phone", loginMember.getMemberTel());
+		model.addAttribute("email", loginMember.getMemberEmail());
+
 		return "payment/booking-info";
 	}
 
@@ -101,7 +114,7 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("payment")
-	public String payment() {
+	public String payment(@SessionAttribute("loginMember") Member loginMember) {
 		return "payment/payment";
 	}
 
@@ -113,10 +126,26 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("seats")
-	public ResponseEntity<List<Seat>> getSeats(@RequestParam(name = "showDate") String showDate,
-			@RequestParam(name = "showTime") String showTime) {
+	public ResponseEntity<List<Seat>> getSeats(@RequestParam("mt20id") String mt20id,
+			@RequestParam("selectedDate") String selectedDate, @RequestParam("selectedTime") String selectedTime,
+			Model model) {
+
+		log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate, selectedTime);
+		
+		if (mt20id == null || selectedDate == null || selectedTime == null) {
+			log.error("필수 파라미터가 누락되었습니다: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate,
+					selectedTime);
+			return ResponseEntity.badRequest().build(); // 400 Bad Request 반환
+		}
+
 		try {
-			List<Seat> seats = service.getSeats(showDate, showTime);
+			List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime);
+
+			if (seats.isEmpty()) {
+				log.warn("좌석 데이터가 없습니다: 공연 ID={}, 날짜={}, 시간={}", mt20id, selectedDate, selectedTime);
+				return ResponseEntity.noContent().build();
+			}
+
 			return ResponseEntity.ok(seats);
 
 		} catch (Exception e) {
@@ -133,7 +162,7 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("performance-detail")
-	public ResponseEntity<PerformanceDetail> getPerformanceDetail(@RequestParam("performanceId") String performanceId) {
+	public ResponseEntity<Performance> getPerformanceDetail(@RequestParam("performanceId") String performanceId) {
 
 		if (performanceId == null || performanceId.trim().isEmpty()) {
 			log.warn("performanceId가 제공되지 않았습니다.");
@@ -141,7 +170,7 @@ public class paymentController {
 		}
 
 		try {
-			PerformanceDetail detail = service.getPerformanceDetail(performanceId);
+			Performance detail = service.getPerformanceDetail(performanceId);
 			return ResponseEntity.ok(detail);
 
 		} catch (RuntimeException e) {
@@ -180,40 +209,36 @@ public class paymentController {
 	 */
 	@PostMapping("save-payment")
 	public ResponseEntity<String> savePayment(@RequestBody Payment paymentData,
-			@SessionAttribute("loginMember") Member loginMember ) {
+			@SessionAttribute("loginMember") Member loginMember) {
 
 		try {
+			System.out.println("전송받은 결제 데이터: " + paymentData);
+			System.out.println("공연 ID (mt20id): " + paymentData.getMt20id());
+			System.out.println("공연 시설 ID (mt10id): " + paymentData.getMt10id());
+
 			// 1. TB_PAYMENT에 데이터 삽입
 			boolean success = service.savePayment(paymentData);
-
 			if (!success) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 저장 실패");
 			}
-			
+
 			// 2. 예약 정보 생성
-	        Booking bookingData = Booking.builder()
-	                .bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
-	                .bookingDate(new Timestamp(System.currentTimeMillis())) // 현재 시간
-	                .totalPrice(paymentData.getPaidAmount())
-	                .memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
-	                .mt20id(paymentData.getMt20id()) // 공연 ID
-	                .merchantUid(paymentData.getMerchantUid())
-	                .bookingStatus("BOOKED") // 기본 예약 상태
-	                .build();
-			
-			
-			
-			
-			
+			Booking bookingData = Booking.builder().bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
+					.bookingDate(new Timestamp(System.currentTimeMillis())) // 현재 시간
+					.totalPrice(paymentData.getPaidAmount()).memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
+					.mt20id(paymentData.getMt20id()) // 공연 ID 추가
+					.mt10id(paymentData.getMt10id()) // 공연 시설 ID 추가
+					.mt20id(paymentData.getMt20id()) // 공연 ID
+					.merchantUid(paymentData.getMerchantUid()).bookingStatus("COMPLETE") // 기본 예약 상태
+					.build();
 
-			// 2. TB_TICKET_BOOKING에 데이터 삽입
+			// 3. TB_TICKET_BOOKING에 데이터 삽입
 			boolean bookingSaved = service.saveBooking(bookingData);
-
 			if (!bookingSaved) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 정보 저장 실패");
 			}
 
-			// 3.여러 좌석 업데이트
+			// 4 .여러 좌석 업데이트
 			for (String seatId : paymentData.getSeatIds()) {
 				boolean seatReserved = service.reserveSeat(seatId);
 				if (!seatReserved) {
