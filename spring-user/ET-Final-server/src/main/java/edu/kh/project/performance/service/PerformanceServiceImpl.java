@@ -95,5 +95,13 @@ public class PerformanceServiceImpl implements PerformanceService {
             return "1회차"; // 기본값
         }
     }
+
+
+    // 공연관리자가 등록한 공연 목록 조회 
+	@Override
+	public List<Performance> getPerformancesByManager(int memberNo) {
+		
+		return mapper.selectPerformancesByManager(memberNo);
+	}
     
 }
