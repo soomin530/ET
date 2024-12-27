@@ -23,4 +23,11 @@ public interface PerformanceMapper {
 	 */
 	Performance detail(String mt20id);
 
+	/** 공연 위도, 경도 조회
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
+	Performance selectPerformanceById(String mt20id);
+
 }

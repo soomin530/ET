@@ -63,6 +63,7 @@ public class PerformanceController {
      */
     @GetMapping("/detail/{mt20id}")
     public String detail(@PathVariable("mt20id") String mt20id, Model model) {
+    	
         // 공연 ID로 공연 정보 조회
         Performance performance = performanceService.getPerformanceById(mt20id);
 

@@ -25,6 +25,19 @@ public class PerformanceServiceImpl implements PerformanceService {
     // 공연 상세페이지 조회
 	@Override
 	public Performance getPerformanceById(String mt20id) {
-		return mapper.detail(mt20id);
+
+	    Performance performance = mapper.detail(mt20id);
+
+	    // 지도 API 정보
+	    Performance mapInfo = mapper.selectPerformanceById(mt20id);
+
+	    // 데이터 병합
+	    if (mapInfo != null) {
+	        performance.setFcltla(mapInfo.getFcltla()); // 위도
+	        performance.setFcltlo(mapInfo.getFcltlo()); // 경도
+	    }
+
+	    return performance;
 	}
+
 }
