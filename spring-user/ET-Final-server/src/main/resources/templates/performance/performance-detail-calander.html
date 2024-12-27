@@ -7,9 +7,11 @@
 	<title>공연 예매 사이트</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<link rel="stylesheet" href="/css/performance/detail.css">
+    <th:block th:replace="~{common/common}"></th:block>
 </head>
 
 <body>
+    <th:block th:replace="~{common/header}"></th:block>
 	<div class="performance-container">
 		<div class="performance-content">
 			<!-- 왼쪽: 공연 정보 -->
@@ -80,6 +82,12 @@
 		</div>
 	</div>
 
+    <form action="/payment/seat-selection" method="get" class="seatSelection" id="bookingForm"> 
+        <input type="hidden" name="mt20id" th:value="${performance.mt20id}">
+        <input type="hidden" name="selectedDate" value=""> 
+        <input type="hidden" name="selectedTime" value=""> 
+    </form>
+
 	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
 
 	<script th:inline="javascript">
@@ -127,7 +135,7 @@
 	</script>
 
 	<script src="/js/performance/detail.js"></script>
-
+    <th:block th:replace="~{common/footer}"></th:block>
 </body>
 
 </html>
