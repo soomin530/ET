@@ -1,0 +1,162 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+  width: 200px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.logo {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.welcome {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.menu-list {
+  list-style: none;
+}
+
+.menu-item {
+  margin-bottom: 15px;
+}
+
+.menu-item a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.menu-item a:hover {
+  background-color: #eee;
+}
+
+/* 메인 컨텐츠 스타일 */
+.main-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #333;
+}
+
+.info-section {
+  margin-top: 20px;
+}
+
+.info-section h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.form-group label {
+  width: 120px;
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"] {
+  width: 300px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.form-group.gender {
+  margin-top: 15px;
+}
+
+.form-group.gender input[type="radio"] {
+  margin-right: 5px;
+}
+
+.form-group.gender label:not(:first-child) {
+  width: auto;
+  margin-right: 20px;
+}
+
+.edit-btn {
+  padding: 6px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background-color: #e9ecef;
+}
+
+/* 버튼 스타일 */
+.form-actions {
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+margin-top: 20px;
+}
+
+.cancel-btn {
+padding: 10px 20px;
+border: 1px solid #ccc;
+background-color: #f5f5f5;
+color: #333;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+.cancel-btn:hover {
+background-color: #ddd;
+}
+
+.save-btn {
+padding: 10px 20px;
+border: none;
+background-color: #ff4d4f;
+color: white;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+.save-btn:hover {
+background-color: #d9363e;
+}
