@@ -385,7 +385,7 @@ body {
 
 .ticker {
     display: flex;
-    animation: ticker 45s linear infinite;
+    animation: ticker 30s linear infinite;
     white-space: nowrap;
 }
 
