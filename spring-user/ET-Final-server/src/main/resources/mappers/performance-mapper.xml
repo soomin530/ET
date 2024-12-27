@@ -68,5 +68,53 @@
 		   pt.DAY_OF_WEEK, 
 		   pt.PERFORMANCE_TIME
     </select>
+    
+    <!-- 주요 공연 소개 -->
+    <select id="mainPerform">
+    	<![CDATA[
+	    	SELECT
+				MT20ID,
+				POSTER,
+				PRFNM
+			FROM
+				(
+					SELECT MT20ID, POSTER, PRFNM
+					FROM TB_PERFORMANCES_DETAIL
+					ORDER BY
+					DBMS_RANDOM.VALUE )
+			WHERE
+				ROWNUM <= 3
+			ORDER BY PRFNM
+		]]>
+    </select>
+    
+    
+    <!-- 공연 점수 별 순위 10개 -->
+    <select id="performanceRanking">
+    	<![CDATA[
+	    	SELECT *
+			FROM (
+			    SELECT 
+			        MT20ID,
+			        PRFNM,
+			        POSTER,
+			        PRFREVIEW_RANK,
+			        REVIEW_COUNT,
+			        AVG_RATING
+			    FROM 
+			        ETFIVE.VW_PERFORMANCE_RANKING
+			    ORDER BY 
+			        PRFREVIEW_RANK DESC, AVG_RATING DESC
+			) 
+			WHERE ROWNUM <= 10
+		]]>
+	</select>
+		
+    <!-- 공연관리자가 등록한 공연 목록 조회  -->
+    <select id="selectPerformancesByManager">
+		SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER
+		FROM TB_PERFORMANCES_DETAIL
+		WHERE GENRENM = #{genre}
+    </select>
 	
 </mapper>
