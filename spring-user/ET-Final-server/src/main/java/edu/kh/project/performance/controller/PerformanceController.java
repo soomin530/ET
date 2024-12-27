@@ -1,6 +1,7 @@
 package edu.kh.project.performance.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import edu.kh.project.performance.model.dto.Performance;
+import edu.kh.project.performance.model.dto.ScheduleInfo;
 import edu.kh.project.performance.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PerformanceController {
 
-    private final PerformanceService performanceService; 
+	private final PerformanceService performanceService;
 
-    /**
+	/**
      * 공연 목록 페이지로 이동
      * @param genre 공연 장르
      * @param model 
@@ -63,13 +65,19 @@ public class PerformanceController {
      */
     @GetMapping("/detail/{mt20id}")
     public String detail(@PathVariable("mt20id") String mt20id, Model model) {
+    	
         // 공연 ID로 공연 정보 조회
         Performance performance = performanceService.getPerformanceById(mt20id);
+        
+        // 스케줄 및 잔여석 정보 조회
+ 		Map<String, List<ScheduleInfo>> schedule = performanceService.getScheduleWithAvailableSeats(mt20id);
+ 		performance.setSchedule(schedule);
 
         // 공연 정보 추가
         model.addAttribute("performance", performance);
 
         return "performance/performance-detail-calander"; 
     }
+
 
 }
