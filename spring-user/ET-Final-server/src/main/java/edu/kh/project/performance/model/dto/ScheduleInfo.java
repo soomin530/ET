@@ -6,7 +6,6 @@ import lombok.Data;
 public class ScheduleInfo {
 	
     private String time;
-    private String round;
     private int seats;
     private String seatStatus;
     

@@ -48,7 +48,9 @@ public class NaverController {
 	@Value("${naver.redirect.url}")
 	private String redirectUrl;
 
-	// 네이버 로그인 초기 요청
+	/** 네이버 로그인 초기 요청
+	 * @return
+	 */
 	@GetMapping("/login")
 	public String naverLogin() {
 		// state용 난수 생성
@@ -63,7 +65,15 @@ public class NaverController {
 		return "redirect:" + naverAuthUrl;
 	}
 
-	// callback 처리
+	
+	
+	/** callback 처리
+	 * @param code
+	 * @param state
+	 * @param error
+	 * @param session
+	 * @return
+	 */
 	@GetMapping("/callback")
 	public String naverCallback(@RequestParam(name = "code", required = false) String code,
 			@RequestParam(name = "state", required = false) String state,
@@ -80,8 +90,12 @@ public class NaverController {
 		// POST 처리로 forward
 		return "forward:/naver/process";
 	}
-
-	// 실제 로그인 처리
+	
+	
+	/** 실제 로그인 처리
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/process", method = {RequestMethod.GET, RequestMethod.POST})
 	public String processNaverLogin(HttpSession session) {
 		// 임시 저장된 값 가져오기
@@ -151,6 +165,13 @@ public class NaverController {
 		return "redirect:/";
 	}
 
+	
+	/** 로그아웃 처리
+	 * @param session
+	 * @param status
+	 * @param response
+	 * @return
+	 */
 	@PostMapping("/logout")
 	public String naverLogout(HttpSession session, SessionStatus status, HttpServletResponse response) {
 	    try {
@@ -175,7 +196,12 @@ public class NaverController {
 	    return "redirect:/";
 	}
 
-	// 예외 처리
+	
+	/** 예외 처리
+	 * @param e
+	 * @param model
+	 * @return
+	 */
 	@ExceptionHandler(Exception.class)
 	public String handleException(Exception e, Model model) {
 		log.error("네이버 로그인 오류", e);

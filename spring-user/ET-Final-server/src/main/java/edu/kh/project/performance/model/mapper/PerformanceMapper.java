@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import edu.kh.project.performance.model.dto.Performance;
+import edu.kh.project.performance.model.dto.PerformanceRanking;
 
 @Mapper
 public interface PerformanceMapper {
@@ -36,5 +37,16 @@ public interface PerformanceMapper {
 	 * @author 우수민
 	 */
 	Performance selectPerformanceById(String mt20id);
+
+	/** 메인 페이지 주요 공연 소개
+	 * @return
+	 */
+	List<Performance> mainPerform();
+
+	/** 상위 10개 공연 가져오기
+	 * @param i
+	 * @return
+	 */
+	List<PerformanceRanking> performanceRanking();
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.kh.project.performance.model.dto.Performance;
+import edu.kh.project.performance.model.dto.PerformanceRanking;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
 
 public interface PerformanceService {
@@ -27,5 +28,15 @@ public interface PerformanceService {
 	 * @return
 	 */
 	Map<String, List<ScheduleInfo>> getScheduleWithAvailableSeats(String mt20id);
+
+	/** 메인 페이지 주요 공연 소개
+	 * @return
+	 */
+	List<Performance> mainPerform();
+
+	/** 상위 10개 공연 가져오기
+	 * @return
+	 */
+	List<PerformanceRanking> performanceRanking();
 
 }
