@@ -43,55 +43,54 @@ public class PerfmgrController {
 
 	private final RedisService redisService;
 
-	/**
-	 * 로그인 진행
-	 * 
-	 * @param inputMember
-	 * @param ra
-	 * @param model
-	 * @param saveId
-	 * @param resp
-	 * @return
-	 */
 	@PostMapping("login")
-	@ResponseBody
-	public Map<String, Object> login(@RequestBody PerfMgr inputMember, HttpSession session, RedirectAttributes ra,
-			Model model, @RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
+	public String login(PerfMgr inputMember, 
+	                  HttpSession session,
+	                  RedirectAttributes ra,
+	                  Model model,
+	                  @RequestParam(value="saveId", required=false) String saveId,
+	                  HttpServletResponse resp) {
 
-		Map<String, Object> result = new HashMap<>();
+	   // 로그인 서비스 호출
+	   PerfMgr perfmgrLoginMember = service.login(inputMember);
 
-		// 로그인 서비스 호출
-		PerfMgr perfmgrLoginMember = service.login(inputMember);
+	   String path = null;
 
-		// 로그인 실패 시
-		if (inputMember == null) {
-			result.put("status", "fail");
-			result.put("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
-			return result;
-		}
+	   // 로그인 실패 시  
+	   if(inputMember == null) {
+	       ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
+	       path = "login";
+	   } else {
+	       // Session scope에 loginMember 추가
+	       model.addAttribute("loginMember", perfmgrLoginMember);
 
-		// Session scope에 loginMember 추가
-		model.addAttribute("loginMember", perfmgrLoginMember);
+	       // JWT 토큰 생성
+	       String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
+	       String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
 
-		// JWT 토큰 생성
-		String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
-		String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
+	       // 토큰 생성 및 Redis에 저장  
+	       JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
-		// 토큰 생성 및 Redis에 저장
-		JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
+	       // Access Token을 HttpOnly 쿠키에 저장
+	       Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
+	       accessTokenCookie.setHttpOnly(true);
+	       accessTokenCookie.setSecure(false); // 개발환경은 false
+	       accessTokenCookie.setPath("/");
+	       accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
+	       resp.addCookie(accessTokenCookie);
 
-		// Access Token을 HttpOnly 쿠키에 저장
-		Cookie accessTokenCookie = new Cookie("Access-token", tokenInfo.accessToken());
-		accessTokenCookie.setHttpOnly(true);
-		accessTokenCookie.setPath("/");
-		accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-		resp.addCookie(accessTokenCookie);
+	       // Refresh Token을 HttpOnly 쿠키에 저장 
+	       Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+	       refreshTokenCookie.setHttpOnly(true);
+	       refreshTokenCookie.setSecure(false); // 개발환경은 false
+	       refreshTokenCookie.setPath("/api/auth/refresh");
+	       refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+	       resp.addCookie(refreshTokenCookie);
 
-		result.put("status", "success");
-		result.put("redirectUrl", "/");
+	       path = "/";
+	   }
 
-		return result;
-
+	   return "redirect:" + path;
 	}
 
 	/**
@@ -135,43 +134,29 @@ public class PerfmgrController {
 	public ResponseEntity<?> logout(HttpServletRequest request,
 	                                 HttpServletResponse response,
 	                                 SessionStatus status) {
-	    try {
-	        // Access Token 추출
-	        String accessToken = extractAccessToken(request.getCookies());
-	        String memberNo = jwtTokenUtil.getMemberIdFromToken(accessToken);
+		try {
+			// Access Token 쿠키 삭제
+			Cookie accessTokenCookie = new Cookie("Access-token", "");
+			accessTokenCookie.setMaxAge(0);
+			accessTokenCookie.setPath("/");
+			response.addCookie(accessTokenCookie);
+
+			// Refresh Token 쿠키도 삭제
+			Cookie refreshTokenCookie = new Cookie("Refresh-token", "");
+			refreshTokenCookie.setMaxAge(0);
+			refreshTokenCookie.setPath("/");
+			response.addCookie(refreshTokenCookie);
 
 
-	        // Access Token 쿠키 삭제
-	        Cookie accessTokenCookie = new Cookie("Access-token", "");
-	        accessTokenCookie.setMaxAge(0);
-	        accessTokenCookie.setPath("/");
-	        response.addCookie(accessTokenCookie);
-	        
-	        status.setComplete();
+			status.setComplete();
 
-	        return ResponseEntity.ok()
-	            .body(Map.of(
-	                "message", "로그아웃 되었습니다.",
-	                "redirectUrl", "/"
-	            ));
+			return ResponseEntity.ok().body(Map.of("message", "로그아웃 되었습니다.", "redirectUrl", "/"));
 
-	    } catch (Exception e) {
-	        return ResponseEntity.internalServerError()
-	            .body(Map.of("message", "로그아웃 처리 중 오류가 발생했습니다."));
-	    }
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("message", "로그아웃 처리 중 오류가 발생했습니다."));
+		}
 	}
 	
-	private String extractAccessToken(Cookie[] cookies) {
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("Access-token".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        throw new JwtException("Access token not found in cookies");
-    }
-
 	/**
 	 * 이메일 중복검사 (비동기 요청)
 	 * 
