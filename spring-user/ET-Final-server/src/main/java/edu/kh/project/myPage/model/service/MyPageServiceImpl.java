@@ -4,6 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.mapper.MyPageMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +15,10 @@ public class MyPageServiceImpl implements MyPageService {
     
     private final MyPageMapper mapper;
     private final BCryptPasswordEncoder bcrypt;
+   
     
+    
+    // 비밀번호 인증
     @Override
     public int verifyPassword(String memberPw, int memberNo) {
         
@@ -27,4 +31,22 @@ public class MyPageServiceImpl implements MyPageService {
         }
         return 0;
     }
+
+    // 회원 목록 조회
+	@Override
+	public Member getMemberInfo(int memberNo) {
+		
+		return mapper.getMemberInfo(memberNo);
+	}
+
+
+	
+
+    	
+	
+    
+    
+    
+    
+    
 }
