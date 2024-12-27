@@ -29,6 +29,9 @@ public class Performance {
 	private String prfstate;		// 공연상태
 	private String mt10id;			// 공연시설
 	private String styurl;			// 소개이미지
+	private String fcltla;			// 위도
+	private String fcltlo;			// 경도
+	
 	
 	
 
