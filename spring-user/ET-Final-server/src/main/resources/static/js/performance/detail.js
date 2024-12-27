@@ -152,19 +152,46 @@ class Calendar {
 document.getElementById('booking-btn').onclick = function() {
 	const calendar = window.calendarInstance;
 	if (calendar.selectedDate && calendar.selectedTime && calendar.selectedRound) {
-		// form이 없으면 생성
-		if (!document.getElementById('bookingForm')) {
-			document.body.insertAdjacentHTML('beforeend', formHTML);
+		
+		// mt20id 값 가져오기
+    const mt20id = document.getElementById('mt20id')?.value;
+    if (!mt20id) {
+        console.error("mt20id 값이 누락되었습니다.");
+        alert("공연 정보를 불러오는 데 문제가 발생했습니다. 다시 시도해주세요.");
+        return;
+    }
+    const selectedDate = calendar.formatDisplayDate(calendar.selectedDate);
+    const selectedTime = calendar.selectedTime;
+
+		if (!mt20id || !selectedDate || !selectedTime) {
+			console.error("필수 파라미터가 누락되었습니다:", { mt20id, selectedDate, selectedTime });
+			return;
 		}
 
-		// form 값 설정
-		const form = document.getElementById('bookingForm');
-		form.querySelector('input[name="selectedDate"]').value = calendar.formatDisplayDate(calendar.selectedDate);
-		form.querySelector('input[name="selectedTime"]').value = calendar.selectedTime;
-		// form.querySelector('input[name="selectedRound"]').value = calendar.selectedRound;
+		const url = `/payment/seat-selection?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${selectedTime}`;
 
-		// form submit
-		form.submit();
+		const width = 1200;  // 창 너비
+    const height = 800;  // 창 높이
+    // 화면 중앙 좌표 계산
+    const left = (window.innerWidth / 2) - (width / 2) + window.screenX;
+    const top = (window.innerHeight / 2) - (height / 2) + window.screenY;
+
+    // 새 창 열기
+    const newWindow=  window.open(
+        url, // Spring Controller에서 처리 가능한 URL
+        "예매창", // 새 창 이름
+        `width=${width}, height=${height}, top=${top}, left=${left}, resizable=yes, scrollbars=yes`
+       );
+    // 새 창 크기 강제로 고정
+    if (newWindow) {
+        // 새 창 크기 강제 설정
+        newWindow.addEventListener("resize", function () {
+            newWindow.resizeTo(width, height);
+        });
+    } else {
+        alert("팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.");
+    }
+
 	}
 };
 

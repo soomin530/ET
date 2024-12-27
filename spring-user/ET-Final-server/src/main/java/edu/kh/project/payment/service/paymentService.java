@@ -5,13 +5,13 @@ import java.util.Map;
 
 import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
-import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
+import edu.kh.project.performance.model.dto.Performance;
 
 public interface paymentService {
 
 	// 특정 공연 좌석 정보 조회
-	List<Seat> getSeats(String showDate, String showTime);
+	//List<Seat> getSeats(String showDate, String showTime);
 
 	// 좌석 상태 업데이트(예약)
 	static boolean bookSeat(String seatId) {	
@@ -25,10 +25,13 @@ public interface paymentService {
 	boolean reserveSeat(String seatId);
 	
 	// 상세정보 조회
-	PerformanceDetail getPerformanceDetail(String performanceId);
+	Performance getPerformanceDetail(String performanceId);
 
 	// 예약 정보 저장
 	boolean saveBooking(Booking bookingData);
+
+	// 특정 공연 좌석 정보 조회
+	List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime);
 
 	
 
