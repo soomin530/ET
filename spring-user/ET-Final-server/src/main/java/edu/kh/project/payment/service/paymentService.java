@@ -5,8 +5,8 @@ import java.util.Map;
 
 import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
-import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
+import edu.kh.project.performance.model.dto.Performance;
 
 public interface paymentService {
 
@@ -25,7 +25,7 @@ public interface paymentService {
 	boolean reserveSeat(String seatId);
 	
 	// 상세정보 조회
-	PerformanceDetail getPerformanceDetail(String performanceId);
+	Performance getPerformanceDetail(String performanceId);
 
 	// 예약 정보 저장
 	boolean saveBooking(Booking bookingData);

@@ -634,6 +634,10 @@
           // 공연 상세 정보 확인용 콘솔 출력
           console.log("공연 상세 정보:", data);
 
+          // 공연 정보를 로컬스토리지에 저장
+          localStorage.setItem("performanceId", data.mt20id);
+          localStorage.setItem("facilityId", data.mt10id);
+
           renderPerformanceInfo(data);
         })
         .catch(error => {
@@ -652,12 +656,12 @@
         }
 
         reservationInfo.innerHTML = `
-          <img src="${data.poster}" alt="${data.performanceName}" />
+          <img src="${data.poster}" alt="${data.prfnm}" />
           <div class="details">
-            <h3>${data.performanceName}</h3>
-            <p> ${data.performanceFrom} ~ ${data.performanceTo}</p>
-            <p> ${data.facilityName}</p>
-            <p> ${data.performanceRuntime}</p>
+            <h3>${data.prfnm}</h3>
+            <p> ${data.prfpdfrom} ~ ${data.prfpdto}</p>
+            <p> ${data.fcltynm}</p>
+            <p> ${data.prfruntime}</p>
           </div>
         `;
       }
@@ -724,6 +728,7 @@
         const totalPrice = document.getElementById("total-price").textContent;
         localStorage.setItem("selectedSeats", JSON.stringify(selectedSeatsArray));
         localStorage.setItem("totalPrice", totalPrice);
+        
 
         // 다음 단계로 이동
         window.location.href = "/payment/booking-info";

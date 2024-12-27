@@ -188,12 +188,16 @@
 
         <form id="booking-form">
             <div class="form-group">
-                <label for="name">이름</label>
-                <input type="text" id="name" required>
+                <label for="name">닉네임</label>
+                <input type="text" id="nickname" th:value="${nickname}" readonly>
             </div>
             <div class="form-group">
                 <label for="phone">연락처</label>
-                <input type="tel" id="phone" required placeholder="000-0000-0000">
+                <input type="tel" id="phone" name="phone" th:value="${phone}" required placeholder="000-0000-0000">
+            </div>
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" th:value="${email}" required>
             </div>
             <div class="btn-group">
                 <button type="button" class="prev-btn" id="prev-btn">이전 단계</button> <!-- 이전 단계 버튼 -->
@@ -228,8 +232,14 @@
 
         // 전화번호 입력 시 자동으로 '-' 추가
         const phoneInput = document.getElementById('phone');
-        // 초기값 '010' 설정
-        phoneInput.value = '010';   // 추후에 로그인된 아이디로 예매하기 떄문에 전화번호 이름은 미리 값이 설정 되도록 할 예정
+
+        // 서버에서 전달된 th:value 값을 가져와 포맷팅
+        let phoneValue = phoneInput.value.replace(/[^0-9]/g, ''); // 숫자만 남김
+        if (phoneValue.length === 11) {
+            phoneValue = `${phoneValue.slice(0, 3)}-${phoneValue.slice(3, 7)}-${phoneValue.slice(7)}`;
+        }
+
+        phoneInput.value = phoneValue; // 포맷팅된 값을 설정
 
         phoneInput.addEventListener('input', () => {
             let value = phoneInput.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
@@ -257,8 +267,9 @@
         document.getElementById('booking-form').addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const name = document.getElementById('name').value.trim();
+            const nickname = document.getElementById('nickname').value.trim(); // 닉네임
             const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();       // 이메일
 
             // 이름 유효성 검사 (최대 6글자, 특수문자 제외)
             const nameRegex = /^[가-힣a-zA-Z]{1,6}$/; // 한글 또는 영문 최대 6글자
@@ -267,12 +278,11 @@
                 return;
             }
 
-            if (!name || !phone) {
+            // 유효성 검사
+            if (!name || !phone || !email) {
                 alert("모든 필드를 입력해주세요.");
                 return;
             }
-
-
 
             // 전화번호 유효성 검사
             if (!/^\d{3}-\d{3,4}-\d{4}$/.test(phone)) {
@@ -280,7 +290,12 @@
                 return;
             }
 
-            const bookingInfo = { name, phone };
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert("올바른 이메일 형식을 입력해주세요.");
+                return;
+            }
+
+            const bookingInfo = { nickname, phone, email };
             // 예매자 정보 localStorage에 저장
             localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));
 

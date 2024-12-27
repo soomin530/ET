@@ -140,11 +140,6 @@ public class PerfmgrController {
 	        String accessToken = extractAccessToken(request.getCookies());
 	        String memberNo = jwtTokenUtil.getMemberIdFromToken(accessToken);
 
-	        // Redis에서 Refresh Token 찾기 및 삭제
-	        String refreshToken = redisService.getMemberNoFromToken(memberNo);
-	        if (refreshToken != null) {
-	            redisService.deleteRefreshToken(refreshToken);
-	        }
 
 	        // Access Token 쿠키 삭제
 	        Cookie accessTokenCookie = new Cookie("Access-token", "");

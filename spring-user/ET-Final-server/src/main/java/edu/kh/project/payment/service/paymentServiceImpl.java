@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
-import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
 import edu.kh.project.payment.model.mapper.paymentMapper;
+import edu.kh.project.performance.model.dto.Performance;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +61,7 @@ public class paymentServiceImpl implements paymentService{
 
 	// 공연 상세 정보 조회
 	@Override
-	public PerformanceDetail getPerformanceDetail(String performanceId) {
+	public Performance getPerformanceDetail(String performanceId) {
 		  return mapper.getPerformanceDetail(performanceId);
 	}
 

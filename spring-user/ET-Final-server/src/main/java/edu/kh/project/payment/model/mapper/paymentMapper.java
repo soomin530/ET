@@ -8,8 +8,8 @@ import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
-import edu.kh.project.payment.model.dto.PerformanceDetail;
 import edu.kh.project.payment.model.dto.Seat;
+import edu.kh.project.performance.model.dto.Performance;
 
 @Mapper
 public interface paymentMapper {
@@ -28,7 +28,7 @@ public interface paymentMapper {
 	int insertPayment(Payment paymentData);
 
 	// 공연 정보 조회
-	PerformanceDetail getPerformanceDetail(String performanceId);
+	Performance getPerformanceDetail(String performanceId);
 
 	// 예약 정보 저장
 	int insertBooking(Booking bookingData);

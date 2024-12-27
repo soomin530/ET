@@ -34,12 +34,15 @@
 	</select>
 	
 	<!-- 공연 상세 정보 출력 -->
-	<select id="getPerformanceDetail" resultType="edu.kh.project.payment.model.dto.PerformanceDetail">
-		SELECT PD.PRFNM AS performanceName,
-		   PD.PRFPDFROM AS performanceFrom,
-		   PD.PRFPDTO AS performanceTo,
-		   PD.FCLTYNM AS facilityName,
-		   PD.PRFRUNTIME AS performanceRuntime,
+	<select id="getPerformanceDetail" resultType="edu.kh.project.performance.model.dto.Performance">
+		SELECT 
+		   PD.MT20ID AS mt20id,
+	  	   PD.MT10ID AS mt10id, 	
+		   PD.PRFNM AS prfnm,
+		   PD.PRFPDFROM AS prfpdfrom,
+		   PD.PRFPDTO AS prfpdto,
+		   PD.FCLTYNM AS fcltynm,
+		   PD.PRFRUNTIME AS prfruntime,
 		   PD.POSTER AS poster
 		FROM "TB_PERFORMANCES_DETAIL" PD
 		WHERE PD.MT20ID = #{performanceId}
