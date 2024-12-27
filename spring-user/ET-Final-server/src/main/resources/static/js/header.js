@@ -48,45 +48,43 @@ const loginBtn = document.getElementById("login-Btn");
 const memberLoginId = document.getElementById("memberLoginId");
 const memberLoginPw = document.getElementById("memberLoginPw");
 
-// 로그인
 const performLogin = () => {
+    // 입력 검증
+    if (memberLoginId.value.length === 0) {
+        alert("아이디를 입력해주세요.");
+        memberLoginId.focus();
+        return;
+    }
 
-	if (memberLoginId.value.length === 0) {
-		alert("아이디를 입력해주세요.");
-		memberLoginId.focus();
-		return;
-	}
+    if (memberLoginPw.value.length === 0) {
+        alert("비밀번호를 입력해주세요.");
+        memberLoginPw.focus();
+        return;
+    }
 
-	if (memberLoginPw.value.length === 0) {
-		alert("비밀번호를 입력해주세요.");
-		memberLoginPw.focus();
-		return;
-	}
+    const form = new FormData();
+    form.append('memberId', memberLoginId.value);
+    form.append('memberPw', memberLoginPw.value);
+    
+    // saveId 체크박스가 있다면
+    const saveIdCheckbox = document.getElementById('saveId');
+    if(saveIdCheckbox && saveIdCheckbox.checked) {
+        form.append('saveId', 'on');
+    }
 
-	const data = {
-		memberId: memberLoginId.value,
-		memberPw: memberLoginPw.value
-	}
-
-	fetch("/member/login", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(data)
-	})
-		.then(resp => resp.json())
-		.then(data => {
-			console.log("로그인 성공:", data);
-
-			if (data.status === "success") {
-				// 로그인 성공: redirectUrl로 이동
-				window.location.href = data.redirectUrl;
-
-			} else {
-				// 로그인 실패: 메시지 표시
-				alert(data.message);
-			}
-		});
-
+    fetch("/member/login", {
+        method: "POST",
+        body: form
+    })
+    .then(response => {
+        if(response.redirected) {
+            window.location.href = response.url;
+        }
+    })
+    .catch(error => {
+        console.error("로그인 에러:", error);
+        alert("로그인 처리 중 오류가 발생했습니다.");
+    });
 };
 
 // 로그인 버튼 클릭 이벤트

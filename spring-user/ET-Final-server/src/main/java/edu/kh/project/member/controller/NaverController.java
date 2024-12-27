@@ -24,6 +24,8 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.member.service.MemberService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -150,9 +152,21 @@ public class NaverController {
 	}
 
 	@PostMapping("/logout")
-	public String naverLogout(HttpSession session, SessionStatus status) {
+	public String naverLogout(HttpSession session, SessionStatus status, HttpServletResponse response) {
 	    try {
-	        status.setComplete();
+	        // Access Token 쿠키 삭제
+ 			Cookie accessTokenCookie = new Cookie("Access-token", "");
+ 			accessTokenCookie.setMaxAge(0);
+ 			accessTokenCookie.setPath("/");
+ 			response.addCookie(accessTokenCookie);
+
+ 			// Refresh Token 쿠키도 삭제
+ 			Cookie refreshTokenCookie = new Cookie("Refresh-token", "");
+ 			refreshTokenCookie.setMaxAge(0);
+ 			refreshTokenCookie.setPath("/");
+ 			response.addCookie(refreshTokenCookie);
+ 			
+ 			status.setComplete();
 	        
 	    } catch (Exception e) {
 	        log.error("로그아웃 처리 중 에러 발생", e);

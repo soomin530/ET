@@ -63,50 +63,63 @@ public class MemberController {
 	private static final List<String> WEEKDAYS = Arrays.asList("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일");
 
 	@PostMapping("login")
-	@ResponseBody
-	public Map<String, Object> login(@RequestBody Member inputMember, HttpServletResponse resp, Model model) {
-		Map<String, Object> result = new HashMap<>();
+	public String login(Member inputMember,
+	                  RedirectAttributes ra,
+	                  Model model,
+	                  @RequestParam(value="saveId", required=false) String saveId,
+	                  HttpServletResponse resp) {
 
-		// 로그인 서비스 호출
-		Member loginMember = service.login(inputMember);
+	   // 로그인 서비스 호출 
+	   Member loginMember = service.login(inputMember);
 
-		// 로그인 실패 시
-		if (loginMember == null) {
-			result.put("status", "fail");
-			result.put("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
-			return result;
-		}
+	   String path = null;
 
-		// Session scope에 loginMember 추가
-		model.addAttribute("loginMember", loginMember);
+	   // 로그인 실패 시
+	   if(loginMember == null) {
+	       ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
+	       model.addAttribute("inputMember", inputMember); 
+	       path = "login";
+	   } else {
+	       // Session scope에 loginMember 추가
+	       model.addAttribute("loginMember", loginMember);
 
-		// 로그인 성공 처리
-		String memberNo = String.valueOf(loginMember.getMemberNo());
-		String memberEmail = loginMember.getMemberEmail();
+	       // 로그인 성공 처리
+	       String memberNo = String.valueOf(loginMember.getMemberNo());
+	       String memberEmail = loginMember.getMemberEmail();
 
-		// 토큰 생성
-		JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
+	       // 토큰 생성
+	       JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
-		// Access Token을 HttpOnly 쿠키에 저장
-		Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
-		accessTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
-		accessTokenCookie.setSecure(true);    // HTTPS에서만 전송
-		accessTokenCookie.setPath("/");
-		accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-		resp.addCookie(accessTokenCookie);
+	       // Access Token을 HttpOnly 쿠키에 저장 
+	       Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
+	       accessTokenCookie.setHttpOnly(true);
+	       accessTokenCookie.setSecure(false);
+	       accessTokenCookie.setPath("/");
+	       accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
+	       resp.addCookie(accessTokenCookie);
 
-		// Refresh Token을 HttpOnly 쿠키에 저장
-		Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
-		refreshTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
-		refreshTokenCookie.setSecure(true);    // HTTPS에서만 전송
-		refreshTokenCookie.setPath("/api/auth/refresh"); // 토큰 갱신 엔드포인트에서만 사용 가능
-		refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
-		resp.addCookie(refreshTokenCookie);
+	       // Refresh Token을 HttpOnly 쿠키에 저장
+	       Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+	       refreshTokenCookie.setHttpOnly(true);
+	       refreshTokenCookie.setSecure(false); 
+	       refreshTokenCookie.setPath("/api/auth/refresh");
+	       refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+	       resp.addCookie(refreshTokenCookie);
 
-		result.put("status", "success");
-		result.put("redirectUrl", "/");
+	       // 아이디 저장 쿠키
+	       if(saveId != null) {
+	           Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
+	           cookie.setPath("/");
+	           cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+	           resp.addCookie(cookie);
+	       }
 
-		return result;
+	       path = "/";
+	   }
+
+	   log.debug("loginMember: " + loginMember);
+
+	   return "redirect:" + path;
 	}
 
 	/**
@@ -159,14 +172,6 @@ public class MemberController {
 	@PostMapping("logout")
 	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, SessionStatus status) {
 		try {
-			// Refresh Token 추출
-			String refreshToken = extractRefreshToken(request.getCookies());
-
-			// Refresh Token이 있다면 Redis에서 삭제
-			if (refreshToken != null) {
-				redisService.deleteRefreshToken(refreshToken);
-			}
-
 			// Access Token 쿠키 삭제
 			Cookie accessTokenCookie = new Cookie("Access-token", "");
 			accessTokenCookie.setMaxAge(0);
