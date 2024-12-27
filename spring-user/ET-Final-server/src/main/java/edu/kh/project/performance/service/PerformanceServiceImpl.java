@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import edu.kh.project.performance.model.dto.Performance;
+import edu.kh.project.performance.model.dto.PerformanceRanking;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
 import edu.kh.project.performance.model.mapper.PerformanceMapper;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,6 @@ public class PerformanceServiceImpl implements PerformanceService {
             if (dayOfWeek != null) {
                 ScheduleInfo info = new ScheduleInfo();
                 info.setTime((String) data.get("TIME"));
-                info.setRound(getTimeRound((String) data.get("TIME")));
                 info.setSeats(((BigDecimal) data.get("SEATS")).intValue());
                 info.setSeatStatus((String) data.get("STATUS"));
                 
@@ -73,6 +73,7 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
     
 	
+    // 요일 값 받아서 출력
     private String getDayOfWeek(Integer dayNum) {
         switch (dayNum) {
             case 1: return "월요일";
@@ -87,20 +88,23 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
     
     
-    private String getTimeRound(String time) {
-        try {
-            int hour = Integer.parseInt(time.split(":")[0]);
-            return hour < 15 ? "1회차" : "2회차";
-        } catch (Exception e) {
-            return "1회차"; // 기본값
-        }
-    }
+    // 메인 페이지 주요 공연 소개
+	@Override
+	public List<Performance> mainPerform() {
+		return mapper.mainPerform();
+	}
 
+
+	// 상위 10개 공연 가져오기
+	@Override
+	public List<PerformanceRanking> performanceRanking() {
+		return mapper.performanceRanking();
+	}
+    
 
     // 공연관리자가 등록한 공연 목록 조회 
 	@Override
 	public List<Performance> getPerformancesByManager(int memberNo) {
-		
 		return mapper.selectPerformancesByManager(memberNo);
 	}
     

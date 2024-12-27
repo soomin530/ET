@@ -2,262 +2,332 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>티켓팅 시스템</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>티켓팅 시스템</title>
 	<link rel="stylesheet" href="/css/main-style.css">
-	
+
 	<th:block th:replace="~{common/common}"></th:block>
-</head> 
+</head>
 
 <body>
 
-    <th:block th:replace="~{common/header}"></th:block>
+	<th:block th:replace="~{common/header}"></th:block>
 
-    <div class="section visible" id="hero">
-        <div class="hero">
-            <h1>당신의 꿈의 공연을 찾아보세요!</h1>
-            <button onclick="scrollToSection('performances')">현재 진행 중인 공연 보기</button>
-        </div>
-    </div>
-    
-	<div class="section carousel-section" id="performances-carousel">
-	    <h2>주요 공연 소개</h2>
-
-        <button onclick="location.href='/payment/seatPage'">예매하기(결제)</button>
-
-	    <div class="carousel" id="mainCarousel">
-	        <div class="carousel-inner" id="carouselInner">
-	            <div class="carousel-item" style="background-image: url('http://www.kopis.or.kr/upload/pfmPoster/PF_PF254599_241126_091729.jpg')">
-	                <div class="carousel-caption">
-	                    <h3>여름 페스티벌 콘서트</h3>
-	                    <p>최고의 아티스트들과 함께하는 멋진 여름 축제!</p>
-	                </div>
-	            </div>
-	            <div class="carousel-item" style="background-image: url('http://www.kopis.or.kr/upload/pfmPoster/PF_PF253823_241115_164813.JPG')">
-	                <div class="carousel-caption">
-	                    <h3>브로드웨이 뮤지컬</h3>
-	                    <p>세계적인 뮤지컬의 감동을 직접 느껴보세요!</p>
-	                </div>
-	            </div>
-	            <div class="carousel-item" style="background-image: url('http://www.kopis.or.kr/upload/pfmPoster/PF_PF248171_241126_093047.gif')">
-	                <div class="carousel-caption">
-	                    <h3>록 밴드 라이브</h3>
-	                    <p>열정의 록 콘서트, 모든 팬들을 위한 무대!</p>
-	                </div>
-	            </div>
-	        </div>
-	        <a href="#" class="carousel-control prev" onclick="changeSlide(-1, event)">&#10094;</a>
-	        <a href="#" class="carousel-control next" onclick="changeSlide(1, event)">&#10095;</a>
-	    </div>
+	<!-- hero 섹션 바로 다음에 추가 -->
+	<div class="ticker-wrap">
+		<div class="ticker">
+			<!-- 타임리프로 performanceRanking을 반복 -->
+			<div th:each="ranking, iterStat : ${performanceRanking}">
+				<div class="ticker-item">
+					<!-- 클릭 시 해당 MT20ID로 상세 페이지로 이동 -->
+					<a th:href="@{/performance/detail/{mt20id}(mt20id=${ranking.mt20id})}" class="ticker-link">
+						🎟️ <span th:text="${iterStat.index + 1}">1</span>위:
+						<span th:text="${ranking.prfnm}">공연 제목</span>
+						(평점: <span th:text="${ranking.avgRating}">평점</span>⭐)
+					</a>
+				</div>
+			</div>
+		</div>
 	</div>
 
-    <div class="section" id="performances">
-        <h2>장르별 랭킹</h2>
-        <button>뮤지컬</button> <button>연극</button> <button>클래식</button>
-        <div class="card-container">
-            <div class="card">
-                <img src="https://source.unsplash.com/300x200/?concert" alt="콘서트">
-                <h3>라이브 콘서트</h3>
-                <p>최고의 아티스트와 함께하는 라이브 공연!</p>
-                <button>예매하기</button>
-            </div>
-            <div class="card">
-                <img src="https://source.unsplash.com/300x200/?theater" alt="연극">
-                <h3>뮤지컬</h3>
-                <p>환상적인 뮤지컬 공연을 놓치지 마세요!</p>
-                <button>예매하기</button>
-            </div>
-            <div class="card">
-                <img src="https://source.unsplash.com/300x200/?festival" alt="축제">
-                <h3>여름 축제</h3>
-                <p>다양한 공연과 먹거리가 가득한 축제!</p>
-                <button>예매하기</button>
-            </div>
-        </div>
-    </div>
-    <!-- 통계 섹션 추가 -->
-    <div class="section" id="statistics">
-        <h2>시스템 통계</h2>
-        <div class="card-container">
-            <div class="card">
-                <h3>공연 통계</h3>
-                <canvas id="performanceChart" width="300" height="200"></canvas>
-                <ul>
-                    <li>총 공연 수: 127개</li>
-                    <li>이번 달 예매 공연: 42개</li>
-                    <li>평균 관객 수: 1,250명</li>
-                </ul>
-            </div>
-            <div class="card">
-                <h3>사용자 통계</h3>
-                <canvas id="userChart" width="300" height="200"></canvas>
-                <ul>
-                    <li>총 회원 수: 15,420명</li>
-                    <li>월간 신규 가입자: 1,230명</li>
-                    <li>재방문 비율: 68%</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+	<div class="section visible" id="hero">
+		<div class="hero">
+			<h1>당신의 꿈의 공연을 찾아보세요!</h1>
+		</div>
+	</div>
 
-    <div class="section" id="about">
-        <h2>시스템 소개</h2>
-        <p>우리의 티켓팅 시스템은 사용자에게 최적의 공연 정보를 제공하고, 손쉽게 예매할 수 있도록 돕습니다. 다양한 공연 정보를 탐색하고, 특별한 경험을 만들어 보세요.</p>
-        <p>우리는 고객의 안전과 편의를 최우선으로 생각하며, 다양한 결제 수단과 고객 지원 서비스를 제공합니다. 또한, 매주 새로운 이벤트와 할인 혜택을 업데이트하여 고객에게 더 많은 기회를 제공합니다.
-        </p>
-        <button
-            style="padding: 10px 20px; background: #283593; color: white; border: none; border-radius: 5px; cursor: pointer;"
-            onclick="scrollToSection('contact')">연락처로 이동</button>
-    </div>
+	<!-- 케러셀 HTML 부분 -->
+	<div class="section carousel-section" id="performances-carousel">
+		<div class="section-header">
+			<h2 class="main-title">주요 공연 소개</h2>
+			<h3 class="current-performance" th:text="${mainPerform[0].prfnm}">공연 제목</h3>
+		</div>
+		<div class="custom-carousel">
+			<div class="carousel-container">
+				<th:block th:each="mainPerform, status : ${mainPerform}">
+					<div class="carousel-slide" th:classappend="${status.first ? 'active' : ''}"
+						th:data-title="${mainPerform.prfnm}"
+						th:data-link="@{/performance/detail/{mt20id}(mt20id=${mainPerform.mt20id})}">
+						<div class="carousel-image">
+							<img th:src="${mainPerform.poster}" alt="공연 이미지" loading="lazy">
+						</div>
+					</div>
+				</th:block>
+				<button class="carousel-arrow prev-arrow">&#10094;</button>
+				<button class="carousel-arrow next-arrow">&#10095;</button>
+			</div>
+			<div class="carousel-bottom">
+				<a th:href="@{/performance/detail/{mt20id}(mt20id=${mainPerform[0].mt20id})}" class="carousel-btn"
+					style="cursor: pointer;">자세히 보기</a>
+				<div class="carousel-indicators">
+					<!-- 인디케이터는 JavaScript에서 동적으로 생성됩니다 -->
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="section" id="contact">
-        <h2>연락처</h2>
-        <p>문의 사항이 있으시면 아래 연락처로 문의해 주세요.</p>
-        <p>이메일: support@ticketingsystem.com</p>
-        <p>전화: 123-456-7890</p>
-        <p>운영 시간: 월요일 - 금요일, 9:00 - 18:00</p>
-    </div>
+	<!-- carousel-section 다음에 추가 -->
+	<div class="section statistics-section" id="performance-stats">
+		<div class="section-header">
+			<h2 class="main-title">공연 통계</h2>
+		</div>
+
+		<!-- 공연 통계 테이블 -->
+		<div class="table-container">
+			<!-- 통계 차트 -->
+			<div class="chart-container">
+				<canvas id="concertChart"></canvas>
+			</div>
+
+			<div class="table-scroll">
+				<table>
+					<thead>
+						<tr>
+							<th>카테고리</th>
+							<th>공연 수</th>
+							<th>공연일 수</th>
+							<th>예매 수</th>
+							<th>취소 예매 수</th>
+							<th>총 예매 수</th>
+							<th>총 예매 금액</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- 연극 데이터 -->
+						<tr>
+							<td>연극</td>
+							<td>422</td>
+							<td>6305</td>
+							<td>192932</td>
+							<td>69216</td>
+							<td>123716</td>
+							<td>3,278,347,195</td>
+						</tr>
+						<!-- 서양음악(클래식) 데이터 -->
+						<tr>
+							<td>서양음악(클래식)</td>
+							<td>1054</td>
+							<td>1325</td>
+							<td>201572</td>
+							<td>60655</td>
+							<td>140917</td>
+							<td>3,516,942,954</td>
+						</tr>
+						<!-- 뮤지컬 데이터 -->
+						<tr>
+							<td>뮤지컬</td>
+							<td>668</td>
+							<td>7228</td>
+							<td>766050</td>
+							<td>357941</td>
+							<td>408109</td>
+							<td>28,605,122,773</td>
+						</tr>
+						<!-- 합계 데이터 -->
+						<tr>
+							<td>합계</td>
+							<td>2144</td>
+							<td>14858</td>
+							<td>1160554</td>
+							<td>487812</td>
+							<td>672742</td>
+							<td>35,399,462,922</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 공지사항 영역 -->
+	<div>
+		
+	</div>
 
 	<!-- common/footer 추가-->
 	<th:block th:replace="~{common/footer}"></th:block>
 
 
-    <!-- Chart.js 라이브러리 추가 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+	<!-- Chart.js 라이브러리 추가 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
 
-    <script>
-        let currentSlide = 0;
-        const carousel = document.getElementById('carouselInner');
-        const slides = document.querySelectorAll('.carousel-item');
+	<script>
+		// 캐러셀 클래스 추가
+		class Carousel {
+			constructor() {
+				this.carousel = document.querySelector('.custom-carousel');
+				this.slides = Array.from(this.carousel.querySelectorAll('.carousel-slide'));
+				this.totalSlides = this.slides.length;
+				this.currentSlide = 0;
+				this.autoPlayInterval = null;
+				this.performanceTitle = document.querySelector('.current-performance');
+				this.titles = this.slides.map(slide => slide.dataset.title);
+				this.detailLinks = Array.from(this.carousel.querySelectorAll('[data-link]'))
+					.map(el => el.dataset.link);
+				this.detailButton = this.carousel.querySelector('.carousel-btn');
 
-        function changeSlide(direction) {
-            currentSlide += direction;
-            
-            if (currentSlide >= slides.length) {
-                currentSlide = 0;
-            }
-            
-            if (currentSlide < 0) {
-                currentSlide = slides.length - 1;
-            }
-            
-            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
-        }
+				this.initializeCarousel();
+				this.addEventListeners();
+				this.startAutoPlay();
+			}
 
-        // 자동 슬라이드 기능
-        setInterval(() => {
-            changeSlide(1);
-        }, 5000);
+			initializeCarousel() {
+				// 인디케이터 생성
+				const indicatorsContainer = this.carousel.querySelector('.carousel-indicators');
+				indicatorsContainer.innerHTML = ''; // 기존 인디케이터 초기화
 
-        function changeSlide(direction, event) {
-            // 기본 a 태그 동작 방지
-            if (event) {
-                event.preventDefault();
-            }
+				for (let i = 0; i < this.totalSlides; i++) {
+					const indicator = document.createElement('div');
+					indicator.className = `indicator ${i === 0 ? 'active' : ''}`;
+					indicator.addEventListener('click', () => this.goToSlide(i));
+					indicatorsContainer.appendChild(indicator);
+				}
 
-            currentSlide += direction;
-            
-            if (currentSlide >= slides.length) {
-                currentSlide = 0;
-            }
-            
-            if (currentSlide < 0) {
-                currentSlide = slides.length - 1;
-            }
-            
-            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
-        }
+				// 인디케이터 요소들을 저장
+				this.indicators = Array.from(indicatorsContainer.querySelectorAll('.indicator'));
+			}
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // 공연 통계 차트
-            var performanceCtx = document.getElementById('performanceChart').getContext('2d');
-            new Chart(performanceCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['콘서트', '뮤지컬', '연극', '축제'],
-                    datasets: [{
-                        label: '공연별 예매 수',
-                        data: [42, 35, 28, 22],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.6)',
-                            'rgba(54, 162, 235, 0.6)',
-                            'rgba(255, 206, 86, 0.6)',
-                            'rgba(75, 192, 192, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
+			addEventListeners() {
+				this.carousel.addEventListener('mouseenter', () => this.stopAutoPlay());
+				this.carousel.addEventListener('mouseleave', () => this.startAutoPlay());
 
-            // 사용자 통계 차트
-            var userCtx = document.getElementById('userChart').getContext('2d');
-            new Chart(userCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['신규 회원', '기존 회원', '비활성 회원'],
-                    datasets: [{
-                        data: [20, 68, 12],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.6)',
-                            'rgba(54, 162, 235, 0.6)',
-                            'rgba(255, 206, 86, 0.6)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            });
-        });
-        const sections = document.querySelectorAll('.section');
+				this.carousel.querySelector('.prev-arrow').addEventListener('click', () => {
+					this.prevSlide();
+					this.resetAutoPlay();
+				});
 
-        const options = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
+				this.carousel.querySelector('.next-arrow').addEventListener('click', () => {
+					this.nextSlide();
+					this.resetAutoPlay();
+				});
+			}
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                } else {
-                    entry.target.classList.remove('visible');
-                }
-            });
-        }, options);
+			updateSlides() {
+				const activeSlide = this.slides[this.currentSlide];
+				document.querySelector('.carousel-slide.active').classList.remove('active');
+				activeSlide.classList.add('active');
 
-        sections.forEach(section => {
-            observer.observe(section);
-        });
+				this.performanceTitle.textContent = activeSlide.dataset.title;
 
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
+				// href 속성 직접 변경
+				this.detailButton.href = activeSlide.dataset.link;
 
-    </script>
-	
+				this.indicators.forEach((indicator, index) => {
+					if (index === this.currentSlide) {
+						indicator.classList.add('active');
+					} else {
+						indicator.classList.remove('active');
+					}
+				});
+			}
+
+			nextSlide() {
+				this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+				this.updateSlides();
+			}
+
+			prevSlide() {
+				this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+				this.updateSlides();
+			}
+
+			goToSlide(index) {
+				this.currentSlide = index;
+				this.updateSlides();
+				this.resetAutoPlay();
+			}
+
+			startAutoPlay() {
+				this.autoPlayInterval = setInterval(() => this.nextSlide(), 5000);
+			}
+
+			stopAutoPlay() {
+				if (this.autoPlayInterval) {
+					clearInterval(this.autoPlayInterval);
+					this.autoPlayInterval = null;
+				}
+			}
+
+			resetAutoPlay() {
+				this.stopAutoPlay();
+				this.startAutoPlay();
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', function () {
+			// 캐러셀 초기화
+			new Carousel();
+
+			// 차트 초기화
+			const ctx = document.getElementById('concertChart').getContext('2d');
+			new Chart(ctx, {
+				type: 'bar',  // 바 차트
+				data: {
+					labels: ['연극', '서양음악(클래식)', '뮤지컬', '합계'],  // 카테고리
+					datasets: [{
+						label: '예매 수',
+						data: [192932, 201572, 766050, 672742],  // 예매 수
+						backgroundColor: 'rgba(75, 192, 192, 0.2)',
+						borderColor: 'rgba(75, 192, 192, 1)',
+						borderWidth: 1
+					}, {
+						label: '취소 예매 수',
+						data: [69216, 60655, 357941, 487812],  // 취소 예매 수
+						backgroundColor: 'rgba(255, 99, 132, 0.2)',
+						borderColor: 'rgba(255, 99, 132, 1)',
+						borderWidth: 1
+					}]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					},
+					responsive: true,
+					plugins: {
+						legend: {
+							position: 'top',
+						}
+					}
+				}
+			});
+
+		});
+
+		const sections = document.querySelectorAll('.section');
+
+		const options = {
+			root: null,
+			rootMargin: '0px',
+			threshold: 0.1
+		};
+
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				} else {
+					entry.target.classList.remove('visible');
+				}
+			});
+		}, options);
+
+		sections.forEach(section => {
+			observer.observe(section);
+		});
+
+		function scrollToSection(sectionId) {
+			const section = document.getElementById(sectionId);
+			section.scrollIntoView({behavior: 'smooth'});
+		}
+
+	</script>
+
 	<script src="/js/main.js"></script>
-    <script src="/js/memberInfo.js"></script>
-	
+	<script src="/js/memberInfo.js"></script>
+
 </body>
 
 </html>
