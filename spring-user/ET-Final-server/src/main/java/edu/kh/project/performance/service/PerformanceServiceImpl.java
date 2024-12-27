@@ -87,7 +87,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         }
     }
     
-
+    
     // 메인 페이지 주요 공연 소개
 	@Override
 	public List<Performance> mainPerform() {
@@ -99,6 +99,13 @@ public class PerformanceServiceImpl implements PerformanceService {
 	@Override
 	public List<PerformanceRanking> performanceRanking() {
 		return mapper.performanceRanking();
+	}
+    
+
+    // 공연관리자가 등록한 공연 목록 조회 
+	@Override
+	public List<Performance> getPerformancesByManager(int memberNo) {
+		return mapper.selectPerformancesByManager(memberNo);
 	}
     
 }

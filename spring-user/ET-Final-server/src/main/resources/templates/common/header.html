@@ -74,7 +74,7 @@
 							<th:block th:if="*{memberAuth == 3}">
 								<button class="nickname-button" th:text="*{concertManagerNickname}"
 									onclick="location.href='/mypage/memberInfo'">공연관리자 닉네임</button>
-								<button class="performance-manage-button">공연관리</button>
+								<button id="performanceManagerButton" class="performance-manage-button" onclick="location.href='/performance/manager'">공연관리</button>
 								<button class="logout-button" onclick="perfLogoutSession()">로그아웃</button>
 							</th:block>
 						</th:block>
@@ -85,48 +85,52 @@
 	</header>
 
 	<!-- Modal for Login -->
-	<div id="loginModal" class="modal">
-		<div class="modal-content">
+<div id="loginModal" class="modal">
+	<div class="modal-content">
 			<div class="modal-header">
-				<h2>로그인</h2>
-				<span class="close" onclick="closeModal('loginModal')">&times;</span>
+					<h2>로그인</h2>
+					<span class="close" onclick="closeModal('loginModal')">&times;</span>
 			</div>
 			<div class="modal-body">
-				<input type="text" id="memberLoginId" placeholder="아이디" required>
-				<input type="password" id="memberLoginPw" placeholder="비밀번호" required>
-				<button type="submit" id="login-Btn">로그인</button>
+					<!-- 로그인 Form -->
+					<form action="/member/login" method="POST">
+							<input type="text" id="memberLoginId" name="memberId" placeholder="아이디" required>
+							<input type="password" id="memberLoginPw" name="password" placeholder="비밀번호" autocomplete="current-password" required>
+							<button type="submit" id="login-Btn">로그인</button>
+					</form>
 
-				<a href="/naver/login">
-					<img src="/images/naver_login_button.png" alt="네이버 로그인" style="width: 45px; height: 45px;">
-				</a>
-
+					<a href="/naver/login">
+							<img src="/images/naver_login_button.png" alt="네이버 로그인" style="width: 45px; height: 45px;">
+					</a>
 			</div>
 			<div class="modal-footer">
-				<p>아직 계정이 없으신가요? <a href="#" onclick="openModal('selectModal'); closeModal('loginModal')">회원가입</a></p>
-				<p>공연 관리자 이신가요? <a href="#" onclick="openModal('adminLoginModal'); closeModal('loginModal')">공연 관리자
-						로그인</a></p>
+					<p>아직 계정이 없으신가요? <a href="#" onclick="openModal('selectModal'); closeModal('loginModal')">회원가입</a></p>
+					<p>공연 관리자 이신가요? <a href="#" onclick="openModal('adminLoginModal'); closeModal('loginModal')">공연 관리자
+									로그인</a></p>
 			</div>
-		</div>
 	</div>
+</div>
 
-	<!-- Modal for Perf Admin Login -->
+
 	<div id="adminLoginModal" class="modal">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>공연 관리자 로그인</h2>
-				<span class="close" onclick="closeModal('adminLoginModal')">&times;</span>
-			</div>
-			<div class="modal-body">
-				<input type="text" id="concertManagerLoginId" placeholder="공연 관리자 아이디" required>
-				<input type="password" id="concertManagerLoginPw" placeholder="공연 관리자 비밀번호" required>
-				<button type="submit" id="perf-login-Btn">공연 관리자 로그인</button>
-			</div>
-			<div class="modal-footer">
-				<p>일반 회원이신가요? <a href="#" onclick="openModal('loginModal'); closeModal('adminLoginModal')">회원 로그인</a>
-				</p>
-			</div>
-		</div>
-	</div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>공연 관리자 로그인</h2>
+            <span class="close" onclick="closeModal('adminLoginModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <!-- 공연 관리자 로그인 Form -->
+            <form action="/perfmgr/login" method="POST">
+                <input type="text" id="concertManagerLoginId" name="managerId" placeholder="공연 관리자 아이디" required>
+                <input type="password" id="concertManagerLoginPw" name="password" placeholder="공연 관리자 비밀번호" autocomplete="new-password" required>
+                <button type="submit" id="perf-login-Btn">공연 관리자 로그인</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <p>일반 회원이신가요? <a href="#" onclick="openModal('loginModal'); closeModal('adminLoginModal')">회원 로그인</a></p>
+        </div>
+    </div>
+</div>
 
 	<!-- select for Signup -->
 	<div id="selectModal" class="modal">
@@ -164,10 +168,10 @@
 					<input id="memberId" name="memberId" type="text" placeholder="아이디 입력">
 					<span class="signUp-message" id="idMessage"></span>
 
-					<input id="memberPw" name="memberPw" type="password" placeholder="비밀번호 입력">
+					<input id="memberPw" name="memberPw" type="password" placeholder="비밀번호 입력" autocomplete="new-password" required>
 					<span class="signUp-message" id="pwMessage"></span>
 
-					<input id="memberPwConfirm" type="password" placeholder="비밀번호 확인 입력">
+					<input id="memberPwConfirm" type="password" placeholder="비밀번호 확인 입력" autocomplete="new-password" required>
 					<span class="signUp-message" id="confirmPwMessage"></span>
 
 					<input id="memberNickname" name="memberNickname" type="text" placeholder="닉네임">

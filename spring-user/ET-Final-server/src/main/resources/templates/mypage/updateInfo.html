@@ -7,176 +7,180 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>회원정보 수정</title>
 		
-		<style>
-			       * {
-			           margin: 0;
-			           padding: 0;
-			           box-sizing: border-box;
-			       }
 
-			       body {
-			           font-family: 'Noto Sans KR', sans-serif;
-			           display: flex;
-			           min-height: 100vh;
-			       }
-
-			       /* 사이드바 스타일 */
-			       .sidebar {
-			           width: 200px;
-			           background-color: #f8f9fa;
-			           padding: 20px;
-			           border-right: 1px solid #ddd;
-			       }
-
-			       .logo {
-			           font-size: 14px;
-			           color: #666;
-			           margin-bottom: 30px;
-			       }
-
-			       .welcome {
-			           color: #ff6b6b;
-			           font-weight: bold;
-			       }
-
-			       .menu-list {
-			           list-style: none;
-			       }
-
-			       .menu-item {
-			           margin-bottom: 15px;
-			       }
-
-			       .menu-item a {
-			           text-decoration: none;
-			           color: #333;
-			           display: flex;
-			           align-items: center;
-			           padding: 10px;
-			           border-radius: 5px;
-			           transition: background-color 0.2s;
-			       }
-
-			       .menu-item a:hover {
-			           background-color: #eee;
-			       }
-
-			       /* 메인 컨텐츠 스타일 */
-			       .main-content {
-			           flex: 1;
-			           padding: 40px;
-			       }
-
-			       .page-title {
-			           font-size: 24px;
-			           margin-bottom: 30px;
-			           padding-bottom: 15px;
-			           border-bottom: 2px solid #333;
-			       }
-
-			       .info-section {
-			           margin-top: 20px;
-			       }
-
-			       .info-section h3 {
-			           font-size: 18px;
-			           margin-bottom: 20px;
-			       }
-
-			       .form-group {
-			           margin-bottom: 20px;
-			           display: flex;
-			           align-items: center;
-			       }
-
-			       .form-group label {
-			           width: 120px;
-			           font-weight: 500;
-			       }
-
-			       .form-group input[type="text"],
-			       .form-group input[type="email"],
-			       .form-group input[type="tel"] {
-			           width: 300px;
-			           padding: 8px 12px;
-			           border: 1px solid #ddd;
-			           border-radius: 4px;
-			           font-size: 14px;
-			       }
-
-			       .form-group input:disabled {
-			           background-color: #f8f9fa;
-			           cursor: not-allowed;
-			       }
-
-			       .form-group.gender {
-			           margin-top: 15px;
-			       }
-
-			       .form-group.gender input[type="radio"] {
-			           margin-right: 5px;
-			       }
-
-			       .form-group.gender label:not(:first-child) {
-			           width: auto;
-			           margin-right: 20px;
-			       }
-
-			       .edit-btn {
-			           padding: 6px 12px;
-			           background-color: #f8f9fa;
-			           border: 1px solid #ddd;
-			           border-radius: 4px;
-			           margin-left: 10px;
-			           cursor: pointer;
-			       }
-
-			       .edit-btn:hover {
-			           background-color: #e9ecef;
-			       }
-				   
-				   /* 버튼 스타일 */
-				   .form-actions {
-				       display: flex;
-				       justify-content: flex-end;
-				       gap: 10px;
-				       margin-top: 20px;
-				   }
-
-				   .cancel-btn {
-				       padding: 10px 20px;
-				       border: 1px solid #ccc;
-				       background-color: #f5f5f5;
-				       color: #333;
-				       border-radius: 5px;
-				       cursor: pointer;
-				       transition: background-color 0.3s;
-				   }
-
-				   .cancel-btn:hover {
-				       background-color: #ddd;
-				   }
-
-				   .save-btn {
-				       padding: 10px 20px;
-				       border: none;
-				       background-color: #ff4d4f;
-				       color: white;
-				       border-radius: 5px;
-				       cursor: pointer;
-				       transition: background-color 0.3s;
-				   }
-
-				   .save-btn:hover {
-				       background-color: #d9363e;
-				   }
-			   </style>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	
 	<link rel="stylesheet" href="/css/main-style.css">
+
+	<link rel="stylesheet" href="/css/myPage/updateInfo.css">
 	
 	<th:block th:replace="~{common/common}"></th:block>
+
+	<style>
+		* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+  width: 200px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.logo {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.welcome {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.menu-list {
+  list-style: none;
+}
+
+.menu-item {
+  margin-bottom: 15px;
+}
+
+.menu-item a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.menu-item a:hover {
+  background-color: #eee;
+}
+
+/* 메인 컨텐츠 스타일 */
+.main-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #333;
+}
+
+.info-section {
+  margin-top: 20px;
+}
+
+.info-section h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.form-group label {
+  width: 120px;
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"] {
+  width: 300px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.form-group.gender {
+  margin-top: 15px;
+}
+
+.form-group.gender input[type="radio"] {
+  margin-right: 5px;
+}
+
+.form-group.gender label:not(:first-child) {
+  width: auto;
+  margin-right: 20px;
+}
+
+.edit-btn {
+  padding: 6px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background-color: #e9ecef;
+}
+
+/* 버튼 스타일 */
+.form-actions {
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+margin-top: 20px;
+}
+
+.cancel-btn {
+padding: 10px 20px;
+border: 1px solid #ccc;
+background-color: #f5f5f5;
+color: #333;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+.cancel-btn:hover {
+background-color: #ddd;
+}
+
+.save-btn {
+padding: 10px 20px;
+border: none;
+background-color: #ff4d4f;
+color: white;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+.save-btn:hover {
+background-color: #d9363e;
+}
+
+</style>
 	
 
 </head>
@@ -210,51 +214,62 @@
 	       <h2 class="page-title">회원정보수정</h2>
 	       
 	       <div class="info-section">
-	           <h3>기본정보</h3>
-	           <form>
-	               <div class="form-group">
-	                   <label for="userId">아이디</label>
-	                   <input type="text" id="userId" disabled>
-	               </div>
-	               
-	               <div class="form-group">
-	                   <label for="userName">이름</label>
-	                   <input type="text" id="userName">
-	               </div>
-	               
-	               <div class="form-group">
-	                   <label for="userPhone">휴대폰번호</label>
-	                   <input type="tel" id="userPhone" disabled>
-	               </div>
-	               
-	               <div class="form-group">
-	                   <label for="userEmail">이메일</label>
-	                   <input type="email" id="userEmail">
-	                   <button type="button" class="edit-btn">인증</button>
-	               </div>
-	               
-	               <div class="form-group">
-	                   <label for="userBirth">생년월일</label>
-	                   <input type="text" id="userBirth">
-	               </div>
-	               
-	               <div class="form-group gender">
-	                   <label>성별</label>
-	                   <input type="radio" id="male" name="gender">
-	                   <label for="male">남</label>
-	                   <input type="radio" id="female" name="gender">
-	                   <label for="female">여</label>
-	               </div>
-	               
-	               <!-- 취소 및 수정 버튼 -->
-	               <div class="form-actions">
-	                   <button type="button" class="cancel-btn">취소</button>
-	                   <button type="submit" class="save-btn">수정</button>
-	               </div>
-	           </form>
-	       </div>
-	   </div>
+					<h3>기본정보</h3>
+					<form id="userForm">
+							<!-- 아이디 (수정 불가) -->
+							<div class="form-group">
+									<label for="userId">아이디</label>
+									<input type="text" id="userId" disabled>
+							</div>
 	
+							
+	
+							<!-- 휴대폰 번호 (수정 불가) -->
+							<div class="form-group">
+									<label for="userPhone">휴대폰번호</label>
+									<input type="tel" id="userPhone">
+							</div>
+	
+							<!-- 닉네임 -->
+							<div class="form-group">
+									<label for="userNickname">닉네임</label>
+									<input type="text" id="userNickname">
+							</div>
+	
+							<!-- 이메일 -->
+							<div class="form-group">
+									<label for="userEmail">이메일</label>
+									<input type="email" id="userEmail">
+									<button type="button" class="edit-btn" id="sendVerificationBtn">인증</button>
+							</div>
+	
+							<!-- 이메일 인증 섹션 -->
+							<div id="emailVerificationSection" style="display: none;">
+									<div class="form-group">
+											<label for="verificationCode">인증코드</label>
+											<input type="text" id="verificationCode">
+											<button type="button" class="verify-btn" id="verifyCodeBtn">확인</button>
+									</div>
+									<div id="timer">05:00</div>
+							</div>
+	
+	
+							<!-- 성별 -->
+							<div class="form-group gender">
+									<label>성별</label>
+									<input type="radio" id="male" name="gender">
+									<label for="male">남</label>
+									<input type="radio" id="female" name="gender">
+									<label for="female">여</label>
+							</div>
+	
+							<!-- 취소 및 수정 버튼 -->
+							<div class="form-actions">
+									<button type="button" class="cancel-btn">취소</button>
+									<button type="submit" class="save-btn">수정</button>
+							</div>
+					</form>
+			</div>
 	
     <!-- common/footer 추가-->
 	<th:block th:replace="~{common/footer}"></th:block>
@@ -262,9 +277,12 @@
 
     <script>
 
+
     </script>
 	
 	<script src="/js/main.js"></script>
+
+	<script src="/js/myPage/updateInfo.js"></script>
 	
 </body>
 
