@@ -1,5 +1,6 @@
 package edu.kh.project.myPage.controller;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,26 @@ import lombok.extern.slf4j.Slf4j;
 @SessionAttributes({"loginMember"})
 public class MyPageController {
 	
-	 private final MyPageService service;
+	private final MyPageService service;
+    private final BCryptPasswordEncoder bcrypt;
+
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	 
 	// 비밀번호 검증
 	    @PostMapping("verifyPassword")

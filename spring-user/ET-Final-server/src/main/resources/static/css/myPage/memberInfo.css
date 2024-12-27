@@ -175,7 +175,7 @@ body {
 
 }
 
-/* 공통 스타일 */
+/* 모달 스타일 */
 .modalvf {
     display: none; /* 기본 상태에서 숨김 */
     position: fixed;
@@ -273,7 +273,7 @@ body {
     }
 }
 
-/*26 추가*/
+
 .pwModal {
     display: none;
     position: fixed;
