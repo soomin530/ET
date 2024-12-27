@@ -24,61 +24,60 @@ public class PerformanceController {
 	private final PerformanceService performanceService;
 
 	/**
-	 * 공연 목록 페이지로 이동
-	 * 
-	 * @param genre 공연 장르
-	 * @param model
-	 * @return
-	 * @author 우수민
-	 */
-	@GetMapping("/genre/{genre}")
-	public String genre(@PathVariable("genre") String genre, Model model) {
+     * 공연 목록 페이지로 이동
+     * @param genre 공연 장르
+     * @param model 
+     * @return 
+     * @author 우수민
+     */
+    @GetMapping("/genre/{genre}")
+    public String genre(@PathVariable("genre") String genre, Model model) {
+    	
+    	if(genre.equals("musical")) {
+    		genre = "뮤지컬";
+    	}
+    	
+    	if(genre.equals("theater")) {
+    		genre = "연극";
+    	}
+    	
+    	if(genre.equals("classic")) {
+    		genre = "서양음악(클래식)";
+    	}
 
-		if (genre.equals("musical")) {
-			genre = "뮤지컬";
-		}
+        // 각 장르 공연 목록을 가져오기
+        List<Performance> performances = performanceService.getPerformancesByGenre(genre);
+        
+        log.debug("Performances: {}", performances);
 
-		if (genre.equals("theater")) {
-			genre = "연극";
-		}
+        // 모델에 데이터 추가해서 전달
+        model.addAttribute("performances", performances);
+        model.addAttribute("genre", genre);
 
-		if (genre.equals("classic")) {
-			genre = "서양음악(클래식)";
-		}
+        return "performance/genre";
+    }
+    
+    /** 공연 상세페이지 조회
+     * @param mt20id
+     * @param model
+     * @return
+     * @author 우수민
+     */
+    @GetMapping("/detail/{mt20id}")
+    public String detail(@PathVariable("mt20id") String mt20id, Model model) {
+    	
+        // 공연 ID로 공연 정보 조회
+        Performance performance = performanceService.getPerformanceById(mt20id);
+        
+        // 스케줄 및 잔여석 정보 조회
+ 		Map<String, List<ScheduleInfo>> schedule = performanceService.getScheduleWithAvailableSeats(mt20id);
+ 		performance.setSchedule(schedule);
 
-		// 각 장르 공연 목록을 가져오기
-		List<Performance> performances = performanceService.getPerformancesByGenre(genre);
+        // 공연 정보 추가
+        model.addAttribute("performance", performance);
 
-		log.debug("Performances: {}", performances);
+        return "performance/performance-detail-calander"; 
+    }
 
-		// 모델에 데이터 추가해서 전달
-		model.addAttribute("performances", performances);
-		model.addAttribute("genre", genre);
-
-		return "performance/genre";
-	}
-
-	/**
-	 * 공연 상세페이지 조회
-	 * 
-	 * @param mt20id
-	 * @param model
-	 * @return
-	 * @author 우수민
-	 */
-	@GetMapping("/detail/{mt20id}")
-	public String detail(@PathVariable("mt20id") String mt20id, Model model) {
-		// 공연 ID로 공연 정보 조회
-		Performance performance = performanceService.getPerformanceById(mt20id);
-
-		// 스케줄 및 잔여석 정보 조회
-		Map<String, List<ScheduleInfo>> schedule = performanceService.getScheduleWithAvailableSeats(mt20id);
-		performance.setSchedule(schedule);
-
-		// 공연 정보 추가
-		model.addAttribute("performance", performance);
-
-		return "performance/performance-detail-calander";
-	}
 
 }

@@ -40,9 +40,14 @@
 						<th>가격</th>
 						<td class="performance-price" th:text="${performance.pcseguidance}"></td>
 					</tr>
+
+					<!-- 위도, 경도 -->
+					<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
+					<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
+
 				</table>
 
-				<div id="map" style="width: 500px; height: 400px;"></div>
+				<div id="map" style="width: 600px; height: 400px;"></div>
 			</div>
 
 			<!-- 오른쪽: 예매 영역 -->
@@ -75,32 +80,28 @@
 		</div>
 	</div>
 
-	<form id="bookingForm" method="get" action="/payment/seat-selection">
-		<input type="hidden" name="mt20id" th:value="${performance.mt20id}" />
-		<input type="hidden" name="selectedDate" value="" />
-		<input type="hidden" name="selectedTime" value="" />
-	</form>
-
 	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
 
 	<script th:inline="javascript">
-		const performanceData = {
-	        id: /*[[${performance.mt20id}]]*/ '',
-	        startDate: /*[[${performance.prfpdfrom}]]*/ '',
-	        endDate: /*[[${performance.prfpdto}]]*/ '',
-	        runtime: /*[[${performance.prfruntime}]]*/ '',
-	        cast: /*[[${performance.prfcast}]]*/ '',
-	        venue: /*[[${performance.fcltynm}]]*/ '',
-	        schedule: /*[[${performance.schedule}]]*/ {}
-	    };
 		
-		console.log(performanceData);
+		const fcltla = document.getElementById('fcltla').value;
+        const fcltlo = document.getElementById('fcltlo').value;
+		
+		const performanceData = {
+			id: /*[[${performance.mt20id}]]*/ '',
+			startDate: /*[[${performance.prfpdfrom}]]*/ '',
+			endDate: /*[[${performance.prfpdto}]]*/ '',
+			runtime: /*[[${performance.prfruntime}]]*/ '',
+			cast: /*[[${performance.prfcast}]]*/ '',
+			venue: /*[[${performance.fcltynm}]]*/ '',
+			schedule: /*[[${performance.schedule}]]*/ {}
+		};
 
 		// 카카오지도 API  
 		window.addEventListener('DOMContentLoaded', () => {
 			var mapContainer = document.getElementById('map'),
 				mapOption = {
-					center: new kakao.maps.LatLng(33.450701, 126.570667),
+					center: new kakao.maps.LatLng(fcltla, fcltlo), // 지도의 중심좌표
 					level: 3
 				};
 

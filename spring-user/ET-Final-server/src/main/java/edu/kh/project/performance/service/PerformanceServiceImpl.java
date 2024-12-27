@@ -25,12 +25,26 @@ public class PerformanceServiceImpl implements PerformanceService {
 		return mapper.genre(genre);
 	}
 
+	
 	// 공연 상세페이지 조회
 	@Override
 	public Performance getPerformanceById(String mt20id) {
-		return mapper.detail(mt20id);
+
+	    Performance performance = mapper.detail(mt20id);
+
+	    // 지도 API 정보
+	    Performance mapInfo = mapper.selectPerformanceById(mt20id);
+
+	    // 데이터 병합
+	    if (mapInfo != null) {
+	        performance.setFcltla(mapInfo.getFcltla()); // 위도
+	        performance.setFcltlo(mapInfo.getFcltlo()); // 경도
+	    }
+
+	    return performance;
 	}
 
+	
 	// 스케줄 및 잔여 좌석 조회
 	@Override
 	 public Map<String, List<ScheduleInfo>> getScheduleWithAvailableSeats(String mt20id) {
@@ -58,6 +72,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         return scheduleMap;
     }
     
+	
     private String getDayOfWeek(Integer dayNum) {
         switch (dayNum) {
             case 1: return "월요일";
@@ -71,6 +86,7 @@ public class PerformanceServiceImpl implements PerformanceService {
         }
     }
     
+    
     private String getTimeRound(String time) {
         try {
             int hour = Integer.parseInt(time.split(":")[0]);
@@ -79,4 +95,5 @@ public class PerformanceServiceImpl implements PerformanceService {
             return "1회차"; // 기본값
         }
     }
+    
 }

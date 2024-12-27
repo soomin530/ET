@@ -16,6 +16,13 @@
 		WHERE MT20ID = #{mt20id}
 	</select>
 	
+	<!-- 공연 위도, 경도 조회 -->
+	<select id="selectPerformanceById">
+		SELECT FCLTLA, FCLTLO
+		FROM TB_VENUE JOIN TB_PERFORMANCES_DETAIL USING(MT10ID)
+		WHERE MT20ID = #{mt20id}
+	</select>
+	
 	<!-- 스케줄 및 잔여 좌석 조회 -->
 	<select id="getScheduleData" resultType="map">
         SELECT 
