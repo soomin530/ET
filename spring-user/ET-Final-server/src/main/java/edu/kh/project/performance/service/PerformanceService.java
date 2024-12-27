@@ -1,8 +1,10 @@
 package edu.kh.project.performance.service;
 
 import java.util.List;
+import java.util.Map;
 
 import edu.kh.project.performance.model.dto.Performance;
+import edu.kh.project.performance.model.dto.ScheduleInfo;
 
 public interface PerformanceService {
 
@@ -19,5 +21,11 @@ public interface PerformanceService {
 	 * @author 우수민
 	 */
 	Performance getPerformanceById(String mt20id);
+
+	/** 스케줄 및 잔여 좌석 조회
+	 * @param mt20id
+	 * @return
+	 */
+	Map<String, List<ScheduleInfo>> getScheduleWithAvailableSeats(String mt20id);
 
 }

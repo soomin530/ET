@@ -2,139 +2,131 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공연 예매 사이트</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/performance/detail.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>공연 예매 사이트</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/css/performance/detail.css">
 </head>
 
 <body>
-    <div class="performance-container">
-        <div class="performance-content">
-            <!-- 왼쪽: 공연 정보 -->
-            <div class="performance-info">
-                <img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image">
-                <table class="info-table">
-                    <tr>
-                        <th>공연명</th>
-                        <td class="performance-title" th:text="${performance.prfnm}"></td>
-                    </tr>
-                    <tr>
-                        <th>장소</th>
-                        <td class="performance-venue" th:text="${performance.fcltynm}"></td>
-                    </tr>
-                    <tr>
-                        <th>공연기간</th>
-                        <td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}"></td>
-                    </tr>
-                    <tr>
-                        <th>공연시간</th>
-                        <td class="performance-runtime" th:text="${performance.prfruntime}"></td>
-                    </tr>
-                    <tr>
-                        <th>출연진</th>
-                        <td class="performance-actor" th:text="${performance.prfcast}"></td>
-                    </tr>
-                    <tr>
-                        <th>가격</th>
-                        <td class="performance-price" th:text="${performance.pcseguidance}"></td>
-                    </tr>
+	<div class="performance-container">
+		<div class="performance-content">
+			<!-- 왼쪽: 공연 정보 -->
+			<div class="performance-info">
+				<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image">
+				<table class="info-table">
+					<tr>
+						<th>공연명</th>
+						<td class="performance-title" th:text="${performance.prfnm}"></td>
+					</tr>
+					<tr>
+						<th>장소</th>
+						<td class="performance-venue" th:text="${performance.fcltynm}"></td>
+					</tr>
+					<tr>
+						<th>공연기간</th>
+						<td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}"></td>
+					</tr>
+					<tr>
+						<th>공연시간</th>
+						<td class="performance-runtime" th:text="${performance.prfruntime}"></td>
+					</tr>
+					<tr>
+						<th>출연진</th>
+						<td class="performance-actor" th:text="${performance.prfcast}"></td>
+					</tr>
+					<tr>
+						<th>가격</th>
+						<td class="performance-price" th:text="${performance.pcseguidance}"></td>
+					</tr>
 
-                    <!-- 위도, 경도 -->
-                    <input type="hidden" id="fcltla" th:value="${performance.fcltla}">
-                    <input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
+					<!-- 위도, 경도 -->
+					<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
+					<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
 
-                </table>
+				</table>
 
-                <div id="map" style="width: 600px; height: 400px;"></div>
-            </div>
+				<div id="map" style="width: 600px; height: 400px;"></div>
+			</div>
 
-            <!-- 오른쪽: 예매 영역 -->
-            <div class="performance-booking">
-                <div class="datepicker">
-                    <div class="calendar-header">
-                        <button class="month-nav" id="prevMonth">‹</button>
-                        <span class="current-month" id="currentMonth"></span>
-                        <button class="month-nav" id="nextMonth">›</button>
-                    </div>
-                    <div class="weekdays">
-                        <span>일</span>
-                        <span>월</span>
-                        <span>화</span>
-                        <span>수</span>
-                        <span>목</span>
-                        <span>금</span>
-                        <span>토</span>
-                    </div>
-                    <div class="days" id="calendar-days"></div>
-                </div>
-                <div class="schedule-box" id="schedule-info">
-                    <h3 class="text-lg font-bold mb-2">선택한 날짜의 공연 시간</h3>
-                    <div class="selected-date" id="selected-date">날짜를 선택해주세요</div>
-                    <div class="time-slots" id="time-slots">
-                    </div>
-                </div>
-                <button class="booking-btn" id="booking-btn" disabled>예매하기</button>
-            </div>
-        </div>
-    </div>
+			<!-- 오른쪽: 예매 영역 -->
+			<div class="performance-booking">
+				<div class="datepicker">
+					<div class="calendar-header">
+						<button class="month-nav" id="prevMonth">‹</button>
+						<span class="current-month" id="currentMonth"></span>
+						<button class="month-nav" id="nextMonth">›</button>
+					</div>
+					<div class="weekdays">
+						<span>일</span>
+						<span>월</span>
+						<span>화</span>
+						<span>수</span>
+						<span>목</span>
+						<span>금</span>
+						<span>토</span>
+					</div>
+					<div class="days" id="calendar-days"></div>
+				</div>
+				<div class="schedule-box" id="schedule-info">
+					<h3 class="text-lg font-bold mb-2">선택한 날짜의 공연 시간</h3>
+					<div class="selected-date" id="selected-date">날짜를 선택해주세요</div>
+					<div class="time-slots" id="time-slots">
+					</div>
+				</div>
+				<button class="booking-btn" id="booking-btn" disabled>예매하기</button>
+			</div>
+		</div>
+	</div>
 
-    <script src="/js/performance/detail.js"></script>
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
+	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
 
-    <script>
-        const fcltla = document.getElementById('fcltla').value;
+	<script th:inline="javascript">
+		
+		const fcltla = document.getElementById('fcltla').value;
         const fcltlo = document.getElementById('fcltlo').value;
+		
+		const performanceData = {
+			id: /*[[${performance.mt20id}]]*/ '',
+			startDate: /*[[${performance.prfpdfrom}]]*/ '',
+			endDate: /*[[${performance.prfpdto}]]*/ '',
+			runtime: /*[[${performance.prfruntime}]]*/ '',
+			cast: /*[[${performance.prfcast}]]*/ '',
+			venue: /*[[${performance.fcltynm}]]*/ '',
+			schedule: /*[[${performance.schedule}]]*/ {}
+		};
 
-        // 카카오지도 API
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-            mapOption = {
-                center: new kakao.maps.LatLng(fcltla, fcltlo), // 지도의 중심좌표
-                level: 3 // 지도의 확대 레벨
-            };
+		// 카카오지도 API  
+		window.addEventListener('DOMContentLoaded', () => {
+			var mapContainer = document.getElementById('map'),
+				mapOption = {
+					center: new kakao.maps.LatLng(fcltla, fcltlo), // 지도의 중심좌표
+					level: 3
+				};
 
-        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+			var map = new kakao.maps.Map(mapContainer, mapOption);
+			var marker = new kakao.maps.Marker({
+				position: map.getCenter()
+			});
+			marker.setMap(map);
 
-        // 지도를 클릭한 위치에 표출할 마커입니다
-        var marker = new kakao.maps.Marker({
-            // 지도 중심좌표에 마커를 생성합니다 
-            position: map.getCenter()
-        });
-        // 지도에 마커를 표시합니다
-        marker.setMap(map);
+			kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+				var latlng = mouseEvent.latLng;
+				marker.setPosition(latlng);
 
-        // 지도에 클릭 이벤트를 등록합니다
-        // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
-        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+				var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
+				message += '경도는 ' + latlng.getLng() + ' 입니다';
 
-            // 클릭한 위도, 경도 정보를 가져옵니다 
-            var latlng = mouseEvent.latLng;
+				var resultDiv = document.getElementById('clickLatlng');
+				if (resultDiv) {
+					resultDiv.innerHTML = message;
+				}
+			});
+		});
+	</script>
 
-            // 마커 위치를 클릭한 위치로 옮깁니다
-            marker.setPosition(latlng);
-
-            var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-            message += '경도는 ' + latlng.getLng() + ' 입니다';
-
-            var resultDiv = document.getElementById('clickLatlng');
-            resultDiv.innerHTML = message;
-
-
-            // Hidden input에서 위도, 경도 값 가져오기
-            document.addEventListener('DOMContentLoaded', function () {
-                
-                // 위도와 경도가 유효한 경우에만 지도 중심좌표 설정
-                if (fcltla && fcltlo) {
-                    const mapCenter = new kakao.maps.LatLng(parseFloat(fcltla), parseFloat(fcltlo));
-                    map.setCenter(mapCenter);
-
-                    // 마커 위치도 업데이트
-                    marker.setPosition(mapCenter);
-                }
-            });
-        }); 
-    </script>
+	<script src="/js/performance/detail.js"></script>
 
 </body>
 

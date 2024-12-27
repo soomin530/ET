@@ -11,7 +11,7 @@
 	
 	<!-- 공연 상세페이지 조회 -->
 	<select id="detail">
-		SELECT POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE
+		SELECT MT20ID, POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE
 		FROM TB_PERFORMANCES_DETAIL
 		WHERE MT20ID = #{mt20id}
 	</select>
@@ -22,5 +22,51 @@
 		FROM TB_VENUE JOIN TB_PERFORMANCES_DETAIL USING(MT10ID)
 		WHERE MT20ID = #{mt20id}
 	</select>
+	
+	<!-- 스케줄 및 잔여 좌석 조회 -->
+	<select id="getScheduleData" resultType="map">
+        SELECT 
+		   p.MT20ID,
+		   pt.DAY_OF_WEEK,
+		   CASE 
+		       WHEN pt.DAY_OF_WEEK = 1 THEN '월요일'
+		       WHEN pt.DAY_OF_WEEK = 2 THEN '화요일'
+		       WHEN pt.DAY_OF_WEEK = 3 THEN '수요일'
+		       WHEN pt.DAY_OF_WEEK = 4 THEN '목요일'
+		       WHEN pt.DAY_OF_WEEK = 5 THEN '금요일'
+		       WHEN pt.DAY_OF_WEEK = 6 THEN '토요일'
+		       WHEN pt.DAY_OF_WEEK = 7 THEN '일요일'
+		   END AS day_name,
+		   pt.PERFORMANCE_TIME as time,
+		   COALESCE((
+		       SELECT SUM(vsi.SEAT_COUNT)
+		       FROM TB_VENUE_SEAT_INFO vsi
+		       JOIN TB_PERFORMANCES_DETAIL pd ON vsi.MT10ID = pd.MT10ID
+		       WHERE pd.MT20ID = p.MT20ID
+		   ), 0) - COUNT(CASE 
+		       WHEN ts.SEAT_STATUS = 'booked' 
+		       AND ts.SHOW_DATE >= TRUNC(SYSDATE) 
+		       THEN 1 
+		   END) as seats,
+		   'available' as status  
+		FROM 
+		   TB_PERFORMANCES_DETAIL p
+		   INNER JOIN TB_PERFORMANCE_TIME pt ON p.MT20ID = pt.MT20ID
+		   LEFT JOIN TB_TICKET_SEAT ts ON (
+		       ts.MT20ID = p.MT20ID
+		       AND ts.SHOW_TIME = pt.PERFORMANCE_TIME
+		       AND ts.SHOW_DATE >= TRUNC(SYSDATE)
+		   )
+		WHERE 
+		   p.MT20ID = #{mt20id}
+		   AND pt.DAY_OF_WEEK IS NOT NULL
+		GROUP BY 
+		   p.MT20ID,
+		   pt.DAY_OF_WEEK,
+		   pt.PERFORMANCE_TIME
+		ORDER BY 
+		   pt.DAY_OF_WEEK, 
+		   pt.PERFORMANCE_TIME
+    </select>
 	
 </mapper>

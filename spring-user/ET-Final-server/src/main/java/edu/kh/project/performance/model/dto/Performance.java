@@ -1,5 +1,8 @@
 package edu.kh.project.performance.model.dto;
 
+import java.util.List;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +36,7 @@ public class Performance {
 	private String fcltlo;			// 경도
 	
 	
+	private Map<String, List<ScheduleInfo>> schedule; // 스케줄 정보 추가
 	
 
 }

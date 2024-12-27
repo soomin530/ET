@@ -1,6 +1,7 @@
 package edu.kh.project.performance.model.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -23,6 +24,12 @@ public interface PerformanceMapper {
 	 */
 	Performance detail(String mt20id);
 
+	/** 스케줄 및 잔여 좌석 조회
+	 * @param mt20id
+	 * @return
+	 */
+	List<Map<String, Object>> getScheduleData(String mt20id);
+	
 	/** 공연 위도, 경도 조회
 	 * @param mt20id
 	 * @return

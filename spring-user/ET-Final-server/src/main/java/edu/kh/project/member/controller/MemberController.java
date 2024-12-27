@@ -84,20 +84,24 @@ public class MemberController {
 		String memberNo = String.valueOf(loginMember.getMemberNo());
 		String memberEmail = loginMember.getMemberEmail();
 
-		// 토큰 생성 및 Redis에 저장
+		// 토큰 생성
 		JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
-		
-		// Refresh Token을 Redis에 저장
-		// key: memberNo, value: refreshToken, 만료시간 설정
-		redisService.saveRefreshToken(memberNo, tokenInfo.refreshToken(), 
-		    jwtTokenUtil.getRefreshTokenValidityInMilliseconds());
 
 		// Access Token을 HttpOnly 쿠키에 저장
-		Cookie accessTokenCookie = new Cookie("Access-token", tokenInfo.accessToken());
-		accessTokenCookie.setHttpOnly(true);
+		Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
+		accessTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
+		accessTokenCookie.setSecure(true);    // HTTPS에서만 전송
 		accessTokenCookie.setPath("/");
 		accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
 		resp.addCookie(accessTokenCookie);
+
+		// Refresh Token을 HttpOnly 쿠키에 저장
+		Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+		refreshTokenCookie.setHttpOnly(true);  // JavaScript에서 접근 불가
+		refreshTokenCookie.setSecure(true);    // HTTPS에서만 전송
+		refreshTokenCookie.setPath("/api/auth/refresh"); // 토큰 갱신 엔드포인트에서만 사용 가능
+		refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+		resp.addCookie(refreshTokenCookie);
 
 		result.put("status", "success");
 		result.put("redirectUrl", "/");
