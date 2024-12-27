@@ -25,7 +25,15 @@ public interface PerformanceService {
 	/** 스케줄 및 잔여 좌석 조회
 	 * @param mt20id
 	 * @return
+	 * @author 우수민
 	 */
 	Map<String, List<ScheduleInfo>> getScheduleWithAvailableSeats(String mt20id);
+
+	/** 공연관리자가 등록한 공연 목록 조회 
+	 * @param memberNo
+	 * @return
+	 * @author 우수민
+	 */
+	List<Performance> getPerformancesByManager(int memberNo);
 
 }

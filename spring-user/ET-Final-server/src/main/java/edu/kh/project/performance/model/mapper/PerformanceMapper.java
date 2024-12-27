@@ -37,4 +37,11 @@ public interface PerformanceMapper {
 	 */
 	Performance selectPerformanceById(String mt20id);
 
+	/** 공연관리자가 등록한 공연 목록 조회 
+	 * @param memberNo
+	 * @return
+	 * @author 우수민
+	 */
+	List<Performance> selectPerformancesByManager(int memberNo);
+
 }
