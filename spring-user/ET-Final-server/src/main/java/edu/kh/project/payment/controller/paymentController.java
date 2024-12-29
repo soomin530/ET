@@ -225,13 +225,15 @@ public class paymentController {
 			}
 
 			// 2. 예약 정보 생성
-			Booking bookingData = Booking.builder().bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
+			Booking bookingData = Booking.builder()
+					.bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
 					.bookingDate(new Timestamp(System.currentTimeMillis())) // 현재 시간
-					.totalPrice(paymentData.getPaidAmount()).memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
+					.totalPrice(paymentData.getPaidAmount())
+					.memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
 					.mt20id(paymentData.getMt20id()) // 공연 ID 추가
 					.mt10id(paymentData.getMt10id()) // 공연 시설 ID 추가
-					.mt20id(paymentData.getMt20id()) // 공연 ID
-					.merchantUid(paymentData.getMerchantUid()).bookingStatus("COMPLETE") // 기본 예약 상태
+					.merchantUid(paymentData.getMerchantUid())
+					.bookingStatus("COMPLETE") // 기본 예약 상태
 					.build();
 
 			// 3. TB_TICKET_BOOKING에 데이터 삽입
