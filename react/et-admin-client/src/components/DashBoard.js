@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import '../css/DashBoard.css';
-import Restore from './Restore.js';
-import Manager from './Manager.js';
-import Statistics from './Statistics.js';
+import UserManage from './UserManage.js';
+import PerformanceManage from './PerformanceManage.js';
+import BookedSeatManage from './BookedSeatManage.js';
+import AnnouncementManage from './AnnouncementManage.js';
+import ManagerEnroll from './ManagerEnroll.js';
 import { AuthContext } from './AuthContext.js';
 
 import { NavLink, Route, Routes } from 'react-router';
@@ -27,21 +29,21 @@ export default function DashBoard() {
 
           <div className='main-show-container'>
             <div className='router-tab-box'>
-              <NavLink to="/restore">유저관리</NavLink>
-              <NavLink to="/statistics">공연관리</NavLink>
-              <NavLink to="/manager">예매 좌석 관리</NavLink>
-              <NavLink to="/announcement">공지사항 관리</NavLink>
-              <NavLink to="/tourManagerEnroll">업체계정 신청</NavLink>
+              <NavLink to="/UserManage">유저관리</NavLink>
+              <NavLink to="/PerformanceManage">공연관리</NavLink>
+              <NavLink to="/BookedSeatManage">예매 좌석 관리</NavLink>
+              <NavLink to="/AnnouncementManage">공지사항 관리</NavLink>
+              <NavLink to="/ManagerEnroll">업체계정 신청</NavLink>
             </div>
 
             
             <Routes>
               <Route path='/' element={<h1>DashBoard 메인</h1>}/>
-              <Route path='/restore' element={<Restore/>}/>
-              <Route path='/statistics' element={<Statistics/>}/>
-              <Route path='/manager' element={<Manager/>}/>
-              <Route path='/announcement' element={<Manager/>}/>
-              <Route path='/tourManagerEnroll' element={<Manager/>}/>
+              <Route path='/UserManage' element={<UserManage />}/>
+              <Route path='/PerformanceManage' element={<PerformanceManage/>}/>
+              <Route path='/BookedSeatManage' element={<BookedSeatManage/>}/>
+              <Route path='/AnnouncementManage' element={<AnnouncementManage/>}/>
+              <Route path='/ManagerEnroll' element={<ManagerEnroll/>}/>
             </Routes>
           </div>
       </div>

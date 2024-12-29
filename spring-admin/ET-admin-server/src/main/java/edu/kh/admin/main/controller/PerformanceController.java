@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.service.AdminService;
+import edu.kh.admin.main.model.dto.Performance;
+import edu.kh.admin.main.model.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,42 +25,66 @@ import lombok.extern.slf4j.Slf4j;
 			  allowCredentials = "true",
 			  methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
 				           RequestMethod.DELETE, RequestMethod.OPTIONS})
-@RequestMapping("admin")
+@RequestMapping("performance")
 @RequiredArgsConstructor
 @Slf4j
-@SessionAttributes({ "loginMember" })
-public class AdminController {
+@SessionAttributes({ "loginMember" }) 
+public class PerformanceController {
 
-	private final AdminService service;
+	private final PerformanceService service;
 	
-	@GetMapping("showMemberList")
-	public ResponseEntity<Object> showMemberList() {
-		List<Member> showMemberList = service.showMemberList();
+	@PostMapping("searchPerformanceList")
+	public ResponseEntity<Object> searchPerformanceList(@RequestBody Map<String, Object> formdata)  {
+				
+		List<Performance> searchPerformanceList = service.searchPerformanceList(formdata);
+	
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(showMemberList);
+			return ResponseEntity.status(HttpStatus.OK).body(searchPerformanceList);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
 		}
 	}
 	
-	@PostMapping("searchShowMemberList")
-	public ResponseEntity<Object> searchShowMemberList(@RequestBody Map<String, Object> formdata)  {
-		
-		
-		List<Member> searchShowMemberList = service.searchShowMemberList(formdata);
-		
-		log.info(formdata.toString());
-		log.info(searchShowMemberList.toString());
-
-		
-		try {
-			return ResponseEntity.status(HttpStatus.OK).body(searchShowMemberList);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
-		}
-	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	@GetMapping("showMemberList")
+//	public ResponseEntity<Object> showMemberList() {
+//		List<Member> showMemberList = service.showMemberList();
+//		try {
+//			return ResponseEntity.status(HttpStatus.OK).body(showMemberList);
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+//		}
+//	}
 	
 }

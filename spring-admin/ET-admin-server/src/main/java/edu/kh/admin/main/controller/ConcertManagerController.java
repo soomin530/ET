@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import edu.kh.admin.main.model.dto.ConcertManager;
 import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.service.AdminService;
+import edu.kh.admin.main.model.dto.Performance;
+import edu.kh.admin.main.model.service.ConcertManagerService;
+import edu.kh.admin.main.model.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,42 +28,77 @@ import lombok.extern.slf4j.Slf4j;
 			  allowCredentials = "true",
 			  methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
 				           RequestMethod.DELETE, RequestMethod.OPTIONS})
-@RequestMapping("admin")
+@RequestMapping("manager")
 @RequiredArgsConstructor
 @Slf4j
 @SessionAttributes({ "loginMember" })
-public class AdminController {
+public class ConcertManagerController {
 
-	private final AdminService service;
+	private final ConcertManagerService service;
 	
-	@GetMapping("showMemberList")
-	public ResponseEntity<Object> showMemberList() {
-		List<Member> showMemberList = service.showMemberList();
+	@GetMapping("managerEnrollList")
+	public ResponseEntity<Object> managerEnrollList() {
+		List<ConcertManager> managerEnrollList = service.managerEnrollList();
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(showMemberList);
+			return ResponseEntity.status(HttpStatus.OK).body(managerEnrollList);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
 		}
 	}
 	
-	@PostMapping("searchShowMemberList")
-	public ResponseEntity<Object> searchShowMemberList(@RequestBody Map<String, Object> formdata)  {
-		
-		
-		List<Member> searchShowMemberList = service.searchShowMemberList(formdata);
-		
-		log.info(formdata.toString());
-		log.info(searchShowMemberList.toString());
-
-		
+	@PostMapping("searchManagerEnrollList")
+	public ResponseEntity<Object> searchPerformanceList(@RequestBody Map<String, Object> formdata)  {
+				
+		List<ConcertManager> searchManagerEnrollList = service.searchManagerEnrollList(formdata);
+	
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(searchShowMemberList);
+			return ResponseEntity.status(HttpStatus.OK).body(searchManagerEnrollList);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	@GetMapping("showMemberList")
+//	public ResponseEntity<Object> showMemberList() {
+//		List<Member> showMemberList = service.showMemberList();
+//		try {
+//			return ResponseEntity.status(HttpStatus.OK).body(showMemberList);
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+//		}
+//	}
 	
 }

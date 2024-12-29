@@ -1,6 +1,7 @@
 package edu.kh.admin.main.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,9 +43,31 @@ public class AdminServiceImpl implements AdminService{
 		    	member.setMemberTel(areaCode + "-" + middlePart + "-" + lastPart);  
 		    }
 		}
-		
 		return list;
 		}
 	
+		@Override
+		public List<Member> searchShowMemberList(Map<String, Object> formdata) {
+			List<Member> list = mapper.searchShowMemberList(formdata);
+			
+			for (Member member : list) {
+			    String rawAddress = member.getMemberAddress();
+			    String formalTel = member.getMemberTel();
+			    
+			    if (rawAddress != null) {
+			        String formattedAddress = rawAddress.replace("^^^", " "); 
+			        member.setMemberAddress(formattedAddress); 
+			    }
+			    
+			    if (formalTel != null && formalTel.length() == 11) {
+			    	String areaCode = formalTel.substring(0, 3);
+			    	String middlePart = formalTel.substring(3, 7); 
+			    	String lastPart = formalTel.substring(7); 
+			    	
+			    	member.setMemberTel(areaCode + "-" + middlePart + "-" + lastPart);  
+			    }
+			}
+			return list;
+		}
 		
 }

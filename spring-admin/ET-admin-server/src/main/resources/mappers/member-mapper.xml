@@ -11,6 +11,33 @@
 		ORDER BY MEMBER_NO ASC
 	</select>
 
+	<!-- 검색된 모든 회원 조회 -->
+	<select id="searchShowMemberList">
+	    SELECT 
+	        MEMBER_NO, 
+	        MEMBER_NICKNAME, 
+	        MEMBER_ADDRESS, 
+	        MEMBER_TEL 
+	    FROM 
+	        "TB_MEMBER"
+	    WHERE 
+	        MEMBER_DEL_FL = 'N'
+	        AND MEMBER_AUTH = '1'
+	        <choose>
+	            <when test="selectedValue == '회원이름'">
+	                AND MEMBER_NICKNAME LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <when test="selectedValue == '주소'">
+	                AND MEMBER_ADDRESS LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <otherwise>
+	                AND MEMBER_TEL LIKE '%' || #{inputValue} || '%' 
+	            </otherwise>
+	        </choose>
+	    ORDER BY 
+	        MEMBER_NO ASC
+	</select>
+
 	
 
 </mapper>
