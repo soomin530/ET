@@ -20,11 +20,19 @@ public class PerformanceServiceImpl implements PerformanceService {
 
 	private final PerformanceMapper mapper;
 
-	// 장르별 공연 목록 조회
-	@Override
-	public List<Performance> getPerformancesByGenre(String genre) {
-		return mapper.genre(genre);
-	}
+	// 장르별 공연 목록 조회 (기존)
+    @Override
+    public List<Performance> getPerformancesByGenre(String genre) {
+        return mapper.genre(genre);
+    }
+
+    // 장르별 공연 목록 조회 무한 스크롤
+    @Override
+    public List<Performance> getPerformancesByPage(int page, int pageSize, String genre) {
+        // 시작 위치 계산
+        int offset = (page - 1) * pageSize;
+        return mapper.genreWithPaging(genre, pageSize, offset);
+    }
 
 	
 	// 공연 상세페이지 조회
@@ -107,5 +115,5 @@ public class PerformanceServiceImpl implements PerformanceService {
 	public List<Performance> getPerformancesByManager(int memberNo) {
 		return mapper.selectPerformancesByManager(memberNo);
 	}
-    
+
 }

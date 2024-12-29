@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
@@ -17,6 +18,18 @@ public interface PerformanceMapper {
 	 * @author 우수민
 	 */
 	List<Performance> genre(String genre);
+	
+	/** 
+	 * 장르별 공연 목록 페이징 조회
+	 * @param genre 장르
+	 * @param pageSize 페이지당 항목 수
+	 * @param offset 시작 위치
+	 * @return 공연 목록
+	 * @author 우수민
+	 */
+	List<Performance> genreWithPaging(@Param("genre") String genre, 
+	                                 @Param("pageSize") int pageSize, 
+	                                 @Param("offset") int offset);
 
 	/** 공연 상세페이지 조회
 	 * @param mt20id
