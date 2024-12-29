@@ -34,7 +34,7 @@ public interface paymentMapper {
 	int insertBooking(Booking bookingData);
 
 	// 특정 공연 좌석 조회
-	List<Seat> selectSeatsByShow(String mt20id, String selectedDate, String selectedTime);
+	List<Seat> selectSeatsByShow(Map<String, Object> params);
 
 	
 	

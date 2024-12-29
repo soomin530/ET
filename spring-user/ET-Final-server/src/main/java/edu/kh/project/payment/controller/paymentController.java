@@ -126,8 +126,10 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("seats")
-	public ResponseEntity<List<Seat>> getSeats(@RequestParam("mt20id") String mt20id,
-			@RequestParam("selectedDate") String selectedDate, @RequestParam("selectedTime") String selectedTime,
+	public ResponseEntity<List<Seat>> getSeats(
+			@RequestParam("mt20id") String mt20id,
+			@RequestParam("selectedDate") String selectedDate,
+			@RequestParam("selectedTime") String selectedTime,
 			Model model) {
 
 		log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate, selectedTime);
