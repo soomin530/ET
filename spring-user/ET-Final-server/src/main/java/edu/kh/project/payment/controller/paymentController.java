@@ -81,7 +81,25 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("seat-selection")
-	public String seatSelection() {
+	public String seatSelection(@RequestParam("mt20id") String mt20id,
+			@RequestParam("selectedDate") String selectedDate, @RequestParam("selectedTime") String selectedTime,
+			Model model) {
+
+		log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate, selectedTime);
+
+		try {
+			List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime);
+
+			if (seats.isEmpty()) {
+				log.warn("좌석 데이터가 없습니다: 공연 ID={}, 날짜={}, 시간={}", mt20id, selectedDate, selectedTime);
+
+			}
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}
 
 		return "payment/seat-selection";
 	}
@@ -133,7 +151,7 @@ public class paymentController {
 			Model model) {
 
 		log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate, selectedTime);
-		
+
 		if (mt20id == null || selectedDate == null || selectedTime == null) {
 			log.error("필수 파라미터가 누락되었습니다: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate,
 					selectedTime);
