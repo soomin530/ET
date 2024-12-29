@@ -28,7 +28,6 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Member login(Member inputMember) {
 		// 암호화 진행
-
 		String bcryptPassword = bcrypt.encode(inputMember.getMemberPw());
 
 		// 1. 아이디 일치하면서 탈퇴하지 않은 회원 조회
@@ -91,6 +90,26 @@ public class MemberServiceImpl implements MemberService {
 		// 회원 가입 매퍼 메서드 호출
 		return mapper.signup(inputMember);
 	}
+	
+	// 네이버 로그인
+	@Override
+	public Member loginNaver(Member naverMember) {
+        
+        // 기존 네이버 회원인지 조회
+        Member existingMember = mapper.selectNaverMember(naverMember.getMemberId());
+        
+        if(existingMember == null) {
+        	String encPw = bcrypt.encode(naverMember.getMemberPw());
+        	naverMember.setMemberPw(encPw);
+            // 새로운 네이버 회원인 경우 회원가입 처리
+            mapper.insertNaverMember(naverMember);
+            return naverMember;
+        }
+        
+        // 기존 네이버 회원인 경우 정보 업데이트
+        mapper.updateNaverMember(naverMember);
+        return existingMember;
+    }
 
 	@Override
 	public void insertVenue(Map<String, Object> venue) {

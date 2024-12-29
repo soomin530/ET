@@ -121,8 +121,8 @@
             margin-top: 20px;
         }
 
-         /*이전 단계 버튼 색상*/
-         .prev-btn {
+        /*이전 단계 버튼 색상*/
+        .prev-btn {
             background-color: #b6b2b0;
         }
 
@@ -179,7 +179,9 @@
     <div class="payment-container">
         <div class="info-section">
             <h3>좌석 정보: <span id="seat-info"></span></h3>
-            <h3>예매자: <span id="booking-info"></span></h3>
+            <h3>예매자 : <span id="booking-nickname"></span></h3>
+            <h3>이메일 : <span id="booking-email"></span></h3>
+            <h3>연락처: <span id="booking-phone"></span></h3>
             <h3>총 결제 금액: <span id="total-price"></span></h3>
         </div>
 
@@ -198,13 +200,29 @@
             const parts = seatId.split('-');
             const gradeName = parts[1]; // R석, VIP석 등급
             const seatNumber = parts[2]; // A1, A2 등 좌석 번호
+            // "전석"일 경우 "석"을 붙이지 않음
+            if (gradeName === "전석") {
+                return `${gradeName} ${seatNumber}`; // 전석 A1 형식으로 변환
+            }
             return `${gradeName}석 ${seatNumber}`; // R석 A1 형식으로 변환
         }).join(', ');
 
         const bookingInfo = JSON.parse(localStorage.getItem('bookingInfo'));
         const totalPrice = localStorage.getItem('totalPrice');
+
+        const performanceId = localStorage.getItem("performanceId"); // 공연 ID
+        const facilityId = localStorage.getItem("facilityId"); // 공연 시설 ID
+
+        if (performanceId && facilityId) {
+            console.log("공연 ID:", performanceId);
+            console.log("공연 시설 ID:", facilityId);
+        }
         document.getElementById('seat-info').textContent = seatInfo;
-        document.getElementById('booking-info').textContent = `${bookingInfo.name} (${bookingInfo.phone})`;
+
+        document.getElementById('booking-nickname').textContent = bookingInfo.nickname; // 닉네임
+        document.getElementById('booking-email').textContent = bookingInfo.email;       // 이메일
+        document.getElementById('booking-phone').textContent = bookingInfo.phone;       // 연락처
+
         document.getElementById('total-price').textContent = totalPrice;
 
         // '이전 단계' 버튼 클릭 시 처리
@@ -227,8 +245,9 @@
                 merchant_uid: `ORD-${new Date().getTime()}`, // 주문번호
                 name: `좌석: ${seatInfo}`, // 상품명
                 amount: parseInt(totalPrice), // 결제 금액
-                buyer_name: bookingInfo.name, // 구매자 이름
-                buyer_tel: bookingInfo.phone // 구매자 연락처
+                buyer_name: bookingInfo.nickname, // 구매자 이름
+                buyer_tel: bookingInfo.phone, // 구매자 연락처
+                buyer_email: bookingInfo.email, // 구매자 이메일
 
             }, function (rsp) {
                 if (rsp.success) {
@@ -248,15 +267,17 @@
                         name: rsp.name || `좌석: ${seatInfo}`,
                         paidAmount: rsp.paid_amount || 0,
                         currency: rsp.currency || 'KRW',
-                        buyerName: rsp.buyer_name || bookingInfo.name || 'Unknown',
-                        buyerTel: rsp.buyer_tel || bookingInfo.phone || '000-0000-0000',
+                        buyerName: rsp.buyer_name || bookingInfo.nickname,
+                        buyerTel: rsp.buyer_tel || bookingInfo.phone,
                         buyerAddr: rsp.buyer_addr || 'N/A',
                         buyerPostcode: rsp.buyer_postcode || '00000',
-                        buyerEmail: rsp.buyer_email || 'unknown',
-                        status: rsp.status || 'unknown',
+                        buyerEmail: rsp.buyer_email || bookingInfo.email,
+                        status: rsp.status,
                         paidAt: rsp.paid_at ? new Date(rsp.paid_at * 1000).toISOString() : null,
                         receiptUrl: rsp.receipt_url || null,
                         seatIds: JSON.parse(localStorage.getItem('selectedSeats')), // 좌석 ID 배열 추가
+                        mt20id: performanceId, // 공연 ID 추가
+                        mt10id: facilityId // 공연 시설 ID 추가
                     };
                     console.log("전송할 결제 데이터:", paymentData);
 
@@ -275,9 +296,21 @@
                             //window.location.href = `/payment/order-summary?orderId=${rsp.merchant_uid}`;
                             window.location.href = `/payment/seat-selection`;
                         },
-                        error: function () {
+                        error: function (jqXHR, textStatus, errorThrown) {
                             console.error('Error during payment save:', textStatus, errorThrown);
-                            alert(`결제 저장에 실패했습니다: ${jqXHR.responseText || textStatus}`);
+
+                            // 서버에서 반환된 응답 내용
+                            const response = jqXHR.responseText;
+
+                            // 응답 내용을 파싱해서 표시
+                            try {
+                                const parsedResponse = JSON.parse(response);
+                                console.error('서버 응답:', parsedResponse);
+                                alert(`결제 저장에 실패했습니다: ${parsedResponse.message || response}`);
+                            } catch (e) {
+                                console.error('응답 파싱 실패. 원본 응답:', response);
+                                alert(`결제 저장에 실패했습니다: ${response}`);
+                            }
                         }
                     });
                 } else {

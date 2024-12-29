@@ -23,12 +23,25 @@
     .container {
       display: flex;
       width: 90%;
-      margin: 10px;
+      margin: 20px auto;
+      /* 위아래 여백 추가 */
+      gap: 20px;
+      /* seat-container와 info-container 간격 */
     }
 
     .seat-container {
       flex: 3;
-      margin-right: 20px;
+      /* 좌석 컨테이너가 더 넓게 차지 */
+      min-height: 500px;
+      /* 최소 높이 설정 */
+      padding: 15px;
+      /* 내부 여백 추가 */
+      border: 1px solid #ddd;
+      /* 구분선 */
+      border-radius: 10px;
+      /* 모서리 둥글게 */
+      background-color: #fff;
+      /* 배경색 추가 */
     }
 
     .stage {
@@ -97,6 +110,14 @@
       background-color: #f5b041;
     }
 
+    .b {
+      background-color: #ffcccb;
+    }
+
+    .all {
+      background-color: #d3d3d3;
+    }
+
     .booked {
       background-color: #e74c3c;
       color: white;
@@ -124,6 +145,8 @@
 
     .info-container h2 {
       margin-bottom: 20px;
+      font-size: 20px;
+      /* 제목 크기 조정 */
     }
 
     .info-item {
@@ -141,17 +164,55 @@
       padding-top: 20px;
     }
 
+    /* 예매 상세 정보 */
     .reservation-info {
       flex: 1;
-      /* 상단 좌석 정보와 하단 버튼 그룹 사이 여유 공간 확보 */
       display: flex;
+      flex-direction: row;
+      /* 가로 배치 */
       align-items: center;
-      /* 중앙 정렬 */
-      justify-content: center;
-      /* 중앙 정렬 */
-      color: #888;
-      /* 임시 텍스트 색상 */
+      /* 세로 정렬 */
+      justify-content: flex-start;
+      /* 가로 정렬 */
+      color: #333;
+      text-align: left;
+      /* 텍스트 정렬 */
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      background-color: #fff;
+      margin-bottom: 20px;
+      gap: 15px;
+      /* 이미지와 텍스트 간격 */
     }
+
+    .reservation-info img {
+      max-width: 130px;
+      /* 이미지 크기 조정 */
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .reservation-info .details {
+      display: flex;
+      flex-direction: column;
+      /* 텍스트는 세로로 */
+      gap: 5px;
+      /* 텍스트 간격 */
+      font-size: 14px;
+      color: #555;
+    }
+
+    .reservation-info .details h3 {
+      font-size: 18px;
+      margin: 0;
+      overflow: hidden;
+      /* 텍스트 넘침 방지 */
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+
 
     .btn-group {
       display: flex;
@@ -282,7 +343,7 @@
   </style>
 </head>
 
-<body data-step="1" data-performance-id="PF001">
+<body data-step="1">
   <div class="progress-header">
     <div class="progress-container">
       <div class="progress-line"></div>
@@ -352,6 +413,19 @@
 
       document.querySelector('.reservation-info').textContent = '예매 정보를 여기에 표시합니다.';
 
+      const urlParams = new URLSearchParams(window.location.search);
+      const mt20id = urlParams.get("mt20id");
+      const selectedDate = urlParams.get("selectedDate");
+      const selectedTime = urlParams.get("selectedTime");
+
+      if (mt20id && selectedDate && selectedTime) {
+        fetchSeats(mt20id, selectedDate, selectedTime);
+      } else {
+        alert("공연 정보가 올바르지 않습니다.");
+      }
+
+
+
 
       const body = document.body;
 
@@ -376,14 +450,15 @@
       const selectedSeats = new Set();
 
       // 좌석 데이터를 백엔드에서 가져오는 함수
-      async function fetchSeats(showDate, showTime) {
+      async function fetchSeats(mt20id, showDate, showTime) {
         try {
-          const response = await fetch(`/payment/seats?showDate=${showDate}&showTime=${showTime}`);
+          const response = await fetch(`/payment/seats?mt20id=${mt20id}&showDate=${selectedDate}&showTime=${selectedTime}`);
 
           if (!response.ok) {
             throw new Error("좌석 데이터를 가져오는데 실패했습니다.");
           }
           const seatData = await response.json();
+
           renderSeats(seatData); // 좌석 생성
           updateSeatGradeInfo(seatData);
           console.log("좌석 데이터:", seatData);
@@ -402,7 +477,9 @@
           "1": [], // VIP석
           "2": [], // R석
           "3": [], // S석
-          "4": []  // A석
+          "4": [], // A석
+          "5": [], // B석
+          "6": []  // 전석
         };
 
         seatData.forEach(seat => {
@@ -479,7 +556,9 @@
           case "2": return "R석";
           case "3": return "S석";
           case "4": return "A석";
-          default: return "일반석";
+          case "5": return "B석";
+          case "6": return "전석";
+          default: return "기타";
         }
       }
 
@@ -491,7 +570,9 @@
           case "2": return "r";
           case "3": return "s";
           case "4": return "a";
-          default: return "";
+          case "5": return "b";
+          case "6": return "all";
+          default: return "기타";
         }
       }
 
@@ -524,7 +605,10 @@
           const gradeClass = seat.classList.contains("vip") ? "VIP" :
             seat.classList.contains("r") ? "R" :
               seat.classList.contains("s") ? "S" :
-                seat.classList.contains("a") ? "A" : "전좌석";
+                seat.classList.contains("a") ? "A" :
+                  seat.classList.contains("b") ? "B" :
+                    seat.classList.contains("all") ? "전" : "기타";
+
           const seatNumber = seat.textContent.trim(); // 좌석 번호 추출
           selectedSeatDetails.push(`${gradeClass}석 ${seatNumber}`); // "R석 A1" 형식으로 저장
           totalPrice += parseInt(seat.dataset.price); // 가격 합산
@@ -548,12 +632,6 @@
 
       /* 공연 상세 정보 조회*/
       const performanceId = document.body.dataset.performanceId;
-      if (!performanceId) {
-        console.error("performanceId가 정의되지 않았습니다.");
-        alert("공연 정보를 가져올 수 없습니다. 다시 시도해주세요.");
-        return; // 더 이상 진행하지 않음
-      }
-
 
       fetch(`/payment/performance-detail?performanceId=${performanceId}`)
         .then(response => {
@@ -566,6 +644,13 @@
           if (!data || Object.keys(data).length === 0) {
             throw new Error("공연 정보를 불러올 수 없습니다.");
           }
+          // 공연 상세 정보 확인용 콘솔 출력
+          console.log("공연 상세 정보:", data);
+
+          // 공연 정보를 로컬스토리지에 저장
+          localStorage.setItem("performanceId", data.mt20id);
+          localStorage.setItem("facilityId", data.mt10id);
+
           renderPerformanceInfo(data);
         })
         .catch(error => {
@@ -577,7 +662,6 @@
 
       function renderPerformanceInfo(data) {
         const reservationInfo = document.querySelector(".reservation-info");
-        reservationInfo.innerHTML = ""; // 초기화
 
         if (!data) {
           reservationInfo.innerHTML = `<p style="color: red;">공연 정보를 불러올 수 없습니다.</p>`;
@@ -585,11 +669,13 @@
         }
 
         reservationInfo.innerHTML = `
-          <h3>${data.performanceName}</h3>
-          <img src="${data.poster}" alt="${data.performanceName}" style="max-width: 100%; height: auto;" />
-          <p>공연 기간: ${data.performanceFrom} ~ ${data.performanceTo}</p>
-          <p>공연 시설: ${data.facilityName}</p>
-          <p>공연 런타임: ${data.performanceRuntime}분</p>
+          <img src="${data.poster}" alt="${data.prfnm}" />
+          <div class="details">
+            <h3>${data.prfnm}</h3>
+            <p> ${data.prfpdfrom} ~ ${data.prfpdto}</p>
+            <p> ${data.fcltynm}</p>
+            <p> ${data.prfruntime}</p>
+          </div>
         `;
       }
 
@@ -637,6 +723,8 @@
           case "2": return "#85c1e9"; // R석 색상
           case "3": return "#82e0aa"; // S석 색상
           case "4": return "#f5b041"; // A석 색상
+          case "5": return "#ffcccb"; // B석 색상
+          case "6": return "#d3d3d3"; // 전석 색상
           default: return "#e8e8e8"; // 기본 색상
         }
       }
@@ -654,13 +742,17 @@
         localStorage.setItem("selectedSeats", JSON.stringify(selectedSeatsArray));
         localStorage.setItem("totalPrice", totalPrice);
 
+
         // 다음 단계로 이동
         window.location.href = "/payment/booking-info";
       });
 
       // 기본 좌석 데이터 가져오기
-      //fetchSeats("2024-12-25", "19:30"); // 기본적으로 2024년 12월 25일 19:30의 좌석 데이터를 가져옴
-      fetchSeats("2024-12-30", "20:00"); // 기본적으로 2024년 12월 30일 20:00의 좌석 데이터를 가져옴
+      //fetchSeats("2024-12-25", "19:30"); // 기본적으로 2024년 12월 25일 19:30의 좌석 데이터를 가져옴 / 오페라 30석
+      //fetchSeats("2024-12-30", "20:00"); // 기본적으로 2024년 12월 30일 20:00의 좌석 데이터를 가져옴 / 오페라 170석
+      //fetchSeats("2024-11-03", "16:30"); // 오페라 전석 50
+      //fetchSeats("2025-01-25", "19:00");
+      fetchSeats(mt20id, selectedDate, selectedTime); // 좌석 데이터 요청
     });
 
   </script>

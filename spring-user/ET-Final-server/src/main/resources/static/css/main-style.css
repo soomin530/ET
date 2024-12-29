@@ -1,106 +1,460 @@
 body {
-	font-family: 'Arial', sans-serif;
-	margin: 0;
-	padding: 0;
-	background-color: #eef2f3;
-	color: #333;
-	overflow-x: hidden;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eef2f3;
+    color: #333;
+    overflow-x: hidden;
 }
 
 .section {
-	height: auto;
-	width: 100vw;
-	padding: 60px 20px;
-	text-align: center;
-	opacity: 0;
-	transform: translateY(20px);
-	transition: opacity 0.5s ease, transform 0.5s ease;
+    height: auto;
+    width: 100vw;
+    padding: 60px 20px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .section button {
-	padding: 8px 20px;
-	margin: 0 5px;
-	border: 1px solid #e0e0e0;
-	background-color: transparent;
-	border-radius: 20px;
-	font-size: 14px;
-	cursor: pointer;
-	transition: all 0.3s ease;
+    padding: 8px 20px;
+    margin: 0 5px;
+    border: 1px solid #e0e0e0;
+    background-color: transparent;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 /* 선택된 버튼 스타일 */
 .section button:first-of-type {
-	background-color: #333;
-	color: white;
-	border-color: #333;
+    background-color: #333;
+    color: white;
+    border-color: #333;
 }
 
 /* 호버 효과 */
 .section button:hover {
-	background-color: #f5f5f5;
+    background-color: #f5f5f5;
 }
 
 .visible {
-	opacity: 1;
-	transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .hero {
-	background-image: url('https://source.unsplash.com/1600x900/?concert,show');
-	background-size: cover;
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	color: white;
-	text-align: center;
-	position: relative;
-	padding: 20px;
+    background-image: url('https://source.unsplash.com/1600x900/?concert,show');
+    background-size: cover;
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    position: relative;
+    padding: 20px;
 }
 
 .hero h1 {
-	font-size: 3.5em;
-	margin: 0;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-size: 3.5em;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .hero button {
-	padding: 15px 30px;
-	font-size: 1.2em;
-	background: #ff9800;
-	border: none;
-	border-radius: 5px;
-	color: white;
-	cursor: pointer;
-	transition: background 0.3s;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background: #ff9800;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
 .hero button:hover {
-	background: #e68a00;
+    background: #e68a00;
 }
 
 .card-container {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-	gap: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .card {
-	background: white;
-	border-radius: 10px;
-	padding: 20px;
-	width: 300px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-	transition: transform 0.3s;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
 }
 
 .card:hover {
-	transform: translateY(-5px);
+    transform: translateY(-5px);
 }
 
 .card img {
-	width: 100%;
-	border-radius: 10px;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.current-performance {
+    font-size: 1.8rem;
+    color: #666;
+    margin-top: 0.5rem;
+    font-weight: normal;
+    position: relative;
+    display: inline-block;
+}
+
+.current-performance::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: #ff5722;
+    border-radius: 2px;
+}
+
+.carousel-section {
+    padding-top: 40px;
+}
+
+/* 캐러셀 컨테이너 수정 */
+.custom-carousel {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 600px;
+    overflow: visible;
+}
+
+/* 캐러셀 이미지 컨테이너 수정 */
+.carousel-container {
+    position: relative;
+    height: 500px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.performance-title {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* 이미지 영역 */
+.carousel-image {
+    position: absolute;
+    width: 30%;
+    height: 100%;
+    left: 35%;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 배경 그라데이션 추가 */
+.carousel-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.7) 0%,
+        rgba(0,0,0,0.3) 30%,
+        rgba(0,0,0,0.3) 70%,
+        rgba(0,0,0,0.7) 100%
+    );
+    z-index: 1;
+}
+
+/* 캐러셀 콘텐츠 스타일 수정 */
+.carousel-content {
+    position: absolute;
+    z-index: 2;
+    color: white;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem 2rem;
+}
+
+.carousel-content h3 {
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.carousel-description {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-bottom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.carousel-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #ff5722;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.carousel-btn:hover {
+    background-color: #f4511e;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.carousel-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.prev-arrow {
+    left: 20px;
+}
+
+.next-arrow {
+    right: 20px;
+}
+
+.carousel-indicators {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.indicator.active {
+    background-color: #ff5722;
+}
+
+.statistics-section {
+    background-color: #fff;
+    padding: 60px 20px;
+    margin-top: 40px;
+}
+
+.table-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.table-scroll {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px;
+}
+
+.statistics-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+}
+
+.statistics-section th, 
+.statistics-section td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #eee;
+}
+
+.statistics-section th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.statistics-section tr:hover {
+    background-color: #f8f9fa;
+}
+
+.chart-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.ticker-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.ticker {
+    display: flex;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+}
+
+.ticker-link {
+    display: inline-block;           /* 링크를 인라인 블록으로 만들어서 공간을 조정할 수 있도록 */
+    padding: 5px 10px;              /* 패딩을 추가하여 클릭 영역을 넓힘 */
+    color: #fff;                     /* 기본 텍스트 색상 */
+    font-size: 16px;                 /* 텍스트 크기 */
+    font-weight: bold;               /* 텍스트를 두껍게 */
+    border-radius: 5px;              /* 둥근 모서리 */
+    text-decoration: none;           /* 밑줄 제거 */
+    transition: all 0.3s ease;       /* 부드러운 애니메이션 효과 */
+}
+
+.ticker-link:hover {
+    background-color: #2980b9;       /* 마우스 오버 시 배경 색상 */
+    transform: scale(1.05);           /* 살짝 확대 효과 */
+}
+
+.ticker-link:focus {
+    outline: none;                   /* 포커스 시 outline 제거 */
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.7); /* 포커스 시 그림자 효과 */
+}
+
+.ticker-link span {
+    margin-left: 5px;                 /* 제목과 평점 사이 간격 추가 */
+}
+
+.ticker:hover {
+    animation-play-state: paused;
+}
+
+.ticker-item {
+    display: inline-block;
+    padding: 0 20px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-btn {
+        font-size: 1em;
+        padding: 10px 25px;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .card-container {
+        flex-direction: column;
+    }
+
+    .card {
+        width: 90%;
+    }
+
+    .custom-carousel {
+        height: 400px;
+    }
 }

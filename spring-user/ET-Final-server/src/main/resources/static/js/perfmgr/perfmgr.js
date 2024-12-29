@@ -19,30 +19,24 @@ const perfmgrLogin = () => {
 		concertManagerLoginPw.focus();
 		return;
 	}
-
-	const data = {
-		concertManagerId: concertManagerLoginId.value,
-		concertManagerPw: concertManagerLoginPw.value
-	}
+	
+	const form = new FormData();
+    form.append('concertManagerId', concertManagerLoginId.value);
+    form.append('concertManagerPw', concertManagerLoginPw.value);
 
 	fetch("/perfmgr/login", {
 		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(data)
+		body: form
 	})
-		.then(resp => resp.json())
-		.then(data => {
-			console.log("로그인 성공:", data);
-
-			if (data.status === "success") {
-				// 로그인 성공: redirectUrl로 이동
-				window.location.href = data.redirectUrl;
-
-			} else {
-				// 로그인 실패: 메시지 표시
-				alert(data.message);
-			}
-		});
+	.then(response => {
+	        if(response.redirected) {
+	            window.location.href = response.url;
+	        }
+	    })
+	    .catch(error => {
+	        console.error("로그인 에러:", error);
+	        alert("로그인 처리 중 오류가 발생했습니다.");
+	    });
 
 };
 
@@ -63,7 +57,7 @@ concertManagerLoginPw.addEventListener("keydown", (event) => {
 });
 
 // JWT 토큰을 사용한 로그아웃
-function logoutSession() {
+function perfLogoutSession() {
 	fetch("/perfmgr/logout", {
 		method: "POST"
 	})

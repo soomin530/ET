@@ -13,16 +13,106 @@
 	
 	<th:block th:replace="~{common/common}"></th:block>
 
-    
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8;
+        }
 
+        .container {
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .container h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .icon {
+            font-size: 40px;
+            margin: 20px 0;
+            color: #ccc;
+        }
+
+        .description {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .note {
+            text-align: left;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .button.cancel {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .button.change {
+            background-color: #e60023;
+            color: #fff;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <h2>비밀번호 변경</h2>
+        <div class="icon">🔒</div>
+        <p class="description">주기적인 <span style="color: #e60023;">비밀번호 변경</span>을 통해<br>개인정보를 안전하게 보호하세요.</p>
+
+        <form>
+            <input type="password" placeholder="새 비밀번호" required>
+            <input type="password" placeholder="새 비밀번호 확인" required>
+            <p class="note">※ 비밀번호는 8~12자 이내로 영문(대소문자), 숫자, 특수문자 3가지 조합 중 2가지 이상을 포함해서 만드셔야 합니다.</p>
+            <div class="button-group">
+                <button type="button" class="button cancel">취소</button>
+                <button type="submit" class="button change">변경</button>
+            </div>
+        </form>
+    </div>
+
 
     <th:block th:replace="~{common/header}"></th:block>
-
-
-    <h2>ddd</h2>
 
 	
     <!-- common/footer 추가-->
