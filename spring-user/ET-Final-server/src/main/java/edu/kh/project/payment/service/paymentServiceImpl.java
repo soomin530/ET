@@ -1,5 +1,6 @@
 package edu.kh.project.payment.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,10 +63,15 @@ public class paymentServiceImpl implements paymentService{
 		return result > 0;
 	}
 
+	// 특정 공연 좌석 정보 조회
 	@Override
 	public List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime) {
-		// TODO Auto-generated method stub
-		return mapper.selectSeatsByShow(mt20id, selectedDate, selectedTime );
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("mt20id", mt20id);
+	    params.put("selectedDate", selectedDate);
+	    params.put("selectedTime", selectedTime);
+
+	    return mapper.selectSeatsByShow(params);
 	}
 
 	
