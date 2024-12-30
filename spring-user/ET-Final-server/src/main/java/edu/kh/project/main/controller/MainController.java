@@ -29,7 +29,7 @@ public class MainController {
 		// 주요 공연 조회
 		List<Performance> mainPerform = service.mainPerform();
 		
-		
+		// 공연 랭킹 목록 조회
 		List<PerformanceRanking> performanceRanking = service.performanceRanking();
 		
 		model.addAttribute("mainPerform", mainPerform);
