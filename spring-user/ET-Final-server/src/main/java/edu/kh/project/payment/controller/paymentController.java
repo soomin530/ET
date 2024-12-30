@@ -150,8 +150,6 @@ public class paymentController {
 			@RequestParam("selectedTime") String selectedTime,
 			Model model) {
 
-		log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate, selectedTime);
-
 		if (mt20id == null || selectedDate == null || selectedTime == null) {
 			log.error("필수 파라미터가 누락되었습니다: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate,
 					selectedTime);
