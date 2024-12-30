@@ -80,10 +80,10 @@ public class MyPageController {
 	}
 
 	// 비밀번호 변경 페이지로 이동
-	@GetMapping("ChangePw")
+	@GetMapping("changePw")
 	public String ChangePw() {
 
-		return "mypage/ChangePw";
+		return "mypage/changePw";
 	}
 
 	// 배송지 관리 페이지로 이동
@@ -98,6 +98,13 @@ public class MyPageController {
 	public String membershipOut() {
 
 		return "mypage/membershipOut";
+	}
+	
+	// 비밀번호 변경 페이지로 이동
+	@GetMapping("checkPw")
+	public String CheckPw() {
+
+		return "mypage/checkPw";
 	}
 
 }
