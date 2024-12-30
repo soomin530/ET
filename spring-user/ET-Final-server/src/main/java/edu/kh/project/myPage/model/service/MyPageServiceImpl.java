@@ -1,5 +1,8 @@
 package edu.kh.project.myPage.model.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,14 +42,49 @@ public class MyPageServiceImpl implements MyPageService {
 		return mapper.getMemberInfo(memberNo);
 	}
 
+	
+	// 비밀번호 변경
+	@Override
+	public int changePw(int memberNo, String newPassword) {
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		String encPw = bcrypt.encode(newPassword);
+		
+		paramMap.put("encPw", encPw);
+		paramMap.put("memberNo", memberNo);
+		
+		return mapper.changePw(paramMap);
+	}
 
 	
-
-    	
+	// 회원 비밀번호 비교
+	@Override
+	public int memberPwCheck(String memberPw, int memberNo) {
+		
+		String checkPw = mapper.memberPwCheck(memberNo);
+		
+		if(bcrypt.matches(memberPw, checkPw)) {
+			return 1;
+		} else {
+			return 0;
+		}
+		
+	}
 	
-    
-    
-    
-    
+	
+	// 네이버 회원 삭제
+	@Override
+	public int membershipNaverOut(int memberNo) {
+		return mapper.membershipNaverOut(memberNo);
+	}
+	
+	
+	// 회원 탈퇴 처리
+	@Override
+	public int membershipOut(int memberNo) {
+		return mapper.membershipOut(memberNo);
+	}
+
     
 }

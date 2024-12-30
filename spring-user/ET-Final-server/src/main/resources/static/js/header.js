@@ -49,42 +49,46 @@ const memberLoginId = document.getElementById("memberLoginId");
 const memberLoginPw = document.getElementById("memberLoginPw");
 
 const performLogin = () => {
-    // 입력 검증
-    if (memberLoginId.value.length === 0) {
-        alert("아이디를 입력해주세요.");
-        memberLoginId.focus();
-        return;
-    }
+	// 입력 검증
+	if (memberLoginId.value.length === 0) {
+		alert("아이디를 입력해주세요.");
+		memberLoginId.focus();
+		return;
+	}
 
-    if (memberLoginPw.value.length === 0) {
-        alert("비밀번호를 입력해주세요.");
-        memberLoginPw.focus();
-        return;
-    }
+	if (memberLoginPw.value.length === 0) {
+		alert("비밀번호를 입력해주세요.");
+		memberLoginPw.focus();
+		return;
+	}
 
-    const form = new FormData();
-    form.append('memberId', memberLoginId.value);
-    form.append('memberPw', memberLoginPw.value);
-    
-    // saveId 체크박스가 있다면
-    const saveIdCheckbox = document.getElementById('saveId');
-    if(saveIdCheckbox && saveIdCheckbox.checked) {
-        form.append('saveId', 'on');
-    }
+	const form = new FormData();
+	form.append('memberId', memberLoginId.value);
+	form.append('memberPw', memberLoginPw.value);
 
-    fetch("/member/login", {
-        method: "POST",
-        body: form
-    })
-    .then(response => {
-        if(response.redirected) {
-            window.location.href = response.url;
-        }
-    })
-    .catch(error => {
-        console.error("로그인 에러:", error);
-        alert("로그인 처리 중 오류가 발생했습니다.");
-    });
+	// saveId 체크박스가 있다면
+	const saveIdCheckbox = document.getElementById('saveId');
+	if (saveIdCheckbox && saveIdCheckbox.checked) {
+		form.append('saveId', 'on');
+	}
+
+	fetch("/member/login", {
+		method: "POST",
+		body: form
+	})
+		.then(response => {
+			if (response.status === 401) {
+				// 로그인 실패 시 경고창 띄우기
+				alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+			} else if (response.ok) {
+	            // 로그인 성공 시 현재 페이지로 리다이렉트
+	            window.location.href = window.location.href;
+	        }
+		})
+		.catch(error => {
+			console.error("로그인 에러:", error);
+			alert("로그인 처리 중 오류가 발생했습니다.");
+		});
 };
 
 // 로그인 버튼 클릭 이벤트
@@ -105,7 +109,7 @@ memberLoginPw.addEventListener("keydown", (event) => {
 
 // JWT 토큰을 사용한 회원 로그아웃
 function logoutSession() {
-	
+
 	fetch("/member/logout", {
 		method: "POST"
 	})
@@ -123,7 +127,7 @@ function logoutSession() {
 
 // JWT 토큰을 사용한 네이버 로그아웃
 function naverLogoutSession() {
-	
+
 	fetch("/naver/logout", {
 		method: "POST"
 	})
