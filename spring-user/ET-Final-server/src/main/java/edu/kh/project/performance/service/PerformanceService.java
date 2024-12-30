@@ -5,6 +5,7 @@ import java.util.Map;
 
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
+import edu.kh.project.performance.model.dto.Review;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
 
 public interface PerformanceService {
@@ -55,5 +56,42 @@ public interface PerformanceService {
 	 */
 	List<Performance> getPerformancesByManager(int memberNo);
 
+	
+	/** 리뷰 등록
+	 * @param review
+	 * @return
+	 * @author 우수민
+	 */
+	boolean insertReview(Review review);
+
+	/** 리뷰 중복 여부 확인
+	 * @param memberNo
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
+	boolean hasReviewForPerformance(int memberNo, String mt20id);
+	
+	/** 리뷰 수정
+	 * @param review
+	 * @return
+	 * @author 우수민
+	 */
+	boolean updateReview(Review review);
+
+	/** 리뷰 삭제
+	 * @param paramMap
+	 * @return
+	 * @author 우수민
+	 */
+	boolean deleteReview(Map<String, Object> paramMap);
+
+	/** 리뷰 목록 조회 
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 * 
+	 */
+	List<Review> getReviewsByPerformanceId(String mt20id);
 
 }
