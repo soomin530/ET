@@ -13,7 +13,7 @@ public interface MyPageMapper {
      */
     String selectEncPw(int memberNo);
 
-	/** 회원목록 조회
+	/** 회원정보 조회
 	 * @param memberNo
 	 * @return
 	 */

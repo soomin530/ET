@@ -32,7 +32,7 @@ public class MyPageServiceImpl implements MyPageService {
         return 0;
     }
 
-    // 회원 목록 조회
+    // 회원 정보 조회
 	@Override
 	public Member getMemberInfo(int memberNo) {
 		
