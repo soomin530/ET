@@ -3,7 +3,7 @@
 <mapper namespace="edu.kh.project.payment.model.mapper.paymentMapper">
 
 	<!-- 특정 공연 좌석 조회 -->
-	<select id="selectSeatsByShow" parameterType="map" resultType="map">
+	<select id="selectSeatsByShow" parameterType="map" resultType="edu.kh.project.payment.model.dto.Seat">
 	    SELECT 
 	        TPF.MT20ID AS mt20id,  
 	        TPT.DAY_OF_WEEK AS dayOfWeek,  
