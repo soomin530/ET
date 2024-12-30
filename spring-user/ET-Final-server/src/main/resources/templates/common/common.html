@@ -21,45 +21,8 @@
 
 <body>
 
-	<script>
-		// Updated Modal functionality with Naver Login initialization
-		function openModal(modalId) {
-		    const modal = document.getElementById(modalId);
-		    if (modal) {
-		        modal.style.display = 'flex';
-		        setTimeout(() => {
-		            modal.classList.add('show');
-		            // 로그인 모달이 열릴 때 네이버 로그인 초기화
-		            if (modalId === 'loginModal') {
-		                if (document.getElementById('naverIdLogin')) {
-		                    initializeNaverLogin();
-		                }
-		            }
-		        }, 10);
-		    }
-		}
-
-		function closeModal(modalId) {
-		    const modal = document.getElementById(modalId);
-		    if (modal) {
-		        modal.classList.remove('show');
-		        setTimeout(() => {
-		            modal.style.display = 'none';
-		        }, 300);
-		    }
-		}
-
-		// Close modal when clicking outside
-		window.onclick = function (event) {
-		    if (event.target.classList.contains('modal')) {
-		        closeModal('loginModal');
-		        closeModal('adminLoginModal');
-		        closeModal('selectModal');
-		        closeModal('userSignupModal');
-		        closeModal('peradmSignupModal');
-		    }
-		}
-	</script>
+	<!-- 공통 JavaScript 파일들 -->
+    <script src="/js/common/modal.js"></script>
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -70,6 +33,7 @@
 	
 	<!-- naver -->
 	<script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+	
 </body>
 
 </html>

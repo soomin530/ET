@@ -1,14 +1,13 @@
-// // 유효성 검사를 위한 객체
-// const checkObj = {
-//      memberNickname: true,  // 닉네임은 현재 값이 유효하다고 초기화
-//      memberEmail: true,     // 이메일도 현재 값이 유효하다고 초기화
-//      authKey: false         // 이메일 인증 여부
-//  };
+// 유효성 검사를 위한 객체
+const mypageCheckObj = {
+     memberNickname: false,  // 닉네임은 현재 값이 유효하다고 초기화
+     memberEmail: false,     // 이메일도 현재 값이 유효하다고 초기화
+     authKey: false         // 이메일 인증 여부
+ };
 
 // 페이지 로드 시 회원 정보 불러오기
  document.addEventListener("DOMContentLoaded", () => {
      loadUserInfo();
-	 
  });
 
 // 회원 정보 불러오기
@@ -26,7 +25,7 @@ function loadUserInfo() {
            
             document.getElementById("userPhone").value = data.memberTel || "";
             document.getElementById("userNickname").value = data.memberNickname || "";
-            document.getElementById("userEmail").value = data.memberEmail || "";
+            document.getElementById("verificationEmail").value = data.memberEmail || "";
             
             // 성별 설정
             if (data.memberGender === "M") {
@@ -43,16 +42,16 @@ function loadUserInfo() {
 
 
 // 인증번호 받기 버튼
-const sendAuthKeyBtn = document.querySelector("#verificationBtn");
+const verificationBtn = document.querySelector("#verificationBtn");
 
 // 인증번호 입력 input
-const authKey = document.querySelector("#verificationCode");
+const verificationCode = document.querySelector("#verificationCode");
 
 // 인증번호 입력 후 확인 버튼
-const checkAuthKeyBtn = document.querySelector("#verificationBtn");
+const verificationConfirmBtn = document.querySelector("#verificationConfirmBtn");
 
 // 인증번호 관련 메시지 출력 span
-const authKeyMessage = document.querySelector("#verificationMessage");
+const verificationMessage = document.querySelector("#verificationMessage");
 
 let verificationTimer; 
 
@@ -67,11 +66,11 @@ let second = verificationSec;
 /* 이메일 유효성 검사 */
 
 // 이메일 유효성 검사에 사용될 요소 얻어오기
-const memberEmail = document.querySelector("#verificationEmail");
-const emailMessage = document.querySelector("#verificationEmailMessage");
+const verificationEmail = document.querySelector("#verificationEmail");
+const verificationEmailMessage = document.querySelector("#verificationEmailMessage");
 
 /* 이메일 인증*/
-verificationEmail.addEventListener("input", e => {
+verificationBtn.addEventListener("input", e => {
 	// 작성된 이메일 값 얻어오기
 	const verificationInputEmail = e.target.value;
 
@@ -87,25 +86,7 @@ verificationEmail.addEventListener("input", e => {
 
 		return;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+});
 
 
 // 폼 제출 처리
@@ -157,4 +138,44 @@ document.getElementById("userForm").addEventListener("submit", (e) => {
 // 취소 버튼 클릭 시 이전 페이지로 이동
 document.querySelector(".cancel-btn").addEventListener("click", () => {
     history.back();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
+
+	// 비밀번호 검증이 필요한 페이지들
+	const pagesNeedingVerification = ['changePw', 'membershipOut'];
+
+	// 현재 활성화된 메뉴 설정
+	const setActiveMenu = () => {
+		const currentPath = window.location.pathname;
+		document.querySelectorAll('.mypage-side-menu-link').forEach(link => {
+			link.classList.toggle('active', currentPath.includes(link.dataset.page));
+		});
+	};
+
+
+	// 이벤트 핸들러 설정
+	const initializeEventHandlers = () => {
+		document.querySelectorAll('.mypage-side-menu-link').forEach(link => {
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				const targetPage = e.target.dataset.page;
+				
+				// 클릭된 페이지를 세션 스토리지에 저장
+	           sessionStorage.setItem('targetPage', targetPage);
+			   
+				if (pagesNeedingVerification.includes(targetPage)) {
+					// 비밀번호 검증 페이지로 이동
+					window.location.href = `/mypage/checkPw`;
+				} else {
+					window.location.href = `/mypage/${targetPage}`;
+				}
+			});
+		});
+	};
+
+	// 초기화
+	setActiveMenu();
+	initializeEventHandlers();
 });

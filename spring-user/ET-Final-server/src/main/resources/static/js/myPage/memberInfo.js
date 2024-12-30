@@ -1,113 +1,108 @@
-	// "회원 정보 수정" 버튼 클릭 이벤트
-	document.querySelector('.updateInfo').addEventListener('click', function(e) {
-		// 쿠키에서 accessToken 확인
-	    const getCookie = (name) => {
-	        const value = `; ${document.cookie}`;
-	        const parts = value.split(`; ${name}=`);
-	        if (parts.length === 2) return parts.pop().split(';').shift();
-	    };
-	    
-	    const accessToken = getCookie('Access-Token');
-	    
-		if (accessToken) {
-			// accessToken이 있으면 회원정보 수정 페이지로 이동
-			window.location.href = '/mypage/updateInfo'; // 실제 이동할 URL로 수정하세요
-		} else {
-			// accessToken이 없으면 비밀번호 인증 모달 표시
-			const modalvf = document.getElementById('passwordModal');
-			modalvf.style.display = 'flex';
+// 공통 함수: 쿠키 가져오기
+const getCookie = (name) => {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+};
+
+// 공통 함수: 페이지 접근 처리
+const handlePageAccess = (targetPage) => {
+	const accessToken = getCookie('Access-Token');
+	if (accessToken) {
+		window.location.href = `/mypage/${targetPage}`;
+	} else {
+		const modalvf = document.getElementById('passwordModal');
+		modalvf.style.display = 'flex';
+		// 현재 타겟 페이지를 저장
+		sessionStorage.setItem('targetPage', targetPage);
+	}
+};
+
+// 각 버튼 클릭 이벤트
+document.querySelectorAll('.updateInfo, .changePw, .membershipOut').forEach(button => {
+	button.addEventListener('click', (e) => {
+		// e.target.classList[0]이 정의되어 있는지 확인
+		const targetClass = e.target.classList[0];
+		if (targetClass) {
+			const pageType = targetClass.replace('.', '');
+			if (pageType === 'changePw') {
+				const modalvf = document.getElementById('passwordModal');
+				modalvf.style.display = 'flex';
+			}
+			handlePageAccess(pageType);
 		}
 	});
-	
-	/*
-    // "비밀번호" 버튼 클릭 이벤트
-    document.querySelector('.changePw').addEventListener('click', function (e) {
-
-        // 비밀번호 인증 모달 표시
-        const modalvf = document.getElementById('passwordModal');
-        modalvf.style.display = 'flex'; // 모달을 화면에 보이도록 설정
-    });
-
-    // "회원탈퇴" 버튼 클릭 이벤트
-    document.querySelector('.membershipOut').addEventListener('click', function (e) {
-
-        // 비밀번호 인증 모달 표시
-        const modalvf = document.getElementById('passwordModal');
-        modalvf.style.display = 'flex'; // 모달을 화면에 보이도록 설정
-    });  */
+});
 
 
+// 모달 관련 이벤트
+document.getElementById('clsModal').addEventListener('click', clsModal);
+document.getElementById('passwordInput').addEventListener('keydown', e => {
+	if (e.key === 'Enter') verifyPassword();
+});
+document.getElementById('passwordModal').addEventListener('click', () => {
+	console.log("modal background clicked");
+});
+document.querySelector('.modalContent').addEventListener('click', e => e.stopPropagation());
 
-    // "취소" 버튼 클릭 이벤트
-    document.getElementById('clsModal').addEventListener('click', function () {
-        clsModal();
-    });
+// 모달 닫기 함수
+function clsModal() {
+	const modalvf = document.getElementById('passwordModal');
+	modalvf.style.display = 'none';
+	document.getElementById('passwordInput').value = '';
+	document.getElementById('errorMsg').style.display = 'none';
+	// 저장된 타겟 페이지 제거
+	sessionStorage.removeItem('targetPage');
+}
 
-    // 비밀번호 입력 필드에서 엔터 키 이벤트
-    document.getElementById('passwordInput').addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-            verifyPassword();
-        }
-    });
-
-    // 모달 배경을 클릭하면 모달 닫기
-    document.getElementById('passwordModal').addEventListener('click', function () {
-		console.log("ehla");
-        //closeModal();
-    });
-
-    // 모달 내부 클릭 시 닫히지 않도록 방지
-    document.querySelector('.modalContent').addEventListener('click', function (e) {
-        e.stopPropagation();
-    });
-
-    // 모달 닫기 함수
-    function clsModal() {
-        const modalvf = document.getElementById('passwordModal');
-        modalvf.style.display = 'none'; // 모달을 숨김
-        document.getElementById('passwordInput').value = ''; // 입력 필드 초기화
-        document.getElementById('errorMsg').style.display = 'none'; // 오류 메시지 숨김
-    }
-
-    // 비밀번호 확인 함수
-	async function verifyPassword() {
-	    const password = passwordInput.value;
-	    
-	    if (!password) {
-	        errorMsg.textContent = '비밀번호를 입력해주세요.';
-	        errorMsg.style.display = 'block';
-	        return;
-	    }
-
-	    try {
-	        const formData = new FormData();
-	        formData.append("memberPw", password);
-
-	        const response = await fetch('/mypage/verifyPassword', {
-	            method: 'POST',
-	            body: formData
-	        });
-
-	        const result = await response.json();
-	        
-	        if (result === 1) {
-	            // 비밀번호 일치
-	            window.location.href = '/mypage/updateInfo';
-				
-				/*
-                window.location.href = '/mypage/changePw';
-                window.location.href = '/mypage/membershipOut'; */
-			
-	        } else {
-	            // 비밀번호 불일치
-	            errorMsg.textContent = '비밀번호가 일치하지 않습니다.';
-	            errorMsg.style.display = 'block';
-	            passwordInput.value = '';
-	            passwordInput.focus();
-	        }
-	    } catch (error) {
-	        console.error('비밀번호 확인 중 오류 발생:', error);
-	        errorMsg.textContent = '서버 통신 중 오류가 발생했습니다.';
-	        errorMsg.style.display = 'block';
-	    }
+// 로딩 상태 표시
+function showLoading(isLoading) {
+	const loadingSpinner = document.getElementById('loadingSpinner');
+	if (isLoading) {
+		loadingSpinner.style.display = 'block'; // 로딩 스피너 보이기
+	} else {
+		loadingSpinner.style.display = 'none'; // 로딩 스피너 숨기기
 	}
+}
+
+// 비밀번호 확인 함수
+async function verifyPassword() {
+	const passwordInput = document.getElementById('passwordInput');
+	const errorMsg = document.getElementById('errorMsg');
+	const password = passwordInput.value;
+
+	if (!password) {
+		errorMsg.textContent = '비밀번호를 입력해주세요.';
+		errorMsg.style.display = 'block';
+		return;
+	}
+
+	showLoading(true); // 로딩 시작
+
+	try {
+		const formData = new FormData();
+		formData.append("memberPw", password);
+
+		const response = await fetch('/mypage/verifyPassword', {
+			method: 'POST',
+			body: formData
+		});
+
+		const result = await response.json();
+
+		if (result === 1) {
+			// 저장된 타겟 페이지로 이동
+			const targetPage = sessionStorage.getItem('targetPage') || 'updateInfo';
+			window.location.href = `/mypage/${targetPage}`;
+		} else {
+			errorMsg.textContent = '비밀번호가 일치하지 않습니다.';
+			errorMsg.style.display = 'block';
+			passwordInput.value = '';
+			passwordInput.focus();
+		}
+	} catch (error) {
+		console.error('비밀번호 확인 중 오류 발생:', error);
+		errorMsg.textContent = '서버 통신 중 오류가 발생했습니다.';
+		errorMsg.style.display = 'block';
+	}
+}

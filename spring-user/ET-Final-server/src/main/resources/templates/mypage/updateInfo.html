@@ -177,6 +177,33 @@
 		.save-btn:hover {
 			background-color: #d9363e;
 		}
+
+		.sidebar-nav {
+			width: 100%;
+		}
+
+		.nav-link {
+			text-decoration: none;
+			color: #333;
+			display: block;
+			padding: 10px;
+			transition: background-color 0.2s;
+		}
+
+		.nav-link.active {
+			background-color: #ff4d4f;
+			color: white;
+			border-radius: 5px;
+		}
+
+		.nav-link:hover {
+			background-color: #eee;
+		}
+
+		.nav-link:hover:not(.active) {
+			background-color: #eee;
+			border-radius: 5px;
+		}
 	</style>
 </head>
 
@@ -186,20 +213,22 @@
 	<div class="mypage-container">
 		<!-- 사이드바 -->
 		<div class="sidebar">
-			<ul class="menu-list">
-				<li class="menu-item">
-					<a href="/mypage/updateInfo">회원정보수정</a>
-				</li>
-				<li class="menu-item">
-					<a href="/mypage/changePw">비밀번호변경</a>
-				</li>
-				<li class="menu-item">
-					<a href="/mypage/addressManagement">배송지등록</a>
-				</li>
-				<li class="menu-item">
-					<a href="/mypage/membershipOut">회원탈퇴</a>
-				</li>
-			</ul>
+			<nav class="sidebar-nav">
+				<ul class="menu-list">
+					<li class="menu-item">
+						<a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+					</li>
+				</ul>
+			</nav>
 		</div>
 
 		<div class="main-content">
@@ -234,7 +263,7 @@
 						<div class="form-group">
 							<label for="verificationCode">인증코드</label>
 							<input type="text" id="verificationCode" placeholder="인증번호 입력">
-							<button type="button" class="verify-btn" id="verificationBtn">인증하기</button>
+							<button type="button" class="verify-btn" id="verificationConfirmBtn">인증하기</button>
 						</div>
 						<span class="verification-message" id="verificationMessage"></span>
 					</div>
