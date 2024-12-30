@@ -5,6 +5,7 @@ import PerformanceManage from './PerformanceManage.js';
 import BookedSeatManage from './BookedSeatManage.js';
 import AnnouncementManage from './AnnouncementManage.js';
 import ManagerEnroll from './ManagerEnroll.js';
+import Quill from './Quill.jsx';
 import { AuthContext } from './AuthContext.js';
 
 import { NavLink, Route, Routes } from 'react-router';
@@ -34,6 +35,7 @@ export default function DashBoard() {
               <NavLink to="/BookedSeatManage">예매 좌석 관리</NavLink>
               <NavLink to="/AnnouncementManage">공지사항 관리</NavLink>
               <NavLink to="/ManagerEnroll">업체계정 신청</NavLink>
+              <NavLink to="/Quill">퀼 연습</NavLink>
             </div>
 
             
@@ -44,6 +46,7 @@ export default function DashBoard() {
               <Route path='/BookedSeatManage' element={<BookedSeatManage/>}/>
               <Route path='/AnnouncementManage' element={<AnnouncementManage/>}/>
               <Route path='/ManagerEnroll' element={<ManagerEnroll/>}/>
+              <Route path='/Quill' element={<Quill/>}/>
             </Routes>
           </div>
       </div>
