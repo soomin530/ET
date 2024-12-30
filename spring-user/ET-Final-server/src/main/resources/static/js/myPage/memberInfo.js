@@ -1,10 +1,23 @@
-    // "회원 정보 수정" 버튼 클릭 이벤트
-    document.querySelector('.updateInfo').addEventListener('click', function (e) {
-
-        // 비밀번호 인증 모달 표시
-        const modalvf = document.getElementById('passwordModal');
-        modalvf.style.display = 'flex'; // 모달을 화면에 보이도록 설정
-    });
+	// "회원 정보 수정" 버튼 클릭 이벤트
+	document.querySelector('.updateInfo').addEventListener('click', function(e) {
+		// 쿠키에서 accessToken 확인
+	    const getCookie = (name) => {
+	        const value = `; ${document.cookie}`;
+	        const parts = value.split(`; ${name}=`);
+	        if (parts.length === 2) return parts.pop().split(';').shift();
+	    };
+	    
+	    const accessToken = getCookie('Access-Token');
+	    
+		if (accessToken) {
+			// accessToken이 있으면 회원정보 수정 페이지로 이동
+			window.location.href = '/mypage/updateInfo'; // 실제 이동할 URL로 수정하세요
+		} else {
+			// accessToken이 없으면 비밀번호 인증 모달 표시
+			const modalvf = document.getElementById('passwordModal');
+			modalvf.style.display = 'flex';
+		}
+	});
 	
 	/*
     // "비밀번호" 버튼 클릭 이벤트
