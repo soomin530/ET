@@ -1,101 +1,120 @@
+// 공통 함수: 쿠키 가져오기
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+};
+
 // 필요한 DOM 요소들 선택
-const changePasswordForm = document.querySelector('form');
-const newPasswordInput = document.querySelector('input[placeholder="새 비밀번호"]');
-const confirmPasswordInput = document.querySelector('input[placeholder="새 비밀번호 확인"]');
-const cancelBtn = document.querySelector('.cancel-btn');
+const newPasswordInput = document.querySelector("#newPassword");
+const confirmPasswordInput = document.querySelector("#confirmPassword");
+const submitBtn = document.querySelector("#submitBtn");
+const cancelBtn = document.querySelector(".cancel-btn");
+
+const passwordNote = document.querySelector(".password-note");
+
+// 유효성 검사 결과를 표시할 요소들
+const passwordMessage = document.createElement("p");
+const confirmPasswordMessage = document.createElement("p");
+newPasswordInput.parentElement.append(passwordMessage);
+confirmPasswordInput.parentElement.append(confirmPasswordMessage);
 
 // 비밀번호 유효성 검사 함수
 function validatePassword(password) {
-    // 8~12자 검사
-    if (password.length < 8 || password.length > 12) return false;
-
-    let containsLetter = /[a-zA-Z]/.test(password);
-    let containsNumber = /[0-9]/.test(password);
-    let containsSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    // 3가지 조합 중 2가지 이상 포함 검사
-    let combinationCount = 0;
-    if (containsLetter) combinationCount++;
-    if (containsNumber) combinationCount++;
-    if (containsSpecial) combinationCount++;
-
-    return combinationCount >= 2;
+	// 비밀번호 정규식 (영문자, 숫자, 특수문자 포함 8~12자)
+	const regExp = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,12}$/;
+	return regExp.test(password);
 }
 
-// 취소 버튼 클릭 이벤트
-cancelBtn.addEventListener('click', () => {
-    // 이전 페이지로 이동
-    window.history.back();
-});
+// 비밀번호 확인 유효성 검사 함수
+function validatePasswordMatch() {
+	const password = newPasswordInput.value;
+	const confirmPassword = confirmPasswordInput.value;
 
-// 폼 제출 이벤트
-changePasswordForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+	if (password !== confirmPassword) {
+		confirmPasswordMessage.innerText = "비밀번호가 일치하지 않습니다.";
+		confirmPasswordMessage.style.color = "red";
+		return false;
+	} else {
+		confirmPasswordMessage.innerText = "비밀번호가 일치합니다.";
+		confirmPasswordMessage.style.color = "green";
+		return true;
+	}
+}
 
-    const newPassword = newPasswordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
+// 비밀번호 실시간 검사
+newPasswordInput.addEventListener("input", (e) => {
+	const password = e.target.value;
 
-    // 비밀번호 일치 여부 확인
-    if (newPassword !== confirmPassword) {
-        alert('새 비밀번호와 확인 비밀번호가 일치하지 않습니다.');
-        confirmPasswordInput.focus();
-        return;
-    }
+	if (password.trim().length === 0) {
+		passwordMessage.innerText = "비밀번호를 입력해주세요. (영어, 숫자, 특수문자 포함 6~12자)";
+		passwordMessage.style.color = "gray";
+	} else if (!validatePassword(password)) {
+		passwordMessage.innerText = "특수문자(!, @, #, $, %, *)를 포함하여 6~12자여야 합니다.";
+		passwordMessage.style.color = "red";
+	} else {
+		passwordMessage.innerText = "유효한 비밀번호입니다.";
+		passwordMessage.style.color = "green";
+	}
 
-    // 비밀번호 유효성 검사
-    if (!validatePassword(newPassword)) {
-        alert('비밀번호는 8~12자 이내로 영문, 숫자, 특수문자 중 2가지 이상을 포함해야 합니다.');
-        newPasswordInput.focus();
-        return;
-    }
-
-    try {
-        const response = await fetch('/mypage/changePw', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                newPassword: newPassword
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            alert('비밀번호가 성공적으로 변경되었습니다.');
-            window.location.href = '/mypage/updateInfo'; // 변경 성공 시 이동할 페이지
-        } else {
-            alert(data.message || '비밀번호 변경에 실패했습니다.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
-    }
-});
-
-// 입력 필드 실시간 유효성 검사
-let timer;
-newPasswordInput.addEventListener('input', (e) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-        const isValid = validatePassword(e.target.value);
-        e.target.style.borderColor = isValid ? '#ddd' : '#ff4d4f';
-    }, 500);
+	// 비밀번호 확인 유효성 검사
+	validatePasswordMatch();
 });
 
 // 비밀번호 확인 실시간 검사
-confirmPasswordInput.addEventListener('input', (e) => {
-    if (newPasswordInput.value === e.target.value) {
-        e.target.style.borderColor = '#ddd';
-    } else {
-        e.target.style.borderColor = '#ff4d4f';
+confirmPasswordInput.addEventListener("input", validatePasswordMatch);
+
+// 취소 버튼 클릭 시 이전 페이지로 이동
+cancelBtn.addEventListener("click", () => {
+	window.history.back();
+});
+
+// 폼 제출 버튼 클릭 시
+submitBtn.addEventListener("click", () => {
+	const newPassword = newPasswordInput.value; // 비밀번호 입력값
+	const confirmPassword = confirmPasswordInput.value; // 비밀번호 확인 입력값
+	
+	const naverFl = getCookie('naverFl');
+	    
+    if (naverFl === 'Y') {
+        alert('네이버 로그인 사용자는 네이버에서 비밀번호를 변경해주세요.');
+        window.location.href = '/mypage/memberInfo';
+        return;
     }
+
+	// 비밀번호 확인
+	if (newPassword !== confirmPassword) {
+		alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+		return;
+	}
+
+	// 서버로 비밀번호 변경 요청 보내기
+	fetch('/mypage/changePw', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json' // 요청의 본문이 JSON 형식임을 서버에 알림
+		},
+		body: JSON.stringify({ newPassword: newPassword }) // 서버에 보내는 데이터
+	})
+		.then(response => response.text()) // 서버에서 응답을 텍스트로 받음
+		.then(data => {
+			if (data > 0) {
+				alert('비밀번호가 변경되었습니다.');
+				window.location.href = "/";
+			} else {
+				alert('서버 오류가 발생했습니다.');
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			alert('서버 오류가 발생했습니다.');
+		});
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
-	
+	// 비밀번호 검증이 필요한 페이지들
+	const pagesNeedingVerification = ['changePw', 'membershipOut'];
+
 	// 현재 활성화된 메뉴 설정
 	const setActiveMenu = () => {
 		const currentPath = window.location.pathname;
@@ -111,7 +130,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			link.addEventListener('click', (e) => {
 				e.preventDefault();
 				const targetPage = e.target.dataset.page;
-				window.location.href = `/mypage/${targetPage}`;
+				
+				// 클릭된 페이지를 세션 스토리지에 저장
+	           sessionStorage.setItem('targetPage', targetPage);
+			   
+				if (pagesNeedingVerification.includes(targetPage)) {
+					// 비밀번호 검증 페이지로 이동
+					window.location.href = `/mypage/checkPw`;
+				} else {
+					window.location.href = `/mypage/${targetPage}`;
+				}
 			});
 		});
 	};

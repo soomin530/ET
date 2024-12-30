@@ -15,6 +15,35 @@ public interface MyPageService {
     // 회원 정보 조회
 	Member getMemberInfo(int memberNo);
 
+
+	/** 비밀번호 변경
+	 * @param memberNo
+	 * @param newPassword
+	 * @return
+	 */
+	int changePw(int memberNo, String newPassword);
+
 	
+	/** 회원 비밀번호 비교
+	 * @param memberPw
+	 * @param memberPw2
+	 * @return
+	 */
+	int memberPwCheck(String memberPw, int memberNo);
+	
+	
+	/** 네이버 회원 삭제
+	 * @param memberNo
+	 * @return
+	 */
+	int membershipNaverOut(int memberNo);
+	
+	
+	/** 회원 탈퇴 처리
+	 * @param memberNo
+	 * @return
+	 */
+	int membershipOut(int memberNo);
+
 
 }

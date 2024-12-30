@@ -63,8 +63,8 @@ public class MemberController {
 	private static final List<String> WEEKDAYS = Arrays.asList("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일");
 
 	@PostMapping("login")
-	public String login(Member inputMember,
-	                  RedirectAttributes ra,
+	public ResponseEntity<?> login(Member inputMember,
+					  RedirectAttributes ra,
 	                  Model model,
 	                  @RequestParam(value="saveId", required=false) String saveId,
 	                  HttpServletResponse resp) {
@@ -76,9 +76,8 @@ public class MemberController {
 
 	   // 로그인 실패 시
 	   if(loginMember == null) {
-	       ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
-	       model.addAttribute("inputMember", inputMember); 
-	       path = "login";
+		   return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                .body("아이디 또는 비밀번호가 일치하지 않습니다.");
 	   } else {
 	       // Session scope에 loginMember 추가
 	       model.addAttribute("loginMember", loginMember);
@@ -117,9 +116,8 @@ public class MemberController {
 	       path = "/";
 	   }
 
-	   log.debug("loginMember: " + loginMember);
 
-	   return "redirect:" + path;
+	   return ResponseEntity.ok().build();  // 로그인 성공 시 200 OK 반환
 	}
 
 	/**
@@ -173,15 +171,19 @@ public class MemberController {
 	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, SessionStatus status) {
 		try {
 			// Access Token 쿠키 삭제
-			Cookie accessTokenCookie = new Cookie("Access-token", "");
+			Cookie accessTokenCookie = new Cookie("Access-Token", "");
+			accessTokenCookie.setHttpOnly(true);  // HttpOnly 설정 추가
+			accessTokenCookie.setSecure(false);   // 원래 설정과 동일하게
 			accessTokenCookie.setMaxAge(0);
 			accessTokenCookie.setPath("/");
 			response.addCookie(accessTokenCookie);
 
 			// Refresh Token 쿠키도 삭제
-			Cookie refreshTokenCookie = new Cookie("Refresh-token", "");
+			Cookie refreshTokenCookie = new Cookie("Refresh-Token", "");
+			refreshTokenCookie.setHttpOnly(true);  // HttpOnly 설정 추가
+			refreshTokenCookie.setSecure(false);   // 원래 설정과 동일하게
 			refreshTokenCookie.setMaxAge(0);
-			refreshTokenCookie.setPath("/");
+			refreshTokenCookie.setPath("/api/auth/refresh");  // 원래 path와 동일하게
 			response.addCookie(refreshTokenCookie);
 
 			status.setComplete();
