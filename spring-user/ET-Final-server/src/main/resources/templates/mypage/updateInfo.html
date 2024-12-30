@@ -225,17 +225,18 @@
 
 					<div class="form-group">
 						<label for="userEmail">이메일</label>
-						<input type="email" id="userEmail">
-						<button type="button" class="edit-btn" id="sendVerificationBtn">인증</button>
+						<input type="text" name="verificationEmail" id="verificationEmail" placeholder="이메일을 입력하세요">
+						<span class="verification-message" id="verificationEmailMessage"></span>
+						<button type="button" class="edit-btn" id="verificationBtn">인증번호 받기</button>
 					</div>
 
-					<div id="emailVerificationSection" style="display: none;">
+					<div id="emailVerification" style="margin-top : 10px;">
 						<div class="form-group">
 							<label for="verificationCode">인증코드</label>
-							<input type="text" id="verificationCode">
-							<button type="button" class="verify-btn" id="verifyCodeBtn">확인</button>
+							<input type="text" id="verificationCode" placeholder="인증번호 입력">
+							<button type="button" class="verify-btn" id="verificationBtn">인증하기</button>
 						</div>
-						<div id="timer">05:00</div>
+						<span class="verification-message" id="verificationMessage"></span>
 					</div>
 
 					<div class="form-group gender">
