@@ -1,7 +1,7 @@
 package edu.kh.project.payment.controller;
 
 import java.sql.Timestamp;
-import java.util.Collections;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.RestTemplate;
@@ -92,19 +93,6 @@ public class paymentController {
 
 		try {
 
-			List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime, dayOfWeek);
-
-			if (seats.isEmpty()) {
-				log.warn("좌석 데이터가 없습니다: 공연 ID={}, 날짜={}, 시간={}", mt20id, selectedDate, selectedTime);
-			}
-			
-			// 조회한 좌석 데이터를 모델에 추가
-	        model.addAttribute("seats", seats);
-	        model.addAttribute("mt20id", mt20id);
-	        model.addAttribute("selectedDate", selectedDate);
-	        model.addAttribute("selectedTime", selectedTime);
-	        model.addAttribute("dayOfWeek", dayOfWeek);
-
 
 			return "payment/seat-selection";
 
@@ -148,45 +136,26 @@ public class paymentController {
 		return "payment/payment";
 	}
 
-	/**
-	 * 좌석 정보 제공
-	 * 
-	 * @param showDate
-	 * @param showTime
-	 * @return
-	 */
+	// Controller
 	@GetMapping("seats")
-	public ResponseEntity<List<Seat>> getSeats(@RequestParam("mt20id") String mt20id,
-			@RequestParam("selectedDate") String selectedDate, @RequestParam("selectedTime") String selectedTime,
-			@RequestParam("dayOfWeek") Integer dayOfWeek // 요일 추가
-	) {
+	@ResponseBody
+	public ResponseEntity<List<Seat>> getSeats(
+	        @RequestParam("mt20id") String mt20id,
+	        @RequestParam("selectedDate") String selectedDate, 
+	        @RequestParam("selectedTime") String selectedTime,
+	        @RequestParam("dayOfWeek") String dayOfWeek) {
 
-		log.info("좌석 조회 요청222: mt20id={}, selectedDate={}, selectedTime={}, dayOfWeek={}", mt20id, selectedDate,
-				selectedTime, dayOfWeek);
+	    log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", 
+	             mt20id, selectedDate, selectedTime);
 
-		if (mt20id == null || selectedDate == null || selectedTime == null || dayOfWeek == null) {
-			log.error("필수 파라미터가 누락되었습니다: mt20id={}, selectedDate={}, selectedTime={}, dayOfWeek={}", mt20id,
-					selectedDate, selectedTime, dayOfWeek);
-			return ResponseEntity.badRequest().build(); // 400 Bad Request 반환
-		}
+	    try {
+	        List<Seat> seats = service.getSeatsByPerformance(mt20id, dayOfWeek, selectedTime, dayOfWeek);
+	        return ResponseEntity.ok(seats);
 
-		try {
-
-			List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime, dayOfWeek);
-
-			if (seats.isEmpty()) {
-				log.warn("좌석 데이터가 없습니다: 공연 ID={}, 날짜={}, 시간={}", mt20id, selectedDate, selectedTime);
-				return ResponseEntity.ok(Collections.emptyList());
-			}
-
-			return ResponseEntity.ok(seats);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("좌석 조회 실패", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-
+	    } catch (Exception e) {
+	        log.error("좌석 조회 중 오류 발생", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
 	/**

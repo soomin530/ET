@@ -5,40 +5,49 @@
 	<!-- 특정 공연 좌석 조회 -->
 	<select id="selectSeatsByShow" parameterType="map" resultType="map">
 	    SELECT 
-	        TPF.MT20ID AS mt20id,  
-	        TPT.DAY_OF_WEEK AS dayOfWeek,  
-	        TPT.PERFORMANCE_TIME AS performanceTime,  
-	        TVSI.SEAT_COUNT AS totalSeatCount,  
-	        TVSI.SEAT_COUNT - COALESCE(COUNT(TTS.SEATS_ID), 0) AS availableSeatCount,  
-	        SG.GRADE_NAME AS gradeName, 
-	        PSP.PRICE AS gradePrice 
-	    FROM ETFIVE.TB_PERFORMANCES_DETAIL TPF
-	    JOIN ETFIVE.TB_PERFORMANCE_TIME TPT
-	        ON TPF.MT20ID = TPT.MT20ID
-	    JOIN ETFIVE.TB_VENUE_SEAT_INFO TVSI
-	        ON TPF.MT10ID = TVSI.MT10ID
-	    LEFT JOIN ETFIVE.TB_TICKET_SEAT TTS
-	        ON TTS.MT20ID = TPF.MT20ID
-	        AND TTS.GRADE_ID = TVSI.GRADE_ID
-	        AND TTS.SEAT_STATUS = 'available'
-	        AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-	        AND TTS.SHOW_TIME = #{selectedTime}
-	    JOIN TB_PERFORMANCE_SEAT_PRICE PSP
-	        ON TPF.MT20ID = PSP.MT20ID
-	        AND TVSI.GRADE_ID = PSP.GRADE_ID
-	    JOIN TB_SEAT_GRADE SG
-	        ON SG.GRADE_ID = TVSI.GRADE_ID
-	    WHERE TPF.MT20ID = #{mt20id}
-	      AND TPT.DAY_OF_WEEK = #{dayOfWeek}
-	      AND TPT.PERFORMANCE_TIME = #{performanceTime}
-	    GROUP BY 
-	        TPF.MT20ID, 
-	        TPT.DAY_OF_WEEK, 
-	        TPT.PERFORMANCE_TIME, 
-	        TVSI.SEAT_COUNT, 
-	        SG.GRADE_NAME, 
-	        PSP.PRICE
-	    ORDER BY SG.GRADE_NAME
+	        S.MT20ID,
+	        S.DAY_OF_WEEK AS dayOfWeek,
+	        S.PERFORMANCE_TIME AS performanceTime,
+	        S.SEAT_COUNT AS totalSeatCount,
+	        S.AVAILABLE_COUNT AS availableSeatCount,
+	        S.GRADE_ID AS gradeId,
+	        S.GRADE_NAME AS gradeName,
+	        S.PRICE AS gradePrice
+	    FROM (
+	        SELECT 
+	            TPF.MT20ID,
+	            TPT.DAY_OF_WEEK,
+	            TPT.PERFORMANCE_TIME,
+	            TVSI.SEAT_COUNT,
+	            TVSI.SEAT_COUNT - COUNT(TTS.SEATS_ID) AS AVAILABLE_COUNT,
+	            SG.GRADE_ID,
+	            SG.GRADE_NAME,
+	            PSP.PRICE
+	        FROM TB_PERFORMANCES_DETAIL TPF
+	        JOIN TB_PERFORMANCE_TIME TPT ON TPF.MT20ID = TPT.MT20ID
+	        JOIN TB_VENUE_SEAT_INFO TVSI ON TPF.MT10ID = TVSI.MT10ID
+	        JOIN TB_SEAT_GRADE SG ON SG.GRADE_ID = TVSI.GRADE_ID
+	        JOIN TB_PERFORMANCE_SEAT_PRICE PSP 
+	            ON TPF.MT20ID = PSP.MT20ID 
+	            AND TVSI.GRADE_ID = PSP.GRADE_ID
+	        LEFT JOIN TB_TICKET_SEAT TTS 
+	            ON TTS.MT20ID = TPF.MT20ID
+	            AND TTS.GRADE_ID = TVSI.GRADE_ID
+	            AND TTS.SEAT_STATUS = 'BOOKED'
+	            AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+	            AND TTS.SHOW_TIME = #{selectedTime}
+	        WHERE TPF.MT20ID = #{mt20id}
+	        AND TPT.DAY_OF_WEEK = #{dayOfWeek}
+	        GROUP BY
+	            TPF.MT20ID,
+	            TPT.DAY_OF_WEEK,
+	            TPT.PERFORMANCE_TIME,
+	            TVSI.SEAT_COUNT,
+	            SG.GRADE_ID,
+	            SG.GRADE_NAME,
+	            PSP.PRICE
+	    ) S
+	    ORDER BY S.GRADE_ID
 	</select>
 
 	

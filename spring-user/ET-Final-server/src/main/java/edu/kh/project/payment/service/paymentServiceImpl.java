@@ -64,7 +64,7 @@ public class paymentServiceImpl implements paymentService {
 
 	// 특정 공연 좌석 정보 조회
 	@Override
-	public List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime, int dayOfWeek) {
+	public List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime, String dayOfWeek) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("mt20id", mt20id);
 		params.put("selectedDate", selectedDate);
@@ -73,5 +73,6 @@ public class paymentServiceImpl implements paymentService {
 
 		return mapper.selectSeatsByShow(params);
 	}
+
 
 }
