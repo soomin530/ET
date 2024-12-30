@@ -3,10 +3,25 @@
 <mapper namespace="edu.kh.project.performance.model.mapper.PerformanceMapper">
 
 	<!-- 장르별 공연 목록 조회 -->
-	<select id="genre">
-		SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER
-		FROM TB_PERFORMANCES_DETAIL
-		WHERE GENRENM = #{genre}
+	<select id="genre" resultType="Performance">
+	    SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER
+	    FROM TB_PERFORMANCES_DETAIL
+	    WHERE GENRENM = #{genre}
+	</select>
+	
+	<!-- 장르별 공연 목록 페이징 조회 -->
+	<select id="genreWithPaging" resultType="Performance">
+	<![CDATA[
+	    SELECT *
+	    FROM (
+	        SELECT /*+ INDEX_DESC(p PK_PERFORMANCES_DETAIL) */
+	            p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER,
+	            ROW_NUMBER() OVER (ORDER BY p.PRFPDFROM DESC) AS RN
+	        FROM TB_PERFORMANCES_DETAIL p
+	        WHERE p.GENRENM = #{genre}
+	    )
+	    WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
+	]]>
 	</select>
 	
 	<!-- 공연 상세페이지 조회 -->

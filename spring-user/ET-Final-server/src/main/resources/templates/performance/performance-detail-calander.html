@@ -7,11 +7,11 @@
 	<title>공연 예매 사이트</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<link rel="stylesheet" href="/css/performance/detail.css">
-    <th:block th:replace="~{common/common}"></th:block>
+	<th:block th:replace="~{common/common}"></th:block>
 </head>
 
 <body>
-    <th:block th:replace="~{common/header}"></th:block>
+	<th:block th:replace="~{common/header}"></th:block>
 	<div class="performance-container" style="margin-top: 20px;">
 		<div class="performance-content">
 			<!-- 왼쪽: 공연 정보 -->
@@ -80,58 +80,59 @@
 				<button class="booking-btn" id="booking-btn" disabled>예매하기</button>
 			</div>
 		</div>
+
+		<!-- 리뷰 섹션 추가 -->
+		<div class="review-section">
+			<h3 class="text-xl font-bold mb-4">공연 리뷰</h3>
+
+			<!-- 리뷰 작성 폼 -->
+			<div class="review-form"
+				style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+				<div class="star-rating mb-3">
+					<input type="radio" name="rating" value="5" id="rate5"><label for="rate5">★</label>
+					<input type="radio" name="rating" value="4" id="rate4"><label for="rate4">★</label>
+					<input type="radio" name="rating" value="3" id="rate3"><label for="rate3">★</label>
+					<input type="radio" name="rating" value="2" id="rate2"><label for="rate2">★</label>
+					<input type="radio" name="rating" value="1" id="rate1"><label for="rate1">★</label>
+				</div>
+				<textarea id="reviewContent"
+					style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px; resize: vertical;"
+					rows="3" placeholder="공연에 대한 리뷰를 남겨주세요."></textarea>
+				<button id="submitReview"
+					style="width: 100%; padding: 15px; background-color: #f43142; color: white; border: none; border-radius: 4px; font-size: 1.1em; cursor: pointer; transition: all 0.2s ease;">
+					리뷰 등록하기
+				</button>
+			</div>
+
+			<!-- 리뷰 목록 -->
+			<div id="reviewList" class="review-list">
+				<!-- 리뷰 아이템들이 여기에 동적으로 추가됨 -->
+			</div>
+		</div>
 	</div>
 
-  <input type="hidden" id="mt20id" name="mt20id" th:value="${performance.mt20id}">
+	<!-- hidden inputs -->
+	<input type="hidden" id="currentMemberNo" th:value="${session.loginMember != null ? session.loginMember.memberNo : ''}" />
+	<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
+	<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
+	<input type="hidden" id="mt20id" name="mt20id" th:value="${performance.mt20id}">
 
 	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
 
 	<script th:inline="javascript">
-		
-		const fcltla = document.getElementById('fcltla').value;
-        const fcltlo = document.getElementById('fcltlo').value;
-		
-		const performanceData = {
-			id: /*[[${performance.mt20id}]]*/ '',
-			startDate: /*[[${performance.prfpdfrom}]]*/ '',
-			endDate: /*[[${performance.prfpdto}]]*/ '',
-			runtime: /*[[${performance.prfruntime}]]*/ '',
-			cast: /*[[${performance.prfcast}]]*/ '',
-			venue: /*[[${performance.fcltynm}]]*/ '',
-			schedule: /*[[${performance.schedule}]]*/ {}
-		};
-
-		// 카카오지도 API  
-		window.addEventListener('DOMContentLoaded', () => {
-			var mapContainer = document.getElementById('map'),
-				mapOption = {
-					center: new kakao.maps.LatLng(fcltla, fcltlo), // 지도의 중심좌표
-					level: 3
-				};
-
-			var map = new kakao.maps.Map(mapContainer, mapOption);
-			var marker = new kakao.maps.Marker({
-				position: map.getCenter()
-			});
-			marker.setMap(map);
-
-			kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-				var latlng = mouseEvent.latLng;
-				marker.setPosition(latlng);
-
-				var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-				message += '경도는 ' + latlng.getLng() + ' 입니다';
-
-				var resultDiv = document.getElementById('clickLatlng');
-				if (resultDiv) {
-					resultDiv.innerHTML = message;
-				}
-			});
-		});
+	    const performanceData = {
+	        id: /*[[${performance.mt20id}]]*/ '',
+	        startDate: /*[[${performance.prfpdfrom}]]*/ '',
+	        endDate: /*[[${performance.prfpdto}]]*/ '',
+	        runtime: /*[[${performance.prfruntime}]]*/ '',
+	        cast: /*[[${performance.prfcast}]]*/ '',
+	        venue: /*[[${performance.fcltynm}]]*/ '',
+	        schedule: /*[[${performance.schedule}]]*/ {}
+	    };
 	</script>
 
 	<script src="/js/performance/detail.js"></script>
-    <th:block th:replace="~{common/footer}"></th:block>
+	<th:block th:replace="~{common/footer}"></th:block>
 </body>
 
 </html>

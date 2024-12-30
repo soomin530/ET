@@ -32,32 +32,30 @@ public class PerformanceController {
      * @return 
      * @author 우수민
      */
-    @GetMapping("/genre/{genre}")
-    public String genre(@PathVariable("genre") String genre, Model model) {
-    	
-    	if(genre.equals("musical")) {
-    		genre = "뮤지컬";
-    	}
-    	
-    	if(genre.equals("theater")) {
-    		genre = "연극";
-    	}
-    	
-    	if(genre.equals("classic")) {
-    		genre = "서양음악(클래식)";
-    	}
+	@GetMapping("/genre/{genre}")
+	public String genre(@PathVariable("genre") String genre, Model model) {
+	    // 장르명 변환 로직
+	    if(genre.equals("musical")) {
+	        genre = "뮤지컬";
+	    }
+	    if(genre.equals("theater")) {
+	        genre = "연극";
+	    }
+	    if(genre.equals("classic")) {
+	        genre = "서양음악(클래식)";
+	    }
 
-        // 각 장르 공연 목록을 가져오기
-        List<Performance> performances = performanceService.getPerformancesByGenre(genre);
-        
-        log.debug("Performances: {}", performances);
+	    // 첫 페이지 데이터만 가져오기 (20개)
+	    List<Performance> performances = performanceService.getPerformancesByPage(1, 20, genre);
 
-        // 모델에 데이터 추가해서 전달
-        model.addAttribute("performances", performances);
-        model.addAttribute("genre", genre);
+	    log.debug("Performances: {}", performances);
 
-        return "performance/genre";
-    }
+	    // 모델에 데이터 추가
+	    model.addAttribute("performances", performances);
+	    model.addAttribute("genre", genre);
+
+	    return "performance/genre";
+	}
     
     /** 공연 상세페이지 조회
      * @param mt20id

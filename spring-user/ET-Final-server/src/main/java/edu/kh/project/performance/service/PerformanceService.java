@@ -15,6 +15,14 @@ public interface PerformanceService {
 	 * @author 우수민
 	 */
 	List<Performance> getPerformancesByGenre(String genre);
+	
+	/** 장르별 공연 목록 조회 무한 스크톨
+	 * @param page
+	 * @param pageSize
+	 * @param genre
+	 * @return
+	 */
+	List<Performance> getPerformancesByPage(int page, int pageSize, String genre);
 
 	/** 공연 상세페이지 조회
 	 * @param mt20id
@@ -46,5 +54,6 @@ public interface PerformanceService {
 	 * @author 우수민
 	 */
 	List<Performance> getPerformancesByManager(int memberNo);
+
 
 }
