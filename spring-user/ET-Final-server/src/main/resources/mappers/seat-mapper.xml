@@ -3,7 +3,7 @@
 <mapper namespace="edu.kh.project.payment.model.mapper.paymentMapper">
 
 	<!-- 특정 공연 좌석 조회 -->
-	<select id="selectSeatsByShow">
+	<select id="selectSeatsByShow" parameterType="map" resultType="edu.kh.project.payment.model.dto.Seat">
 		SELECT TS.SEATS_ID AS seatId,
 			TS.GRADE_ID AS gradeId,
 			SG.GRADE_NAME AS gradeName,
@@ -16,8 +16,8 @@
 		JOIN TB_PERFORMANCE_SEAT_PRICE PSP
 		ON TS.GRADE_ID = PSP.GRADE_ID AND TS.MT20ID = PSP.MT20ID
 		WHERE TS.MT20ID = #{mt20id}
-		AND TS.SHOW_DATE = TO_DATE(#{showDate}, 'YYYY-MM-DD')
-		AND TS.SHOW_TIME = #{showTime}
+		AND TS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+        AND TS.SHOW_TIME = #{selectedTime}
 	</select>
 	
 	<!-- 좌석 업데이트 -->
