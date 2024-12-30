@@ -273,11 +273,13 @@ class Calendar {
 function initializeReviews() {
 	const mt20id = performanceData.id;
 	const currentMemberNo = document.getElementById('currentMemberNo')?.value;
-
+	
 	function loadReviews() {
 		$.get(`/performance/review/list/${mt20id}`, function(reviews) {
 			const reviewList = $('#reviewList');
 			reviewList.empty();
+			
+			console.log(reviews);
 
 			if (reviews.length === 0) {
 				reviewList.html(`
@@ -294,7 +296,7 @@ function initializeReviews() {
                     <div class="review-item">
                         <div class="review-header">
                             <div class="reviewer-info">
-                                <span class="reviewer-name">${review.memberName}</span>
+                                <span class="reviewer-name">${review.memberNickname}</span>
                                 <span class="review-date">${new Date(review.createDate).toLocaleDateString()}</span>
                             </div>
                             <div class="review-stars">${stars}</div>

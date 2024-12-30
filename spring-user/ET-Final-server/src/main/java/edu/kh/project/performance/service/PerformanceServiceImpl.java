@@ -2,6 +2,7 @@ package edu.kh.project.performance.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
+import edu.kh.project.performance.model.dto.Review;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
 import edu.kh.project.performance.model.mapper.PerformanceMapper;
 import lombok.RequiredArgsConstructor;
@@ -116,4 +118,49 @@ public class PerformanceServiceImpl implements PerformanceService {
 		return mapper.selectPerformancesByManager(memberNo);
 	}
 
+
+	// 리뷰 등록
+	@Override
+	public boolean insertReview(Review review) {
+		int result = mapper.insertReview(review);
+		return result > 0;
+	}
+
+	// 리뷰 중복 여부 확인
+	@Override
+	public boolean hasReviewForPerformance(int memberNo, String mt20id) {
+		
+		Map<String, Object> params = new HashMap<>();
+		
+	    params.put("memberNo", memberNo); 
+	    params.put("mt20id", mt20id);     
+		    
+		int reviewCount = mapper.selectReviewCount(params);
+		
+		return reviewCount > 0;
+	}
+	
+	// 리뷰 수정
+	@Override
+	public boolean updateReview(Review review) {
+		int result = mapper.updateReview(review);
+		return result > 0; // 업데이트 성공 여부 반환
+	}
+
+	// 리뷰 삭제
+	@Override
+	public boolean deleteReview(Map<String, Object> paramMap) {
+		int result = mapper.deleteReview(paramMap);
+		return result > 0;
+	}
+
+
+	// 리뷰 목록 조회 
+	@Override
+	public List<Review> getReviewsByPerformanceId(String mt20id) {
+	    
+	    return mapper.selectReviewsByPerformanceId(mt20id);
+	}
+
 }
+
