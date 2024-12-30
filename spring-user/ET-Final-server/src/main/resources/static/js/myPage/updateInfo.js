@@ -1,14 +1,14 @@
-// 유효성 검사를 위한 객체
-const checkObj = {
-     memberNickname: true,  // 닉네임은 현재 값이 유효하다고 초기화
-     memberEmail: true,     // 이메일도 현재 값이 유효하다고 초기화
-     authKey: false         // 이메일 인증 여부
- };
+// // 유효성 검사를 위한 객체
+// const checkObj = {
+//      memberNickname: true,  // 닉네임은 현재 값이 유효하다고 초기화
+//      memberEmail: true,     // 이메일도 현재 값이 유효하다고 초기화
+//      authKey: false         // 이메일 인증 여부
+//  };
 
 // 페이지 로드 시 회원 정보 불러오기
  document.addEventListener("DOMContentLoaded", () => {
      loadUserInfo();
-	 initializeValidation();
+	 
  });
 
 // 회원 정보 불러오기
@@ -42,6 +42,71 @@ function loadUserInfo() {
 }
 
 
+// 인증번호 받기 버튼
+const sendAuthKeyBtn = document.querySelector("#verificationBtn");
+
+// 인증번호 입력 input
+const authKey = document.querySelector("#verificationCode");
+
+// 인증번호 입력 후 확인 버튼
+const checkAuthKeyBtn = document.querySelector("#verificationBtn");
+
+// 인증번호 관련 메시지 출력 span
+const authKeyMessage = document.querySelector("#verificationMessage");
+
+let verificationTimer; 
+
+const verificationMin = 4; // 타이머 초기값 (분)
+const verificationSec = 59; // 타이머 초기값 (초)
+const verificationTime = "05:00";
+
+// 실제 줄어드는 시간을 저장할 변수
+let minit = verificationMin;
+let second = verificationSec;
+
+/* 이메일 유효성 검사 */
+
+// 이메일 유효성 검사에 사용될 요소 얻어오기
+const memberEmail = document.querySelector("#verificationEmail");
+const emailMessage = document.querySelector("#verificationEmailMessage");
+
+/* 이메일 인증*/
+verificationEmail.addEventListener("input", e => {
+	// 작성된 이메일 값 얻어오기
+	const verificationInputEmail = e.target.value;
+
+	// 3) 입력된 이메일이 없을 경우
+	if (verificationInputEmail.trim().length === 0) {
+		verificationEmailMessage.innerText = "메일을 받을 수 있는 이메일을 입력해주세요.";
+
+		// 메시지에 색상을 추가하는 클래스 모두 제거
+		verificationEmailMessage.classList.remove('confirm', 'error');
+
+		// 잘못 입력한 띄어쓰기가 있을 경우 없앰
+		verificationEmail.value = "";
+
+		return;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 폼 제출 처리
 document.getElementById("userForm").addEventListener("submit", (e) => {
@@ -62,10 +127,9 @@ document.getElementById("userForm").addEventListener("submit", (e) => {
 
     // 수정된 회원 정보 수집
     const updatedInfo = {
-        memberName: document.getElementById("userName").value,
+       
         memberNickname: document.getElementById("userNickname").value,
         memberEmail: document.getElementById("userEmail").value,
-        memberBirth: document.getElementById("userBirth").value,
         memberGender: document.querySelector('input[name="gender"]:checked')?.value
     };
 

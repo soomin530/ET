@@ -48,7 +48,6 @@ public class MyPageController {
 		String memberEmail = loginMember.getMemberEmail();
 
 		// 토큰 생성
-
 		JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
 		// Access Token을 HttpOnly 쿠키에 저장

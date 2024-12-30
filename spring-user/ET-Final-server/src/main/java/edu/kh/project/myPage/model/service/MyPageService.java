@@ -12,7 +12,7 @@ public interface MyPageService {
     int verifyPassword(String memberPw, int memberNo);
 
     
-    // 회원 목록 조회
+    // 회원 정보 조회
 	Member getMemberInfo(int memberNo);
 
 	
