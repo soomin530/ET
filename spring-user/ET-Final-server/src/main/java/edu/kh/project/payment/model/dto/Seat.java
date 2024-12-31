@@ -26,7 +26,7 @@ public class Seat {
 	private String showDate; // 공연 날짜
 	private String showTime; // 공연 시간
 	private int memberNo;    // 예약한 회원 번호
-	
+
 	
 	private int totalSeatCount;  // 총 좌석 수 (추가)
 	private int availableSeatCount;  // 총 좌석 수 (추가)
