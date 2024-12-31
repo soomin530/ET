@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
+import edu.kh.project.performance.model.dto.Review;
 
 @Mapper
 public interface PerformanceMapper {
@@ -68,5 +69,45 @@ public interface PerformanceMapper {
 	 * @author 우수민
 	 */
 	List<Performance> selectPerformancesByManager(int memberNo);
+
+
+	/** 리뷰 등록
+	 * @param review
+	 * @return
+	 * @author 우수민
+	 */
+	int insertReview(Review review);
+
+	/** 리뷰 중복 여부 확인
+	 * @param memberNo
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
+	 int selectReviewCount(Map<String, Object> params);
+	
+	/** 리뷰 수정
+	 * @param review
+	 * @return
+	 * @author 우수민
+	 */
+	int updateReview(Review review);
+
+	/** 리뷰 삭제
+	 * @param paramMap
+	 * @return
+	 * @author 우수민
+	 */
+	int deleteReview(Map<String, Object> paramMap);
+
+
+
+	/** 리뷰 목록 조회
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
+	List<Review> selectReviewsByPerformanceId(String mt20id);
+
 
 }
