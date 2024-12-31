@@ -110,13 +110,6 @@ public class PerformanceServiceImpl implements PerformanceService {
 	public List<PerformanceRanking> performanceRanking() {
 		return mapper.performanceRanking();
 	}
-    
-
-    // 공연관리자가 등록한 공연 목록 조회 
-	@Override
-	public List<Performance> getPerformancesByManager(int memberNo) {
-		return mapper.selectPerformancesByManager(memberNo);
-	}
 
 
 	// 리뷰 등록
@@ -160,6 +153,12 @@ public class PerformanceServiceImpl implements PerformanceService {
 	public List<Review> getReviewsByPerformanceId(String mt20id) {
 	    
 	    return mapper.selectReviewsByPerformanceId(mt20id);
+	}
+
+	// 공연관리자가 등록한 공연 목록 조회 
+	@Override
+	public List<Performance> getPerformancesByManager(int memberNo) {
+		return mapper.selectPerformancesByManager(memberNo);
 	}
 
 }

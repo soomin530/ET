@@ -34,9 +34,10 @@ public class paymentServiceImpl implements paymentService {
 	private String apiSecret;
 
 	// 좌석 상태 업데이트 (예약)
-	public boolean reserveSeat(String seatId) {
-		int result = mapper.updateSeatStatus(seatId, "BOOKED");
-		return result > 0; // 업데이트 성공 여부 반환
+	@Override
+	public boolean insertTicketSeat(Seat seatData) {
+		int result = mapper.insertTicketSeat(seatData);
+		return result > 0;
 	}
 
 	// 좌석 가격 조회 (등급 기준)
@@ -75,5 +76,8 @@ public class paymentServiceImpl implements paymentService {
 		return mapper.selectSeatsByShow(params);
 	}
 
+	
+
+	
 
 }

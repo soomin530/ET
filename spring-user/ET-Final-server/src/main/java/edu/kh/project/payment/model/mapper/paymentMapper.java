@@ -15,8 +15,8 @@ import edu.kh.project.performance.model.dto.Performance;
 public interface paymentMapper {
 
 	// 좌석 상태 업데이트(예약)
-	int updateSeatStatus(@Param("seatId") String seatId, @Param("status") String status);
-
+	//int insertTicketSeat(Seat seatData);
+	
 	// 좌석 가격 조회 (등급 기준)
 	int selectSeatPrice(String gradeId);
 
@@ -32,6 +32,9 @@ public interface paymentMapper {
 	// 특정 공연 좌석 조회
 	List<Seat> selectSeatsByShow(Map<String, Object> params);
 
+	// 좌석 상태 업데이트(예약)
+	int insertTicketSeat(Seat seatData);
+
 	
-	
+
 }
