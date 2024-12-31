@@ -30,7 +30,7 @@ document.querySelector("#searchAddress").addEventListener("click", execDaumPostc
 // 필수 입력 항목의 유효성 검사 여부를 체크하기 위한 객체
 // - true  == 해당 항목은 유효한 형식으로 작성됨
 // - false == 해당 항목은 유효하지 않은 형식으로 작성됨
-const checkObj = {
+let checkObj = {
 	"memberEmail": false,
 	"memberId": false,
 	"memberPw": false,
