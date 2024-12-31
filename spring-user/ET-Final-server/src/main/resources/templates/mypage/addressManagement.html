@@ -14,168 +14,366 @@
 	<th:block th:replace="~{common/common}"></th:block>
 
     <style>
+		
+		.modal {
+		           display: none;
+		           position: fixed;
+		           top: 0;
+		           left: 0;
+		           width: 100%;
+		           height: 100%;
+		           background-color: rgba(0, 0, 0, 0.5);
+		           z-index: 1000;
+		       }
+
+		       .modal.show {
+		           display: flex;
+		           justify-content: center;
+		           align-items: center;
+		       }
+
+		       .modal-content {
+		           background-color: white;
+		           padding: 30px;
+		           border-radius: 8px;
+		           width: 90%;
+		           max-width: 500px;
+		           position: relative;
+		       }
+
+		       .modal-header {
+		           margin-bottom: 20px;
+		           padding-bottom: 10px;
+		           border-bottom: 1px solid #ddd;
+		       }
+
+		       .modal-header h2 {
+		           margin: 0;
+		           font-size: 1.5rem;
+		       }
+
+		       .form-group {
+		           margin-bottom: 15px;
+		       }
+
+		       .form-group label {
+		           display: block;
+		           margin-bottom: 5px;
+		           font-weight: bold;
+		       }
+
+		       .form-group input {
+		           width: 100%;
+		           padding: 8px;
+		           border: 1px solid #ddd;
+		           border-radius: 4px;
+		           font-size: 14px;
+		       }
+
+		       .form-group .required::after {
+		           content: " *";
+		           color: red;
+		       }
+
+		       .address-search-group {
+		           display: flex;
+		           gap: 10px;
+		       }
+
+		       .address-search-group input {
+		           width: 60%;
+		       }
+
+		       .address-search-btn {
+		           width: 40%;
+		           padding: 8px;
+		           background-color: #333;
+		           color: white;
+		           border: none;
+		           border-radius: 4px;
+		           cursor: pointer;
+		       }
+
+		       .button-group {
+		           display: flex;
+		           justify-content: flex-end;
+		           gap: 10px;
+		           margin-top: 20px;
+		       }
+
+		       .button-group button {
+		           padding: 10px 20px;
+		           border: none;
+		           border-radius: 4px;
+		           cursor: pointer;
+		           font-size: 14px;
+		       }
+
+		       .cancel-btn {
+		           background-color: #ddd;
+		       }
+
+		       .submit-btn {
+		           background-color: #333;
+		           color: white;
+		       }
+
+		       /* 입력 필드 포커스 스타일 */
+		       .form-group input:focus {
+		           outline: none;
+		           border-color: #333;
+		           box-shadow: 0 0 3px rgba(0,0,0,0.2);
+		       }
+		   
+		
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-.container {
-    width: 400px;
-    background-color: #ffffff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        .sidebar {
+			width: 200px;
+			background-color: #f8f9fa;
+			padding: 20px;
+			border-right: 1px solid #ddd;
+			position: fixed;
+			height: 70vh;
+			/* 70vh로 높이 설정 */
+			z-index: 1;
+			top: 90px;
+			/* 상단에 붙이기 */
+		}
 
-.title {
-    font-size: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    color: #333;
-}
+        .main-content {
+			flex: 1;
+			padding: 40px;
+			margin-left: 200px;
+			z-index: 2;
+			position: relative;
+		}
 
-.tabs {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 20px;
-}
+        .mypage-container {
+			display: flex;
+			min-height: calc(100vh - 200px);
+			position: relative;
+		}
 
-.tab {
-    padding: 10px 20px;
-    font-size: 14px;
-    background-color: #f2f2f2;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 4px 4px 0 0;
-    cursor: pointer;
-}
+		.menu-list {
+			list-style: none;
+		}
 
-.tab.active {
-    background-color: #fff;
-    border-bottom: none;
-    color: #d9534f;
-}
+		.menu-item {
+			margin-bottom: 15px;
+		}
 
-.description {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 15px;
-}
+		.menu-item a {
+			text-decoration: none;
+			color: #333;
+			display: flex;
+			align-items: center;
+			padding: 10px;
+			border-radius: 5px;
+			transition: background-color 0.2s;
+		}
 
-.add-address-btn {
-    display: block;
-    width: 100%;
-    padding: 10px 0;
-    background-color: #d9534f;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
+		.menu-item a:hover {
+			background-color: #eee;
+		}
 
-.add-address-btn:hover {
-    background-color: #c9302c;
-}
+        .add-button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .add-button:hover {
+            background-color: #555;
+        }
+        
+        .address-list {
+            border-top: 2px solid #333;
+        }
+        
+        .address-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .address-checkbox {
+            margin-right: 15px;
+        }
+        
+        .address-content {
+            flex-grow: 1;
+        }
+        
+        .address-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .action-buttons {
+            display: none;
+            gap: 10px;
+        }
+        
+        .action-buttons.show {
+            display: flex;
+        }
+        
+        .edit-button, .delete-button {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+        }
 
-.address-box {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    margin-bottom: 10px;
-    position: relative;
-}
+        .sidebar-nav {
+			width: 100%;
+		}
 
-.address-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
+		.nav-link {
+			text-decoration: none;
+			color: #333;
+			display: block;
+			padding: 10px;
+			transition: background-color 0.2s;
+		}
 
-.recipient-name {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
+		.nav-link.active {
+			background-color: #ff4d4f;
+			color: white;
+			border-radius: 5px;
+		}
 
-.default-badge {
-    font-size: 12px;
-    color: #fff;
-    background-color: #d9534f;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
+		.nav-link:hover {
+			background-color: #eee;
+		}
 
-.address-details {
-    font-size: 13px;
-    color: #555;
-    line-height: 1.5;
-}
+		.nav-link:hover:not(.active) {
+			background-color: #eee;
+			border-radius: 5px;
+		}
+    </style>
 
-.edit-btn {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: #f2f2f2;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 12px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.edit-btn:hover {
-    background-color: #e0e0e0;
-}
-
-</style>
 </head>
 
 
 <body>
-
     <th:block th:replace="~{common/header}"></th:block>
 
-    <div class="container">
-        <h2 class="title">배송지관리</h2>
-        
-        <div class="tabs">
-            <button class="tab active">나의 주소록</button>
-        </div>
+    <div class="mypage-container">
+		<!-- 사이드바 -->
+		<div class="sidebar">
+		   <nav class="sidebar-nav">
+		       <ul class="menu-list">
+		           <li class="menu-item">
+		               <a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+		           </li>
+		           <!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+		           <li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+		               <a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+		           </li>
+		           <li class="menu-item">
+		               <a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+		           </li>
+		           <li class="menu-item">
+		               <a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+		           </li>
+		       </ul>
+		   </nav>
+		</div>
 
-        <p class="description">나의 주소록은 최대 10개까지 저장할 수 있습니다.</p>
-
-        <button class="add-address-btn">+ 새 배송지 추가</button>
-
-        <div class="address-box">
-            <div class="address-header">
-                <span class="recipient-name">고민규</span>
-                <span class="default-badge">기본배송지</span>
+        <div class="container">
+			
+            <div class="header">
+                <h1>배송지 관리</h1>
+				<p>나의 주소록은 최대 10개까지 저장할 수 있습니다.</p>
+                <button class="add-button">새 배송지 추가</button>
             </div>
-            <div class="address-details">
-                <p></p>
-                <p></p>
-                <p></p>
-            </div>
-            <div>
-                <button class="edit-btn">수정</button>
-            </div>
-        </div>
+			
+			<!-- 새 배송지 추가 모달 -->
+			<div id="addressModal" class="modal">
+			        <div class="modal-content">
+			            <div class="modal-header">
+			                <h2>배송지 추가</h2>
+			            </div>
+			            <form id="addressForm">
+			                <div class="form-group">
+			                    <label class="required" for="receiverName">받는 사람</label>
+			                    <input type="text" id="receiverName" required>
+			                </div>
 
-        
-    </div>
+			                <div class="form-group">
+			                    <label class="required" for="postcode">우편번호</label>
+			                    <div class="address-search-group">
+			                        <input type="text" id="postcode" readonly required>
+			                        
+									<button type="button" id="searchAddress" class="address-search-btn" onclick="execDaumPostcode()">주소 검색</button>
+
+			                    </div>
+			                </div>
+
+			                <div class="form-group">
+			                    <label class="required" for="address">주소</label>
+			                    <input type="text" id="address" readonly required>
+			                </div>
+
+			                <div class="form-group">
+			                    <label class="required" for="detailAddress">상세주소</label>
+			                    <input type="text" id="detailAddress" required>
+			                </div>
+
+			                <div class="form-group">
+			                    <label class="required" for="phone">휴대폰 번호</label>
+			                    <input type="tel" id="phone" required placeholder="ex) 010-1234-5678">
+			                </div>
+
+			                <div class="form-group">
+			                    <label for="extraPhone">추가 연락처</label>
+			                    <input type="tel" id="extraPhone" placeholder="ex) 010-1234-5678">
+			                </div>
+
+			                <div class="button-group">
+			                    <button type="button" class="cancel-btn" id="cancelBtn">취소</button>
+			                    <button type="submit" class="submit-btn">등록</button>
+			                </div>
+			            </form>
+			        </div>
+			    </div>
     
 
 	
@@ -183,11 +381,11 @@
 	<th:block th:replace="~{common/footer}"></th:block>
 
 
-    <script>
-
-    </script>
-	
+    
 	<script src="/js/main.js"></script>
+    <script src="/js/myPage/addressManagement.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>            
+
 	
 </body>
 

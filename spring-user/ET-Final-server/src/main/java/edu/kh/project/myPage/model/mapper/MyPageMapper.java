@@ -57,4 +57,10 @@ public interface MyPageMapper {
 	 */
 	String memberPwCheck(int memberNo);
 
+	/** 회원정보 수정
+	 * @param member
+	 * @return
+	 */
+	int updateMember(Member member);
+
 }
