@@ -62,4 +62,19 @@ public interface MyPageService {
 	 */
 	int membershipOut(int memberNo);
 
+
+	/** 회원 정보 수정
+	 * @param member
+	 * @return
+	 */
+	int updateMember(Member member);
+	
+	
+	
+	
+	
+	
+	
+	
+
 }
