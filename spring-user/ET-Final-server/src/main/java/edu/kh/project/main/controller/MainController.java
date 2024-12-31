@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import edu.kh.project.notice.model.dto.Notice;
+import edu.kh.project.notice.model.service.NoticeService;
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
 import edu.kh.project.performance.service.PerformanceService;
@@ -18,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class MainController {
 	
 	private final PerformanceService service;
+	
+	private final NoticeService noticeService;
 	
 	/** 메인 페이지
 	 * @param model
@@ -32,6 +36,11 @@ public class MainController {
 		// 공연 랭킹 목록 조회
 		List<PerformanceRanking> performanceRanking = service.performanceRanking();
 		
+		// 최근 공지사항 4개 조회해서 모델에 추가
+        List<Notice> recentNotices = noticeService.getRecentNotices();
+        
+        
+        model.addAttribute("notices", recentNotices);
 		model.addAttribute("mainPerform", mainPerform);
 		model.addAttribute("performanceRanking", performanceRanking);
 		

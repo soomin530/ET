@@ -26,7 +26,7 @@
 	
 	<!-- 공연 상세페이지 조회 -->
 	<select id="detail">
-		SELECT MT20ID, POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE
+		SELECT MT20ID, POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE, PRFREVIEW_RANK
 		FROM TB_PERFORMANCES_DETAIL
 		WHERE MT20ID = #{mt20id}
 	</select>
@@ -158,7 +158,9 @@
     <!-- 리뷰 수정 -->
     <update id="updateReview">
     	UPDATE TB_PERFORMANCE_REVIEW
-    	SET REVIEW_CONTENT = #{reviewContent}
+    	SET 
+    		REVIEW_CONTENT = #{reviewContent},
+    		REVIEW_STAR = #{reviewStar}
     	WHERE REVIEW_NO = #{reviewNo}
     </update>
     

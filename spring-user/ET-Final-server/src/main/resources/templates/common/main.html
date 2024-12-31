@@ -139,10 +139,53 @@
 			</div>
 		</div>
 	</div>
-	
-	<!-- 공지사항 영역 -->
-	<div>
-		
+
+	<!-- 공지사항 섹션 -->
+	<div class="notice-section" id="notice-section">
+		<div class="notice-top">
+			<h2 class="notice-main-title">NOTICE</h2>
+			<a href="/notice/list" class="notice-view-all">MORE +</a>
+		</div>
+
+		<div class="notice-container">
+			<div class="notice-row" th:each="notice, iterStat : ${notices}"
+				th:if="${iterStat.index > 0 && iterStat.index < 4}" th:data-notice-id="${notice.announceNo}"
+				th:onclick="openNoticeDetail(this)">
+				<div class="notice-row-content">
+					<span class="notice-row-date" th:text="${notice.announceWriteDate}">2024.03.21</span>
+					<h3 class="notice-row-title" th:text="${notice.announceTitle}">공지사항 제목</h3>
+				</div>
+				<div class="notice-row-arrow">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+						<path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+							stroke-linejoin="round" />
+					</svg>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 공지사항 상세 모달 -->
+	<div id="noticeDetailModal" class="noticeModal">
+		<div class="noticeModal-wrap">
+			<div class="noticeModal-top">
+				<div class="noticeModal-top-content">
+					<span class="noticeModal-badge">NOTICE</span>
+					<h2 id="modalNoticeTitle" class="noticeModal-title">공지사항 제목</h2>
+					<p id="modalNoticeDate" class="noticeModal-date">2024.03.21</p>
+				</div>
+				<button type="button" class="noticeModal-close" onclick="closeModal('noticeDetailModal')">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+						stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+			<div class="noticeModal-content">
+				<div id="modalNoticeContent" class="noticeModal-text"></div>
+			</div>
+		</div>
 	</div>
 
 	<!-- common/footer 추가-->
@@ -151,179 +194,6 @@
 
 	<!-- Chart.js 라이브러리 추가 -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-
-	<script>
-		// 캐러셀 클래스 추가
-		class Carousel {
-			constructor() {
-				this.carousel = document.querySelector('.custom-carousel');
-				this.slides = Array.from(this.carousel.querySelectorAll('.carousel-slide'));
-				this.totalSlides = this.slides.length;
-				this.currentSlide = 0;
-				this.autoPlayInterval = null;
-				this.performanceTitle = document.querySelector('.current-performance');
-				this.titles = this.slides.map(slide => slide.dataset.title);
-				this.detailLinks = Array.from(this.carousel.querySelectorAll('[data-link]'))
-					.map(el => el.dataset.link);
-				this.detailButton = this.carousel.querySelector('.carousel-btn');
-
-				this.initializeCarousel();
-				this.addEventListeners();
-				this.startAutoPlay();
-			}
-
-			initializeCarousel() {
-				// 인디케이터 생성
-				const indicatorsContainer = this.carousel.querySelector('.carousel-indicators');
-				indicatorsContainer.innerHTML = ''; // 기존 인디케이터 초기화
-
-				for (let i = 0; i < this.totalSlides; i++) {
-					const indicator = document.createElement('div');
-					indicator.className = `indicator ${i === 0 ? 'active' : ''}`;
-					indicator.addEventListener('click', () => this.goToSlide(i));
-					indicatorsContainer.appendChild(indicator);
-				}
-
-				// 인디케이터 요소들을 저장
-				this.indicators = Array.from(indicatorsContainer.querySelectorAll('.indicator'));
-			}
-
-			addEventListeners() {
-				this.carousel.addEventListener('mouseenter', () => this.stopAutoPlay());
-				this.carousel.addEventListener('mouseleave', () => this.startAutoPlay());
-
-				this.carousel.querySelector('.prev-arrow').addEventListener('click', () => {
-					this.prevSlide();
-					this.resetAutoPlay();
-				});
-
-				this.carousel.querySelector('.next-arrow').addEventListener('click', () => {
-					this.nextSlide();
-					this.resetAutoPlay();
-				});
-			}
-
-			updateSlides() {
-				const activeSlide = this.slides[this.currentSlide];
-				document.querySelector('.carousel-slide.active').classList.remove('active');
-				activeSlide.classList.add('active');
-
-				this.performanceTitle.textContent = activeSlide.dataset.title;
-
-				// href 속성 직접 변경
-				this.detailButton.href = activeSlide.dataset.link;
-
-				this.indicators.forEach((indicator, index) => {
-					if (index === this.currentSlide) {
-						indicator.classList.add('active');
-					} else {
-						indicator.classList.remove('active');
-					}
-				});
-			}
-
-			nextSlide() {
-				this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
-				this.updateSlides();
-			}
-
-			prevSlide() {
-				this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-				this.updateSlides();
-			}
-
-			goToSlide(index) {
-				this.currentSlide = index;
-				this.updateSlides();
-				this.resetAutoPlay();
-			}
-
-			startAutoPlay() {
-				this.autoPlayInterval = setInterval(() => this.nextSlide(), 5000);
-			}
-
-			stopAutoPlay() {
-				if (this.autoPlayInterval) {
-					clearInterval(this.autoPlayInterval);
-					this.autoPlayInterval = null;
-				}
-			}
-
-			resetAutoPlay() {
-				this.stopAutoPlay();
-				this.startAutoPlay();
-			}
-		}
-
-		document.addEventListener('DOMContentLoaded', function () {
-			// 캐러셀 초기화
-			new Carousel();
-
-			// 차트 초기화
-			const ctx = document.getElementById('concertChart').getContext('2d');
-			new Chart(ctx, {
-				type: 'bar',  // 바 차트
-				data: {
-					labels: ['연극', '서양음악(클래식)', '뮤지컬', '합계'],  // 카테고리
-					datasets: [{
-						label: '예매 수',
-						data: [192932, 201572, 766050, 672742],  // 예매 수
-						backgroundColor: 'rgba(75, 192, 192, 0.2)',
-						borderColor: 'rgba(75, 192, 192, 1)',
-						borderWidth: 1
-					}, {
-						label: '취소 예매 수',
-						data: [69216, 60655, 357941, 487812],  // 취소 예매 수
-						backgroundColor: 'rgba(255, 99, 132, 0.2)',
-						borderColor: 'rgba(255, 99, 132, 1)',
-						borderWidth: 1
-					}]
-				},
-				options: {
-					scales: {
-						y: {
-							beginAtZero: true
-						}
-					},
-					responsive: true,
-					plugins: {
-						legend: {
-							position: 'top',
-						}
-					}
-				}
-			});
-
-		});
-
-		const sections = document.querySelectorAll('.section');
-
-		const options = {
-			root: null,
-			rootMargin: '0px',
-			threshold: 0.1
-		};
-
-		const observer = new IntersectionObserver((entries) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting) {
-					entry.target.classList.add('visible');
-				} else {
-					entry.target.classList.remove('visible');
-				}
-			});
-		}, options);
-
-		sections.forEach(section => {
-			observer.observe(section);
-		});
-
-		function scrollToSection(sectionId) {
-			const section = document.getElementById(sectionId);
-			section.scrollIntoView({behavior: 'smooth'});
-		}
-
-	</script>
 
 	<script src="/js/main.js"></script>
 
