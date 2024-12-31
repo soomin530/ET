@@ -12,7 +12,8 @@
 	        S.AVAILABLE_COUNT AS availableSeatCount,
 	        S.GRADE_ID AS gradeId,
 	        S.GRADE_NAME AS gradeName,
-	        S.PRICE AS gradePrice
+	        S.PRICE AS gradePrice,
+	        S.SEAT_STATUS AS seatStatus
 	    FROM (
 	        SELECT 
 	            TPF.MT20ID,
@@ -22,7 +23,8 @@
 	            TVSI.SEAT_COUNT - COUNT(TTS.SEATS_ID) AS AVAILABLE_COUNT,
 	            SG.GRADE_ID,
 	            SG.GRADE_NAME,
-	            PSP.PRICE
+	            PSP.PRICE,
+	            TTS.SEAT_STATUS
 	        FROM TB_PERFORMANCES_DETAIL TPF
 	        JOIN TB_PERFORMANCE_TIME TPT ON TPF.MT20ID = TPT.MT20ID
 	        JOIN TB_VENUE_SEAT_INFO TVSI ON TPF.MT10ID = TVSI.MT10ID
@@ -33,11 +35,12 @@
 	        LEFT JOIN TB_TICKET_SEAT TTS 
 	            ON TTS.MT20ID = TPF.MT20ID
 	            AND TTS.GRADE_ID = TVSI.GRADE_ID
-	            AND TTS.SEAT_STATUS = 'BOOKED'
+	            AND TTS.SEAT_STATUS = 'available'
 	            AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
 	            AND TTS.SHOW_TIME = #{selectedTime}
 	        WHERE TPF.MT20ID = #{mt20id}
 	        AND TPT.DAY_OF_WEEK = #{dayOfWeek}
+	        AND TPT.PERFORMANCE_TIME = #{selectedTime}
 	        GROUP BY
 	            TPF.MT20ID,
 	            TPT.DAY_OF_WEEK,
@@ -45,7 +48,8 @@
 	            TVSI.SEAT_COUNT,
 	            SG.GRADE_ID,
 	            SG.GRADE_NAME,
-	            PSP.PRICE
+	            PSP.PRICE,
+	            TTS.SEAT_STATUS
 	    ) S
 	    ORDER BY S.GRADE_ID
 	</select>

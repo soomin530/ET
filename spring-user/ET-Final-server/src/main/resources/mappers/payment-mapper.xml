@@ -26,7 +26,14 @@
 	    )
 	</insert>
 
-	
+	<!-- 좌석 데이터 삽입 -->
+	<insert id="insertTicketSeat">
+	    INSERT INTO TB_TICKET_SEAT (
+	        SEATS_ID, SEAT_STATUS, MT20ID, MEMBER_NO, SHOW_DATE, GRADE_ID, SHOW_TIME
+	    ) VALUES (
+	        SEATS_SEQ.NEXTVAL, 'BOOKED', #{mt20id}, #{memberNo}, TO_DATE(#{showDate}, 'YYYY-MM-DD'), #{gradeId}, #{showTime}
+	    )
+	</insert>
 
 
 </mapper>
