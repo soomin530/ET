@@ -190,7 +190,11 @@ class Calendar {
    */
   handleDateSelection(date) {
     const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
-    const dayOfWeek = date.getDay(); // 0(일요일) ~ 6(토요일) 값 반환
+    let dayOfWeek = date.getDay(); // 0(일요일) ~ 6(토요일) 값 반환
+    if(dayOfWeek === 0 ) {
+      console.log(dayOfWeek);
+      dayOfWeek = 7;
+    };
 
     document.getElementById(
       "selected-date"
@@ -466,7 +470,7 @@ document.getElementById("booking-btn").onclick = function () {
       .formatDisplayDate(calendar.selectedDate)
       .replace(/\./g, "-"); // YYYY-MM-DD로 변환
     const selectedTime = calendar.selectedTime;
-    const dayOfWeek = calendar.dayOfWeek; // 0(일)~6(토) 값 사용
+    const dayOfWeek = calendar.dayOfWeek; // 1(월)~7(일) 값 사용
 
     if (!mt20id || !selectedDate || !selectedTime || dayOfWeek === undefined) {
       console.error("필수 파라미터가 누락되었습니다:", {
