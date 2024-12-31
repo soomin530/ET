@@ -97,7 +97,7 @@ public class NaverController {
 	 * @return
 	 */
 	@RequestMapping(value = "/process", method = {RequestMethod.GET, RequestMethod.POST})
-	public String processNaverLogin(HttpSession session) {
+	public String processNaverLogin(HttpSession session, HttpServletResponse resp) {
 		// 임시 저장된 값 가져오기
 		String code = (String) session.getAttribute("naverCode");
 		String state = (String) session.getAttribute("naverState");
@@ -154,8 +154,15 @@ public class NaverController {
 	        Member naverUser = service.loginNaver(naverMember);
 	        
 	        if(naverUser != null) {
+	        	naverUser.setMemberPw("");
 	        	// 세션에 로그인 정보 저장
-		        session.setAttribute("loginMember", naverMember);
+	        	session.setAttribute("loginMember", naverUser);
+	            
+	            // 네이버 로그인 여부를 쿠키에 저장
+	            Cookie naverFlCookie = new Cookie("naverFl", "Y");
+	            naverFlCookie.setPath("/");
+	            naverFlCookie.setMaxAge(3600); // 1시간
+	            resp.addCookie(naverFlCookie);
 	        }
 	        
 		} catch (Exception e) {

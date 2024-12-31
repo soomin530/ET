@@ -2,288 +2,294 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>회원정보 수정</title>
-		
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>회원정보 수정</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	
-	<link rel="stylesheet" href="/css/main-style.css">
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<link rel="stylesheet" href="/css/myPage/updateInfo.css">
-	
 	<th:block th:replace="~{common/common}"></th:block>
 
 	<style>
 		* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  display: flex;
-  min-height: 100vh;
-}
+		body {
+			font-family: 'Noto Sans KR', sans-serif;
+			min-height: 100vh;
+			display: block;
+		}
 
-/* 사이드바 스타일 */
-.sidebar {
-  width: 200px;
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-right: 1px solid #ddd;
-}
+		.sidebar {
+			width: 200px;
+			background-color: #f8f9fa;
+			padding: 20px;
+			border-right: 1px solid #ddd;
+			position: fixed;
+			height: 70vh;
+			/* 70vh로 높이 설정 */
+			z-index: 1;
+			top: 90px;
+			/* 상단에 붙이기 */
+		}
 
-.logo {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 30px;
-}
+		.main-content {
+			flex: 1;
+			padding: 40px;
+			margin-left: 200px;
+			z-index: 2;
+			position: relative;
+		}
 
-.welcome {
-  color: #ff6b6b;
-  font-weight: bold;
-}
+		.mypage-container {
+			display: flex;
+			min-height: calc(100vh - 200px);
+			position: relative;
+		}
 
-.menu-list {
-  list-style: none;
-}
+		.menu-list {
+			list-style: none;
+		}
 
-.menu-item {
-  margin-bottom: 15px;
-}
+		.menu-item {
+			margin-bottom: 15px;
+		}
 
-.menu-item a {
-  text-decoration: none;
-  color: #333;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 0.2s;
-}
+		.menu-item a {
+			text-decoration: none;
+			color: #333;
+			display: flex;
+			align-items: center;
+			padding: 10px;
+			border-radius: 5px;
+			transition: background-color 0.2s;
+		}
 
-.menu-item a:hover {
-  background-color: #eee;
-}
+		.menu-item a:hover {
+			background-color: #eee;
+		}
 
-/* 메인 컨텐츠 스타일 */
-.main-content {
-  flex: 1;
-  padding: 40px;
-}
+		/* 페이지 타이틀 마진 조정 */
+		.page-title {
+			margin-top: 0;
+			/* 기존 마진 제거 */
+			font-size: 24px;
+			margin-bottom: 30px;
+			padding-bottom: 15px;
+			border-bottom: 2px solid #333;
+		}
 
-.page-title {
-  font-size: 24px;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #333;
-}
+		.info-section {
+			margin-top: 20px;
+		}
 
-.info-section {
-  margin-top: 20px;
-}
+		.info-section h3 {
+			font-size: 18px;
+			margin-bottom: 20px;
+		}
 
-.info-section h3 {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
+		.form-group {
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+		}
 
-.form-group {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-}
+		.form-group label {
+			width: 120px;
+			font-weight: 500;
+		}
 
-.form-group label {
-  width: 120px;
-  font-weight: 500;
-}
+		.form-group input[type="text"],
+		.form-group input[type="email"],
+		.form-group input[type="tel"] {
+			width: 300px;
+			padding: 8px 12px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			font-size: 14px;
+		}
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="tel"] {
-  width: 300px;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
+		.form-group input:disabled {
+			background-color: #f8f9fa;
+			cursor: not-allowed;
+		}
 
-.form-group input:disabled {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
-}
+		.form-group.gender {
+			margin-top: 15px;
+		}
 
-.form-group.gender {
-  margin-top: 15px;
-}
+		.form-group.gender input[type="radio"] {
+			margin-right: 5px;
+		}
 
-.form-group.gender input[type="radio"] {
-  margin-right: 5px;
-}
+		.form-group.gender label:not(:first-child) {
+			width: auto;
+			margin-right: 20px;
+		}
 
-.form-group.gender label:not(:first-child) {
-  width: auto;
-  margin-right: 20px;
-}
+		.edit-btn {
+			padding: 6px 12px;
+			background-color: #f8f9fa;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			margin-left: 10px;
+			cursor: pointer;
+		}
 
-.edit-btn {
-  padding: 6px 12px;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-left: 10px;
-  cursor: pointer;
-}
+		.edit-btn:hover {
+			background-color: #e9ecef;
+		}
 
-.edit-btn:hover {
-  background-color: #e9ecef;
-}
+		.form-actions {
+			display: flex;
+			justify-content: flex-end;
+			gap: 10px;
+			margin-top: 20px;
+		}
 
-/* 버튼 스타일 */
-.form-actions {
-display: flex;
-justify-content: flex-end;
-gap: 10px;
-margin-top: 20px;
-}
+		.cancel-btn {
+			padding: 10px 20px;
+			border: 1px solid #ccc;
+			background-color: #f5f5f5;
+			color: #333;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
 
-.cancel-btn {
-padding: 10px 20px;
-border: 1px solid #ccc;
-background-color: #f5f5f5;
-color: #333;
-border-radius: 5px;
-cursor: pointer;
-transition: background-color 0.3s;
-}
+		.cancel-btn:hover {
+			background-color: #ddd;
+		}
 
-.cancel-btn:hover {
-background-color: #ddd;
-}
+		.save-btn {
+			padding: 10px 20px;
+			border: none;
+			background-color: #ff4d4f;
+			color: white;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
 
-.save-btn {
-padding: 10px 20px;
-border: none;
-background-color: #ff4d4f;
-color: white;
-border-radius: 5px;
-cursor: pointer;
-transition: background-color 0.3s;
-}
+		.save-btn:hover {
+			background-color: #d9363e;
+		}
 
-.save-btn:hover {
-background-color: #d9363e;
-}
+		.sidebar-nav {
+			width: 100%;
+		}
 
-</style>
-	
+		.nav-link {
+			text-decoration: none;
+			color: #333;
+			display: block;
+			padding: 10px;
+			transition: background-color 0.2s;
+		}
 
+		.nav-link.active {
+			background-color: #ff4d4f;
+			color: white;
+			border-radius: 5px;
+		}
+
+		.nav-link:hover {
+			background-color: #eee;
+		}
+
+		.nav-link:hover:not(.active) {
+			background-color: #eee;
+			border-radius: 5px;
+		}
+	</style>
 </head>
 
 <body>
+	<th:block th:replace="~{common/header}"></th:block>
 
-    <th:block th:replace="~{common/header}"></th:block>
-	
-	   
-	   <!-- 사이드바 -->
-	   <div class="sidebar">
-		
-	       <ul class="menu-list">
-	           <li class="menu-item">
-	               <a href="/mypage/updateInfo">회원정보수정</a>
-	           </li>
-	           <li class="menu-item">
-	               <a href="/mypage/changePw">비밀번호변경</a>
-	           </li>
-	           <li class="menu-item">
-	               <a href="/mypage/addressManagement">배송지등록</a>
-	           </li>
-	           <li class="menu-item">
-	               <a href="/mypage/membershipOut">회원탈퇴</a>
-	           </li>
-	       </ul>
-		   
-	   </div>
+	<div class="mypage-container">
+		<!-- 사이드바 -->
+		<div class="sidebar">
+		   <nav class="sidebar-nav">
+		       <ul class="menu-list">
+		           <li class="menu-item">
+		               <a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+		           </li>
+		           <!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+		           <li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+		               <a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+		           </li>
+		           <li class="menu-item">
+		               <a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+		           </li>
+		           <li class="menu-item">
+		               <a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+		           </li>
+		       </ul>
+		   </nav>
+		</div>
 
-	   <div class="main-content">
-	       <h2 class="page-title">회원정보수정</h2>
-	       
-	       <div class="info-section">
-					<h3>기본정보</h3>
-					<form id="userForm">
-							<!-- 아이디 (수정 불가) -->
-							<div class="form-group">
-									<label for="userId">아이디</label>
-									<input type="text" id="userId" disabled>
-							</div>
-	
-							
-	
-							<!-- 휴대폰 번호 (수정 불가) -->
-							<div class="form-group">
-									<label for="userPhone">휴대폰번호</label>
-									<input type="tel" id="userPhone">
-							</div>
-	
-							<!-- 닉네임 -->
-							<div class="form-group">
-									<label for="userNickname">닉네임</label>
-									<input type="text" id="userNickname">
-							</div>
-	
-							<!-- 이메일 -->
-							<div class="form-group">
-									<label for="userEmail">이메일</label>
-									<input type="email" id="userEmail">
-									<button type="button" class="edit-btn" id="sendVerificationBtn">인증</button>
-							</div>
-	
-							<!-- 이메일 인증 섹션 -->
-							<div id="emailVerificationSection" style="display: none;">
-									<div class="form-group">
-											<label for="verificationCode">인증코드</label>
-											<input type="text" id="verificationCode">
-											<button type="button" class="verify-btn" id="verifyCodeBtn">확인</button>
-									</div>
-									<div id="timer">05:00</div>
-							</div>
-	
-	
-							<!-- 성별 -->
-							<div class="form-group gender">
-									<label>성별</label>
-									<input type="radio" id="male" name="gender">
-									<label for="male">남</label>
-									<input type="radio" id="female" name="gender">
-									<label for="female">여</label>
-							</div>
-	
-							<!-- 취소 및 수정 버튼 -->
-							<div class="form-actions">
-									<button type="button" class="cancel-btn">취소</button>
-									<button type="submit" class="save-btn">수정</button>
-							</div>
-					</form>
+		<div class="main-content">
+			<h2 class="page-title">회원정보수정</h2>
+
+			<div class="info-section">
+				<h3>기본정보</h3>
+				<form id="userForm">
+					<div class="form-group">
+						<label for="userId">아이디</label>
+						<input type="text" id="userId" disabled>
+					</div>
+
+					<div class="form-group">
+						<label for="userPhone">휴대폰번호</label>
+						<input type="tel" id="userPhone">
+					</div>
+
+					<div class="form-group">
+						<label for="userNickname">닉네임</label>
+						<input type="text" id="userNickname">
+					</div>
+
+					<div class="form-group">
+						<label for="userEmail">이메일</label>
+						<input type="text" name="verificationEmail" id="verificationEmail" placeholder="이메일을 입력하세요">
+						<span class="verification-message" id="verificationEmailMessage"></span>
+						<button type="button" class="edit-btn" id="verificationBtn">인증번호 받기</button>
+					</div>
+
+					<div id="emailVerification" style="margin-top : 10px;">
+						<div class="form-group">
+							<label for="verificationCode">인증코드</label>
+							<input type="text" id="verificationCode" placeholder="인증번호 입력">
+							<button type="button" class="verify-btn" id="verificationConfirmBtn">인증하기</button>
+						</div>
+						<span class="verification-message" id="verificationMessage"></span>
+					</div>
+
+					<div class="form-group gender">
+						<label>성별</label>
+						<input type="radio" id="male" name="gender">
+						<label for="male">남</label>
+						<input type="radio" id="female" name="gender">
+						<label for="female">여</label>
+					</div>
+
+					<div class="form-actions">
+						<button type="button" class="cancel-btn">취소</button>
+						<button type="submit" class="save-btn">수정</button>
+					</div>
+				</form>
 			</div>
-	
-    <!-- common/footer 추가-->
+		</div>
+	</div>
+
 	<th:block th:replace="~{common/footer}"></th:block>
 
-
-    <script>
-
-
-    </script>
-	
 	<script src="/js/main.js"></script>
-
 	<script src="/js/myPage/updateInfo.js"></script>
-	
 </body>
 
 </html>

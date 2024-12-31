@@ -1,3 +1,4 @@
+
 package edu.kh.project.payment.service;
 
 import java.util.HashMap;
@@ -64,22 +65,15 @@ public class paymentServiceImpl implements paymentService {
 
 	// 특정 공연 좌석 정보 조회
 	@Override
-	public List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime, int dayOfWeek) {
-		  log.debug("좌석 조회 요청 - mt20id: {}, selectedDate: {}, selectedTime: {}, dayOfWeek: {}", 
-			        mt20id, selectedDate, selectedTime, dayOfWeek);
-		
+	public List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime, String dayOfWeek) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("mt20id", mt20id);
 		params.put("selectedDate", selectedDate);
 		params.put("selectedTime", selectedTime);
 		params.put("dayOfWeek", dayOfWeek); // 요일 추가
 
-		List<Seat> seats = mapper.selectSeatsByShow(params);
-
-	    log.debug("좌석 조회 결과 - 좌석 수: {}", seats.size());
-	    seats.forEach(seat -> log.debug("좌석 데이터: {}", seat));
-
-	    return seats;
+		return mapper.selectSeatsByShow(params);
 	}
+
 
 }

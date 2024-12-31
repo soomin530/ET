@@ -106,8 +106,6 @@ public class MemberServiceImpl implements MemberService {
             return naverMember;
         }
         
-        // 기존 네이버 회원인 경우 정보 업데이트
-        mapper.updateNaverMember(naverMember);
         return existingMember;
     }
 

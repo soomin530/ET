@@ -31,9 +31,7 @@ public interface paymentService {
 	boolean saveBooking(Booking bookingData);
 
 	// 특정 공연 좌석 정보 조회
-	List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime, int dayOfWeek);
-
-	
+	List<Seat> getSeatsByPerformance(String mt20id, String selectedDate, String selectedTime, String dayOfWeek);
 
 	
 	

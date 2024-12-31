@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비밀번호 확인</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/myPage/changePw.css">
+    <th:block th:replace="~{common/common}"></th:block>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            min-height: 100vh;
+            display: block;
+        }
+
+        .mypage-container {
+            display: flex;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .password-description {
+            margin-bottom: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .cancel-btn, .confirm-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            width: 48%;
+        }
+
+        .cancel-btn {
+            border: 1px solid #ddd;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .confirm-btn {
+            border: none;
+            background-color: #ff4d4f;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .confirm-btn:hover {
+            background-color: #ff6b6b;
+        }
+
+        .error-message {
+            color: #ff4d4f;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mypage-container">
+        <div class="password-container">
+            <h2>비밀번호 확인</h2>
+
+            <p class="password-description">
+                회원정보를 변경하려면 비밀번호를 입력해주세요.
+            </p>
+
+            <form id="passwordForm">
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="비밀번호" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="window.history.back()">취소</button>
+                    <button type="submit" class="confirm-btn">확인</button>
+                </div>
+            </form>
+
+            <p id="errorMsg" class="error-message">비밀번호가 일치하지 않습니다.</p>
+        </div>
+    </div>
+
+    <script>
+        // 비밀번호 확인 처리
+        document.getElementById('passwordForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!password) {
+                alert('비밀번호를 입력해주세요.');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append("memberPw", password);
+
+                const response = await fetch('/mypage/verifyPassword', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result === 1) {
+                    // 저장된 타겟 페이지로 이동
+                    const targetPage = sessionStorage.getItem('targetPage') || 'updateInfo';
+                    window.location.href = `/mypage/${targetPage}`;
+                } else {
+                    // 비밀번호가 일치하지 않으면 오류 메시지 표시
+                    errorMsg.textContent = '비밀번호가 일치하지 않습니다.';
+                    errorMsg.style.display = 'block';
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                }
+            } catch (error) {
+                console.error('비밀번호 확인 중 오류 발생:', error);
+                errorMsg.textContent = '서버 통신 중 오류가 발생했습니다.';
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

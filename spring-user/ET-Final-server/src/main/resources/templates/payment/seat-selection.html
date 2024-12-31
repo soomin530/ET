@@ -93,7 +93,6 @@
       cursor: pointer;
     }
 
-
     /* 좌석 등급별 색상 */
     .vip {
       background-color: #b19cd9;
@@ -159,11 +158,58 @@
       padding-bottom: 5px;
     }
 
-    .seat-grade-info {
-      margin-top: 20px;
-      border-top: 1px solid #ddd;
+    #seat-grade-info {
+
       padding-top: 20px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
     }
+
+    #seat-grade-info .grade-header {
+      display: flex;
+      justify-content: space-between;
+      /* 헤더 양쪽 정렬 */
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    #seat-grade-info .grade-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    #seat-grade-info .grade-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      /* 양쪽 정렬 */
+      margin-bottom: 10px;
+    }
+
+    #seat-grade-info .color-box {
+      width: 15px;
+      height: 15px;
+      display: inline-block;
+      margin-right: 10px;
+      border-radius: 3px;
+    }
+
+    #seat-grade-info .grade-text {
+      flex: 1;
+      /* 텍스트 영역 확장 */
+      text-align: left;
+    }
+
+    #seat-grade-info .grade-price {
+      text-align: right;
+      min-width: 80px;
+      /* 최소 너비 설정 */
+    }
+
+
 
     /* 예매 상세 정보 */
     .reservation-info {
@@ -222,6 +268,7 @@
       /* 버튼을 중앙 정렬 */
       gap: 10px;
       /* 버튼 간격 */
+      margin-top: 20px;
     }
 
 
@@ -368,14 +415,11 @@
   </div>
 
   <div class="container">
-    <!-- 좌석 배치 영역 -->
     <div class="seat-container">
       <div class="stage">STAGE</div>
-
-
+      <div id="seatMap" class="seat-map"></div>
     </div>
 
-    <!-- 우측 정보 영역 -->
     <div class="info-container">
       <h2>선택된 좌석</h2>
       <div id="selected-seats" class="info-item">
@@ -394,43 +438,41 @@
 
       <!-- 좌석 등급/잔여석 -->
       <div id="seat-grade-info">
-        <h3 style="text-align: left; font-size: 14px; margin-bottom: 10px;">좌석등급 / 잔여석</h3>
-        <!-- 좌석 등급 정보 추가 -->
+        <div class="grade-header">
+          <h3 style="text-align: left; font-size: 14px; ">좌석등급 / 잔여석</h3>
+        </div>
       </div>
 
       <div class="btn-group">
         <button class="confirm-btn" id="confirm-btn">좌석 선택 완료</button>
-        <button class="reset-btn" id="reset-btn">좌석 다시 선택</button>
+        <button class="reset-btn" id="reset-btn">다시 선택</button>
       </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const seatContainer = document.createElement("div"); // 전체 좌석을 감쌀 컨테이너
-      seatContainer.classList.add("seat-map");
-      seatContainer.style.gridTemplateColumns = "repeat(10, 1fr)"; // 10열로 정렬
-      document.querySelector(".seat-container").appendChild(seatContainer); // 기존 좌석 컨테이너에 추가
+    document.addEventListener('DOMContentLoaded', async () => {
 
-      document.querySelector('.reservation-info').textContent = '예매 정보를 여기에 표시합니다.';
+      const selectedSeats = new Set(); // 스크립트 상단에 선언
+      const seatMap = document.getElementById('seatMap');
+      const selectedSeatsElement = document.getElementById('seat-numbers');
+      const totalPriceElement = document.getElementById('total-price');
+
+      const currentStep = parseInt(document.body.dataset.step, 10) || 1; // 데이터 속성에서 단계 가져오기
 
       const urlParams = new URLSearchParams(window.location.search);
-      console.log("mt20id:", urlParams.get("mt20id"));
-      console.log("selectedDate:", urlParams.get("selectedDate"));
-      console.log("selectedTime:", urlParams.get("selectedTime"));
-      console.log("dayOfWeek:", urlParams.get("dayOfWeek"));
+      const mt20id = urlParams.get('mt20id');
+      const selectedDate = urlParams.get('selectedDate');
+      const selectedTime = urlParams.get('selectedTime');
+      const dayOfWeek = urlParams.get('dayOfWeek');
 
-      const body = document.body;
 
-      const currentStep = parseInt(body.dataset.step, 10) || 1;
-
-      body.classList.add(`step-${currentStep}`);
 
       // 진행 단계 표시 업데이트
       const steps = document.querySelectorAll('.progress-step');
       const progressBar = document.getElementById('progressBar');
 
-
+      // 각 단계에 active 클래스 추가 또는 제거
       steps.forEach((step, index) => {
         if (index + 1 <= currentStep) {
           step.classList.add('active');
@@ -441,158 +483,119 @@
 
 
 
-      // 좌석 조회
-      const mt20id = urlParams.get("mt20id");
-      const selectedDate = urlParams.get("selectedDate");
-      const selectedTime = urlParams.get("selectedTime");
-      const dayOfWeek = urlParams.get("dayOfWeek");
-
-      if (!mt20id || !selectedDate || !selectedTime || !dayOfWeek) {
-        console.error("필수 파라미터가 누락되었습니다.");
-        alert("필수 정보가 누락되었습니다. 날짜와 시간을 다시 선택해주세요.");
-        return;
+      try {
+        await fetchSeatData(mt20id, selectedDate, selectedTime, dayOfWeek);
+      } catch (error) {
+        console.error('좌석 정보를 불러오는데 실패했습니다:', error);
+        alert('좌석 정보를 불러오는데 실패했습니다.');
       }
 
 
-      // fetchSeats 함수 정의
-      async function fetchSeats(mt20id, selectedDate, selectedTime, dayOfWeek) {
-        console.log("좌석 조회 요청 실행됨"); // 디버깅용 로그
 
+
+
+
+      async function fetchSeatData(mt20id, selectedDate, time, dayOfWeek) {
         try {
-          const response = await fetch(`/payment/seats?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${selectedTime}&dayOfWeek=${dayOfWeek}`);
-          if (!response.ok) {
-            throw new Error("좌석 데이터를 가져오는 데 실패했습니다.");
-          }
+          const response = await fetch(`/payment/seats?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${time}&dayOfWeek=${dayOfWeek}`);
+          if (!response.ok) throw new Error('좌석 정보 조회 실패');
 
-          const seatData = await response.json();
-          console.log("받은 좌석 데이터:", seatData); // 디버깅용
-          if (!seatData || seatData.length === 0) {
-            seatContainer.innerHTML = "<p>선택한 날짜와 시간에 좌석이 없습니다.</p>";
-            return;
-          }
-          console.log("좌석 데이터:", seatData);
-          renderSeats(seatData); // 좌석 렌더링
+          const rawData = await response.json();
+          const seatData = parseData(rawData); // 데이터를 파싱
+
+          generateSeatsFromData(seatData);
+
         } catch (error) {
-          console.error("좌석 데이터 요청 오류:", error.message);
-          seatContainer.innerHTML = "<p>좌석 데이터를 불러오는 중 오류가 발생했습니다.</p>";
+          console.error('좌석 데이터 로드 오류:', error);
+          alert('좌석 데이터를 불러올 수 없습니다.');
         }
       }
 
+      function parseData(rawData) {
+        return rawData.map(item => {
+          const parsedItem = {};
+          Object.keys(item).forEach(key => {
+            parsedItem[key] = item[key]; // 서버 데이터를 JSON 형식으로 변환
+          });
+          return parsedItem;
+        });
+      }
+
+      function generateSeatsFromData(seatData) {
+
+        seatMap.innerHTML = '';
+        updateSeatGradeInfo(seatData); // `seat-grade-info` 업데이트
 
 
+        seatData.forEach(data => {
+          const gradeSection = document.createElement('div');
+          gradeSection.classList.add('grade-section');
 
-      // 좌석 데이터를 기반으로 좌석 생성
-      function renderSeats(seatData) {
-        const seatContainer = document.querySelector(".seat-container");
-        seatContainer.innerHTML = ""; // 기존 좌석 초기화
+          const gradeLabel = document.createElement('div');
+          gradeLabel.classList.add('grade-label');
+          gradeLabel.textContent = `${data.GRADENAME}석`;
+          gradeSection.appendChild(gradeLabel);
 
-        // 좌석 데이터를 등급별로 그룹화
-        const gradeGroups = seatData.reduce((acc, seat) => {
-          if (!acc[seat.gradeName]) acc[seat.gradeName] = [];
-          acc[seat.gradeName].push(seat);
-          return acc;
-        }, {});
+          const rows = Math.ceil(data.AVAILABLESEATCOUNT / 10);
+          let seatNumber = 1;
 
-        // 등급별로 좌석 생성
-        Object.entries(gradeGroups).forEach(([gradeName, seats]) => {
-          const gradeSection = document.createElement("div");
-          gradeSection.classList.add("seat-grade-section");
+          for (let row = 1; row <= rows; row++) {
+            const rowContainer = document.createElement('div');
+            rowContainer.classList.add('row-container');
 
-          // 등급 이름과 가격 표시
-          const gradeTitle = document.createElement("div");
-          gradeTitle.textContent = `${gradeName}석 - 가격: ${seats[0].gradePrice.toLocaleString()}원`;
-          gradeTitle.style.fontWeight = "bold";
-          gradeTitle.style.marginBottom = "10px";
-          gradeSection.appendChild(gradeTitle);
-
-          // 좌석 생성
-          for (let i = 0; i < seats[0].totalSeatCount; i++) {
-            const seatElement = document.createElement("div");
-            seatElement.classList.add("seat", gradeName.toLowerCase());
-
-            // 좌석 번호 표시
-            seatElement.textContent = `${gradeName.charAt(0)}${i + 1}`;
-
-            // 사용 가능 여부 표시
-            if (i < seats[0].availableSeatCount) {
-              seatElement.addEventListener("click", () => toggleSeat(seatElement, `${gradeName.charAt(0)}${i + 1}`));
-            } else {
-              seatElement.classList.add("booked");
-              seatElement.textContent = "X"; // 예약 완료 좌석 표시
+            for (let col = 1; col <= 20 && seatNumber <= data.AVAILABLESEATCOUNT; col++) {
+              const seatElement = createSeatElement({
+                gradeId: data.GRADEID,
+                gradeName: data.GRADENAME,
+                price: data.GRADEPRICE,
+                seatId: `${data.GRADENAME}-${row}-${col}`
+              });
+              rowContainer.appendChild(seatElement);
+              seatNumber++;
             }
-
-            gradeSection.appendChild(seatElement);
+            gradeSection.appendChild(rowContainer);
           }
 
-          seatContainer.appendChild(gradeSection);
+          seatMap.appendChild(gradeSection);
         });
       }
 
-      // 행별로 좌석 분류 함수
-      function groupSeatsByRow(seats) {
-        const rows = {};
+      function createSeatElement(seat) {
+        const element = document.createElement('div');
+        element.classList.add('seat', getSeatClass(seat.gradeId));
+        element.textContent = seat.seatId.split('-')[2]; // 열 번호 표시
+        element.dataset.seatId = seat.seatId;
+        element.dataset.price = seat.price;
 
-        seats.forEach(seat => {
-          const rowLabel = seat.seatId.split("-")[2].charAt(0); // A, B, C 등
-          if (!rows[rowLabel]) rows[rowLabel] = [];
-          rows[rowLabel].push(seat);
-        });
-
-        // 행 이름 알파벳 순 정렬 및 좌석 번호 정렬
-        const sortedRowLabels = Object.keys(rows).sort(); // A, B, C, D 순 정렬
-        const sortedRows = sortedRowLabels.map(rowLabel => {
-          // 각 행 내부 좌석 정렬
-          rows[rowLabel].sort((a, b) => {
-            const seatNumberA = parseInt(a.seatId.split("-")[2].slice(1), 10); // 숫자 부분 비교
-            const seatNumberB = parseInt(b.seatId.split("-")[2].slice(1), 10);
-            return seatNumberA - seatNumberB;
-          });
-          return rows[rowLabel];
-        });
-
-        return sortedRows; // 정렬된 행 배열 반환
+        element.addEventListener('click', () => toggleSeat(element));
+        return element;
       }
 
-      // 좌석 등급 이름 반환
-      function getGradeName(gradeId) {
-        switch (gradeId) {
-          case "1": return "VIP석";
-          case "2": return "R석";
-          case "3": return "S석";
-          case "4": return "A석";
-          case "5": return "B석";
-          case "6": return "전석";
-          default: return "기타";
-        }
-      }
-
-
-      // 좌석 등급 클래스 설정
       function getSeatClass(gradeId) {
-        switch (gradeId.toString()) { // 숫자일 경우 문자열로 변환
-          case "1": return "vip";
-          case "2": return "r";
-          case "3": return "s";
-          case "4": return "a";
-          case "5": return "b";
-          case "6": return "all";
-          default: return "기타";
-        }
+        const gradeClasses = {
+          '1': 'vip',
+          '2': 'r',
+          '3': 's',
+          '4': 'a',
+          '5': 'b',
+          '6': 'all'
+        };
+        return gradeClasses[gradeId] || 'normal';
       }
-
-      const selectedSeats = new Set();
 
       // 좌석 선택/해제
-      function toggleSeat(seat, seatId) {
-        if (seat.classList.contains("selected")) {
-          seat.classList.remove("selected");
+      function toggleSeat(seatElement) {
+        const seatId = seatElement.dataset.seatId;
+
+        if (seatElement.classList.contains('selected')) {
+          seatElement.classList.remove('selected');
           selectedSeats.delete(seatId);
         } else {
           if (selectedSeats.size >= 2) {
-            alert("최대 2개의 좌석만 선택할 수 있습니다.");
+            alert("최대 2석까지만 선택 가능합니다.");
             return;
           }
-          seat.classList.add("selected");
+          seatElement.classList.add('selected');
           selectedSeats.add(seatId);
         }
 
@@ -601,20 +604,33 @@
 
       // 선택된 좌석 정보 업데이트
       function updateSelectedSeatsInfo() {
-        const seatInfo = [...selectedSeats].join(", ");
-        const totalPrice = [...selectedSeats].length * selectedSeatsPrice; // 선택된 좌석 가격 합계
-        document.getElementById("selected-seats").textContent = seatInfo || "없음";
-        document.getElementById("total-price").textContent = `${totalPrice.toLocaleString()} 원`;
-      }
-      
-      // 좌석 초기화 함수
-      document.getElementById("reset-btn").addEventListener("click", () => {
-        selectedSeats.clear();
-        document.querySelectorAll(".seat.selected").forEach(seat => {
-          seat.classList.remove("selected");
+        const seatNumbers = [...selectedSeats];
+        let totalPrice = 0;
+
+        seatNumbers.forEach((seatId) => {
+          const seat = document.querySelector(`[data-seat-id="${seatId}"]`);
+          if (seat) {
+            totalPrice += parseInt(seat.dataset.price, 10);
+          }
         });
-        updateSelectedSeatsInfo();
-      });
+
+        selectedSeatsElement.textContent = seatNumbers.length > 0 ? seatNumbers.join(', ') : '없음';
+        totalPriceElement.textContent = `${totalPrice.toLocaleString()} 원`;
+      }
+
+      // 좌석 등급별 클래스 설정
+      function getSeatClass(gradeId) {
+        const gradeClasses = {
+          "1": "vip",
+          "2": "r",
+          "3": "s",
+          "4": "a",
+          "5": "b",
+          "6": "all",
+        };
+        return gradeClasses[gradeId] || "normal";
+      }
+
 
 
       /* 공연 상세 정보 조회*/
@@ -643,8 +659,8 @@
         .catch(error => {
           console.error(error);
           document.querySelector(".reservation-info").innerHTML = `
-            <p style="color: red;">공연 정보를 불러올 수 없습니다. 다시 시도해 주세요.</p>
-          `;
+          <p style="color: red;">공연 정보를 불러올 수 없습니다. 다시 시도해 주세요.</p>
+        `;
         });
 
       function renderPerformanceInfo(data) {
@@ -656,15 +672,16 @@
         }
 
         reservationInfo.innerHTML = `
-          <img src="${data.poster}" alt="${data.prfnm}" />
-          <div class="details">
-            <h3>${data.prfnm}</h3>
-            <p> ${data.prfpdfrom} ~ ${data.prfpdto}</p>
-            <p> ${data.fcltynm}</p>
-            <p> ${data.prfruntime}</p>
-          </div>
-        `;
+        <img src="${data.poster}" alt="${data.prfnm}" />
+        <div class="details">
+          <h3>${data.prfnm}</h3>
+          <p> ${data.prfpdfrom} ~ ${data.prfpdto}</p>
+          <p> ${data.fcltynm}</p>
+          <p> ${data.prfruntime}</p>
+        </div>`
+          ;
       }
+
 
 
       // 좌석 등급 정보 업데이트
@@ -672,17 +689,37 @@
         const seatGradeInfoContainer = document.getElementById("seat-grade-info");
         seatGradeInfoContainer.innerHTML = "";
 
-        const gradeSummary = seatData.reduce((acc, seat) => {
-          const gradeName = seat.gradeName;
-          if (!acc[gradeName]) acc[gradeName] = { count: 0, price: seat.gradePrice };
-          acc[gradeName].count += seat.availableSeatCount;
-          return acc;
-        }, {});
+        // 헤더 추가
+        const gradeHeader = document.createElement("div");
+        gradeHeader.classList.add("grade-header");
+        gradeHeader.innerHTML = `<h3>좌석등급 / 잔여석</h3>`;
 
-        Object.entries(gradeSummary).forEach(([gradeName, data]) => {
-          const gradeInfo = document.createElement("div");
-          gradeInfo.textContent = `${gradeName}석 - 잔여석: ${data.count}석, 가격: ${data.price.toLocaleString()}원`;
-          seatGradeInfoContainer.appendChild(gradeInfo);
+        seatGradeInfoContainer.appendChild(gradeHeader);
+
+        seatData.forEach((data) => {
+          const gradeItem = document.createElement("div");
+          gradeItem.classList.add("grade-item");
+
+          // 색상 박스
+          const colorBox = document.createElement("span");
+          colorBox.classList.add("color-box");
+          colorBox.style.backgroundColor = getGradeColor(data.GRADEID);
+
+          // 등급 텍스트
+          const gradeText = document.createElement("span");
+          gradeText.classList.add("grade-text");
+          gradeText.textContent = `${data.GRADENAME}석 : ${data.AVAILABLESEATCOUNT}석`;
+
+          // 가격 텍스트
+          const gradePrice = document.createElement("span");
+          gradePrice.classList.add("grade-price");
+          gradePrice.textContent = `${data.GRADEPRICE.toLocaleString()}원`;
+
+          gradeItem.appendChild(colorBox);
+          gradeItem.appendChild(gradeText);
+          gradeItem.appendChild(gradePrice);
+
+          seatGradeInfoContainer.appendChild(gradeItem);
         });
       }
 
@@ -699,38 +736,47 @@
         }
       }
 
+      // 좌석 초기화 버튼 클릭 이벤트
+      document.getElementById("reset-btn").addEventListener("click", () => {
+        selectedSeats.clear();
+        document.querySelectorAll(".seat.selected").forEach(seat => {
+          seat.classList.remove("selected");
+        });
+        updateSelectedSeatsInfo();
+      });
+
 
       // 좌석 선택 완료 버튼 이벤트
       document.getElementById("confirm-btn").addEventListener("click", () => {
-        const selectedSeatsArray = [...selectedSeats];
-        if (selectedSeatsArray.length === 0) {
+        if (selectedSeats.length === 0) {
           alert("좌석을 선택해주세요.");
           return;
         }
+        const selectedSeatsArray = [...selectedSeats];
+        const totalPrice = totalPriceElement.textContent;
 
-        const totalPrice = document.getElementById("total-price").textContent;
         localStorage.setItem("selectedSeats", JSON.stringify(selectedSeatsArray));
         localStorage.setItem("totalPrice", totalPrice);
+
+        // 필수 정보를 localStorage에 저장
+        localStorage.setItem('performanceId', mt20id);
+        localStorage.setItem('selectedDate', selectedDate);
+        localStorage.setItem('selectedTime', selectedTime);
+        localStorage.setItem('dayOfWeek', dayOfWeek);
 
 
         // 다음 단계로 이동
         window.location.href = "/payment/booking-info";
       });
-
-      // 기본 좌석 데이터 가져오기
-      //fetchSeats("2024-12-25", "19:30"); // 기본적으로 2024년 12월 25일 19:30의 좌석 데이터를 가져옴 / 오페라 30석
-      //fetchSeats("2024-12-30", "20:00"); // 기본적으로 2024년 12월 30일 20:00의 좌석 데이터를 가져옴 / 오페라 170석
-      //fetchSeats("2024-11-03", "16:30"); // 오페라 전석 50
-      //fetchSeats("2025-01-25", "19:00");
-
-      // 필수 정보를 localStorage에 저장
-      localStorage.setItem('performanceId', mt20id);
-      localStorage.setItem('selectedDate', selectedDate);
-      localStorage.setItem('selectedTime', selectedTime);
-      localStorage.setItem('dayOfWeek', dayOfWeek);
-
-      fetchSeats(mt20id, selectedDate, selectedTime, dayOfWeek); // 좌석 데이터 요청
     });
+
+
+
+
+
+
+
+
 
   </script>
 </body>

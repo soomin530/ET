@@ -21,26 +21,31 @@
     <th:block th:replace="~{common/header}"></th:block>
 
 	
-    <div class="container">
-        <div class="member-container">
-            <div class="updateInfo">
-                <h2> 회원 정보 수정 </h2>
-            </div>
+	<div class="container">
+	    <!-- th:classappend를 사용하여 네이버 로그인 시 클래스 추가 -->
+	    <div class="member-container" th:classappend="${session.loginMember != null && session.loginMember.naverFl == 'Y'} ? 'naver-user' : ''">
+	        <div class="updateInfo" onclick="handlePageAccess('updateInfo')">
+	            <h2>회원 정보 수정</h2>
+	        </div>
 
-            <div class="ChangePw">
-                <h2> 비밀번호 변경 </h2>
-            </div>
+	        <!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+	        <div class="changePw"
+	            th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}"
+	            onclick="handlePageAccess('changePw')">
+	            <h2>비밀번호 변경</h2>
+	        </div>
 
-            <div class="addressManagement">  
-                <h2 onclick="location.href='/mypage/addressManagement'"> 배송지 관리 </h2>
-            </div>
+	        <div class="addressManagement" 
+				onclick="handlePageAccess('addressManagement')">
+	            <h2>배송지 관리</h2>
+	        </div>
 
-            <div class="membershipOut">
-                <h2 onclick="location.href='/mypage/membershipOut'"> 회원탈퇴 </h2>
-            </div>
-
-        </div>
-    </div>
+	        <div class="membershipOut" 
+				onclick="handlePageAccess('membershipOut')">
+	            <h2>회원탈퇴</h2>
+	        </div>
+	    </div>
+	</div>
 
 
 	<!-- 비밀번호 확인 모달 -->
@@ -54,11 +59,16 @@
 	            </div>
 	            <div class="error-message" id="errorMsg">비밀번호가 일치하지 않습니다.</div>
 	            <div class="button-group">
-	                <button onclick="closeModal()" class="btn-cancel">취소</button>
+	                <button onclick="clsModal()" class="btn-cancel">취소</button>
 	                <button id="verifyBtn" class="btn-verify">확인</button>
 	            </div>
 	        </div>
 	    </div>
+	</div>
+	
+	<!-- 로딩 스피너 -->
+	<div id="loadingSpinner" style="display: none;">
+	    <div class="spinner"></div> <!-- Spinner 스타일 정의 필요 -->
 	</div>
 
     <!-- common/footer 추가-->
