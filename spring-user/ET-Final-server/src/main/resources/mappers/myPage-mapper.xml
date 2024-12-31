@@ -11,13 +11,32 @@
 
 	
 	<!-- 회원정보 조회 -->
- 		  <select id="getMemberInfo">
- 		 SELECT 
-		 MEMBER_NO, MEMBER_ID, MEMBER_TEL, MEMBER_NICKNAME, MEMBER_EMAIL, MEMBER_GENDER
-		 FROM "TB_MEMBER"
-		 WHERE MEMBER_NO = #{memberNo}
- 		  </select>
+ 	<select id="getMemberInfo">
+ 		SELECT 
+		MEMBER_NO, MEMBER_ID, MEMBER_TEL, MEMBER_NICKNAME, MEMBER_EMAIL, MEMBER_GENDER
+		FROM "TB_MEMBER"
+		WHERE MEMBER_NO = #{memberNo}
+ 	</select>
+ 	
 	
+	<!-- 이메일 중복검사 -->
+	<select id="verifyEmail" resultType="_int">
+		SELECT COUNT(*)
+		FROM
+		"TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_EMAIL = #{memberEmail}
+	</select>
+	
+	<!-- 닉네임 중복검사 -->
+	<select id="updateNickname" resultType="_int">
+		SELECT COUNT(*)
+		FROM
+		"TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_NICKNAME =
+		#{memberNickname}
+	</select>
 	
 	
 

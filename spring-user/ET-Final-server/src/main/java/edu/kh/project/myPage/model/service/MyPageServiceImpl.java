@@ -38,15 +38,26 @@ public class MyPageServiceImpl implements MyPageService {
 		
 		return mapper.getMemberInfo(memberNo);
 	}
+	
+	
+	// 이메일 중복 체크
+	@Override
+	public int verifyEmail(String verificationEmail) {
+		
+		return mapper.verifyEmail(verificationEmail);
+	}
+	
+	// 닉네임 중복검사(수정)
+	@Override
+	public int updateNickname(String userNickname) {
+		
+		return mapper.updateNickname(userNickname);
+	}
+	
+	
+	
 
 
 	
-
-    	
-	
-    
-    
-    
-    
     
 }

@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.kh.project.common.jwt.JwtTokenUtil;
+import edu.kh.project.email.model.service.EmailService;
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.service.MyPageService;
 import jakarta.servlet.http.Cookie;
@@ -26,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @SessionAttributes({ "loginMember" })
 public class MyPageController {
 
+	private final EmailService emailService;
 	private final MyPageService service;
 	private final BCryptPasswordEncoder bcrypt;
 
@@ -105,5 +108,46 @@ public class MyPageController {
 
 		return "mypage/checkPw";
 	}
+	
+	/** 이메일 중복검사 (비동기 요청)(수정)
+	 * @param verificationEmail
+	 * @return
+	 */
+	@ResponseBody
+	@GetMapping("verifyEmail")
+	public int verifyEmail(@RequestParam("verificationEmail") String verificationEmail) {
+		return service.verifyEmail(verificationEmail);
+	}
+	
+	@ResponseBody
+	@PostMapping("sendEmail")
+	public int sendEmail(@RequestBody String email) {
+		
+		log.debug("email {}", email);
+		
+		String authKey = emailService.sendEmail("updateEmail", email);
+
+		if (authKey != null) { // 인증번호가 반환되어 돌아옴
+								// == 이메일 보내기 성공
+			return 1;
+		}
+
+		// 이메일 보내기 실패
+		return 0;
+	}
+	
+	
+	/** 닉네임 중복검사 (비동기 요청)(수정)
+	 * @param memberNickname
+	 * @return
+	 */
+	@ResponseBody
+	@GetMapping("updateNickname")
+	public int updateNickname(@RequestParam("userNickname") String userNickname) {
+		return service.updateNickname(userNickname);
+	}
+	
+	
+	
 
 }

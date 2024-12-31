@@ -236,7 +236,7 @@
 
 			<div class="info-section">
 				<h3>기본정보</h3>
-				<form id="userForm">
+				<form id="updateForm">
 					<div class="form-group">
 						<label for="userId">아이디</label>
 						<input type="text" id="userId" disabled>
@@ -244,12 +244,14 @@
 
 					<div class="form-group">
 						<label for="userPhone">휴대폰번호</label>
-						<input type="tel" id="userPhone">
+						<input type="text" id="userTel">
+						<span class="update-message" id="updateTelMessage"></span>
 					</div>
 
 					<div class="form-group">
 						<label for="userNickname">닉네임</label>
 						<input type="text" id="userNickname">
+						<span class="update-message" id="updateNickMessage"></span>
 					</div>
 
 					<div class="form-group">
@@ -277,8 +279,8 @@
 					</div>
 
 					<div class="form-actions">
-						<button type="button" class="cancel-btn">취소</button>
-						<button type="submit" class="save-btn">수정</button>
+						<button type="button" class="cancelBtn">취소</button>
+						<button type="submit" class="updateBtn">수정</button>
 					</div>
 				</form>
 			</div>

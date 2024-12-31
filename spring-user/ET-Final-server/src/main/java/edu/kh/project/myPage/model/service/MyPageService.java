@@ -12,8 +12,30 @@ public interface MyPageService {
     int verifyPassword(String memberPw, int memberNo);
 
     
-    // 회원 정보 조회
+    
+	/** 회원정보 조회
+	 * @param memberNo
+	 * @return
+	 */
 	Member getMemberInfo(int memberNo);
+
+	
+	/** 이메일 중복 체크(수정)
+	 * @param verificationEmail
+	 * @return
+	 */
+	int verifyEmail(String verificationEmail);
+
+
+	/** 닉네임 중복검사(수정)
+	 * @param userNickname
+	 * @return
+	 */
+	int updateNickname(String userNickname);
+
+
+
+	
 
 	
 
