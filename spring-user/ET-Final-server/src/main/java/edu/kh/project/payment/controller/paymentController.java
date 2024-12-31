@@ -88,9 +88,6 @@ public class paymentController {
 			@RequestParam("dayOfWeek") int dayOfWeek, // 요일 추가
 			Model model) {
 
-		log.info("좌석 조회 요청222: mt20id={}, selectedDate={}, selectedTime={}, dayOfWeek={}", mt20id, selectedDate,
-				selectedTime, dayOfWeek);
-
 		try {
 
 
@@ -226,7 +223,8 @@ public class paymentController {
 			}
 
 			// 2. 예약 정보 생성
-			Booking bookingData = Booking.builder().bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
+			Booking bookingData = Booking.builder()
+					.bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
 					.bookingDate(new Timestamp(System.currentTimeMillis())) // 현재 시간
 					.totalPrice(paymentData.getPaidAmount()).memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
 					.mt20id(paymentData.getMt20id()) // 공연 ID 추가
@@ -240,13 +238,25 @@ public class paymentController {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 정보 저장 실패");
 			}
 
-			// 4 .여러 좌석 업데이트
-			for (String seatId : paymentData.getSeatIds()) {
-				boolean seatReserved = service.reserveSeat(seatId);
-				if (!seatReserved) {
-					log.warn("좌석 상태 업데이트 실패: {}", seatId);
-				}
+			// 4. TB_TICKET_SEAT에 좌석 데이터 삽입
+			for (Map<String, Object> seatMap : paymentData.getSeatIds()) {
+			    Seat seatData = Seat.builder()
+			        .seatId((String) seatMap.get("seatId"))
+			        .gradeId((String) seatMap.get("gradeId")) // gradeId 명시적으로 설정
+			        .seatStatus("BOOKED")
+			        .mt20id(paymentData.getMt20id())
+			        .memberNo(loginMember.getMemberNo())
+			        .showDate(paymentData.getShowDate())
+			        .showTime(paymentData.getShowTime())
+			        .build();
+
+			    boolean seatInsert = service.insertTicketSeat(seatData);
+			    if (!seatInsert) {
+			        log.warn("좌석 데이터 삽입 실패: {}", seatMap.get("seatId"));
+			    }
 			}
+
+			
 			return ResponseEntity.ok("결제가 성공적으로 저장되었고 좌석 상태가 업데이트되었습니다.");
 
 		} catch (Exception e) {

@@ -124,13 +124,6 @@
 			WHERE ROWNUM <= 10
 		]]>
 	</select>
-		
-    <!-- 공연관리자가 등록한 공연 목록 조회  -->
-    <select id="selectPerformancesByManager">
-		SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER
-		FROM TB_PERFORMANCES_DETAIL
-		WHERE GENRENM = #{genre}
-    </select>
     
     <!-- 리뷰 등록 -->
     <insert id="insertReview">
@@ -176,6 +169,13 @@
 		SELECT MT20ID, REVIEW_STAR, REVIEW_CONTENT, CREATE_DATE, MEMBER_NO, REVIEW_NO, MEMBER_NICKNAME 
 		FROM TB_PERFORMANCE_REVIEW JOIN TB_MEMBER USING(MEMBER_NO)
 		WHERE MT20ID = #{mt20id}
+    </select>
+		
+    <!-- 공연관리자가 등록한 공연 목록 조회  -->
+    <select id="selectPerformancesByManager">
+	    SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER
+	    FROM TB_PERFORMANCES_DETAIL
+	    WHERE CONCERT_MANAGER_NO = #{memberNo}
     </select>
 	
 </mapper>

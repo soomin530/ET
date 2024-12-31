@@ -148,6 +148,39 @@ public class MyPageController {
 	}
 	
 	
+	// 회원 정보 수정
+    @PostMapping("/updateInfo")
+    @ResponseBody
+    public int updateMember(@RequestBody Member member, 
+                          @SessionAttribute("loginMember") Member loginMember) {
+        
+    	
+    	// 로그 추가
+        log.info("Received member update request: {}", member);
+    	
+    	// 현재 로그인한 회원의 번호를 설정
+        member.setMemberNo(loginMember.getMemberNo());
+        
+        int result = service.updateMember(member);
+        
+        // 업데이트 성공 시 세션 정보도 업데이트
+        if(result > 0) {
+            loginMember.setMemberEmail(member.getMemberEmail());
+            loginMember.setMemberNickname(member.getMemberNickname());
+            loginMember.setMemberTel(member.getMemberTel());
+            loginMember.setMemberGender(member.getMemberGender());
+        }
+        
+        return result;
+    }
+    
+    
+    
+    
+	
+	
+	
+	
 	
 	
 

@@ -190,7 +190,11 @@ class Calendar {
 	 */
 	handleDateSelection(date) {
 		const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
-		const dayOfWeek = date.getDay(); // 0(일요일) ~ 6(토요일) 값 반환
+		let dayOfWeek = date.getDay(); // 0(일요일) ~ 6(토요일) 값 반환
+		if (dayOfWeek === 0) {
+			console.log(dayOfWeek);
+			dayOfWeek = 7;
+		};
 
 		document.getElementById(
 			"selected-date"
@@ -534,7 +538,6 @@ document.getElementById("booking-btn").onclick = function() {
 	console.log("선택된 시간:", calendar.selectedTime);
 
 	if (calendar.selectedDate && calendar.selectedTime) {
-
 		// mt20id 값 가져오기
 		const mt20id = document.getElementById("mt20id")?.value;
 		const selectedDate = calendar
