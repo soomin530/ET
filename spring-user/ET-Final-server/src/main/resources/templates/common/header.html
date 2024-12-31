@@ -139,8 +139,8 @@
 				<h2>회원 선택</h2>
 			</div>
 			<div class="modal-body">
-				<button onclick="openModal('userSignupModal'); closeModal('selectModal')">사용자</button>
-				<button onclick="openModal('peradmSignupModal'); closeModal('selectModal')">공연관리자</button>
+			    <button class="user-button" onclick="openModal('userSignupModal'); closeModal('selectModal')">사용자</button>
+			    <button class="manager-button" onclick="openModal('peradmSignupModal'); closeModal('selectModal')">공연관리자</button>
 			</div>
 		</div>
 	</div>
@@ -157,11 +157,11 @@
 				<form id="signUpForm" action="/member/signup" method="POST">
 					<input type="text" name="memberEmail" id="memberEmail" placeholder="이메일을 입력하세요">
 					<span class="signUp-message" id="emailMessage"></span>
-					<button type="button" id="sendAuthKeyBtn">인증번호 받기</button>
+					<button type="button" id="sendAuthKeyBtn" class="auth-btn get-code-btn">인증번호 받기</button>
 
 					<div class="verification-container" style="margin-top : 10px;">
 						<input type="text" id="authKey" placeholder="인증번호 입력">
-						<button type="button" id="checkAuthKeyBtn">인증하기</button>
+						<button type="button" id="checkAuthKeyBtn" class="auth-btn verify-code-btn">인증하기</button>
 					</div>
 					<span class="signUp-message" id="authKeyMessage"></span>
 
@@ -201,7 +201,7 @@
 						</label>
 					</div>
 
-					<button type="submit">회원가입</button>
+					<button type="submit" class="auth-btn sign-up-btn">회원가입</button>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -225,11 +225,11 @@
 					<!-- 이메일 인증 부분 -->
 					<input type="text" name="concertManagerEmail" id="managerEmail" placeholder="이메일을 입력하세요">
 					<span class="signUp-message" id="managerEmailMessage"></span>
-					<button type="button" id="managerSendAuthKeyBtn">인증번호 받기</button>
+					<button type="button" class="auth-btn get-code-btn" id="managerSendAuthKeyBtn">인증번호 받기</button>
 
 					<div class="verification-container" style="margin-top : 10px;">
 						<input type="text" id="managerAuthKey" placeholder="인증번호 입력">
-						<button type="button" id="managerCheckAuthKeyBtn">인증하기</button>
+						<button type="button" class="auth-btn verify-code-btn" id="managerCheckAuthKeyBtn">인증하기</button>
 					</div>
 					<span class="signUp-message" id="managerAuthKeyMessage"></span>
 
@@ -258,7 +258,7 @@
 						placeholder="사업체 소개 (500자 이내)" maxlength="500" style="height : 120px; width: 87%;"></textarea>
 					<span class="signUp-message" id="managerCompanyCommentMessage"></span>
 
-					<button type="submit">회원가입</button>
+					<button type="submit" class="auth-btn sign-up-btn">회원가입</button>
 				</form>
 			</div>
 			<div class="modal-footer">
