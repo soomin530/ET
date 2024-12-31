@@ -178,7 +178,7 @@
 		<div class="performance-grid" id="performanceGrid">
 			<th:block th:each="performance : ${performances}">
 				<div class="performance-item"
-					th:onclick="|location.href='@{/performance/detail/{mt20id}(mt20id=${performance.mt20id})}'|">
+					th:onclick="|location.href='@{/performance/performance-manager-detail/{mt20id}(mt20id=${performance.mt20id})}'|">
 					<div class="image-container">
 						<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image"
 							loading="lazy" decoding="async">
