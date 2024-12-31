@@ -149,7 +149,7 @@ public class paymentController {
 	             mt20id, selectedDate, selectedTime);
 
 	    try {
-	        List<Seat> seats = service.getSeatsByPerformance(mt20id, dayOfWeek, selectedTime, dayOfWeek);
+	        List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime, dayOfWeek);
 	        return ResponseEntity.ok(seats);
 
 	    } catch (Exception e) {
