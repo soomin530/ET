@@ -190,9 +190,20 @@ class Calendar {
    */
   handleDateSelection(date) {
     const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
+    const dayOfWeek = date.getDay(); // 0(일요일) ~ 6(토요일) 값 반환
+
     document.getElementById(
       "selected-date"
     ).innerText = `선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
+    document.getElementById("dayOfWeek").value = dayOfWeek; // hidden input에 값 설정
+
+    // dayOfWeek 요소가 존재하는 경우에만 값을 설정
+    const dayOfWeekInput = document.getElementById("dayOfWeek");
+    if (dayOfWeekInput) {
+        dayOfWeekInput.value = dayOfWeek;
+    } else {
+        console.warn("dayOfWeek 요소를 찾을 수 없습니다.");
+    }
 
     const timeSlotsContainer = document.getElementById("time-slots");
     timeSlotsContainer.innerHTML = "";
@@ -217,6 +228,9 @@ class Calendar {
 
     // 새로운 날짜 선택 시 예매 버튼 비활성화
     document.getElementById("booking-btn").disabled = true;
+
+    this.selectedDate = date;
+    this.dayOfWeek = dayOfWeek; // 0(일)~6(토) 값을 저장
   }
 
   /**
@@ -259,11 +273,13 @@ class Calendar {
 function initializeReviews() {
 	const mt20id = performanceData.id;
 	const currentMemberNo = document.getElementById('currentMemberNo')?.value;
-
+	
 	function loadReviews() {
 		$.get(`/performance/review/list/${mt20id}`, function(reviews) {
 			const reviewList = $('#reviewList');
 			reviewList.empty();
+			
+			console.log(reviews);
 
 			if (reviews.length === 0) {
 				reviewList.html(`
@@ -280,7 +296,7 @@ function initializeReviews() {
                     <div class="review-item">
                         <div class="review-header">
                             <div class="reviewer-info">
-                                <span class="reviewer-name">${review.memberName}</span>
+                                <span class="reviewer-name">${review.memberNickname}</span>
                                 <span class="review-date">${new Date(review.createDate).toLocaleDateString()}</span>
                             </div>
                             <div class="review-stars">${stars}</div>
@@ -439,6 +455,9 @@ window.addEventListener('DOMContentLoaded', initialize);
 // 기존의 예매 버튼 클릭 이벤트를 수정
 document.getElementById("booking-btn").onclick = function () {
   const calendar = window.calendarInstance;
+  console.log("선택된 날짜:", calendar.selectedDate);
+  console.log("선택된 시간:", calendar.selectedTime);
+
   if (calendar.selectedDate && calendar.selectedTime) {
 		
     // mt20id 값 가져오기
@@ -447,18 +466,20 @@ document.getElementById("booking-btn").onclick = function () {
       .formatDisplayDate(calendar.selectedDate)
       .replace(/\./g, "-"); // YYYY-MM-DD로 변환
     const selectedTime = calendar.selectedTime;
+    const dayOfWeek = calendar.dayOfWeek; // 0(일)~6(토) 값 사용
 
-    if (!mt20id || !selectedDate || !selectedTime) {
+    if (!mt20id || !selectedDate || !selectedTime || dayOfWeek === undefined) {
       console.error("필수 파라미터가 누락되었습니다:", {
         mt20id,
         selectedDate,
         selectedTime,
+        dayOfWeek,
       });
       alert("필수 정보가 누락되었습니다. 다시 선택해주세요.");
       return;
     }
 
-    const url = `/payment/seat-selection?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${selectedTime}`;
+    const url = `/payment/seat-selection?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${selectedTime}&dayOfWeek=${dayOfWeek}`;
 
     const width = 1200; // 창 너비
     const height = 800; // 창 높이

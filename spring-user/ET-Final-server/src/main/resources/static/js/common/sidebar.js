@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
-
 	// 비밀번호 검증이 필요한 페이지들
 	const pagesNeedingVerification = ['changePw', 'membershipOut'];
 

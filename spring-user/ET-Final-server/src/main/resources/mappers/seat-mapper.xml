@@ -3,22 +3,53 @@
 <mapper namespace="edu.kh.project.payment.model.mapper.paymentMapper">
 
 	<!-- 특정 공연 좌석 조회 -->
-	<select id="selectSeatsByShow" parameterType="map" resultType="edu.kh.project.payment.model.dto.Seat">
-		SELECT TS.SEATS_ID AS seatId,
-			TS.GRADE_ID AS gradeId,
-			SG.GRADE_NAME AS gradeName,
-			PSP.PRICE AS price,
-			TS.SEAT_STATUS AS status,
-			TS.SHOW_DATE AS showDate,
-			TS.SHOW_TIME AS showTime
-		FROM TB_TICKET_SEAT TS
-		JOIN TB_SEAT_GRADE SG ON TS.GRADE_ID = SG.GRADE_ID
-		JOIN TB_PERFORMANCE_SEAT_PRICE PSP
-		ON TS.GRADE_ID = PSP.GRADE_ID AND TS.MT20ID = PSP.MT20ID
-		WHERE TS.MT20ID = #{mt20id}
-		AND TS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-        AND TS.SHOW_TIME = #{selectedTime}
+	<select id="selectSeatsByShow" parameterType="map" resultType="map">
+	    SELECT 
+	        S.MT20ID,
+	        S.DAY_OF_WEEK AS dayOfWeek,
+	        S.PERFORMANCE_TIME AS performanceTime,
+	        S.SEAT_COUNT AS totalSeatCount,
+	        S.AVAILABLE_COUNT AS availableSeatCount,
+	        S.GRADE_ID AS gradeId,
+	        S.GRADE_NAME AS gradeName,
+	        S.PRICE AS gradePrice
+	    FROM (
+	        SELECT 
+	            TPF.MT20ID,
+	            TPT.DAY_OF_WEEK,
+	            TPT.PERFORMANCE_TIME,
+	            TVSI.SEAT_COUNT,
+	            TVSI.SEAT_COUNT - COUNT(TTS.SEATS_ID) AS AVAILABLE_COUNT,
+	            SG.GRADE_ID,
+	            SG.GRADE_NAME,
+	            PSP.PRICE
+	        FROM TB_PERFORMANCES_DETAIL TPF
+	        JOIN TB_PERFORMANCE_TIME TPT ON TPF.MT20ID = TPT.MT20ID
+	        JOIN TB_VENUE_SEAT_INFO TVSI ON TPF.MT10ID = TVSI.MT10ID
+	        JOIN TB_SEAT_GRADE SG ON SG.GRADE_ID = TVSI.GRADE_ID
+	        JOIN TB_PERFORMANCE_SEAT_PRICE PSP 
+	            ON TPF.MT20ID = PSP.MT20ID 
+	            AND TVSI.GRADE_ID = PSP.GRADE_ID
+	        LEFT JOIN TB_TICKET_SEAT TTS 
+	            ON TTS.MT20ID = TPF.MT20ID
+	            AND TTS.GRADE_ID = TVSI.GRADE_ID
+	            AND TTS.SEAT_STATUS = 'BOOKED'
+	            AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+	            AND TTS.SHOW_TIME = #{selectedTime}
+	        WHERE TPF.MT20ID = #{mt20id}
+	        AND TPT.DAY_OF_WEEK = #{dayOfWeek}
+	        GROUP BY
+	            TPF.MT20ID,
+	            TPT.DAY_OF_WEEK,
+	            TPT.PERFORMANCE_TIME,
+	            TVSI.SEAT_COUNT,
+	            SG.GRADE_ID,
+	            SG.GRADE_NAME,
+	            PSP.PRICE
+	    ) S
+	    ORDER BY S.GRADE_ID
 	</select>
+
 	
 	<!-- 좌석 업데이트 -->
 	<update id="updateSeatStatus">

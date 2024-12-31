@@ -225,11 +225,23 @@
 
         document.getElementById('total-price').textContent = totalPrice;
 
-        // '이전 단계' 버튼 클릭 시 처리
         document.getElementById('prev-btn').addEventListener('click', () => {
-            // 주문자 정보 확인 페이지로 이동
-            window.location.href = '/payment/booking-info';
+            // localStorage에서 필수 정보를 가져옴
+            const mt20id = localStorage.getItem('performanceId');
+            const selectedDate = localStorage.getItem('selectedDate');
+            const selectedTime = localStorage.getItem('selectedTime');
+            const dayOfWeek = localStorage.getItem('dayOfWeek');
+
+            if (!mt20id || !selectedDate || !selectedTime || !dayOfWeek) {
+                alert("필수 정보가 누락되었습니다. 다시 시도해주세요.");
+                return;
+            }
+
+            // 이전 단계로 이동 (필수 파라미터 포함)
+            window.location.href = `/payment/booking-info?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${selectedTime}&dayOfWeek=${dayOfWeek}`;
         });
+
+
 
         // 결제 처리 함수
         function handlePayment(pg, payMethod) {

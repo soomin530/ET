@@ -1,6 +1,7 @@
 package edu.kh.project.payment.controller;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.RestTemplate;
@@ -83,25 +85,23 @@ public class paymentController {
 	@GetMapping("seat-selection")
 	public String seatSelection(@RequestParam("mt20id") String mt20id,
 			@RequestParam("selectedDate") String selectedDate, @RequestParam("selectedTime") String selectedTime,
+			@RequestParam("dayOfWeek") int dayOfWeek, // 요일 추가
 			Model model) {
 
-		log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate, selectedTime);
+		log.info("좌석 조회 요청222: mt20id={}, selectedDate={}, selectedTime={}, dayOfWeek={}", mt20id, selectedDate,
+				selectedTime, dayOfWeek);
 
 		try {
-			List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime);
 
-			if (seats.isEmpty()) {
-				log.warn("좌석 데이터가 없습니다: 공연 ID={}, 날짜={}, 시간={}", mt20id, selectedDate, selectedTime);
 
-			}
-
+			return "payment/seat-selection";
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+			model.addAttribute("errorMessage", "좌석 데이터를 불러오는 중 오류가 발생했습니다.");
+			return null;
 		}
 
-		return "payment/seat-selection";
 	}
 
 	/**
@@ -136,41 +136,26 @@ public class paymentController {
 		return "payment/payment";
 	}
 
-	/**
-	 * 좌석 정보 제공
-	 * 
-	 * @param showDate
-	 * @param showTime
-	 * @return
-	 */
+	// Controller
 	@GetMapping("seats")
+	@ResponseBody
 	public ResponseEntity<List<Seat>> getSeats(
-			@RequestParam("mt20id") String mt20id,
-			@RequestParam("selectedDate") String selectedDate,
-			@RequestParam("selectedTime") String selectedTime,
-			Model model) {
+	        @RequestParam("mt20id") String mt20id,
+	        @RequestParam("selectedDate") String selectedDate, 
+	        @RequestParam("selectedTime") String selectedTime,
+	        @RequestParam("dayOfWeek") String dayOfWeek) {
 
-		if (mt20id == null || selectedDate == null || selectedTime == null) {
-			log.error("필수 파라미터가 누락되었습니다: mt20id={}, selectedDate={}, selectedTime={}", mt20id, selectedDate,
-					selectedTime);
-			return ResponseEntity.badRequest().build(); // 400 Bad Request 반환
-		}
+	    log.info("좌석 조회 요청: mt20id={}, selectedDate={}, selectedTime={}", 
+	             mt20id, selectedDate, selectedTime);
 
-		try {
-			List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime);
+	    try {
+	        List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime, dayOfWeek);
+	        return ResponseEntity.ok(seats);
 
-			if (seats.isEmpty()) {
-				log.warn("좌석 데이터가 없습니다: 공연 ID={}, 날짜={}, 시간={}", mt20id, selectedDate, selectedTime);
-				return ResponseEntity.noContent().build();
-			}
-
-			return ResponseEntity.ok(seats);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-
+	    } catch (Exception e) {
+	        log.error("좌석 조회 중 오류 발생", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
 	/**
@@ -241,15 +226,12 @@ public class paymentController {
 			}
 
 			// 2. 예약 정보 생성
-			Booking bookingData = Booking.builder()
-					.bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
+			Booking bookingData = Booking.builder().bookingId(paymentData.getMerchantUid()) // 결제와 동일한 주문번호 사용
 					.bookingDate(new Timestamp(System.currentTimeMillis())) // 현재 시간
-					.totalPrice(paymentData.getPaidAmount())
-					.memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
+					.totalPrice(paymentData.getPaidAmount()).memberNo(loginMember.getMemberNo()) // 로그인된 회원 번호
 					.mt20id(paymentData.getMt20id()) // 공연 ID 추가
 					.mt10id(paymentData.getMt10id()) // 공연 시설 ID 추가
-					.merchantUid(paymentData.getMerchantUid())
-					.bookingStatus("COMPLETE") // 기본 예약 상태
+					.merchantUid(paymentData.getMerchantUid()).bookingStatus("COMPLETE") // 기본 예약 상태
 					.build();
 
 			// 3. TB_TICKET_BOOKING에 데이터 삽입
