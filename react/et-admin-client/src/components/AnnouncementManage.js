@@ -1,154 +1,169 @@
-
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
 
-export default function Statistics() {
-  const [readCountData, setReadCountData] = useState(null);
-  const [likeCountData, setLikeCountData] = useState(null);
-  const [commentCountData, setCommentCountData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // 최대 조회 수 게시글 조회
-  const getMaxReadCount = async() => {
-    try {
-      const response = await axiosApi.get("/admin/maxReadCount");
-      if(response.status === 200){
-        setReadCountData(response.data);
-      }
-      
-    } catch (error) {
-      console.log("최대 조회 수 게시글 조회 중 예외 발생 : " + error);
+export default function AnnouncementManage() {
+  const [announcementList,setAnnouncementList] = useState([])
+  const [selectedValue, setSelectedValue] = useState('이름');
+  const [inputValue, setInputValue] = useState('');
+  const [loading, setLoading] = useState(true); // 로딩 상태
+  
+  const handleChange = (e) => {
+    setSelectedValue(e.target.value);
+  };
+
+  const handleInputChange = (e) => {  
+    setInputValue(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e);  
     }
-  }
+  };
 
-  // 최대 좋아요 수 게시글 조회
-   const getMaxLikeCount = async() => {
-    try {
-      const response = await axiosApi.get("/admin/maxLikeCount");
-      setLikeCountData(response.data); // 서버에서 받은 데이터로 상태 업데이트
+  // 필요한 것들
+  // 옵션 목록 (id, 이름)
+  const options = [
+    { id: 1, label: '제목' },
+    { id: 2, label: '내용' },
+    { id: 3, label: '등록날짜' },
+  ];
 
-    } catch (error) {
-      console.log("최대 좋아요 수 게시글 조회 중 예외 발생 : " + error);
-    }
-  }
+  //----------------------------------------
 
-  // 최대 댓글 수 게시글 조회
-  const getMaxCommentCount = async() => {
-    try {
-      const response = await axiosApi.get("/admin/maxCommentCount");
-      setCommentCountData(response.data); // 서버에서 받은 데이터로 상태 업데이트
-
-    } catch (error) {
-      console.log("최대 댓글 수 게시글 조회 중 예외 발생 : " + error);
-    }
-  }
-
-
-  // Statistics 컴포넌트가 처음 레더링될 때 콜백 함수 내용
-  // -> 위에 만든 비동기 요청 함수 실행
+  // Restore 컴포넌트가 처음 렌더링 될 때 실행될 함수들
   useEffect(() => {
-    getMaxReadCount();
-    getMaxLikeCount();
-    getMaxCommentCount();
+    getAnnouncementList();
   }, []);
 
-  // readCountData, likeCountData, commentCountData에 변화가 감지될 때 콜백함수 내ㅛㅇㅇ
-  // -> isLoading 상태값을 false로 변경하기
-  useEffect(() => {
-    if(readCountData != null
-      && likeCountData != null
-      && commentCountData != null) {
-
-        setIsLoading(false);
-        
+    // 공지사항 리스트를 위한 정보
+  const getAnnouncementList = async() => {
+      try {
+        const resp = await axiosApi.get("/announcementDetail/showAnnouncementList");
+  
+        if(resp.status === 200){
+          setAnnouncementList(resp.data);
+          console.log(resp.data);
+        }
+      } catch (error) {
+        console.log("회원 : " + error);
       }
-  }, [readCountData, likeCountData, commentCountData]);
+  }
+
+  // 상태가 바뀔때마다 변경
+  useEffect(()=> {
+    if(announcementList != null){
+      setLoading(false);
+    }
+  }, [announcementList]); // 요청을받아 상태가 업데이트 됐을 때
 
 
-  if (isLoading) {
-    return <h1>Loading...</h1>;
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+
+    if(!inputValue || inputValue.trim() === ''){
+      alert("검색어를 입력해주세요")
+      return;
+    }
+
+    const formData = {
+      selectedValue: selectedValue,
+      inputValue: inputValue  
+    };
+    
+    try {
+      const resp = await axiosApi.post("/announcementDetail/searchAnnouncementList",formData);
+  
+      // 요청 성공 처리
+      if (resp.status === 200) {
+        const getData = resp.data;
+        setAnnouncementList(getData);
+      } else {
+        throw new Error('서버 요청 실패');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // --------------------- 출력 단 ----------------------------
+  
+  if(loading){  
+    return <h1>Loading...</h1>
   } else {
     return (
-      <div>
-        {/* 7일 이내 가입한 신규 회원 조회 */}
-        <NewMembers/>
-
-        <section className="statistics-section">
-          <h2>가장 조회수 많은 게시글</h2>
-          <p>게시판 종류 : {readCountData.boardName}</p>
-          <p>게시글 번호/제목 : No.{readCountData.boardNo}  / {readCountData.boardTitle}</p>
-          <p>게시글 조회 수 : {readCountData.readCount}</p>
-          <p>작성자 닉네임 : {readCountData.memberNickname}</p>
-        </section>
-
-        <section className="statistics-section">
-          <h2>가장 좋아요 많은 게시글</h2>
-          <p>게시판 종류 : {likeCountData.boardName}</p>
-          <p>게시글 번호/제목 : No.{likeCountData.boardNo}  / {likeCountData.boardTitle}</p>
-          <p>게시글 좋아요 수 : {likeCountData.likeCount}</p>
-          <p>작성자 닉네임 : {likeCountData.memberNickname}</p>
-        </section>
-
-        <section className="statistics-section">
-          <h2>가장 댓글 많은 게시글</h2>
-          <p>게시판 종류 : {commentCountData.boardName}</p>
-          <p>게시글 번호/제목 : No.{commentCountData.boardNo}  / {commentCountData.boardTitle}</p>
-          <p>게시글 댓글 수 : {commentCountData.commentCount}</p>
-          <p>작성자 닉네임 : {commentCountData.memberNickname}</p>
-        </section>
+      <div className="menu-box">
+        <div className="main-title-container">
+          <h4>공지사항</h4>
+        </div>
+        <div>
+          <form>
+            <select value={selectedValue} onChange={handleChange}>
+              {options.map((option) => (
+                <option key={option.id} value={option.label}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <input
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
+            />
+            <i
+              className="fas fa-search search-icon"
+              onClick={handleSubmit}
+              style={{ cursor: "pointer" }} // 클릭 시 커서 모양 변경
+            ></i>
+          </form>
+        </div>
+        <div className="main-table-container">
+          <AnnouncementList announcementList={announcementList} />
+        </div>
       </div>
     );
   }
+  
 }
 
-// 신규 회원 조회
-const NewMembers = () => {
 
-  const[NewMembers, setNewMembers] = useState(null);
 
-  useEffect(() => {
-    const fetchNewMembers = async() => {
-      try {
-        const response = await axiosApi.get("/admin/newMember");
 
-        if(response.status === 200){
-          setNewMembers(response.data);
-        }
+// -----------------------------------------------------------------------------------------------------------------------------------------------------
 
-      } catch (error) {
-        console.log(error);
-      }
-    }
 
-    fetchNewMembers();
 
-  }, []); // 2번째 인자 빈 배열 -> 
 
-  return(
-    <div className="new-members">
-      <h2>신규 가입 회원 ({NewMembers?.length}명)</h2>
-      <h3>[ 7일 이내 가입 회원 ]</h3>
-      <table border={1}>
-        <thead>
-          <tr>
-            <th>회원번호</th>
-            <th>이메일</th>
-            <th>닉네임</th>
-            <th>가입일</th>
-          </tr>
-        </thead>
-        <tbody>
-          {NewMembers?.map((member) => (
-            <tr key={member.memberNo}>
-              <td>{member.memberNo}</td>
-              <td>{member.memberEmail}</td>
-              <td>{member.memberNickname}</td>
-              <td>{member.enrollDate}</td>
+const AnnouncementList = ({ announcementList }) => {
+  return (
+    <section>
+      {announcementList.length === 0 ? (
+        <p>회원이 없습니다.</p>
+      ) : (
+        <table className="table-border">
+          <thead>
+            <tr>
+              <th>등록번호</th>
+              <th>제목</th>
+              <th>등록날짜</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
+          </thead>
+          <tbody>
+            {announcementList.map((announcement, index) => (
+              <tr
+              key={index}
+              onClick={() => window.location.href = `http://localhost:8081/announcementDetail/${announcement.announcementNo}`} 
+              style={{ cursor: 'pointer' }}>
+                <td>{announcement.announceNo}</td>
+                <td>{announcement.announceTitle}</td>
+                <td>{announcement.announceWriteDate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
+  );
+};
 
