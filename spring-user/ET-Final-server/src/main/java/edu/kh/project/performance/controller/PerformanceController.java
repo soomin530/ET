@@ -268,4 +268,29 @@ public class PerformanceController {
 		return "performance/performance-registration-fixed";
 	}
 	
+	
+	/**
+	 * 관리자 공연 상세페이지 
+	 * 
+	 * @param mt20id
+	 * @param model
+	 * @return
+	 * @author 우수민
+	 */
+	@GetMapping("/performance-manager-detail/{mt20id}")
+	public String managerDetail(@PathVariable("mt20id") String mt20id, Model model) {
+	    log.info("Fetching performance details for ID: {}", mt20id);
+	    
+	    Performance performance = performanceService.getPerformanceById(mt20id);
+	    log.info("Retrieved performance: {}", performance);
+	    
+	    if (performance == null) {
+	        log.warn("No performance found for ID: {}", mt20id);
+	        return "error/404";
+	    }
+	    
+	    model.addAttribute("performance", performance);
+	    return "performance/performance-manager-detail";
+	}
+	
 }
