@@ -63,12 +63,6 @@ public interface PerformanceMapper {
 	 */
 	List<PerformanceRanking> performanceRanking();
 	
-	/** 공연관리자가 등록한 공연 목록 조회 
-	 * @param memberNo
-	 * @return
-	 * @author 우수민
-	 */
-	List<Performance> selectPerformancesByManager(int memberNo);
 
 
 	/** 리뷰 등록
@@ -99,8 +93,7 @@ public interface PerformanceMapper {
 	 * @author 우수민
 	 */
 	int deleteReview(Map<String, Object> paramMap);
-
-
+	
 
 	/** 리뷰 목록 조회
 	 * @param mt20id
@@ -108,6 +101,14 @@ public interface PerformanceMapper {
 	 * @author 우수민
 	 */
 	List<Review> selectReviewsByPerformanceId(String mt20id);
+
+
+	/** 공연관리자가 등록한 공연 목록 조회 
+	 * @param memberNo
+	 * @return
+	 * @author 우수민
+	 */
+	List<Performance> selectPerformancesByManager(int memberNo);
 
 
 }
