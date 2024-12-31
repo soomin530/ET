@@ -34,6 +34,8 @@ public class Performance {
 	private String styurl;			// 소개이미지
 	private String fcltla;			// 위도
 	private String fcltlo;			// 경도
+	private int concertManagerNo;	// 공연 등록 관리자 번호
+	private int prfreviewRank;		// 공연 리뷰 점수
 	
 	
 	private Map<String, List<ScheduleInfo>> schedule; // 스케줄 정보 추가
