@@ -19,6 +19,11 @@ public class PerformanceApiController {
     @Autowired
     private PerformanceService performanceService;
     
+    /** 무한 스크롤 데이터
+     * @param page
+     * @param genre
+     * @return
+     */
     @GetMapping("/genre/more")
     @ResponseBody
     public List<Performance> getMorePerformances(

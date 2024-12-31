@@ -42,7 +42,19 @@
 						<th>가격</th>
 						<td class="performance-price" th:text="${performance.pcseguidance}"></td>
 					</tr>
-
+					
+					<tr>
+					    <th>별점</th>
+					    <td class="performance-rank">
+					        <div class="review-stars">
+					            <th:block th:with="stars=${performance.prfreviewRank}">
+					                <span class="static-stars" th:text="${'★'.repeat(stars) + '☆'.repeat(5 - stars)}"></span>
+					                <span class="numeric-rating" th:text="|${stars}/5|"></span>
+					            </th:block>
+					        </div>
+					    </td>
+					</tr>
+					
 					<!-- 위도, 경도 -->
 					<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
 					<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
@@ -89,11 +101,11 @@
 			<div class="review-form"
 				style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
 				<div class="star-rating mb-3">
-					<input type="radio" name="rating" value="5" id="rate5"><label for="rate5">★</label>
-					<input type="radio" name="rating" value="4" id="rate4"><label for="rate4">★</label>
-					<input type="radio" name="rating" value="3" id="rate3"><label for="rate3">★</label>
-					<input type="radio" name="rating" value="2" id="rate2"><label for="rate2">★</label>
 					<input type="radio" name="rating" value="1" id="rate1"><label for="rate1">★</label>
+					<input type="radio" name="rating" value="2" id="rate2"><label for="rate2">★</label>
+					<input type="radio" name="rating" value="3" id="rate3"><label for="rate3">★</label>
+					<input type="radio" name="rating" value="4" id="rate4"><label for="rate4">★</label>
+					<input type="radio" name="rating" value="5" id="rate5"><label for="rate5">★</label>
 				</div>
 				<textarea id="reviewContent"
 					style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px; resize: vertical;"
@@ -112,7 +124,11 @@
 	</div>
 
 	<!-- hidden inputs -->
-	<input type="hidden" id="currentMemberNo" th:value="${session.loginMember != null ? session.loginMember.memberNo : ''}" />
+	<th:block th:if="${session.loginMember != null}">
+	    <th:block th:if="${!#strings.equals(session.loginMember.memberAuth, '3')}">
+	        <input type="hidden" id="currentMemberNo" th:value="${session.loginMember.memberNo}" />
+	    </th:block>
+	</th:block>
 	<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
 	<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
 	<input type="hidden" id="mt20id" name="mt20id" th:value="${performance.mt20id}">
