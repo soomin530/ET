@@ -299,7 +299,7 @@
 				return;
 			}
 
-			fetch(`/genre/more?page=${page + 1}&genre=${encodeURIComponent(currentGenre)}`)
+			fetch(`/performanceApi/genre/more?page=${page + 1}&genre=${encodeURIComponent(currentGenre)}`)
 				.then(response => {
 					if (!response.ok) {
 						throw new Error(`HTTP error! status: ${response.status}`);

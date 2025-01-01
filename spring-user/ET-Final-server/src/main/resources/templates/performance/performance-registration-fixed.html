@@ -1,396 +1,599 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공연 등록 페이지</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <th:block th:replace="~{common/common}"></th:block>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f9f9f9;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>공연 등록 페이지</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<th:block th:replace="~{common/common}"></th:block>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+			background-color: #f9f9f9;
+		}
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
+		.input-group-append .btn {
+			z-index: 0;
+		}
 
-        .schedule-group, .price-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            position: relative;
-            background-color: #fff;
-        }
+		#venue-info {
+			transition: all 0.3s ease;
+		}
 
-        .remove-schedule {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #dc3545;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
+		#venue-select {
+			max-width: 100%;
+		}
 
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
+		h1 {
+			text-align: center;
+			color: #333;
+			margin-bottom: 30px;
+		}
 
-        .section-title {
-            margin: 30px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
-        }
+		.schedule-group,
+		.price-group {
+			margin-bottom: 20px;
+			padding: 15px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			position: relative;
+			background-color: #fff;
+		}
 
-        .add-btn {
-            margin: 10px 0 20px;
-            width: 100%;
-        }
+		.remove-schedule {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			color: #dc3545;
+			cursor: pointer;
+			font-size: 1.2em;
+		}
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
+		.time-slots {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+			gap: 10px;
+			margin-top: 10px;
+		}
 
-        .form-group label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
+		.section-title {
+			margin: 30px 0 20px;
+			padding-bottom: 10px;
+			border-bottom: 2px solid #eee;
+		}
 
-        .time-input {
-            width: 120px;
-            text-align: center;
-        }
+		.add-btn {
+			margin: 10px 0 20px;
+			width: 100%;
+		}
 
-        select[multiple] {
-            height: 120px;
-        }
-    </style>
+		.form-group {
+			margin-bottom: 1rem;
+		}
+
+		.form-group label {
+			font-weight: 500;
+			margin-bottom: 0.5rem;
+			color: #333;
+		}
+
+		.time-input {
+			width: 120px;
+			text-align: center;
+		}
+
+		select[multiple] {
+			height: 120px;
+		}
+	</style>
 </head>
+
 <body>
-    <th:block th:replace="~{common/header}"></th:block>
-    <div class="container">
-        <h1>공연 등록</h1>
-        <form id="performance-form">
-            <!-- 공연 기본 정보 -->
-            <div class="section-title">
-                <h4>기본 정보</h4>
-            </div>
+	<th:block th:replace="~{common/header}"></th:block>
+	<div class="container" style="margin-top: 20px;">
+		<h1>공연 등록</h1>
+		<form id="performance-form">
+			<!-- 공연 장소 정보 -->
+			<div class="section-title">
+				<h4>공연 장소</h4>
+			</div>
 
-            <!-- 공연 장소 -->
-            <div class="section-title">
-                <h4>공연 장소</h4>
-            </div>
+			<div class="form-group">
+				<label for="venue-search">장소 검색</label>
+				<div class="input-group mb-3">
+					<input type="text" id="venue-search" class="form-control" placeholder="공연장 이름 또는 주소로 검색">
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" id="search-venue">
+							검색
+						</button>
+					</div>
+				</div>
+			</div>
 
-            <div id="schedule-container">
-                <div class="schedule-group">
-                    <span class="remove-schedule">✕</span>
-                    <div class="form-group">
-                        <label>장소 선택</label>
-                        <select class="form-control adres-select" multiple>
-                            <option value=""></option>
-                            <option value=""></option>
-                            <option value=""></option>
-                            <option value=""></option>
-                            <option value=""></option>
-                            <option value=""></option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-success add-btn" id="add-schedule">+ 장소 선택</button>
+			<div class="form-group">
+				<label for="venue-select">공연장 선택</label>
+				<select id="venue-select" class="form-control" required>
+					<option value="">공연장을 선택하세요</option>
+				</select>
+			</div>
 
-            <!-- 공연명 입력 -->
-            <div class="form-group">
-                <label for="prfnm">공연명</label>
-                <input type="text" id="prfnm" name="prfnm" class="form-control" required>
-            </div>
+			<div id="venue-info" class="card mt-3" style="display: none;">
+				<div class="card-body">
+					<h5 class="card-title">선택된 공연장 정보</h5>
+					<p class="card-text">
+						<strong>주소:</strong> <span id="venue-address"></span><br>
+						<strong>좌석수:</strong> <span id="venue-seats"></span>석
+					</p>
+				</div>
+			</div>
+			
+			<!-- 공연 기본 정보 -->
+			<div class="section-title">
+				<h4>기본 정보</h4>
+			</div>
 
-            <!-- 런타임 입력 -->
-            <div class="form-group">
-                <label for="runtime">런타임(분)</label>
-                <input type="number" id="runtime" name="runtime" class="form-control" placeholder="런타임을 입력하세요" required>
-            </div>
+			<!-- 공연명 입력 -->
+			<div class="form-group">
+				<label for="prfnm">공연명</label>
+				<input type="text" id="prfnm" name="prfnm" class="form-control" required>
+			</div>
 
-            <!-- 출연진 입력 -->
-            <div class="form-group">
-                <label for="cast">출연진</label>
-                <textarea id="cast" name="cast" class="form-control" placeholder="출연진을 입력하세요" rows="3" required></textarea>
-            </div>
+			<!-- 런타임 입력 -->
+			<div class="form-group">
+				<label for="runtime">런타임(분)</label>
+				<input type="number" id="runtime" name="runtime" class="form-control" placeholder="런타임을 입력하세요" required>
+			</div>
 
-            <!-- 장르 입력 -->
-            <div class="form-group">
-                <label for="genere">장르</label>
-                <textarea id="cast" name="genere" class="form-control" placeholder="장르를 입력하세요" rows="3" required></textarea>
-            </div>
+			<!-- 출연진 입력 -->
+			<div class="form-group">
+				<label for="cast">출연진</label>
+				<textarea id="cast" name="cast" class="form-control" placeholder="출연진을 입력하세요" rows="3"
+					required></textarea>
+			</div>
 
-            <!-- 공연 기간 -->
-            <div class="section-title">
-                <h4>공연 기간</h4>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="prfpdfrom">시작일</label>
-                        <input type="text" id="prfpdfrom" name="prfpdfrom" class="form-control" required>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="prfpdto">종료일</label>
-                        <input type="text" id="prfpdto" name="prfpdto" class="form-control" required>
-                    </div>
-                </div>
-            </div>
+			<!-- 장르 입력 -->
+			<div class="form-group">
+				<label for="genere">장르</label>
+				<textarea id="genere" name="genere" class="form-control" placeholder="장르를 입력하세요" rows="3"
+					required></textarea>
+			</div>
 
-            <!-- 공연 시간 -->
-            <div class="section-title">
-                <h4>공연 시간</h4>
-            </div>
+			<!-- 공연 기간 -->
+			<div class="section-title">
+				<h4>공연 기간</h4>
+			</div>
 
-            <div id="schedule-container">
-                <div class="schedule-group">
-                    <span class="remove-schedule">✕</span>
-                    <div class="form-group">
-                        <label>요일 선택 (여러 개 선택 가능)</label>
-                        <select class="form-control days-select" multiple>
-                            <option value="월요일">월요일</option>
-                            <option value="화요일">화요일</option>
-                            <option value="수요일">수요일</option>
-                            <option value="목요일">목요일</option>
-                            <option value="금요일">금요일</option>
-                            <option value="토요일">토요일</option>
-                            <option value="일요일">일요일</option>
-                            <option value="HOL">공휴일</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>공연 시간 (콤마로 구분)</label>
-                        <input type="text" class="form-control times-input" placeholder="예: 14:00,19:30">
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-success add-btn" id="add-schedule">+ 공연 시간 추가</button>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="prfpdfrom">시작일</label>
+						<input type="text" id="prfpdfrom" name="prfpdfrom" class="form-control" required>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="prfpdto">종료일</label>
+						<input type="text" id="prfpdto" name="prfpdto" class="form-control" required>
+					</div>
+				</div>
+			</div>
 
-            <!-- 가격 정보 -->
-            <div class="section-title">
-                <h4>티켓 가격</h4>
-            </div>
+			<!-- 공연 시간 -->
+			<div class="section-title">
+				<h4>공연 시간</h4>
+			</div>
 
-            <div id="price-container">
-                <div class="price-group">
-                    <span class="remove-schedule">✕</span>
-                    <div class="form-group">
-                        <label>좌석 등급</label>
-                        <select class="form-control grade-select">
-                            <option value="VIP">VIP석</option>
-                            <option value="R">R석</option>
-                            <option value="S">S석</option>
-                            <option value="A">A석</option>
-                            <option value="B">B석</option>
-                            <option value="전석">전석</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>가격</label>
-                        <input type="number" class="form-control price-input" min="0" step="1000" placeholder="가격을 입력하세요">
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-success add-btn" id="add-price">+ 가격 정보 추가</button>
+			<div id="schedule-container">
+				<div class="schedule-group">
+					<span class="remove-schedule">✕</span>
+					<div class="form-group">
+						<label>요일 선택 (여러 개 선택 가능)</label>
+						<select class="form-control days-select" multiple>
+							<option value="월요일">월요일</option>
+							<option value="화요일">화요일</option>
+							<option value="수요일">수요일</option>
+							<option value="목요일">목요일</option>
+							<option value="금요일">금요일</option>
+							<option value="토요일">토요일</option>
+							<option value="일요일">일요일</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>공연 시간 (콤마로 구분)</label>
+						<input type="text" class="form-control times-input" placeholder="예: 14:00,19:30">
+					</div>
+				</div>
+			</div>
+			<button type="button" class="btn btn-success add-btn" id="add-schedule">+ 공연 시간 추가</button>
 
-            <!-- 공연 설명 -->
-            <div class="form-group">
-                <label for="description">공연 설명</label>
-                <textarea id="description" name="description" class="form-control"></textarea>
-            </div>
+			<!-- 가격 정보 -->
+			<div class="section-title">
+				<h4>티켓 가격</h4>
+			</div>
 
-            <button type="submit" class="btn btn-primary btn-lg btn-block mt-5">공연 등록</button>
-        </form>
-    </div>
+			<div id="price-container">
+				<div class="price-group">
+					<span class="remove-schedule">✕</span>
+					<div class="form-group">
+						<label>좌석 등급</label>
+						<select class="form-control grade-select">
+							<option value="VIP">VIP석</option>
+							<option value="R">R석</option>
+							<option value="S">S석</option>
+							<option value="A">A석</option>
+							<option value="B">B석</option>
+							<option value="전석">전석</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>가격</label>
+						<input type="number" class="form-control price-input" min="0" step="1000"
+							placeholder="가격을 입력하세요">
+					</div>
+				</div>
+			</div>
+			<button type="button" class="btn btn-success add-btn" id="add-price">+ 가격 정보 추가</button>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.js"></script>
+			<!-- 공연 설명 -->
+			<div class="form-group">
+				<label for="description">공연 설명</label>
+				<textarea id="description" name="description" class="form-control"></textarea>
+			</div>
 
-    <script>
-        $(document).ready(function() {
-            // Flatpickr 초기화
-            flatpickr("#prfpdfrom", {
-                locale: "ko",
-                dateFormat: "Y-m-d",
-                minDate: "today"
-            });
+			<button type="submit" class="btn btn-primary btn-lg btn-block mt-5">공연 등록</button>
+		</form>
+	</div>
 
-            flatpickr("#prfpdto", {
-                locale: "ko",
-                dateFormat: "Y-m-d",
-                minDate: "today"
-            });
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.js"></script>
 
-            // 공연 시간 추가
-            $("#add-schedule").click(function() {
-                const scheduleHtml = `
-                    <div class="schedule-group">
-                        <span class="remove-schedule">✕</span>
-                        <div class="form-group">
-                            <label>요일 선택 (여러 개 선택 가능)</label>
-                            <select class="form-control days-select" multiple>
-                                <option value="월요일">월요일</option>
-                                <option value="화요일">화요일</option>
-                                <option value="수요일">수요일</option>
-                                <option value="목요일">목요일</option>
-                                <option value="금요일">금요일</option>
-                                <option value="토요일">토요일</option>
-                                <option value="일요일">일요일</option>
-                                <option value="HOL">공휴일</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>공연 시간 (콤마로 구분)</label>
-                            <input type="text" class="form-control times-input" placeholder="예: 14:00,19:30">
-                        </div>
-                    </div>
-                `;
-                $("#schedule-container").append(scheduleHtml);
-            });
+	<script>
+		$(document).ready(function () {
+			// 공연장 검색 및 목록 로드
+			function loadVenues(keyword = '') {
+				$.ajax({
+					url: '/performanceApi/venue/list',
+					method: 'GET',
+					data: {keyword: keyword},
+					success: function (venues) {
+						const select = $('#venue-select');
+						select.find('option:not(:first)').remove();
 
-            // 가격 정보 추가
-            $("#add-price").click(function() {
-                const priceHtml = `
-                    <div class="price-group">
-                        <span class="remove-schedule">✕</span>
-                        <div class="form-group">
-                            <label>좌석 등급</label>
-                            <select class="form-control grade-select">
-                                <option value="VIP">VIP석</option>
-                                <option value="R">R석</option>
-                                <option value="S">S석</option>
-                                <option value="A">A석</option>
-                                <option value="B">B석</option>
-                                <option value="전석">전석</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>가격</label>
-                            <input type="number" class="form-control price-input" min="0" step="1000" placeholder="가격을 입력하세요">
-                        </div>
-                    </div>
-                `;
-                $("#price-container").append(priceHtml);
-            });
+						venues.forEach(venue => {
+							select.append($('<option>', {
+								value: venue.MT10ID,
+								text: venue.FCLTYNM,
+								'data-address': venue.ADRES,
+								'data-seats': venue.SEATSCALE
+							}));
+						});
+					},
+					error: function () {
+						alert('공연장 목록을 불러오는데 실패했습니다.');
+					}
+				});
+			}
+			
+			// 최초 조회
+			loadVenues();
 
-            // Initialize Summernote editor
-            $('#description').summernote({
-                height: 300,
-                lang: 'ko-KR',
-                placeholder: '공연 설명을 입력하세요. 이미지나 포스터를 첨부할 수 있습니다.',
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['insert', ['link', 'picture']]
-                ]
-            });
+			// 검색 버튼 클릭 시
+			$('#search-venue').click(function () {
+				const keyword = $('#venue-search').val();
+				loadVenues(keyword);
+			});
 
-            // 삭제 버튼
-            $(document).on("click", ".remove-schedule", function() {
-                $(this).closest(".schedule-group, .price-group").remove();
-            });
+			// 검색어 입력 후 엔터 키 처리
+			$('#venue-search').keypress(function (e) {
+				if (e.which == 13) {
+					$('#search-venue').click();
+				}
+			});
 
-            // 폼 제출
-            $("#performance-form").submit(function(e) {
-                e.preventDefault();
+			// 공연장 선택 시 정보 표시
+			$('#venue-select').change(function () {
+				const selected = $(this).find('option:selected');
+				const mt10id = selected.val();
 
-                // 공연 시간 정보 수집
-                const dtguidance = [];
-                $('.schedule-group').each(function() {
-                    const days = $(this).find('.days-select').val();
-                    const times = $(this).find('.times-input').val();
-                    
-                    if (days && days.length > 0 && times) {
-                        // 선택된 각 요일에 대해 시간 정보 생성
-                        days.forEach(day => {
-                            dtguidance.push(`${day}(${times})`);
-                        });
-                    }
-                });
+				if (mt10id) {
+					$('#venue-address').text(selected.data('address'));
+					$('#venue-seats').text(selected.data('seats'));
+					$('#venue-info').slideDown();
 
-                // 가격 정보 수집
-                const pcseguidance = [];
-                $('.price-group').each(function() {
-                    const grade = $(this).find('.grade-select').val();
-                    const price = $(this).find('.price-input').val();
-                    
-                    if (grade && price) {
-                        pcseguidance.push(`${grade}석 ${Number(price).toLocaleString()}원`);
-                    }
-                });
+					// 선택된 공연장 정보를 폼 데이터에 저장
+					$('#performance-form').data('mt10id', mt10id);
+					$('#performance-form').data('fcltynm', selected.text());
+				} else {
+					$('#venue-info').slideUp();
+				}
+			});
 
-                // 전체 데이터 구성
-                const formData = {
-                    mt20id: $('#mt20id').val(),
-                    prfnm: $('#prfnm').val(),
-                    genrenm: $('#genrenm').val(),
-                    prfpdfrom: $('#prfpdfrom').val(),
-                    prfpdto: $('#prfpdto').val(),
-                    dtguidance: dtguidance.join(', '),
-                    pcseguidance: pcseguidance.join(', ')
-                };
+			// 기존 폼 제출 함수 수정
+			function collectFormData() {
+				const formData = {
+					// 기존 데이터
+					prfnm: $('#prfnm').val(),
+					prfruntime: $('#runtime').val(),
+					prfcast: $('#cast').val(),
+					genrenm: $('#genere').val(),
+					prfpdfrom: $('#prfpdfrom').val(),
+					prfpdto: $('#prfpdto').val(),
+					description: $('#description').summernote('code'),
+					daySchedules: collectSchedules(),
+					prices: collectPrices(),
 
-                // 데이터 검증
-                if (dtguidance.length === 0) {
-                    alert('최소 하나의 공연 시간을 입력해주세요.');
-                    return;
-                }
+					// 공연장 정보 추가
+					mt10id: $('#performance-form').data('mt10id'),
+					fcltynm: $('#performance-form').data('fcltynm')
+				};
+				return formData;
+			}
 
-                if (pcseguidance.length === 0) {
-                    alert('최소 하나의 가격 정보를 입력해주세요.');
-                    return;
-                }
+			// 폼 유효성 검사 수정
+			const originalValidateForm = validateForm;
+			validateForm = function () {
+				if (!$('#venue-select').val()) {
+					alert('공연장을 선택해주세요.');
+					$('#venue-select').focus();
+					return false;
+				}
+				return originalValidateForm();
+			};
 
-                // API 호출
-                $.ajax({
-                    url: '/api/performance',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        alert('공연이 성공적으로 등록되었습니다.');
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('공연 등록 중 오류가 발생했습니다.');
-                    }
-                });
-            });
-        });
-    </script>
-    <th:block th:replace="~{common/footer}"></th:block>
+			// Flatpickr 초기화
+			const fromDatePicker = flatpickr("#prfpdfrom", {
+				locale: "ko",
+				dateFormat: "Y-m-d",
+				minDate: "today",
+				onChange: function (selectedDates) {
+					toDatePicker.set("minDate", selectedDates[0]);
+				}
+			});
+
+			const toDatePicker = flatpickr("#prfpdto", {
+				locale: "ko",
+				dateFormat: "Y-m-d",
+				minDate: "today"
+			});
+
+			// Summernote 초기화
+			$('#description').summernote({
+				height: 300,
+				lang: 'ko-KR',
+				placeholder: '공연 설명을 입력하세요.',
+				callbacks: {
+					onImageUpload: function (files) {
+						uploadImage(files[0], this);
+					}
+				}
+			});
+
+			// 공연 시간 추가
+			$("#add-schedule").click(function () {
+				const scheduleHtml = `
+		            <div class="schedule-group">
+		                <span class="remove-schedule">✕</span>
+		                <div class="form-group">
+		                    <label>요일 선택 (여러 개 선택 가능)</label>
+		                    <select class="form-control days-select" multiple required>
+		                        <option value="1">월요일</option>
+		                        <option value="2">화요일</option>
+		                        <option value="3">수요일</option>
+		                        <option value="4">목요일</option>
+		                        <option value="5">금요일</option>
+		                        <option value="6">토요일</option>
+		                        <option value="7">일요일</option>
+		                    </select>
+		                </div>
+		                <div class="form-group">
+		                    <label>공연 시간 (콤마로 구분)</label>
+		                    <input type="text" class="form-control times-input" 
+		                           placeholder="예: 14:00,19:30" required
+		                           pattern="^([0-1][0-9]|2[0-3]):[0-5][0-9](,([0-1][0-9]|2[0-3]):[0-5][0-9])*$">
+		                </div>
+		            </div>
+		        `;
+				$("#schedule-container").append(scheduleHtml);
+			});
+
+			// 가격 정보 추가
+			$("#add-price").click(function () {
+				const priceHtml = `
+		            <div class="price-group">
+		                <span class="remove-schedule">✕</span>
+		                <div class="form-group">
+		                    <label>좌석 등급</label>
+		                    <select class="form-control grade-select" required>
+		                        <option value="VIP">VIP석</option>
+		                        <option value="R">R석</option>
+		                        <option value="S">S석</option>
+		                        <option value="A">A석</option>
+		                        <option value="B">B석</option>
+								<option value="전석">전석</option>
+		                    </select>
+		                </div>
+		                <div class="form-group">
+		                    <label>가격</label>
+		                    <input type="number" class="form-control price-input" 
+		                           min="0" step="1000" required>
+		                </div>
+		            </div>
+		        `;
+				$("#price-container").append(priceHtml);
+			});
+
+			// 삭제 버튼
+			$(document).on("click", ".remove-schedule", function () {
+				$(this).closest(".schedule-group, .price-group").remove();
+			});
+
+			// 폼 제출
+			$("#performance-form").submit(function (e) {
+				e.preventDefault();
+
+				if (!validateForm()) {
+					return;
+				}
+
+				// collectFormData() 함수 사용
+				const formData = collectFormData();
+				submitPerformance(formData);
+			});
+		});
+
+		// 유효성 검증
+		function validateForm() {
+			// 기본 정보 검증
+			if (!$("#prfnm").val().trim()) {
+				alert("공연명을 입력해주세요.");
+				$("#prfnm").focus();
+				return false;
+			}
+
+			const runtime = $("#runtime").val();
+			if (!runtime || runtime <= 0) {
+				alert("올바른 런타임을 입력해주세요.");
+				$("#runtime").focus();
+				return false;
+			}
+
+			// 공연 시간 검증
+			if ($('.schedule-group').length === 0) {
+				alert("최소 하나의 공연 시간을 입력해주세요.");
+				return false;
+			}
+
+			let isScheduleValid = true;
+			$('.schedule-group').each(function () {
+				const days = $(this).find('.days-select').val();
+				const times = $(this).find('.times-input').val();
+
+				if (!days || days.length === 0) {
+					alert("요일을 선택해주세요.");
+					isScheduleValid = false;
+					return false;
+				}
+
+				if (!times || !validateTimeFormat(times)) {
+					alert("올바른 시간 형식을 입력해주세요. (예: 14:00,19:30)");
+					isScheduleValid = false;
+					return false;
+				}
+			});
+
+			if (!isScheduleValid) return false;
+
+			// 가격 정보 검증
+			if ($('.price-group').length === 0) {
+				alert("최소 하나의 가격 정보를 입력해주세요.");
+				return false;
+			}
+
+			let usedGrades = new Set();
+			let isPriceValid = true;
+
+			$('.price-group').each(function () {
+				const grade = $(this).find('.grade-select').val();
+				const price = $(this).find('.price-input').val();
+
+				if (usedGrades.has(grade)) {
+					alert("중복된 좌석 등급이 있습니다.");
+					isPriceValid = false;
+					return false;
+				}
+				usedGrades.add(grade);
+
+				if (!price || price < 0) {
+					alert("올바른 가격을 입력해주세요.");
+					isPriceValid = false;
+					return false;
+				}
+			});
+
+			return isPriceValid;
+		}
+
+		// 시간 형식 검증
+		function validateTimeFormat(times) {
+			const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9](,([0-1][0-9]|2[0-3]):[0-5][0-9])*$/;
+			return timeRegex.test(times);
+		}
+
+		// 스케줄 정보 수집
+		function collectSchedules() {
+			const schedules = [];
+			$('.schedule-group').each(function () {
+				const days = $(this).find('.days-select').val();
+				const times = $(this).find('.times-input').val().split(',').map(t => t.trim());
+
+				if (days && days.length > 0 && times) {
+					schedules.push({
+						days: days,
+						times: times
+					});
+				}
+			});
+			return schedules;
+		}
+
+		// 가격 정보 수집
+		function collectPrices() {
+			const prices = [];
+			$('.price-group').each(function () {
+				const grade = $(this).find('.grade-select').val();
+				const price = $(this).find('.price-input').val();
+
+				if (grade && price) {
+					prices.push({
+						grade: grade,
+						price: parseInt(price)
+					});
+				}
+			});
+			return prices;
+		}
+
+		// 공연 등록 요청
+		function submitPerformance(formData) {
+			$.ajax({
+				url: '/performanceApi/register',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(formData),
+				success: function (response) {
+					if (response.success) {
+						alert('공연이 성공적으로 등록되었습니다.');
+						window.location.href = '/performance/list';
+					} else {
+						alert(response.message || '공연 등록 중 오류가 발생했습니다.');
+					}
+				},
+				error: function (xhr) {
+					const errorMessage = xhr.responseJSON?.message || '공연 등록 중 오류가 발생했습니다.';
+					alert(errorMessage);
+				}
+			});
+		}
+	</script>
+	<th:block th:replace="~{common/footer}"></th:block>
 </body>
+
 </html>
