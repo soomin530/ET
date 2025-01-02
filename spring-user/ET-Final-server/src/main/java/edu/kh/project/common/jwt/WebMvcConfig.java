@@ -1,6 +1,7 @@
 package edu.kh.project.common.jwt;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -14,9 +15,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
     
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/api/**")  // JWT 인증이 필요한 경로 패턴
-                .excludePathPatterns("/login", "/signup"); // 인증이 필요없는 경로
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("https://t1.kakaocdn.net")
+                .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
+    
 }
