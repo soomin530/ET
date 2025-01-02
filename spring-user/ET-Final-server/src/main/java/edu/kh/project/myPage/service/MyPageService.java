@@ -1,4 +1,4 @@
-package edu.kh.project.myPage.model.service;
+package edu.kh.project.myPage.service;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
