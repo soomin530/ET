@@ -28,7 +28,9 @@ const MESSAGE = {
 	AUTH_TIMEOUT: "인증번호 입력 제한시간을 초과하였습니다.",
 	AUTH_LENGTH: "인증번호를 정확히 입력해주세요.",
 	FILL_ALL: "모든 필드를 입력해주세요.",
-	SEND_ERROR: "인증번호 발송에 실패했습니다. 다시 시도해주세요."
+	SEND_ERROR: "인증번호 발송에 실패했습니다. 다시 시도해주세요.",
+	NON_MEMBER_ID: "존재하지 않는 아이디 입니다.",
+	CHECK_MEMBER_ID: "존재하는 아이디 입니다."
 };
 
 // =========================================================================
@@ -53,9 +55,62 @@ const findPwEmailMessage = document.getElementById('findPwEmailMessage');
 const findIdVerifyMessage = document.getElementById('findIdVerifyMessage');
 const findPwVerifyMessage = document.getElementById('findPwVerifyMessage');
 
+// 아이디 입력 필드
+const findPwId = document.getElementById('findPwId');
+
+// 아이디 메시지 요소
+const findIdMessage = document.getElementById('findIdMessage');
+
+
 // =========================================================================
 // 유틸리티 함수
 // =========================================================================
+
+// 아이디 존재 여부 확인
+const setFindIdValidation = () => {
+    if (findPwId) {
+		findPwId.addEventListener('input', e => {
+			const inputPwMemberId = e.target.value.trim();
+            validateMemberIdInput(inputPwMemberId);
+		});
+
+    }
+};
+
+// 아이디 존재 여부 확인 함수
+const validateMemberIdInput = async (inputPwMemberId) => {
+    // 입력값이 없는 경우
+    if (inputPwMemberId.length === 0) {
+        showMessage(findIdMessage, "아이디를 입력해주세요.", false);
+        return false;
+    }
+
+    try {
+        // GET 방식으로 서버에 아이디 존재 여부 확인 요청
+        const response = await fetch(`/member/checkId?memberId=${inputPwMemberId}`);
+
+        if (!response.ok) {
+            throw new Error('서버 응답 오류');
+        }
+
+        const result = await response.json(); // 정수값을 반환하므로 json()으로 받음
+
+        // 아이디 존재 여부에 따른 메시지 표시 (1: 존재, 0: 존재하지 않음)
+        if (result === 1) {
+            showMessage(findIdMessage, MESSAGE.CHECK_MEMBER_ID, true);
+            return true;
+        } else {
+            showMessage(findIdMessage, MESSAGE.NON_MEMBER_ID, false);
+            return false;
+        }
+
+    } catch (error) {
+        console.error("아이디 확인 중 오류:", error);
+        showMessage(findIdMessage, "아이디 확인 중 오류가 발생했습니다.", false);
+        return false;
+    }
+};
+
 
 const setEmailValidation = () => {
 	// 아이디 찾기 이메일 유효성 검사
@@ -302,23 +357,87 @@ const handleVerifyAuthCode = async (formType) => {
 };
 
 // 아이디/비밀번호 찾기 제출 처리
-const handleFindSubmit = (formType) => {
+const handleFindSubmit = async (formType) => {
+	// 폼 데이터 수집
 	const data = formType === 'Id'
 		? {
 			email: document.getElementById('findIdEmail').value
 		}
 		: {
-			id: document.getElementById('findPwId').value,
+			memberId: document.getElementById('findPwId').value,
 			email: document.getElementById('findPwEmail').value
 		};
 
+	// 필수 필드 검증
 	if (Object.values(data).some(value => !value)) {
 		alert(MESSAGE.FILL_ALL);
 		return;
 	}
 
-	// TODO: API 호출 구현
-	console.log(`${formType} 찾기 요청:`, data);
+	// 이메일 인증 확인
+	const verifyMessage = document.getElementById(`find${formType}VerifyMessage`);
+	if (!verifyMessage.textContent.includes(MESSAGE.AUTH_VERIFIED)) {
+		alert('이메일 인증이 필요합니다.');
+		return;
+	}
+
+	try {
+		// API 엔드포인트 설정
+		const endpoint = formType === 'Id' ? '/member/findId' : '/member/findPw';
+
+		const response = await fetch(endpoint, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		});
+
+		if (!response.ok) {
+			throw new Error('서버 응답 오류');
+		}
+
+		const result = await response.json();
+
+		if (result.success) {
+			if (formType === 'Id') {
+				// 아이디 찾기 결과 표시
+				showIdResult(result);
+			} else {
+				// 비밀번호 재설정 페이지로 이동
+		        try {
+		            const token = result.resetToken;
+		            window.location.href = `/member/resetPassword?token=${encodeURIComponent(token)}`;
+		        } catch (error) {
+		            console.error('토큰 처리 중 오류:', error);
+		            alert('비밀번호 재설정 페이지로 이동 중 오류가 발생했습니다.');
+		        }
+			}
+		} else {
+			alert(result.message || '회원 정보를 찾을 수 없습니다.');
+		}
+
+	} catch (error) {
+		console.error('에러 발생:', error);
+		alert('처리 중 오류가 발생했습니다.');
+	}
+};
+
+// 아이디 찾기 결과 표시 함수
+const showIdResult = (result) => {
+    // 기존 폼 숨기기
+    const findIdForm = document.getElementById('findIdForm');
+    findIdForm.innerHTML = `
+        <div class="result-container show" id="idResult">
+            <div class="result-box">
+                <p class="result-label">조회된 아이디</p>
+                <p class="result-id">${result.memberId}</p>
+            </div>
+            <div class="button-group">
+                <button type="button" class="submit-button secondary" onclick="location.href='/'">메인으로</button>
+            </div>
+        </div>
+    `;
 };
 
 // =========================================================================
@@ -332,6 +451,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// 이메일 유효성 검사 초기화
 	setEmailValidation();
+	
+	// 아이디 존재 유효성 검사 초기화
+	setFindIdValidation();
 
 	// 인증번호 받기 버튼 이벤트
 	document.querySelectorAll('.get-code-btn').forEach(button => {

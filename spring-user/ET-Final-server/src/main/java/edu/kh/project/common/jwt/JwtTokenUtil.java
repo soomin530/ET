@@ -81,7 +81,7 @@ public class JwtTokenUtil {
         }
 
         // Refresh Token에서 사용자 정보 추출
-        String memberNo = getMemberIdFromToken(refreshToken);
+        String memberNo = getMemberNoFromToken(refreshToken);
         String roles = getRolesFromToken(refreshToken);
 
         // 새로운 Access Token 발급
@@ -103,13 +103,25 @@ public class JwtTokenUtil {
     /**
      * 토큰에서 사용자 번호 추출
      */
-    public String getMemberIdFromToken(String token) {
+    public String getMemberNoFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secretKeyBytes))
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+    
+    /**
+     * 토큰에서 이메일 정보 추출
+     */
+    public String getMemberEmailFromToken(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(Keys.hmacShaKeyFor(secretKeyBytes))
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .get("memberEmail", String.class);  // createToken에서 설정한 claim 키와 동일하게
     }
 
     /**
