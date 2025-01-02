@@ -207,25 +207,28 @@
     </div>
 
     <script>
-        const seatInfo = JSON.parse(localStorage.getItem('selectedSeats')).map(seat => {
-            if (typeof seat === 'string') {
-                const parts = seat.split('-'); // seat이 문자열인 경우
-                const gradeName = parts[1]; // R석, VIP석 등급
-                const seatNumber = parts[2]; // A1, A2 등 좌석 번호
-                return gradeName === "전석" ? `${gradeName} ${seatNumber}` : `${gradeName}석 ${seatNumber}`;
-            } else if (typeof seat === 'object' && seat.seatId) {
-                const parts = seat.seatId.split('-'); // seatId를 분리
-                const gradeName = parts[1];
-                const seatNumber = parts[2];
-                return gradeName === "전석" ? `${gradeName} ${seatNumber}` : `${gradeName}석 ${seatNumber}`;
-            } else {
-                console.error('Unexpected seat format:', seat);
-                return '알 수 없음';
-            }
-        }).join(', ');
+        const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')); // 로컬스토리지에서 데이터 가져오기
 
-        const totalPrice = localStorage.getItem('totalPrice');
-        document.getElementById('seat-info').textContent = seatInfo;
+        if (!selectedSeats || selectedSeats.length === 0) {
+            document.getElementById('seat-info').textContent = '선택된 좌석 없음';
+        } else {
+            // 좌석 정보 생성
+            const seatInfo = selectedSeats.map(seat => {
+                if (typeof seat === 'object' && seat.seatId) {
+                    return seat.seatId; // 전체 좌석 ID 출력
+                } else if (typeof seat === 'string') {
+                    return seat; // 단순 문자열 처리
+                } else {
+                    console.error('Unexpected seat format:', seat);
+                    return '알 수 없음';
+                }
+            }).join(', ');
+
+            // 좌석 정보 출력
+            document.getElementById('seat-info').textContent = seatInfo;
+        }
+
+        const totalPrice = localStorage.getItem('totalPrice') || '0 원';
         document.getElementById('total-price').textContent = totalPrice;
 
 

@@ -4,63 +4,62 @@
 
 	<!-- 특정 공연 좌석 조회 -->
 	<select id="selectSeatsByShow" parameterType="map" resultType="map">
-	    SELECT 
-	        S.MT20ID,
-	        S.DAY_OF_WEEK AS dayOfWeek,
-	        S.PERFORMANCE_TIME AS performanceTime,
-	        S.SEAT_COUNT AS totalSeatCount,
-	        S.AVAILABLE_COUNT AS availableSeatCount,
-	        S.GRADE_ID AS gradeId,
-	        S.GRADE_NAME AS gradeName,
-	        S.PRICE AS gradePrice,
-	        S.SEAT_STATUS AS seatStatus
-	    FROM (
-	        SELECT 
-	            TPF.MT20ID,
-	            TPT.DAY_OF_WEEK,
-	            TPT.PERFORMANCE_TIME,
-	            TVSI.SEAT_COUNT,
-	            TVSI.SEAT_COUNT - COUNT(TTS.SEATS_ID) AS AVAILABLE_COUNT,
-	            SG.GRADE_ID,
-	            SG.GRADE_NAME,
-	            PSP.PRICE,
-	            TTS.SEAT_STATUS
-	        FROM TB_PERFORMANCES_DETAIL TPF
-	        JOIN TB_PERFORMANCE_TIME TPT ON TPF.MT20ID = TPT.MT20ID
-	        JOIN TB_VENUE_SEAT_INFO TVSI ON TPF.MT10ID = TVSI.MT10ID
-	        JOIN TB_SEAT_GRADE SG ON SG.GRADE_ID = TVSI.GRADE_ID
-	        JOIN TB_PERFORMANCE_SEAT_PRICE PSP 
-	            ON TPF.MT20ID = PSP.MT20ID 
-	            AND TVSI.GRADE_ID = PSP.GRADE_ID
-	        LEFT JOIN TB_TICKET_SEAT TTS 
-	            ON TTS.MT20ID = TPF.MT20ID
-	            AND TTS.GRADE_ID = TVSI.GRADE_ID
-	            AND TTS.SEAT_STATUS = 'available'
-	            AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-	            AND TTS.SHOW_TIME = #{selectedTime}
-	        WHERE TPF.MT20ID = #{mt20id}
-	        AND TPT.DAY_OF_WEEK = #{dayOfWeek}
-	        AND TPT.PERFORMANCE_TIME = #{selectedTime}
-	        GROUP BY
-	            TPF.MT20ID,
-	            TPT.DAY_OF_WEEK,
-	            TPT.PERFORMANCE_TIME,
-	            TVSI.SEAT_COUNT,
-	            SG.GRADE_ID,
-	            SG.GRADE_NAME,
-	            PSP.PRICE,
-	            TTS.SEAT_STATUS
-	    ) S
-	    ORDER BY S.GRADE_ID
+		  SELECT
+		    S.MT20ID,
+		    S.DAY_OF_WEEK AS dayOfWeek,
+		    S.PERFORMANCE_TIME AS performanceTime,
+		    S.SEAT_COUNT AS totalSeatCount,
+		    S.GRADE_ID AS gradeId,
+		    S.GRADE_NAME AS gradeName,
+		    S.PRICE AS gradePrice,
+		    S.SEAT_COUNT - COUNT(CASE WHEN TTS.SEAT_STATUS = 'BOOKED' THEN 1 END) AS availableSeatCount
+		FROM (
+		    SELECT
+		        TPF.MT20ID,
+		        TPT.DAY_OF_WEEK,
+		        TPT.PERFORMANCE_TIME,
+		        TVSI.SEAT_COUNT,
+		        SG.GRADE_ID,
+		        SG.GRADE_NAME,
+		        PSP.PRICE
+		    FROM TB_PERFORMANCES_DETAIL TPF
+		    JOIN TB_PERFORMANCE_TIME TPT ON TPF.MT20ID = TPT.MT20ID
+		    JOIN TB_VENUE_SEAT_INFO TVSI ON TPF.MT10ID = TVSI.MT10ID
+		    JOIN TB_SEAT_GRADE SG ON SG.GRADE_ID = TVSI.GRADE_ID
+		    JOIN TB_PERFORMANCE_SEAT_PRICE PSP
+		        ON TPF.MT20ID = PSP.MT20ID
+		        AND TVSI.GRADE_ID = PSP.GRADE_ID
+		    WHERE TPF.MT20ID = #{mt20id}
+		    AND TPT.DAY_OF_WEEK = #{dayOfWeek}
+		    AND TPT.PERFORMANCE_TIME = #{selectedTime}
+		) S
+		LEFT JOIN TB_TICKET_SEAT TTS
+		    ON S.MT20ID = TTS.MT20ID
+		    AND S.GRADE_ID = TTS.GRADE_ID
+		    AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+		    AND TTS.SHOW_TIME = #{selectedTime}
+		GROUP BY
+		    S.MT20ID,
+		    S.DAY_OF_WEEK,
+		    S.PERFORMANCE_TIME,
+		    S.SEAT_COUNT,
+		    S.GRADE_ID,
+		    S.GRADE_NAME,
+		    S.PRICE
+		ORDER BY
+		    S.GRADE_ID
 	</select>
 
 	
 	<!-- 좌석 업데이트 -->
 	<update id="updateSeatStatus">
-		UPDATE TB_TICKET_SEAT
-	    SET SEAT_STATUS = #{status}
-	    WHERE SEATS_ID = #{seatId}
-	</update>
+    UPDATE TB_TICKET_SEAT
+    SET SEAT_STATUS = 'BOOKED'
+    WHERE SEATS_ID = #{seatId}
+      AND SHOW_DATE = TO_DATE(#{showDate}, 'YYYY-MM-DD')
+      AND SHOW_TIME = #{showTime}
+</update>
+
 
 	<!-- 좌석 가격 -->
 	<select id="selectSeatPrice" resultType="int">
@@ -83,6 +82,23 @@
 		FROM "TB_PERFORMANCES_DETAIL" PD
 		WHERE PD.MT20ID = #{performanceId}
 	</select>
+	
+	<!-- 이미 예약된 좌석 조회 -->
+	<select id="selectBookedSeats" parameterType="map" resultType="Seat">
+	    SELECT 
+	        SEATS_ID AS seatId,
+	        GRADE_ID AS gradeId,
+	        MT20ID AS mt20id,
+	        SEAT_STATUS AS seatStatus,
+	        SHOW_DATE AS showDate,
+	        SHOW_TIME AS showTime
+	    FROM TB_TICKET_SEAT
+	    WHERE MT20ID = #{mt20id}
+	      AND SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+	      AND SHOW_TIME = #{selectedTime}
+	      AND SEAT_STATUS = 'BOOKED'
+	</select>
+	
 	
 
 

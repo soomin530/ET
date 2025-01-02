@@ -33,7 +33,7 @@ public class paymentServiceImpl implements paymentService {
 	@Value("${iamport.api.secret}")
 	private String apiSecret;
 
-	// 좌석 상태 업데이트 (예약)
+	// 좌석 상태 변경(BOOKED) TB_TICKET_SEAT에 데이터 삽입
 	@Override
 	public boolean insertTicketSeat(Seat seatData) {
 		int result = mapper.insertTicketSeat(seatData);
@@ -74,6 +74,17 @@ public class paymentServiceImpl implements paymentService {
 		params.put("dayOfWeek", dayOfWeek); // 요일 추가
 
 		return mapper.selectSeatsByShow(params);
+	}
+
+	//이미 예약된 좌석 조회
+	@Override
+	public List<Seat> getBookedSeats(String mt20id, String selectedDate, String selectedTime) {
+		Map<String, Object> params = new HashMap<>();
+	    params.put("mt20id", mt20id);
+	    params.put("selectedDate", selectedDate);
+	    params.put("selectedTime", selectedTime);
+
+	    return mapper.selectBookedSeats(params);
 	}
 
 	
