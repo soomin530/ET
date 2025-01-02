@@ -5,7 +5,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>관리자 공연 목록</title>
-	<link rel="stylesheet" href="/css/main-style.css">
 	<th:block th:replace="~{common/common}"></th:block>
 	<style>
 		.performance-container {
@@ -178,7 +177,7 @@
 		<div class="performance-grid" id="performanceGrid">
 			<th:block th:each="performance : ${performances}">
 				<div class="performance-item"
-					th:onclick="|location.href='@{/performance/performance-manager-detail/{mt20id}(mt20id=${performance.mt20id})}'|">
+					th:onclick="|location.href='@{/perfmgr/performance-manager-detail/{mt20id}(mt20id=${performance.mt20id})}'|">
 					<div class="image-container">
 						<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image"
 							loading="lazy" decoding="async">

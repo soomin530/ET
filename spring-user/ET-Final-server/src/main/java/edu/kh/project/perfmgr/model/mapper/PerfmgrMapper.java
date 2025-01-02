@@ -1,8 +1,11 @@
 package edu.kh.project.perfmgr.model.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import edu.kh.project.perfmgr.model.dto.PerfMgr;
+import edu.kh.project.performance.model.dto.Performance;
 
 @Mapper
 public interface PerfmgrMapper {
@@ -36,5 +39,25 @@ public interface PerfmgrMapper {
 	 * @return
 	 */
 	int signup(PerfMgr inputMember);
+	
+	/** 공연관리자가 등록한 공연 목록 조회 
+	 * @param memberNo
+	 * @return
+	 * @author 우수민
+	 */
+	List<Performance> selectPerformancesByManager(int memberNo);
+
+	/** 관리자 공연 상세페이지 조회
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
+	Performance detail(String mt20id);
+
+	/** 수정할 공연 정보 조회
+	 * @param mt20id
+	 * @return
+	 */
+	Performance selectModifyPerformance(String mt20id);
 
 }
