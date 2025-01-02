@@ -32,4 +32,11 @@ public class NoticeServiceImpl implements NoticeService{
 		return mapper.detailNotice(noticeId);
 	}
 
+
+	// 공지 사항 전체 조회
+	@Override
+	public List<Notice> getNoticeList() {
+		return mapper.getNoticeList();
+	}
+
 }

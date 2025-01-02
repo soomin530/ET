@@ -1,6 +1,9 @@
 package edu.kh.project.notice.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +32,17 @@ public class NoticeController {
 		return service.detailNotice(noticeId);
 	}
 	
+	/** 공지사항 전체 조회
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/list")
+	public String getNoticeList(Model model) {
+		
+		List<Notice> list = service.getNoticeList();
+		model.addAttribute("noticeList", list);
+		
+		return "/notice/noticeList";
+	}
 	
 }

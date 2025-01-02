@@ -15,7 +15,7 @@
 	<th:block th:replace="~{common/header}"></th:block>
 
 	<div class="parent">
-		<h3 th:text="${genre}">장르</h3>
+		<h2 th:text="${genre}">장르</h2>
 	</div>
 	
 	<!-- 탭 버튼 추가 -->
@@ -44,6 +44,14 @@
 							<span th:text="${performance.prfpdto}">종료일</span>
 						</div>
 						<div class="performance-venue" th:text="${performance.fcltynm}">공연장</div>
+						<div class="performance-rank">
+					        <div class="review-stars">
+					            <th:block th:with="stars=${performance.prfreviewRank}">
+					                <span class="static-stars" th:text="${'★'.repeat(stars) + '☆'.repeat(5 - stars)}"></span>
+					                <span class="numeric-rating" th:text="|${stars}/5|"></span>
+					            </th:block>
+					        </div>
+					    </div>
 					</div>
 				</div>
 			</th:block>
@@ -56,14 +64,8 @@
 	<th:block th:replace="~{common/footer}"></th:block>
 
 	<script th:inline="javascript">
-		let page = 1;
-		let isLoading = false;
-		let hasMoreData = true;
 		const genre = /*[[${genre}]]*/ null;
 		const imageCache = new Map();
-		
-		// 현재 선택된 필터를 저장할 변수
-		let currentFilter = 'all';
 		
 	</script>
 	

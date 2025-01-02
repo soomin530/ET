@@ -71,10 +71,11 @@
 	align-items: center;
 }
 
-h3 {
+.parent h2 {
 	margin-top: 100px;
 	margin-bottom: 15px;
 	font-weight: 600;
+	font-size: 50px;
 }
 
 /* 스피너 컨테이너: 화면 중앙 정렬 */
@@ -134,6 +135,19 @@ h3 {
 	opacity: 1;
 }
 
+/* 평점 별 디자인 */
+.static-stars {
+    color: #ffca28;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+}
+
+.numeric-rating {
+    color: #666;
+    font-size: 0.9em;
+    margin-left: 8px;
+}
+
 /* 탭 컨테이너 스타일 */
 .tab-container {
     max-width: 1200px;
@@ -173,6 +187,30 @@ h3 {
     background-color: #004CFF;
     color: white;
     border-color: #004CFF;
+}
+
+.no-data-message {
+    width: 100%;
+    padding: 50px 0;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin: 20px 0;
+}
+
+.no-data-message h1 {
+    text-align: center;
+    color: #6c757d;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+    cursor: default;
+}
+
+/* 호버 효과 제거를 위한 override */
+.no-data-message:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 /* 반응형 디자인 */
