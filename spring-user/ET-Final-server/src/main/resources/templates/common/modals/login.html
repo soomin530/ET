@@ -18,15 +18,24 @@
 					autocomplete="current-password" required>
 
 				<button type="submit" id="login-Btn">로그인</button>
-
-				<!-- 아이디/비밀번호 찾기 링크 -->
-				<div class="find-links">
-					<a href="/member/find">아이디/비밀번호 찾기</a>
+				
+				<!-- 아이디 저장과 찾기 링크를 감싸는 컨테이너 -->
+				<div class="login-options">
+				    <div class="save-id">
+				        <label class="save-id-label">
+				            <input type="checkbox" id="saveIdCheckbox">
+				            <span class="checkmark"></span>
+				            아이디 저장
+				        </label>
+				    </div>
+				    <div class="find-links">
+				        <a href="/member/find">아이디/비밀번호 찾기</a>
+				    </div>
 				</div>
 
-				<!-- 네이버 로그인 -->
-				<a href="/naver/login">
-					<img src="/images/naver_login_button.png" alt="네이버 로그인" style="width: 45px; height: 45px;">
+				<!-- 네이버 로그인 버튼 -->
+				<a href="/naver/login" id="naverLoginBtn">
+				    <img src="/images/naver_login_button.png" alt="네이버 로그인" style="width: 45px; height: 45px;">
 				</a>
 			</div>
 

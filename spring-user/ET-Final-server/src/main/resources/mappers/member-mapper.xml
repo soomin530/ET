@@ -83,6 +83,7 @@
 		AND MEMBER_DEL_FL = 'N'
 	</select>
 
+
 	<!-- 네이버 회원 가입 -->
 	<insert id="insertNaverMember" parameterType="Member">
 		INSERT INTO TB_MEMBER (
@@ -112,6 +113,7 @@
 		)
 	</insert>
 
+
 	<!-- 네이버 회원 정보 업데이트 -->
 	<update id="updateNaverMember" parameterType="Member">
 		UPDATE TB_MEMBER SET
@@ -121,6 +123,38 @@
 		MEMBER_GENDER = #{memberGender}
 		WHERE MEMBER_ID = #{memberId}
 		AND NAVER_FL = 'Y'
+	</update>
+	
+	
+	<!-- 이메일로 회원 아이디 조회 -->
+	<select id="findByEmail">
+		SELECT 
+			MEMBER_ID
+		FROM "TB_MEMBER"
+		WHERE MEMBER_EMAIL = #{email}
+		AND MEMBER_DEL_FL = 'N'
+	</select>
+	
+	
+	<!-- 이메일로 회원 아이디 조회 -->
+	<select id="findByIdAndEmail">
+		SELECT 
+			MEMBER_NO,
+			MEMBER_EMAIL,
+			MEMBER_ID
+		FROM "TB_MEMBER"
+		WHERE MEMBER_EMAIL = #{email}
+		AND MEMBER_ID = #{memberId}
+		AND MEMBER_DEL_FL = 'N'
+	</select>
+	
+	
+	<!-- 비밀번호 변경 -->
+	<update id="updatePassword">
+		UPDATE "TB_MEMBER"
+		SET
+			MEMBER_PW = #{encPw}
+		WHERE MEMBER_NO = #{memberNo}
 	</update>
 
 

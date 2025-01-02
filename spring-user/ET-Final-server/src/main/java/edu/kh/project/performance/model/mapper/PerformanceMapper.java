@@ -30,7 +30,8 @@ public interface PerformanceMapper {
 	 */
 	List<Performance> genreWithPaging(@Param("genre") String genre, 
 	                                 @Param("pageSize") int pageSize, 
-	                                 @Param("offset") int offset);
+	                                 @Param("offset") int offset,
+	                                 @Param("filter") String rating);
 
 	/** 공연 상세페이지 조회
 	 * @param mt20id

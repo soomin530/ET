@@ -1,4 +1,4 @@
-package edu.kh.project.myPage.model.service;
+package edu.kh.project.myPage.service;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -32,7 +32,7 @@ public class RedisService {
             throw new JwtException("Invalid refresh token");
         }
 
-        String memberNo = jwtTokenUtil.getMemberIdFromToken(refreshToken);
+        String memberNo = jwtTokenUtil.getMemberNoFromToken(refreshToken);
         String savedMemberNo = getMemberNoFromToken(refreshToken);
 
         if (savedMemberNo == null || !savedMemberNo.equals(memberNo)) {

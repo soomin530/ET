@@ -4,22 +4,52 @@
 
 	<!-- 장르별 공연 목록 조회 -->
 	<select id="genre" resultType="Performance">
-	    SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER
+	    SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER, PRFREVIEW_RANK
 	    FROM TB_PERFORMANCES_DETAIL
 	    WHERE GENRENM = #{genre}
 	</select>
 	
 	<!-- 장르별 공연 목록 페이징 조회 -->
 	<select id="genreWithPaging" resultType="Performance">
-	<![CDATA[
 	    SELECT *
 	    FROM (
-	        SELECT /*+ INDEX_DESC(p PK_PERFORMANCES_DETAIL) */
-	            p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER,
-	            ROW_NUMBER() OVER (ORDER BY p.PRFPDFROM DESC) AS RN
+	        SELECT
+	            p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, p.PRFREVIEW_RANK,
+	            <if test="filter == 'rating'">
+	                COALESCE(p.PRFREVIEW_RANK, 0) as RATING,
+	            </if>
+	            ROW_NUMBER() OVER (
+	                ORDER BY
+	                <choose>
+	                    <when test="filter == 'rating'">
+	                        COALESCE(p.PRFREVIEW_RANK, 0) DESC, p.PRFPDFROM DESC
+	                    </when>
+	                    <when test="filter == 'upcoming'">
+	                        p.PRFPDFROM ASC
+	                    </when>
+	                    <when test="filter == 'ongoing'">
+	                        p.PRFPDTO ASC
+	                    </when>
+	                    <otherwise>
+	                        p.PRFPDFROM DESC
+	                    </otherwise>
+	                </choose>
+	            ) AS RN
 	        FROM TB_PERFORMANCES_DETAIL p
 	        WHERE p.GENRENM = #{genre}
+	        <if test="filter == 'upcoming'">
+	       	<![CDATA[
+	            AND p.PRFPDFROM > TRUNC(SYSDATE)
+	        ]]>
+	        </if>
+	        <if test="filter == 'ongoing'">
+	        <![CDATA[
+	            AND p.PRFPDFROM <= TRUNC(SYSDATE)
+	            AND p.PRFPDTO >= TRUNC(SYSDATE)
+	        ]]>
+	        </if>
 	    )
+    <![CDATA[
 	    WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
 	]]>
 	</select>

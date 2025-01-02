@@ -23,7 +23,7 @@ public interface PerformanceService {
 	 * @param genre
 	 * @return
 	 */
-	List<Performance> getPerformancesByPage(int page, int pageSize, String genre);
+	List<Performance> getPerformancesByPage(int page, int pageSize, String genre, String filter);
 
 	/** 공연 상세페이지 조회
 	 * @param mt20id
