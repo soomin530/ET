@@ -137,93 +137,161 @@
 
 /* 평점 별 디자인 */
 .static-stars {
-    color: #ffca28;
-    font-size: 1.2em;
-    letter-spacing: 2px;
+	color: #ffca28;
+	font-size: 1.2em;
+	letter-spacing: 2px;
 }
 
 .numeric-rating {
-    color: #666;
-    font-size: 0.9em;
-    margin-left: 8px;
+	color: #666;
+	font-size: 0.9em;
+	margin-left: 8px;
 }
 
 /* 탭 컨테이너 스타일 */
 .tab-container {
-    max-width: 1200px;
-    margin: 0 auto 30px auto;
-    padding: 0 20px;
+	max-width: 1200px;
+	margin: 0 auto 30px auto;
+	padding: 0 20px;
 }
 
 /* 탭 버튼 컨테이너 */
 .tab-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 30px;
 }
 
 /* 탭 버튼 스타일 */
 .tab-button {
-    padding: 10px 25px;
-    font-size: 15px;
-    font-weight: 500;
-    color: #666;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+	padding: 10px 25px;
+	font-size: 15px;
+	font-weight: 500;
+	color: #666;
+	background-color: #f8f9fa;
+	border: 1px solid #e9ecef;
+	border-radius: 25px;
+	cursor: pointer;
+	transition: all 0.3s ease;
 }
 
 /* 호버 효과 */
 .tab-button:hover {
-    background-color: #e9ecef;
-    color: #333;
+	background-color: #e9ecef;
+	color: #333;
 }
 
 /* 활성화된 탭 스타일 */
 .tab-button.active {
-    background-color: #004CFF;
-    color: white;
-    border-color: #004CFF;
+	background-color: #004CFF;
+	color: white;
+	border-color: #004CFF;
 }
 
 .no-data-message {
-    width: 100%;
-    padding: 50px 0;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin: 20px 0;
+	grid-column: 1 / -1;
+	padding: 4rem 2rem;
+	text-align: center;
 }
 
-.no-data-message h1 {
-    text-align: center;
-    color: #6c757d;
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin: 0;
-    cursor: default;
+.empty-state {
+	background: white;
+	border-radius: 16px;
+	padding: 2rem;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* 호버 효과 제거를 위한 override */
-.no-data-message:hover {
-    transform: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+.empty-icon {
+	font-size: 4rem;
+	margin-bottom: 1rem;
+	animation: bounce 2s infinite;
+}
+
+.empty-state h3 {
+	color: #333;
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+}
+
+.empty-state p {
+	color: #666;
+	margin-bottom: 1.5rem;
+}
+
+.suggestion-btn {
+	background: linear-gradient(135deg, #004CFF, #0039e5);
+	color: white;
+	border: none;
+	padding: 0.75rem 1.5rem;
+	border-radius: 8px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.suggestion-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 76, 255, 0.2);
+}
+
+.genre-buttons {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	margin-top: 1rem;
+}
+
+.filter-suggestions {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	margin-top: 1rem;
+}
+
+.filter-tag {
+	background: #f8f9fa;
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	color: #004CFF;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.filter-tag:hover {
+	background: #e9ecef;
+}
+
+@keyframes bounce {
+
+	0%,
+	20%,
+	50%,
+	80%,
+	100% {
+		transform: translateY(0);
+	}
+
+	40% {
+		transform: translateY(-20px);
+	}
+
+	60% {
+		transform: translateY(-10px);
+	}
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    .tab-buttons {
-        flex-wrap: wrap;
-        padding: 0 10px;
-    }
-    
-    .tab-button {
-        padding: 8px 20px;
-        font-size: 14px;
-    }
+	.tab-buttons {
+		flex-wrap: wrap;
+		padding: 0 10px;
+	}
+
+	.tab-button {
+		padding: 8px 20px;
+		font-size: 14px;
+	}
 }
 
 @media (max-width: 768px) {

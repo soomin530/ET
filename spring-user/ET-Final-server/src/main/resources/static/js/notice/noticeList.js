@@ -8,7 +8,7 @@ function toggleNotice(noticeNo) {
         // 부드러운 닫힘 애니메이션을 위한 timeout
         setTimeout(() => {
             currentActive.querySelector('.notice-content').style.maxHeight = '0px';
-        }, 10);
+        }, 25);
     }
     
     // 클릭한 항목 토글

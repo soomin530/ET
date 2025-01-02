@@ -91,52 +91,47 @@ public class MemberController {
 		// 로그인 실패 시
 		if (loginMember == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
+		}
+		// Session scope에 loginMember 추가
+		model.addAttribute("loginMember", loginMember);
+
+		// 로그인 성공 처리
+		String memberNo = String.valueOf(loginMember.getMemberNo());
+		String memberEmail = loginMember.getMemberEmail();
+
+		// 토큰 생성
+		JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
+
+		// Refresh Token을 HttpOnly 쿠키에 저장
+		Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+		refreshTokenCookie.setHttpOnly(true);
+		refreshTokenCookie.setSecure(false);
+		refreshTokenCookie.setPath("/");
+		refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+		resp.addCookie(refreshTokenCookie);
+
+		// 아이디 저장 쿠키
+		if (saveId != null) {
+			Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
+			cookie.setPath("/");
+			cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+			resp.addCookie(cookie);
+
 		} else {
-			// Session scope에 loginMember 추가
-			model.addAttribute("loginMember", loginMember);
-
-			// 로그인 성공 처리
-			String memberNo = String.valueOf(loginMember.getMemberNo());
-			String memberEmail = loginMember.getMemberEmail();
-
-			// 토큰 생성
-			JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
-
-			// Access Token을 HttpOnly 쿠키에 저장
-			Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
-			accessTokenCookie.setHttpOnly(true);
-			accessTokenCookie.setSecure(false);
-			accessTokenCookie.setPath("/");
-			accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-			resp.addCookie(accessTokenCookie);
-
-			// Refresh Token을 HttpOnly 쿠키에 저장
-			Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
-			refreshTokenCookie.setHttpOnly(true);
-			refreshTokenCookie.setSecure(false);
-			refreshTokenCookie.setPath("/api/auth/refresh");
-			refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
-			resp.addCookie(refreshTokenCookie);
-
-			// 아이디 저장 쿠키
-			if (saveId != null) {
-				Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
-				cookie.setPath("/");
-				cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
-				resp.addCookie(cookie);
-				
-			} else {
-				// saveId 쿠키 삭제
-				Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
-				cookie.setPath("/");
-				cookie.setMaxAge(0);
-				resp.addCookie(cookie);
-				
-			}
+			// saveId 쿠키 삭제
+			Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
+			cookie.setPath("/");
+			cookie.setMaxAge(0);
+			resp.addCookie(cookie);
 
 		}
 
-		return ResponseEntity.ok().build(); // 로그인 성공 시 200 OK 반환
+		// Access Token과 사용자 정보를 응답 본문에 포함
+		Map<String, Object> responseData = new HashMap<>();
+		responseData.put("accessToken", tokenInfo.accessToken());
+		responseData.put("memberInfo", loginMember);
+
+		return ResponseEntity.ok(responseData); // 로그인 성공 시 200 OK 반환
 	}
 
 	/**
@@ -189,20 +184,12 @@ public class MemberController {
 	@PostMapping("logout")
 	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, SessionStatus status) {
 		try {
-			// Access Token 쿠키 삭제
-			Cookie accessTokenCookie = new Cookie("Access-Token", "");
-			accessTokenCookie.setHttpOnly(true); // HttpOnly 설정 추가
-			accessTokenCookie.setSecure(false); // 원래 설정과 동일하게
-			accessTokenCookie.setMaxAge(0);
-			accessTokenCookie.setPath("/");
-			response.addCookie(accessTokenCookie);
-
 			// Refresh Token 쿠키도 삭제
 			Cookie refreshTokenCookie = new Cookie("Refresh-Token", "");
 			refreshTokenCookie.setHttpOnly(true); // HttpOnly 설정 추가
 			refreshTokenCookie.setSecure(false); // 원래 설정과 동일하게
 			refreshTokenCookie.setMaxAge(0);
-			refreshTokenCookie.setPath("/api/auth/refresh"); // 원래 path와 동일하게
+			refreshTokenCookie.setPath("/"); // 원래 path와 동일하게
 			response.addCookie(refreshTokenCookie);
 
 			status.setComplete();

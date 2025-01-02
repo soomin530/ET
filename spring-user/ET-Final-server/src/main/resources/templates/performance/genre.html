@@ -30,31 +30,6 @@
 
 	<div class="performance-container">
 		<div class="performance-grid" id="performanceGrid">
-			<th:block th:each="performance : ${performances}">
-				<div class="performance-item"
-					th:onclick="|location.href='@{/performance/detail/{mt20id}(mt20id=${performance.mt20id})}'|">
-					<div class="image-container">
-						<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image"
-							loading="lazy" decoding="async">
-					</div>
-					<div class="performance-info">
-						<div class="performance-title" th:text="${performance.prfnm}">공연 제목</div>
-						<div class="performance-date">
-							<span th:text="${performance.prfpdfrom}">시작일</span> ~
-							<span th:text="${performance.prfpdto}">종료일</span>
-						</div>
-						<div class="performance-venue" th:text="${performance.fcltynm}">공연장</div>
-						<div class="performance-rank">
-					        <div class="review-stars">
-					            <th:block th:with="stars=${performance.prfreviewRank}">
-					                <span class="static-stars" th:text="${'★'.repeat(stars) + '☆'.repeat(5 - stars)}"></span>
-					                <span class="numeric-rating" th:text="|${stars}/5|"></span>
-					            </th:block>
-					        </div>
-					    </div>
-					</div>
-				</div>
-			</th:block>
 		</div>
 		<div class="loading-spinner" style="display: none;">
 			Loading...

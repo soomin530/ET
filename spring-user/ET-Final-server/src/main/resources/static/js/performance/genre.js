@@ -92,6 +92,58 @@ function createPerformanceElement(performance) {
 	return div;
 }
 
+function createNoDataMessage(filter) {
+    const div = document.createElement('div');
+    div.className = 'no-data-message';
+	
+	console.log(filter);
+    
+    let message, suggestion;
+    switch(filter) {
+        case 'rating':
+			message = '등록된 공연이 없습니다';
+            suggestion = `<p>다른 카테고리를 확인해보세요</p>
+                         <div class="filter-suggestions">
+                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'rating\\']').click()">인기 공연</span>
+                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">예정된 공연</span>
+                         </div>`;
+			break;
+        case 'upcoming':
+            message = '예정된 공연이 없습니다';
+            suggestion = `<p>다른 장르의 공연을 확인해보세요</p>
+                         <div class="genre-buttons">
+                             <button class="suggestion-btn" onclick="location.href='/performance/genre/musical'">뮤지컬</button>
+                             <button class="suggestion-btn" onclick="location.href='/performance/genre/theater'">연극</button>
+                             <button class="suggestion-btn" onclick="location.href='/performance/genre/classic'">클래식</button>
+                         </div>`;
+            break;
+        case 'ongoing':
+            message = '현재 진행중인 공연이 없습니다';
+            suggestion = `<p>곧 시작될 공연을 확인해보세요</p>
+                         <button class="suggestion-btn" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">
+                             공연 예정작 보기
+                         </button>`;
+            break;
+        default:
+            message = '등록된 공연이 없습니다';
+            suggestion = `<p>다른 카테고리를 확인해보세요</p>
+                         <div class="filter-suggestions">
+                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'rating\\']').click()">인기 공연</span>
+                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">예정된 공연</span>
+                         </div>`;
+    }
+
+    div.innerHTML = `
+        <div class="empty-state">
+            <div class="empty-icon">🎭</div>
+            <h3>${message}</h3>
+            ${suggestion}
+        </div>
+    `;
+
+    return div;
+}
+
 // loadMorePerformances 함수
 function loadMorePerformances() {
 	if (isLoading || !hasMoreData) return;
@@ -126,17 +178,10 @@ function loadMorePerformances() {
 				});
 				page += 1;
 			} else {
-				const perforContainer = document.querySelector('.performance-container');
-				hasMoreData = false;
-				const div = document.createElement('div');
-
-				// 스타일을 별도의 클래스로 만들어 적용
-				div.className = 'no-data-message';
-				div.innerHTML = `
-				    <h1>데이터가 없습니다</h1>
-				`;
-
-				perforContainer.appendChild(div);
+			    const perforContainer = document.querySelector('.performance-container');
+			    hasMoreData = false;
+			    const noDataMessage = createNoDataMessage(currentFilter);
+			    perforContainer.appendChild(noDataMessage);
 			}
 			// 초기 로드 완료 표시
 			initialLoadComplete = true;
