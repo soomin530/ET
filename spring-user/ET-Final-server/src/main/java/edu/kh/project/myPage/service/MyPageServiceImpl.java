@@ -15,9 +15,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public abstract class MyPageServiceImpl implements MyPageService {
+public class MyPageServiceImpl implements MyPageService {
     
     private final MyPageMapper mapper;
+    
     private final BCryptPasswordEncoder bcrypt;
    
    
