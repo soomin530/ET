@@ -17,7 +17,7 @@
 	    )
 	</insert>
 	
-	<!-- 예약 정보 저장 -->
+	<!-- 예약 내역 저장 -->
 	<insert id="insertBooking">
 	    INSERT INTO TB_TICKET_BOOKING (
 	        BOOKING_ID, BOOKING_DATE, TOTAL_PRICE, PAYMENT_DATE, MEMBER_NO, MT20ID, MT10ID, MERCHANT_UID, BOOKING_STATUS
@@ -31,7 +31,7 @@
 	    INSERT INTO TB_TICKET_SEAT (
 	        SEATS_ID, SEAT_STATUS, MT20ID, MEMBER_NO, SHOW_DATE, GRADE_ID, SHOW_TIME
 	    ) VALUES (
-	        SEATS_SEQ.NEXTVAL, 'BOOKED', #{mt20id}, #{memberNo}, TO_DATE(#{showDate}, 'YYYY-MM-DD'), #{gradeId}, #{showTime}
+	        #{seatId}, 'BOOKED', #{mt20id}, #{memberNo}, TO_DATE(#{showDate}, 'YYYY-MM-DD'), #{gradeId}, #{showTime}
 	    )
 	</insert>
 

@@ -83,13 +83,18 @@ public class paymentController {
 	 * @return
 	 */
 	@GetMapping("seat-selection")
-	public String seatSelection(@RequestParam("mt20id") String mt20id,
-			@RequestParam("selectedDate") String selectedDate, @RequestParam("selectedTime") String selectedTime,
+	public String seatSelection(
+			@RequestParam("mt20id") String mt20id,
+			@RequestParam("selectedDate") String selectedDate,
+			@RequestParam("selectedTime") String selectedTime,
 			@RequestParam("dayOfWeek") int dayOfWeek, // 요일 추가
 			Model model) {
 
 		try {
-
+			 model.addAttribute("mt20id", mt20id);
+			 model.addAttribute("selectedDate", selectedDate);
+			 model.addAttribute("selectedTime", selectedTime);
+			 model.addAttribute("dayOfWeek", dayOfWeek);
 
 			return "payment/seat-selection";
 
@@ -136,7 +141,7 @@ public class paymentController {
 	// Controller
 	@GetMapping("seats")
 	@ResponseBody
-	public ResponseEntity<List<Seat>> getSeats(
+	public ResponseEntity<Map<String, Object>> getSeats(
 	        @RequestParam("mt20id") String mt20id,
 	        @RequestParam("selectedDate") String selectedDate, 
 	        @RequestParam("selectedTime") String selectedTime,
@@ -146,8 +151,23 @@ public class paymentController {
 	             mt20id, selectedDate, selectedTime);
 
 	    try {
+	    	// 좌석 조회
 	        List<Seat> seats = service.getSeatsByPerformance(mt20id, selectedDate, selectedTime, dayOfWeek);
-	        return ResponseEntity.ok(seats);
+	       
+	        
+	        // 이미 예약된 좌석 조회
+	        List<Seat> bookedSeats = service.getBookedSeats(mt20id, selectedDate, selectedTime);
+
+	        // 결과를 Map으로 반환
+	        Map<String, Object> result = new HashMap<>();
+	        result.put("seats", seats);
+	        result.put("bookedSeats", bookedSeats);
+	        
+	        
+	        
+	        return ResponseEntity.ok(result);
+	        
+	        
 
 	    } catch (Exception e) {
 	        log.error("좌석 조회 중 오류 발생", e);
@@ -240,6 +260,13 @@ public class paymentController {
 
 			// 4. TB_TICKET_SEAT에 좌석 데이터 삽입
 			for (Map<String, Object> seatMap : paymentData.getSeatIds()) {
+				
+				// 필수 값 확인
+			    if (seatMap.get("seatId") == null || seatMap.get("gradeId") == null) {
+			        log.warn("좌석 데이터가 올바르지 않습니다: {}", seatMap);
+			        continue; // 해당 좌석 데이터를 건너뜁니다
+			    }
+
 			    Seat seatData = Seat.builder()
 			        .seatId((String) seatMap.get("seatId"))
 			        .gradeId((String) seatMap.get("gradeId")) // gradeId 명시적으로 설정
@@ -255,7 +282,7 @@ public class paymentController {
 			        log.warn("좌석 데이터 삽입 실패: {}", seatMap.get("seatId"));
 			    }
 			}
-
+			
 			
 			return ResponseEntity.ok("결제가 성공적으로 저장되었고 좌석 상태가 업데이트되었습니다.");
 

@@ -36,8 +36,10 @@ public interface paymentService {
 	// 좌석 예약
 	boolean insertTicketSeat(Seat seatData);
 
-	// 좌석 예약
-	//boolean insertTicketSeat(Seat seatData);
+	// 이미 예약된 좌석 조회
+	List<Seat> getBookedSeats(String mt20id, String selectedDate, String selectedTime);
+
+
 
 
 
