@@ -1,17 +1,20 @@
 package edu.kh.project.perfmgr.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -21,6 +24,7 @@ import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.member.service.MemberService;
 import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.perfmgr.service.PerfmgrService;
+import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.redis.model.service.RedisService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
@@ -44,53 +48,49 @@ public class PerfmgrController {
 	private final RedisService redisService;
 
 	@PostMapping("login")
-	public String login(PerfMgr inputMember, 
-	                  HttpSession session,
-	                  RedirectAttributes ra,
-	                  Model model,
-	                  @RequestParam(value="saveId", required=false) String saveId,
-	                  HttpServletResponse resp) {
+	public String login(PerfMgr inputMember, HttpSession session, RedirectAttributes ra, Model model,
+			@RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
 
-	   // 로그인 서비스 호출
-	   PerfMgr perfmgrLoginMember = service.login(inputMember);
+		// 로그인 서비스 호출
+		PerfMgr perfmgrLoginMember = service.login(inputMember);
 
-	   String path = null;
+		String path = null;
 
-	   // 로그인 실패 시  
-	   if(inputMember == null) {
-	       ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
-	       path = "login";
-	   } else {
-	       // Session scope에 loginMember 추가
-	       model.addAttribute("loginMember", perfmgrLoginMember);
+		// 로그인 실패 시
+		if (inputMember == null) {
+			ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
+			path = "login";
+		} else {
+			// Session scope에 loginMember 추가
+			model.addAttribute("loginMember", perfmgrLoginMember);
 
-	       // JWT 토큰 생성
-	       String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
-	       String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
+			// JWT 토큰 생성
+			String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
+			String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
 
-	       // 토큰 생성 및 Redis에 저장  
-	       JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
+			// 토큰 생성 및 Redis에 저장
+			JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
-	       // Access Token을 HttpOnly 쿠키에 저장
-	       Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
-	       accessTokenCookie.setHttpOnly(true);
-	       accessTokenCookie.setSecure(false); // 개발환경은 false
-	       accessTokenCookie.setPath("/");
-	       accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-	       resp.addCookie(accessTokenCookie);
+			// Access Token을 HttpOnly 쿠키에 저장
+			Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
+			accessTokenCookie.setHttpOnly(true);
+			accessTokenCookie.setSecure(false); // 개발환경은 false
+			accessTokenCookie.setPath("/");
+			accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
+			resp.addCookie(accessTokenCookie);
 
-	       // Refresh Token을 HttpOnly 쿠키에 저장 
-	       Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
-	       refreshTokenCookie.setHttpOnly(true);
-	       refreshTokenCookie.setSecure(false); // 개발환경은 false
-	       refreshTokenCookie.setPath("/api/auth/refresh");
-	       refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
-	       resp.addCookie(refreshTokenCookie);
+			// Refresh Token을 HttpOnly 쿠키에 저장
+			Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+			refreshTokenCookie.setHttpOnly(true);
+			refreshTokenCookie.setSecure(false); // 개발환경은 false
+			refreshTokenCookie.setPath("/api/auth/refresh");
+			refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+			resp.addCookie(refreshTokenCookie);
 
-	       path = "/";
-	   }
+			path = "/";
+		}
 
-	   return "redirect:" + path;
+		return "redirect:" + path;
 	}
 
 	/**
@@ -124,16 +124,16 @@ public class PerfmgrController {
 
 		return "redirect:" + path;
 	}
-	
-	/** 로그아웃 진행
+
+	/**
+	 * 로그아웃 진행
+	 * 
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	@PostMapping("logout")
-	public ResponseEntity<?> logout(HttpServletRequest request,
-	                                 HttpServletResponse response,
-	                                 SessionStatus status) {
+	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, SessionStatus status) {
 		try {
 			// Access Token 쿠키 삭제
 			Cookie accessTokenCookie = new Cookie("Access-token", "");
@@ -147,7 +147,6 @@ public class PerfmgrController {
 			refreshTokenCookie.setPath("/");
 			response.addCookie(refreshTokenCookie);
 
-
 			status.setComplete();
 
 			return ResponseEntity.ok().body(Map.of("message", "로그아웃 되었습니다.", "redirectUrl", "/"));
@@ -156,7 +155,7 @@ public class PerfmgrController {
 			return ResponseEntity.internalServerError().body(Map.of("message", "로그아웃 처리 중 오류가 발생했습니다."));
 		}
 	}
-	
+
 	/**
 	 * 이메일 중복검사 (비동기 요청)
 	 * 
@@ -190,4 +189,95 @@ public class PerfmgrController {
 		return service.checkNickname(concertManagerNickname);
 	}
 
+	/**
+	 * 공연관리 버튼 눌렀을 때 공연 목록 / 공연 등록 조회하는 경로로 이동
+	 * 
+	 * @return
+	 * @author 우수민
+	 */
+	@GetMapping("performance-management")
+	public String performanceManagement() {
+		return "perfmgr/performance-management";
+	}
+
+	/**
+	 * 관리자가 등록한 공연 목록 페이지로 이동
+	 * 
+	 * @param loginMember
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/performance-list")
+	public String manager(@SessionAttribute("loginMember") PerfMgr loginMember, Model model) {
+
+		// 로그인된 관리자 정보 가져오기
+		int memberNo = loginMember.getConcertManagerNo();
+
+		// 등록된 공연 목록 가져오기 (서비스 호출)
+		List<Performance> performances = service.getPerformancesByManager(memberNo);
+
+		// 모델에 공연 목록 추가
+		model.addAttribute("performances", performances);
+
+		return "perfmgr/performance-list";
+	}
+
+	/**
+	 * 공연 등록 버튼 눌렀을 때 공연 등록하는 페이지로 이동
+	 * 
+	 * @return
+	 * @author 우수민
+	 */
+	@GetMapping("performance-registration-fixed")
+	public String updatePerformance() {
+		return "perfmgr/performance-registration-fixed";
+	}
+
+	/**
+	 * 관리자 공연 상세페이지
+	 * 
+	 * @param mt20id
+	 * @param model
+	 * @return
+	 * @author 우수민
+	 */
+	@GetMapping("/performance-manager-detail/{mt20id}")
+	public String managerDetail(@PathVariable("mt20id") String mt20id, Model model) {
+		log.info("Fetching performance details for ID: {}", mt20id);
+
+		Performance performance = service.getPerformanceById(mt20id);
+		log.info("Retrieved performance: {}", performance);
+
+		if (performance == null) {
+			log.warn("No performance found for ID: {}", mt20id);
+			return "error/404";
+		}
+
+		model.addAttribute("performance", performance);
+		return "perfmgr/performance-manager-detail";
+	}
+	
+
+	/** 관리자 공연 상세 페이지에서 수정 버튼 클릭 시
+     *  해당 공연 수정 페이지로 이동
+     * @param mt20id
+     * @return
+     * @author 우수민
+     */
+	@GetMapping("/modifyPerformance")
+	public String modifyPerformance(@RequestParam("mt20id") String mt20id, Model model) {
+	    try {
+	        // 공연 정보 조회
+	        Performance performance = service.getPerformanceDetail(mt20id);
+	        
+	        // 모델에 공연 정보 추가
+	        model.addAttribute("performance", performance);
+	        
+	        return "perfmgr/modifyPerformance";
+	        
+	    } catch (Exception e) {
+	        log.error("공연 수정 페이지 로딩 중 에러 발생: ", e);
+	        return "error/error";  // 에러 페이지로 리다이렉트
+	    }
+	}
 }
