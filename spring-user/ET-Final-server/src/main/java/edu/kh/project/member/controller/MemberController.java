@@ -63,7 +63,7 @@ public class MemberController {
 	private final JwtTokenUtil jwtTokenUtil;
 
 	private final RedisService redisService;
-	
+
 	private final PasswordService passwordService;
 
 	@Autowired
@@ -71,7 +71,9 @@ public class MemberController {
 
 	private static final List<String> WEEKDAYS = Arrays.asList("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일");
 
-	/** 로그인 진행
+	/**
+	 * 로그인 진행
+	 * 
 	 * @param inputMember
 	 * @param ra
 	 * @param model
@@ -80,61 +82,61 @@ public class MemberController {
 	 * @return
 	 */
 	@PostMapping("login")
-	public ResponseEntity<?> login(Member inputMember,
-					  RedirectAttributes ra,
-	                  Model model,
-	                  @RequestParam(value="saveId", required=false) String saveId,
-	                  HttpServletResponse resp) {
+	public ResponseEntity<?> login(Member inputMember, RedirectAttributes ra, Model model,
+			@RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
 
-	   // 로그인 서비스 호출 
-	   Member loginMember = service.login(inputMember);
+		// 로그인 서비스 호출
+		Member loginMember = service.login(inputMember);
 
-	   String path = null;
+		// 로그인 실패 시
+		if (loginMember == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
+		} else {
+			// Session scope에 loginMember 추가
+			model.addAttribute("loginMember", loginMember);
 
-	   // 로그인 실패 시
-	   if(loginMember == null) {
-		   return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                .body("아이디 또는 비밀번호가 일치하지 않습니다.");
-	   } else {
-	       // Session scope에 loginMember 추가
-	       model.addAttribute("loginMember", loginMember);
+			// 로그인 성공 처리
+			String memberNo = String.valueOf(loginMember.getMemberNo());
+			String memberEmail = loginMember.getMemberEmail();
 
-	       // 로그인 성공 처리
-	       String memberNo = String.valueOf(loginMember.getMemberNo());
-	       String memberEmail = loginMember.getMemberEmail();
+			// 토큰 생성
+			JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
-	       // 토큰 생성
-	       JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
+			// Access Token을 HttpOnly 쿠키에 저장
+			Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
+			accessTokenCookie.setHttpOnly(true);
+			accessTokenCookie.setSecure(false);
+			accessTokenCookie.setPath("/");
+			accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
+			resp.addCookie(accessTokenCookie);
 
-	       // Access Token을 HttpOnly 쿠키에 저장 
-	       Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
-	       accessTokenCookie.setHttpOnly(true);
-	       accessTokenCookie.setSecure(false);
-	       accessTokenCookie.setPath("/");
-	       accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-	       resp.addCookie(accessTokenCookie);
+			// Refresh Token을 HttpOnly 쿠키에 저장
+			Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+			refreshTokenCookie.setHttpOnly(true);
+			refreshTokenCookie.setSecure(false);
+			refreshTokenCookie.setPath("/api/auth/refresh");
+			refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+			resp.addCookie(refreshTokenCookie);
 
-	       // Refresh Token을 HttpOnly 쿠키에 저장
-	       Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
-	       refreshTokenCookie.setHttpOnly(true);
-	       refreshTokenCookie.setSecure(false); 
-	       refreshTokenCookie.setPath("/api/auth/refresh");
-	       refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
-	       resp.addCookie(refreshTokenCookie);
+			// 아이디 저장 쿠키
+			if (saveId != null) {
+				Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
+				cookie.setPath("/");
+				cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+				resp.addCookie(cookie);
+				
+			} else {
+				// saveId 쿠키 삭제
+				Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
+				cookie.setPath("/");
+				cookie.setMaxAge(0);
+				resp.addCookie(cookie);
+				
+			}
 
-	       // 아이디 저장 쿠키
-	       if(saveId != null) {
-	           Cookie cookie = new Cookie("saveId", loginMember.getMemberId());
-	           cookie.setPath("/");
-	           cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
-	           resp.addCookie(cookie);
-	       }
+		}
 
-	       path = "/";
-	   }
-
-
-	   return ResponseEntity.ok().build();  // 로그인 성공 시 200 OK 반환
+		return ResponseEntity.ok().build(); // 로그인 성공 시 200 OK 반환
 	}
 
 	/**
@@ -189,18 +191,18 @@ public class MemberController {
 		try {
 			// Access Token 쿠키 삭제
 			Cookie accessTokenCookie = new Cookie("Access-Token", "");
-			accessTokenCookie.setHttpOnly(true);  // HttpOnly 설정 추가
-			accessTokenCookie.setSecure(false);   // 원래 설정과 동일하게
+			accessTokenCookie.setHttpOnly(true); // HttpOnly 설정 추가
+			accessTokenCookie.setSecure(false); // 원래 설정과 동일하게
 			accessTokenCookie.setMaxAge(0);
 			accessTokenCookie.setPath("/");
 			response.addCookie(accessTokenCookie);
 
 			// Refresh Token 쿠키도 삭제
 			Cookie refreshTokenCookie = new Cookie("Refresh-Token", "");
-			refreshTokenCookie.setHttpOnly(true);  // HttpOnly 설정 추가
-			refreshTokenCookie.setSecure(false);   // 원래 설정과 동일하게
+			refreshTokenCookie.setHttpOnly(true); // HttpOnly 설정 추가
+			refreshTokenCookie.setSecure(false); // 원래 설정과 동일하게
 			refreshTokenCookie.setMaxAge(0);
-			refreshTokenCookie.setPath("/api/auth/refresh");  // 원래 path와 동일하게
+			refreshTokenCookie.setPath("/api/auth/refresh"); // 원래 path와 동일하게
 			response.addCookie(refreshTokenCookie);
 
 			status.setComplete();
@@ -221,92 +223,84 @@ public class MemberController {
 	 */
 	@PostMapping("/reissue")
 	public ResponseEntity<?> reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
-	    try {
-	        // Access Token 추출 시도
-	        String accessToken = extractAccessToken(request.getCookies());
-	        
-	        // Access Token이 없는 경우
-	        if (accessToken == null) {
-	            // Refresh Token 추출
-	            String refreshToken = extractRefreshToken(request.getCookies());
-	            
-	            if (refreshToken == null) {
-	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                    .body(Map.of("message", "토큰이 존재하지 않습니다."));
-	            }
-	            
-	            // Refresh Token 유효성 검증
-	            if (!jwtTokenUtil.validateToken(refreshToken)) {
-	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                    .body(Map.of("message", "유효하지 않은 Refresh Token입니다."));
-	            }
-	            
-	            // Refresh Token에서 memberNo 추출
-	            String memberNo = jwtTokenUtil.getMemberNoFromToken(refreshToken);
-	            
-	            // Redis에 저장된 Refresh Token과 비교
-	            String savedRefreshToken = redisService.getMemberNoFromToken(memberNo);
-	            if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
-	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                    .body(Map.of("message", "저장된 Refresh Token과 일치하지 않습니다."));
-	            }
-	            
-	            // 새로운 Access Token 발급
-	            String newAccessToken = jwtTokenUtil.regenerateAccessToken(refreshToken);
-	            
-	            // 새로운 Access Token을 쿠키에 저장
-	            Cookie newAccessTokenCookie = new Cookie("Access-token", newAccessToken);
-	            newAccessTokenCookie.setHttpOnly(true);
-	            newAccessTokenCookie.setPath("/");
-	            newAccessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-	            response.addCookie(newAccessTokenCookie);
-	            
-	            return ResponseEntity.ok()
-	                .body(Map.of(
-	                    "grantType", "Bearer",
-	                    "accessToken", newAccessToken,
-	                    "message", "토큰이 재발급되었습니다."
-	                ));
-	        }
-	        
-	        return ResponseEntity.badRequest()
-	            .body(Map.of("message", "유효한 Access Token이 존재합니다."));
-	            
-	    } catch (JwtException e) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	            .body(Map.of("message", "토큰이 유효하지 않습니다."));
-	    } catch (Exception e) {
-	        return ResponseEntity.internalServerError()
-	            .body(Map.of("message", "토큰 재발급 중 오류가 발생했습니다."));
-	    }
+		try {
+			// Access Token 추출 시도
+			String accessToken = extractAccessToken(request.getCookies());
+
+			// Access Token이 없는 경우
+			if (accessToken == null) {
+				// Refresh Token 추출
+				String refreshToken = extractRefreshToken(request.getCookies());
+
+				if (refreshToken == null) {
+					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "토큰이 존재하지 않습니다."));
+				}
+
+				// Refresh Token 유효성 검증
+				if (!jwtTokenUtil.validateToken(refreshToken)) {
+					return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+							.body(Map.of("message", "유효하지 않은 Refresh Token입니다."));
+				}
+
+				// Refresh Token에서 memberNo 추출
+				String memberNo = jwtTokenUtil.getMemberNoFromToken(refreshToken);
+
+				// Redis에 저장된 Refresh Token과 비교
+				String savedRefreshToken = redisService.getMemberNoFromToken(memberNo);
+				if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+					return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+							.body(Map.of("message", "저장된 Refresh Token과 일치하지 않습니다."));
+				}
+
+				// 새로운 Access Token 발급
+				String newAccessToken = jwtTokenUtil.regenerateAccessToken(refreshToken);
+
+				// 새로운 Access Token을 쿠키에 저장
+				Cookie newAccessTokenCookie = new Cookie("Access-token", newAccessToken);
+				newAccessTokenCookie.setHttpOnly(true);
+				newAccessTokenCookie.setPath("/");
+				newAccessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
+				response.addCookie(newAccessTokenCookie);
+
+				return ResponseEntity.ok()
+						.body(Map.of("grantType", "Bearer", "accessToken", newAccessToken, "message", "토큰이 재발급되었습니다."));
+			}
+
+			return ResponseEntity.badRequest().body(Map.of("message", "유효한 Access Token이 존재합니다."));
+
+		} catch (JwtException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "토큰이 유효하지 않습니다."));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("message", "토큰 재발급 중 오류가 발생했습니다."));
+		}
 	}
 
 	/**
 	 * 쿠키에서 Access Token 추출
 	 */
 	private String extractAccessToken(Cookie[] cookies) {
-	    if (cookies != null) {
-	        for (Cookie cookie : cookies) {
-	            if ("Access-token".equals(cookie.getName())) {
-	                return cookie.getValue();
-	            }
-	        }
-	    }
-	    return null;
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("Access-token".equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * 쿠키에서 Refresh Token 추출
 	 */
 	private String extractRefreshToken(Cookie[] cookies) {
-	    if (cookies != null) {
-	        for (Cookie cookie : cookies) {
-	            if ("Refresh-token".equals(cookie.getName())) {
-	                return cookie.getValue();
-	            }
-	        }
-	    }
-	    return null;
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("Refresh-token".equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -341,151 +335,155 @@ public class MemberController {
 	public int checkNickname(@RequestParam("memberNickname") String memberNickname) {
 		return service.checkNickname(memberNickname);
 	}
-	
-	
-	/** Id Pw 찾기 페이지
+
+	/**
+	 * Id Pw 찾기 페이지
+	 * 
 	 * @return
 	 */
 	@GetMapping("find")
 	public String findIdPw() {
 		return "common/findMember";
 	}
-	
-	
-    /** 아이디 찾기 처리
-     * @param paramMap
-     * @return
-     */
-    @PostMapping("/findId")
-    public ResponseEntity<Map<String, Object>> findMemberId(@RequestBody Map<String, Object> paramMap) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            // 이메일로 회원 정보 조회
-        	String email = (String) paramMap.get("email");
-            Member member = service.findByEmail(email);
-            
-            if (member != null) {
-                response.put("success", true);
-                response.put("memberId", member.getMemberId());
-                
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("success", false);
-                response.put("message", "일치하는 회원 정보를 찾을 수 없습니다.");
-                return ResponseEntity.ok(response);
-            }
-            
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "처리 중 오류가 발생했습니다.");
-            return ResponseEntity.internalServerError().body(response);
-        }
-    }
-    
-    /** 비밀번호 변경 처리전 토큰 생성
-     * @param paramMap
-     * @return
-     */
-    @PostMapping("/findPw")
-    public ResponseEntity<Map<String, Object>> findPassword(@RequestBody Map<String, Object> paramMap) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            Member member = service.findByIdAndEmail(paramMap);
-            
-            if (member != null) {
-            	TokenInfo resetToken = passwordService.generatePasswordResetToken(member.getMemberNo(), member.getMemberEmail());
-                
-                response.put("success", true);
-                response.put("resetToken", resetToken.accessToken());
-                
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("success", false);
-                response.put("message", "일치하는 회원 정보를 찾을 수 없습니다.");
-                return ResponseEntity.ok(response);
-            }
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "처리 중 오류가 발생했습니다.");
-            return ResponseEntity.internalServerError().body(response);
-        }
-    }
-    
-    /** 비밀번호 변경 페이지 이동
-     * @param token
-     * @param model
-     * @param ra
-     * @return
-     */
-    @GetMapping("/resetPassword")
-    public String resetPasswordPage(@RequestParam(name = "token", required = true) String token,
-    								Model model,
-    								RedirectAttributes ra) {
-        // 토큰 유효성 검증
-        try {
-        	// URL 디코딩 및 JSON 파싱
-            String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
-        	
-        	
-            if (!jwtTokenUtil.validateToken(decodedToken)) {
-                ra.addFlashAttribute("message", "만료되거나 유효하지 않은 토큰입니다.");
-                return "redirect:/member/find"; // 토큰이 유효하지 않으면 찾기 페이지로 리다이렉트
-            }
-            
-            // 토큰이 유효하면 재설정 페이지로 이동
-            model.addAttribute("token", decodedToken);
-            return "common/changeMemberPw"; // templates/member/resetPassword.html을 찾음
-            
-        } catch (Exception e) {
-            ra.addFlashAttribute("message", "비밀번호 재설정 페이지 접근 중 오류가 발생했습니다.");
-            return "redirect:/member/find";
-        }
-    }
-    
-    
-    @PostMapping("/resetPassword")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody Map<String, Object> paramMap) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-        	// map 데이터 가져오기
-        	String token = (String) paramMap.get("token");
-        	String password = (String) paramMap.get("newPassword");
-        	
-            // 토큰 유효성 검증
-            if (!jwtTokenUtil.validateToken(token)) {
-                response.put("success", false);
-                response.put("message", "만료되거나 유효하지 않은 토큰입니다.");
-                return ResponseEntity.ok(response);
-            }
 
-            // 토큰에서 회원 정보 추출
-            String memberNo = jwtTokenUtil.getMemberNoFromToken(token);
-            
-            // 비밀번호 업데이트
-            int result = service.updatePassword(Integer.parseInt(memberNo), password);
-            
-            if(result > 0) {
-	            response.put("success", true);
-	            response.put("message", "비밀번호가 성공적으로 변경되었습니다.");
-	            return ResponseEntity.ok(response);
-	            
-            } else {
-            	response.put("success", false);
-	            response.put("message", "비밀번호 변경 중 오류가 발생했습니다.");
-	            return ResponseEntity.internalServerError().body(response);
-	            
-            }
-            
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "비밀번호 변경 중 오류가 발생했습니다.");
-            return ResponseEntity.internalServerError().body(response);
-        }
-    }
+	/**
+	 * 아이디 찾기 처리
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	@PostMapping("/findId")
+	public ResponseEntity<Map<String, Object>> findMemberId(@RequestBody Map<String, Object> paramMap) {
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			// 이메일로 회원 정보 조회
+			String email = (String) paramMap.get("email");
+			Member member = service.findByEmail(email);
+
+			if (member != null) {
+				response.put("success", true);
+				response.put("memberId", member.getMemberId());
+
+				return ResponseEntity.ok(response);
+			} else {
+				response.put("success", false);
+				response.put("message", "일치하는 회원 정보를 찾을 수 없습니다.");
+				return ResponseEntity.ok(response);
+			}
+
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "처리 중 오류가 발생했습니다.");
+			return ResponseEntity.internalServerError().body(response);
+		}
+	}
+
+	/**
+	 * 비밀번호 변경 처리전 토큰 생성
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	@PostMapping("/findPw")
+	public ResponseEntity<Map<String, Object>> findPassword(@RequestBody Map<String, Object> paramMap) {
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			Member member = service.findByIdAndEmail(paramMap);
+
+			if (member != null) {
+				TokenInfo resetToken = passwordService.generatePasswordResetToken(member.getMemberNo(),
+						member.getMemberEmail());
+
+				response.put("success", true);
+				response.put("resetToken", resetToken.accessToken());
+
+				return ResponseEntity.ok(response);
+			} else {
+				response.put("success", false);
+				response.put("message", "일치하는 회원 정보를 찾을 수 없습니다.");
+				return ResponseEntity.ok(response);
+			}
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "처리 중 오류가 발생했습니다.");
+			return ResponseEntity.internalServerError().body(response);
+		}
+	}
+
+	/**
+	 * 비밀번호 변경 페이지 이동
+	 * 
+	 * @param token
+	 * @param model
+	 * @param ra
+	 * @return
+	 */
+	@GetMapping("/resetPassword")
+	public String resetPasswordPage(@RequestParam(name = "token", required = true) String token, Model model,
+			RedirectAttributes ra) {
+		// 토큰 유효성 검증
+		try {
+			// URL 디코딩 및 JSON 파싱
+			String decodedToken = URLDecoder.decode(token, StandardCharsets.UTF_8);
+
+			if (!jwtTokenUtil.validateToken(decodedToken)) {
+				ra.addFlashAttribute("message", "만료되거나 유효하지 않은 토큰입니다.");
+				return "redirect:/member/find"; // 토큰이 유효하지 않으면 찾기 페이지로 리다이렉트
+			}
+
+			// 토큰이 유효하면 재설정 페이지로 이동
+			model.addAttribute("token", decodedToken);
+			return "common/changeMemberPw"; // templates/member/resetPassword.html을 찾음
+
+		} catch (Exception e) {
+			ra.addFlashAttribute("message", "비밀번호 재설정 페이지 접근 중 오류가 발생했습니다.");
+			return "redirect:/member/find";
+		}
+	}
+
+	@PostMapping("/resetPassword")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody Map<String, Object> paramMap) {
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			// map 데이터 가져오기
+			String token = (String) paramMap.get("token");
+			String password = (String) paramMap.get("newPassword");
+
+			// 토큰 유효성 검증
+			if (!jwtTokenUtil.validateToken(token)) {
+				response.put("success", false);
+				response.put("message", "만료되거나 유효하지 않은 토큰입니다.");
+				return ResponseEntity.ok(response);
+			}
+
+			// 토큰에서 회원 정보 추출
+			String memberNo = jwtTokenUtil.getMemberNoFromToken(token);
+
+			// 비밀번호 업데이트
+			int result = service.updatePassword(Integer.parseInt(memberNo), password);
+
+			if (result > 0) {
+				response.put("success", true);
+				response.put("message", "비밀번호가 성공적으로 변경되었습니다.");
+				return ResponseEntity.ok(response);
+
+			} else {
+				response.put("success", false);
+				response.put("message", "비밀번호 변경 중 오류가 발생했습니다.");
+				return ResponseEntity.internalServerError().body(response);
+
+			}
+
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "비밀번호 변경 중 오류가 발생했습니다.");
+			return ResponseEntity.internalServerError().body(response);
+		}
+	}
 
 	@GetMapping("perform-and-save")
 	public String performAndSaveVenues() {

@@ -55,7 +55,7 @@ public class PerformanceController {
 		}
 
 		// 첫 페이지 데이터만 가져오기 (20개)
-		List<Performance> performances = performanceService.getPerformancesByPage(1, 20, genre);
+		List<Performance> performances = performanceService.getPerformancesByPage(1, 20, genre, "");
 
 		log.debug("Performances: {}", performances);
 

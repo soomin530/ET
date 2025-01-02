@@ -1,3 +1,23 @@
+// 쿠키에서 매개변수로 전달받은 key가 일치하는 value 얻어오기 함수
+const getCookie = (key) => {
+	
+
+	const cookies = document.cookie;
+	const cookieList = cookies.split("; ")
+		.map(el => el.split("="));
+
+	const obj = {}; // 비어있는 객체 선언
+
+	for (let i = 0; i < cookieList.length; i++) {
+		const k = cookieList[i][0]; 
+		const v = cookieList[i][1]; 
+		obj[k] = v;
+	}
+	
+	return obj[key];
+
+}
+
 // 다음 주소 API
 function execDaumPostcode() {
 	new daum.Postcode({
@@ -48,6 +68,21 @@ const loginBtn = document.getElementById("login-Btn");
 const memberLoginId = document.getElementById("memberLoginId");
 const memberLoginPw = document.getElementById("memberLoginPw");
 
+if (memberLoginId != null) {
+
+	// 쿠키 중 key 값이 "saveId" 인 요소의 value 얻어오기
+	const saveId = getCookie("saveId");
+
+	// saveId 값이 있을 경우
+	if (saveId != undefined) {
+		memberLoginId.value = saveId;
+
+		// 아이디 저장 체크박스에 체크해두기
+		document.getElementById('saveIdCheckbox').checked = true;
+	}
+
+}
+
 const performLogin = () => {
 	// 입력 검증
 	if (memberLoginId.value.length === 0) {
@@ -67,7 +102,8 @@ const performLogin = () => {
 	form.append('memberPw', memberLoginPw.value);
 
 	// saveId 체크박스가 있다면
-	const saveIdCheckbox = document.getElementById('saveId');
+	const saveIdCheckbox = document.getElementById('saveIdCheckbox');
+	console.log(saveIdCheckbox);
 	if (saveIdCheckbox && saveIdCheckbox.checked) {
 		form.append('saveId', 'on');
 	}
@@ -83,11 +119,11 @@ const performLogin = () => {
 			} else if (response.ok) {
 				// 현재 페이지 URL 확인 후 리다이렉트
 				if (window.location.pathname === '/member/find') {
-				    window.location.href = '/'; // 메인 페이지로 이동
+					window.location.href = '/'; // 메인 페이지로 이동
 				} else {
-				    window.location.href = window.location.href; // 현재 페이지 새로고침
+					window.location.href = window.location.href; // 현재 페이지 새로고침
 				}
-	        }
+			}
 		})
 		.catch(error => {
 			console.error("로그인 에러:", error);

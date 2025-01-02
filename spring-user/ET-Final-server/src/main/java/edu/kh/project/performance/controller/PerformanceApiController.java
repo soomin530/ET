@@ -32,8 +32,9 @@ public class PerformanceApiController {
     @ResponseBody
     public List<Performance> getMorePerformances(
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "genre") String genre) {
+            @RequestParam(value = "genre") String genre,
+            @RequestParam(value = "filter") String filter) {
         int pageSize = 20;
-        return performanceService.getPerformancesByPage(page, pageSize, genre);
+        return performanceService.getPerformancesByPage(page, pageSize, genre, filter);
     }
 }

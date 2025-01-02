@@ -30,10 +30,10 @@ public class PerformanceServiceImpl implements PerformanceService {
 
     // 장르별 공연 목록 조회 무한 스크롤
     @Override
-    public List<Performance> getPerformancesByPage(int page, int pageSize, String genre) {
+    public List<Performance> getPerformancesByPage(int page, int pageSize, String genre, String filter) {
         // 시작 위치 계산
         int offset = (page - 1) * pageSize;
-        return mapper.genreWithPaging(genre, pageSize, offset);
+        return mapper.genreWithPaging(genre, pageSize, offset, filter);
     }
 
 	
