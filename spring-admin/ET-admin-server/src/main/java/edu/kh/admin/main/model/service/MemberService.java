@@ -1,24 +1,29 @@
-package edu.kh.admin.main.model.mapper;
+package edu.kh.admin.main.model.service;
 
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import edu.kh.admin.main.model.dto.Member;
 
-@Mapper
-public interface AdminMapper {
+public interface MemberService {
 
-	/** 모든 유저 정보
+	/** 모든 유저 정보 
 	 * @return
 	 */
 	List<Member> showMemberList();
 
-	/** 검색 정보 조회
+	/** 검색된 유저 정보
 	 * @param formdata
 	 * @return
 	 */
 	List<Member> searchShowMemberList(Map<String, Object> formdata);
 
+	/** 상세정보 띄우기
+	 * @param memberNo
+	 * @return
+	 */
+	List<Member> memberDetail(int memberNo);
+
+	
+	
 }

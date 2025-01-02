@@ -7,7 +7,7 @@ import edu.kh.admin.main.model.dto.Announcement;
 import edu.kh.admin.main.model.dto.Member;
 import edu.kh.admin.main.model.dto.Performance;
 
-public interface AnnouncementDetailService {
+public interface AnnouncementService {
 
 	/** 모든 공지사항 정보 
 	 * @return
@@ -22,6 +22,14 @@ public interface AnnouncementDetailService {
 	 * @return 
 	 */
 	int upload(String title, String content);
+
+
+
+	/** 상세 내용 정보
+	 * @param announceNo
+	 * @return
+	 */
+	List<Announcement> announcementDetail(int announceNo);
 
 	
 }

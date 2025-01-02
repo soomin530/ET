@@ -5,10 +5,13 @@ import PerformanceManage from './PerformanceManage.js';
 import BookedSeatManage from './BookedSeatManage.js';
 import AnnouncementManage from './AnnouncementManage.js';
 import ManagerEnroll from './ManagerEnroll.js';
+import MemberDetail from './MemberDetail.js';
+import AnnouncementDetail from './AnnouncementDetail.js';
 import Quill from './Quill.jsx';
 import { AuthContext } from './AuthContext.js';
 
 import { NavLink, Route, Routes } from 'react-router';
+import ManagerEnrollDetail from './ManagerEnrollDetail.js';
 
 
 
@@ -47,8 +50,11 @@ export default function DashBoard() {
               <Route path='/AnnouncementManage' element={<AnnouncementManage/>}/>
               <Route path='/ManagerEnroll' element={<ManagerEnroll/>}/>
               <Route path='/Quill' element={<Quill/>}/>
+              <Route path="/member/:memberNo" element={<MemberDetail />} /> 
+              <Route path="/announcement/:announceNo" element={<AnnouncementDetail />} /> 
+              <Route path="/manager/:concertManagerNo" element={<ManagerEnrollDetail />} />
             </Routes>
           </div>
-      </div>
+    </div>
   )
 }

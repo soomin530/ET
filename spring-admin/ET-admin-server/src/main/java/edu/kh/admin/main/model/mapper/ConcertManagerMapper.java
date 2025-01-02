@@ -22,6 +22,12 @@ public interface ConcertManagerMapper {
 	 */
 	List<ConcertManager> searchManagerEnrollList(Map<String, Object> formdata);
 
+	/** 업체계정 상세 
+	 * @param concertManagerNo
+	 * @return
+	 */
+	List<ConcertManager> concertManagerDetail(int concertManagerNo);
+
 
 
 }

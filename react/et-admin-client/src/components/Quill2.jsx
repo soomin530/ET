@@ -33,11 +33,11 @@ function Write() {
     formData.append("title", title);
     formData.append("content", content);
     formData.append("date", date);
+
     if (file) {
       formData.append("file", file);
     }
     
-
     try {
       await axiosApi({
         url: '/announcementDetail/upload',

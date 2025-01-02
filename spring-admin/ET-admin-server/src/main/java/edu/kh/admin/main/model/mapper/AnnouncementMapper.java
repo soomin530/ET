@@ -8,12 +8,14 @@ import org.apache.ibatis.annotations.Param;
 import edu.kh.admin.main.model.dto.Announcement;
 
 @Mapper
-public interface AnnouncementDetailMapper {
+public interface AnnouncementMapper {
 
 
 	int upload(@Param("title") String title, @Param("content") String content);
 
 	List<Announcement> showAnnouncementList();
+
+	List<Announcement> announceDetail(int announceNo);
 
 
 

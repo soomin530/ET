@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
+import { useNavigate} from "react-router-dom";
 
 
 export default function AnnouncementManage() {
@@ -40,7 +41,7 @@ export default function AnnouncementManage() {
     // 공지사항 리스트를 위한 정보
   const getAnnouncementList = async() => {
       try {
-        const resp = await axiosApi.get("/announcementDetail/showAnnouncementList");
+        const resp = await axiosApi.get("/announcement/showAnnouncementList");
   
         if(resp.status === 200){
           setAnnouncementList(resp.data);
@@ -73,7 +74,7 @@ export default function AnnouncementManage() {
     };
     
     try {
-      const resp = await axiosApi.post("/announcementDetail/searchAnnouncementList",formData);
+      const resp = await axiosApi.post("/announcement/searchAnnouncementList",formData);
   
       // 요청 성공 처리
       if (resp.status === 200) {
@@ -136,6 +137,7 @@ export default function AnnouncementManage() {
 
 
 const AnnouncementList = ({ announcementList }) => {
+  const navigate = useNavigate();
   return (
     <section>
       {announcementList.length === 0 ? (
@@ -151,10 +153,11 @@ const AnnouncementList = ({ announcementList }) => {
           </thead>
           <tbody>
             {announcementList.map((announcement, index) => (
-              <tr
-              key={index}
-              onClick={() => window.location.href = `http://localhost:8081/announcementDetail/${announcement.announcementNo}`} 
-              style={{ cursor: 'pointer' }}>
+               <tr
+               key={index}
+               onClick={() => navigate(`/announcement/${announcement.announceNo}`)}
+               style={{ cursor: 'pointer' }}
+             >
                 <td>{announcement.announceNo}</td>
                 <td>{announcement.announceTitle}</td>
                 <td>{announcement.announceWriteDate}</td>

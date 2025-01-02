@@ -44,4 +44,27 @@ public class ConcertManagerServiceImpl implements ConcertManagerService{
 		public List<ConcertManager> searchManagerEnrollList(Map<String, Object> formdata) {
 			return mapper.searchManagerEnrollList(formdata);
 		}
+		
+		@Override
+		public List<ConcertManager> concertManagerDetail(int concertManagerNo) {
+		return mapper.concertManagerDetail(concertManagerNo);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 }

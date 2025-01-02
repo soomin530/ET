@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import edu.kh.admin.main.model.dto.Announcement;
 import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.service.AnnouncementDetailService;
+import edu.kh.admin.main.model.service.AnnouncementService;
 import edu.kh.admin.main.model.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,16 +37,16 @@ import lombok.extern.slf4j.Slf4j;
 			  allowCredentials = "true",
 			  methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
 				           RequestMethod.DELETE, RequestMethod.OPTIONS})
-@RequestMapping("announcementDetail")
+@RequestMapping("announcement")
 @RequiredArgsConstructor
 @Slf4j
 @SessionAttributes({ "loginMember" }) 
-public class AnnouncementDetail {
+public class AnnouncementController {
 
 	@Value("${upload.path}")
 	private String uploadDirectory;
 	
-	private final AnnouncementDetailService service;
+	private final AnnouncementService service;
 	
 	@GetMapping("showAnnouncementList")
 	public ResponseEntity<Object> showMemberList() {
@@ -58,7 +59,15 @@ public class AnnouncementDetail {
 		}
 	}
 	
-	
+	@GetMapping("/{announceNo:[0-9]+}")
+	public ResponseEntity<Object> getDetail(@PathVariable("announceNo") int announceNo) {
+	    List<Announcement> announce = service.announcementDetail(announceNo);
+	    if (announce != null) {
+	        return ResponseEntity.ok(announce);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
 	
 	
 	

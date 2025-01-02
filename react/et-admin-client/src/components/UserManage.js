@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
+import { useNavigate} from "react-router-dom";
 
 export default function UserManage() {
   const [selectedValue, setSelectedValue] = useState('회원이름');
   const [inputValue, setInputValue] = useState('');
   const [memberList,setMemberList] = useState([])
   const [loading, setLoading] = useState(true); // 로딩 상태
+
   
   const handleChange = (e) => {
     setSelectedValue(e.target.value);
@@ -32,7 +34,7 @@ export default function UserManage() {
   // 유저 리스트를 위한 정보
   const getShowMemberList = async() => {
     try {
-      const resp = await axiosApi.get("/admin/showMemberList");
+      const resp = await axiosApi.get("/member/showMemberList");
 
       if(resp.status === 200){
         setMemberList(resp.data);
@@ -83,7 +85,7 @@ export default function UserManage() {
       //   credentials: 'include', 
       // });
       // == axiosAPI가 이걸 줄여주는 거임
-      const resp = await axiosApi.post("/admin/searchShowMemberList",formData);
+      const resp = await axiosApi.post("/member/searchShowMemberList",formData);
   
       // 요청 성공 처리
       if (resp.status === 200) {
@@ -148,6 +150,7 @@ export default function UserManage() {
 
 
 const ShowMember = ({ memberList }) => {
+  const navigate = useNavigate();
   return (
     <section>
       {memberList.length === 0 ? (
@@ -166,8 +169,9 @@ const ShowMember = ({ memberList }) => {
             {memberList.map((member, index) => (
               <tr
               key={index}
-              onClick={() => window.location.href = `http://localhost:8081/member/${member.memberNo}`} 
-              style={{ cursor: 'pointer' }}>
+              onClick={() => navigate(`/member/${member.memberNo}`)}
+              style={{ cursor: 'pointer' }}
+            >
                 <td>{member.memberNo}</td>
                 <td>{member.memberNickname}</td>
                 <td>{member.memberAddress}</td>

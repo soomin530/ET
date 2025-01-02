@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
-
+import { useNavigate} from "react-router-dom";
 
 export default function ManagerEnroll() {
   const [enrollList,setEnrollList] = useState([])
@@ -135,6 +135,7 @@ export default function ManagerEnroll() {
 
 
 const ManagerEnrollList = ({ enrollList }) => {
+  const navigate = useNavigate();
   return (
     <section>
       {enrollList.length === 0 ? (
@@ -153,8 +154,9 @@ const ManagerEnrollList = ({ enrollList }) => {
             {enrollList.map((enroll, index) => (
               <tr
               key={index}
-              onClick={() => window.location.href = `http://localhost:8081/performance/${enroll.concertManagerNo}`} 
-              style={{ cursor: 'pointer' }}>
+              onClick={() => navigate(`/manager/${enroll.concertManagerNo}`)}
+              style={{ cursor: 'pointer' }}
+            >
                 <td>{enroll.concertManagerNo}</td>
                 <td>{enroll.concertManagerNickname}</td>
                 <td>{enroll.concertManagerTel}</td>

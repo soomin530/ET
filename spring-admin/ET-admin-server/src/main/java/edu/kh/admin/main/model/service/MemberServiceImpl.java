@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.admin.common.util.Utility;
 import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.mapper.AdminMapper;
+import edu.kh.admin.main.model.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,9 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 @Slf4j
-public class AdminServiceImpl implements AdminService{
+public class MemberServiceImpl implements MemberService{
 
-		private final AdminMapper mapper;
+		private final MemberMapper mapper;
 		private final BCryptPasswordEncoder bcrypt;
 		
 		@Override
@@ -69,5 +69,49 @@ public class AdminServiceImpl implements AdminService{
 			}
 			return list;
 		}
+		
+		@Override
+		public List<Member> memberDetail(int memberNo) {
+		    List<Member> members = mapper.memberDetail(memberNo);  // DB에서 회원 정보 가져오기
+		    
+		    for (Member member : members) {
+		        // 주소 가공: '^^^' 기준으로 분리
+		        if (member.getMemberAddress() != null) {
+		        	 String[] addressParts = member.getMemberAddress().split("\\^\\^\\^");
+		             if (addressParts.length == 3) {
+		                 String city = addressParts[0];
+		                 String district = addressParts[1];
+		                 String street = addressParts[2];
+		                 
+		                 String updatedAddress = city +" "+ district + " " + street;
+		                 member.setMemberAddress(updatedAddress);
+		            }
+		        }
+		        
+		        // 전화번호 가공: '01012345678' -> '010-1234-5678' 형태로
+		        if (member.getMemberTel() != null) {
+		            String phone = member.getMemberTel();
+		            if (phone.length() == 11) {
+		                String formattedPhone = phone.substring(0, 3) + "-" + phone.substring(3, 7) + "-" + phone.substring(7);
+		                member.setMemberTel(formattedPhone);
+		            }
+		        }
+		    }
+		    
+		    return members;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 }
