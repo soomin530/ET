@@ -15,139 +15,146 @@
 
     <style>
 		
-		.modal {
-		           display: none;
-		           position: fixed;
-		           top: 0;
-		           left: 0;
-		           width: 100%;
-		           height: 100%;
-		           background-color: rgba(0, 0, 0, 0.5);
-		           z-index: 1000;
-		       }
+		.adsModal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+}
 
-		       .modal.show {
-		           display: flex;
-		           justify-content: center;
-		           align-items: center;
-		       }
+.adsModal.show {
+    display: flex; /* 모달이 보이도록 설정 */
+}
 
-		       .modal-content {
-		           background-color: white;
-		           padding: 30px;
-		           border-radius: 8px;
-		           width: 90%;
-		           max-width: 500px;
-		           position: relative;
-		       }
+.adsModal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%; /* 모바일 화면을 고려한 넓이 */
+    max-width: 500px; /* 최대 넓이 제한 */
+    position: relative; /* 내부 요소 위치 조정 가능 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    animation: modalFadeIn 0.3s ease-in-out; /* 모달 등장 애니메이션 */
+}
 
-		       .modal-header {
-		           margin-bottom: 20px;
-		           padding-bottom: 10px;
-		           border-bottom: 1px solid #ddd;
-		       }
+.adsModal-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd; /* 구분선 추가 */
+}
 
-		       .modal-header h2 {
-		           margin: 0;
-		           font-size: 1.5rem;
-		       }
+.adsModal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
 
-		       .form-group {
-		           margin-bottom: 15px;
-		       }
+.adsForm-group {
+    margin-bottom: 15px;
+}
 
-		       .form-group label {
-		           display: block;
-		           margin-bottom: 5px;
-		           font-weight: bold;
-		       }
+.adsForm-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
 
-		       .form-group input {
-		           width: 100%;
-		           padding: 8px;
-		           border: 1px solid #ddd;
-		           border-radius: 4px;
-		           font-size: 14px;
-		       }
+.adsForm-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
 
-		       .form-group .required::after {
-		           content: " *";
-		           color: red;
-		       }
+.adsForm-group .required::after {
+    content: " *";
+    color: red;
+}
 
-		       .address-search-group {
-		           display: flex;
-		           gap: 10px;
-		       }
+.address-search-group {
+    display: flex;
+    gap: 10px;
+}
 
-		       .address-search-group input {
-		           width: 60%;
-		       }
+.address-search-group input {
+    flex: 1;
+}
 
-		       .address-search-btn {
-		           width: 40%;
-		           padding: 8px;
-		           background-color: #333;
-		           color: white;
-		           border: none;
-		           border-radius: 4px;
-		           cursor: pointer;
-		       }
+.address-search-btn {
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-		       .button-group {
-		           display: flex;
-		           justify-content: flex-end;
-		           gap: 10px;
-		           margin-top: 20px;
-		       }
+.address-search-btn:hover {
+    background-color: #555;
+}
 
-		       .button-group button {
-		           padding: 10px 20px;
-		           border: none;
-		           border-radius: 4px;
-		           cursor: pointer;
-		           font-size: 14px;
-		       }
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
 
-		       .cancel-btn {
-		           background-color: #ddd;
-		       }
+.adsCancel-btn {
+    background-color: #ddd;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-		       .submit-btn {
-		           background-color: #333;
-		           color: white;
-		       }
+.adsCancel-btn:hover {
+    background-color: #bbb;
+}
 
-		       /* 입력 필드 포커스 스타일 */
-		       .form-group input:focus {
-		           outline: none;
-		           border-color: #333;
-		           box-shadow: 0 0 3px rgba(0,0,0,0.2);
-		       }
-		   
-		
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Apple SD Gothic Neo', sans-serif;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+.adsSubmit-btn {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.adsSubmit-btn:hover {
+    background-color: #555;
+}
+
+.adsForm-group input:focus {
+    outline: none;
+    border-color: #333;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+/* 모달 팝업 등장 애니메이션 */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
         .sidebar {
 			width: 200px;
@@ -287,6 +294,86 @@
 			background-color: #eee;
 			border-radius: 5px;
 		}
+
+		/*0102 추가*/
+
+		/* 기본 스타일 */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.add-button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* 모달 스타일 */
+.adsModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.adsModal.show {
+    display: flex;
+}
+
+.adsModal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.adsForm-group {
+    margin-bottom: 15px;
+}
+
+.adsForm-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+
+		.address-list {
+    margin-top: 20px;
+}
+
+.address-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+
+
+
+
     </style>
 
 </head>
@@ -320,56 +407,63 @@
         <div class="container">
 			
             <div class="header">
-                <h1>배송지 관리</h1>
-				<p>나의 주소록은 최대 10개까지 저장할 수 있습니다.</p>
-                <button class="add-button">새 배송지 추가</button>
+              <h1>배송지 관리</h1>
+							<p>나의 주소록은 최대 10개까지 저장할 수 있습니다.</p>
+              <button class="add-button">새 배송지 추가</button>
             </div>
+
+						<div class="address-list">
+							<!-- 주소 목록이 여기에 동적으로 추가됨 -->
+						</div>
+
+
 			
 			<!-- 새 배송지 추가 모달 -->
-			<div id="addressModal" class="modal">
-			        <div class="modal-content">
-			            <div class="modal-header">
+			<div id="adsModal" class="adsModal">
+			        <div class="adsModal-content">
+			            <div class="adsModal-header">
 			                <h2>배송지 추가</h2>
 			            </div>
 			            <form id="addressForm">
-			                <div class="form-group">
+			                <div class="adsForm-group">
 			                    <label class="required" for="receiverName">받는 사람</label>
 			                    <input type="text" id="receiverName" required>
 			                </div>
 
-			                <div class="form-group">
-			                    <label class="required" for="postcode">우편번호</label>
+			                <div class="adsForm-group">
+			                    <label class="required" for="adsPostcode">우편번호</label>
 			                    <div class="address-search-group">
-			                        <input type="text" id="postcode" readonly required>
+			                        <input type="text" id="adsPostcode" readonly required>
 			                        
-									<button type="button" id="searchAddress" class="address-search-btn" onclick="execDaumPostcode()">주소 검색</button>
+															<button type="button" id="adsSearchAddress" 
+															class="address-search-btn">주소 검색</button>
 
 			                    </div>
 			                </div>
 
-			                <div class="form-group">
-			                    <label class="required" for="address">주소</label>
-			                    <input type="text" id="address" readonly required>
+			                <div class="adsForm-group">
+			                    <label class="required" for="adsAddress">주소</label>
+			                    <input type="text" id="adsAddress" readonly required>
 			                </div>
 
-			                <div class="form-group">
-			                    <label class="required" for="detailAddress">상세주소</label>
-			                    <input type="text" id="detailAddress" required>
+			                <div class="adsForm-group">
+			                    <label class="required" for="adsDetailAddress">상세주소</label>
+			                    <input type="text" id="adsDetailAddress" required>
 			                </div>
 
-			                <div class="form-group">
-			                    <label class="required" for="phone">휴대폰 번호</label>
-			                    <input type="tel" id="phone" required placeholder="ex) 010-1234-5678">
+			                <div class="adsForm-group">
+			                    <label class="required" for="adsPhone">휴대폰 번호</label>
+			                    <input type="tel" id="adsPhone" required placeholder="ex) 010-1234-5678">
 			                </div>
 
-			                <div class="form-group">
-			                    <label for="extraPhone">추가 연락처</label>
-			                    <input type="tel" id="extraPhone" placeholder="ex) 010-1234-5678">
+			                <div class="adsForm-group">
+			                    <label for="adsExtraPhone">추가 연락처</label>
+			                    <input type="tel" id="adsExtraPhone" placeholder="ex) 010-1234-5678">
 			                </div>
 
 			                <div class="button-group">
-			                    <button type="button" class="cancel-btn" id="cancelBtn">취소</button>
-			                    <button type="submit" class="submit-btn">등록</button>
+			                    <button type="button" class="adsCancel-btn" id="adsCancelBtn">취소</button>
+			                    <button type="submit" class="adsSubmit-btn" id="adsSubmitBtn">등록</button>
 			                </div>
 			            </form>
 			        </div>

@@ -1,6 +1,7 @@
 package edu.kh.project.myPage.model.service;
 
 import edu.kh.project.member.model.dto.Member;
+import edu.kh.project.myPage.model.dto.AddressDTO;
 
 public interface MyPageService {
 	
@@ -68,6 +69,12 @@ public interface MyPageService {
 	 * @return
 	 */
 	int updateMember(Member member);
+
+
+	/** 배송지 등록
+	 * @param addressDTO
+	 */
+	int addAddress(AddressDTO addressDTO);
 	
 	
 	

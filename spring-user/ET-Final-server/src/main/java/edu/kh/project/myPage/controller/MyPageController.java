@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import edu.kh.project.common.jwt.JwtTokenUtil;
 import edu.kh.project.email.model.service.EmailService;
 import edu.kh.project.member.model.dto.Member;
+import edu.kh.project.myPage.model.dto.AddressDTO;
 import edu.kh.project.myPage.model.service.MyPageService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -88,12 +89,12 @@ public class MyPageController {
 		return "mypage/changePw";
 	}
 
-	// 배송지 관리 페이지로 이동
-	@GetMapping("addressManagement")
-	public String addressManagement() {
-
-		return "mypage/addressManagement";
-	}
+//	// 배송지 관리 페이지로 이동
+//	@GetMapping("addressManagement")
+//	public String addressManagement() {
+//
+//		return "mypage/addressManagement";
+//	}
 
 	// 회원탈퇴 페이지로 이동
 	@GetMapping("membershipOut")
@@ -175,10 +176,27 @@ public class MyPageController {
     }
     
     
+    /** 배송지 관리
+     * @return
+     */
+    @GetMapping("addressManagement")
+    public String addressManagement() {
+        return "mypage/addressManagement"; // 배송지 관리 페이지 HTML 파일
+    }
+
+    /** 배송지 등록
+     * @param addressDTO
+     * @return
+     */
+    @PostMapping("/addAddress")
+    @ResponseBody
+    public ResponseEntity<String> addAddress(@RequestBody AddressDTO addressDTO) {
+        // 서비스 계층에서 배송지 저장 처리
+        // int result = service.addAddress(addressDTO);
+
+        return ResponseEntity.ok("배송지가 등록되었습니다.");
+    }
     
-    
-	
-	
 	
 	
 	
