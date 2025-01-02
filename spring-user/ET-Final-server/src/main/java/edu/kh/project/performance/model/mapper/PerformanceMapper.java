@@ -64,7 +64,6 @@ public interface PerformanceMapper {
 	List<PerformanceRanking> performanceRanking();
 	
 
-
 	/** 리뷰 등록
 	 * @param review
 	 * @return
@@ -102,13 +101,12 @@ public interface PerformanceMapper {
 	 */
 	List<Review> selectReviewsByPerformanceId(String mt20id);
 
-
-	/** 공연관리자가 등록한 공연 목록 조회 
-	 * @param memberNo
+    /** 관리자 공연 등록
+     *  -> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기
 	 * @return
 	 * @author 우수민
 	 */
-	List<Performance> selectPerformancesByManager(int memberNo);
+	List<Map<String, Object>> selectVenueList();
 
 
 }

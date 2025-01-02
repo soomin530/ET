@@ -74,7 +74,7 @@
 						<th:block th:if="*{member.memberAuth == 3}">
 							<button class="nickname-button" th:text="*{member.concertManagerNickname}" style="cursor: unset;">공연관리자 닉네임</button>
 							<button id="performanceManagerButton" class="performance-manage-button"
-								onclick="location.href='/performance/performance-management'">공연관리</button>
+								onclick="location.href='/perfmgr/performance-management'">공연관리</button>
 							<button class="logout-button" onclick="perfLogoutSession()">로그아웃</button>
 						</th:block>
 				</div>
