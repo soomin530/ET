@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import edu.kh.project.member.model.dto.Member;
+import edu.kh.project.myPage.model.dto.AddressDTO;
 
 @Mapper
 public interface MyPageMapper {
@@ -63,4 +64,5 @@ public interface MyPageMapper {
 	 */
 	int updateMember(Member member);
 
+	
 }

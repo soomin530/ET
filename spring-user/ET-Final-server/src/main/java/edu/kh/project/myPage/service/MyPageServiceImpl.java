@@ -3,19 +3,19 @@ package edu.kh.project.myPage.model.service;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.project.member.model.dto.Member;
+import edu.kh.project.myPage.model.dto.AddressDTO;
 import edu.kh.project.myPage.model.mapper.MyPageMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class MyPageServiceImpl implements MyPageService {
+public abstract class MyPageServiceImpl implements MyPageService {
     
     private final MyPageMapper mapper;
     private final BCryptPasswordEncoder bcrypt;
@@ -106,13 +106,22 @@ public class MyPageServiceImpl implements MyPageService {
 	}
 	
 	
-	
-	
 	// 회원 정보 수정
 	@Override
 	public int updateMember(Member member) {
 		
 		 return mapper.updateMember(member);
 	}
+
+	@Override
+	public int addAddress(AddressDTO addressDTO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	
+
+	
     
 }
