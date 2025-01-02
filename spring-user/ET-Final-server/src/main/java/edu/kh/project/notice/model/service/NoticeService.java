@@ -17,4 +17,9 @@ public interface NoticeService {
 	 */
 	Notice detailNotice(int noticeId);
 
+	/** 공지사항 전체 조회
+	 * @return
+	 */
+	List<Notice> getNoticeList();
+
 }

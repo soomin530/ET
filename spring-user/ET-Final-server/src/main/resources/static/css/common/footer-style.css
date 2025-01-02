@@ -1,13 +1,112 @@
 footer {
-	background: #333;
-	color: white;
-	text-align: center;
-	padding: 30px 20px;
-	margin-top: 40px;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 50px 0 20px;
+    margin-top: 80px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    padding: 0 20px;
+}
+
+.footer-section h3 {
+    color: #fff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.footer-section h4 {
+    color: #fff;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.footer-section p {
+    color: #999;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+    color: #999;
+    font-size: 0.9em;
+}
+
+.footer-section ul li a {
+    color: #999;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #004CFF;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .social-icons a {
-	color: white;
-	margin: 0 15px;
-	font-size: 1.5em;
+    color: #fff;
+    font-size: 1.5em;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #004CFF;
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.footer-bottom p {
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    footer {
+        padding: 40px 0 20px;
+    }
+
+    .footer-section {
+        text-align: center;
+    }
+
+    .social-icons {
+        justify-content: center;
+    }
 }

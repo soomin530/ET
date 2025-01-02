@@ -46,20 +46,21 @@
 		<div class="custom-carousel">
 			<div class="carousel-container">
 				<th:block th:each="mainPerform, status : ${mainPerform}">
-					<div class="carousel-slide" th:classappend="${status.first ? 'active' : ''}"
-						th:data-title="${mainPerform.prfnm}"
-						th:data-link="@{/performance/detail/{mt20id}(mt20id=${mainPerform.mt20id})}">
-						<div class="carousel-image">
-							<img th:src="${mainPerform.poster}" alt="공연 이미지" loading="lazy">
+					<!-- 클릭 가능한 링크로 감싸기 -->
+					<a th:href="@{/performance/detail/{mt20id}(mt20id=${mainPerform.mt20id})}"
+						class="carousel-slide-link">
+						<div class="carousel-slide" th:classappend="${status.first ? 'active' : ''}"
+							th:data-title="${mainPerform.prfnm}">
+							<div class="carousel-image">
+								<img th:src="${mainPerform.poster}" th:alt="${mainPerform.prfnm}" loading="lazy">
+							</div>
 						</div>
-					</div>
+					</a>
 				</th:block>
 				<button class="carousel-arrow prev-arrow">&#10094;</button>
 				<button class="carousel-arrow next-arrow">&#10095;</button>
 			</div>
 			<div class="carousel-bottom">
-				<a th:href="@{/performance/detail/{mt20id}(mt20id=${mainPerform[0].mt20id})}" class="carousel-btn"
-					style="cursor: pointer;">자세히 보기</a>
 				<div class="carousel-indicators">
 					<!-- 인디케이터는 JavaScript에서 동적으로 생성됩니다 -->
 				</div>

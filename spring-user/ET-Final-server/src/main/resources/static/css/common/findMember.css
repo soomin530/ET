@@ -56,6 +56,25 @@
 	background: linear-gradient(135deg, #218838, #19692c);
 }
 
+/* 버튼 그룹 스타일 */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.button-group .submit-button {
+    flex: 1;
+}
+
+.submit-button.secondary {
+    background-color: #6c757d;
+}
+
+.submit-button.secondary:hover {
+    background-color: #5a6268;
+}
+
 /* 폼 스타일 */
 .find-form {
 	display: flex;

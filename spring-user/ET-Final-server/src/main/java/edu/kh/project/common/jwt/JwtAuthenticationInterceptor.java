@@ -23,7 +23,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
             token = token.substring(7);
             
             if (jwtTokenUtil.validateToken(token)) {
-                String memberNo = jwtTokenUtil.getMemberIdFromToken(token);
+                String memberNo = jwtTokenUtil.getMemberNoFromToken(token);
                 request.setAttribute("memberNo", memberNo);
                 return true;
             }

@@ -54,13 +54,6 @@ public class PerformanceController {
 			genre = "서양음악(클래식)";
 		}
 
-		// 첫 페이지 데이터만 가져오기 (20개)
-		List<Performance> performances = performanceService.getPerformancesByPage(1, 20, genre);
-
-		log.debug("Performances: {}", performances);
-
-		// 모델에 데이터 추가
-		model.addAttribute("performances", performances);
 		model.addAttribute("genre", genre);
 
 		return "performance/genre";

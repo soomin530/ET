@@ -1,5 +1,6 @@
 package edu.kh.project.member.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +109,36 @@ public class MemberServiceImpl implements MemberService {
         
         return existingMember;
     }
+
+	
+	// 이메일로 회원 아이디 조회
+	@Override
+	public Member findByEmail(String email) {
+		return mapper.findByEmail(email);
+	}
+	
+	
+	// 이메일 아이디로 회원 정보 조회
+	@Override
+	public Member findByIdAndEmail(Map<String, Object> paramMap) {
+		return mapper.findByIdAndEmail(paramMap);
+	}
+	
+	
+	// 비밀번호 수정
+	@Override
+	public int updatePassword(int memberNo, String password) {
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		String encPw = bcrypt.encode(password);
+		
+		paramMap.put("encPw", encPw);
+		paramMap.put("memberNo", memberNo);
+		
+		return mapper.updatePassword(paramMap);
+	}
+
 
 	@Override
 	public void insertVenue(Map<String, Object> venue) {
