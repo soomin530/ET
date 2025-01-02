@@ -30,7 +30,7 @@ document.querySelector("#searchAddress").addEventListener("click", execDaumPostc
 // 필수 입력 항목의 유효성 검사 여부를 체크하기 위한 객체
 // - true  == 해당 항목은 유효한 형식으로 작성됨
 // - false == 해당 항목은 유효하지 않은 형식으로 작성됨
-const checkObj = {
+let checkObj = {
 	"memberEmail": false,
 	"memberId": false,
 	"memberPw": false,
@@ -81,8 +81,12 @@ const performLogin = () => {
 				// 로그인 실패 시 경고창 띄우기
 				alert("아이디 또는 비밀번호가 일치하지 않습니다.");
 			} else if (response.ok) {
-	            // 로그인 성공 시 현재 페이지로 리다이렉트
-	            window.location.href = window.location.href;
+				// 현재 페이지 URL 확인 후 리다이렉트
+				if (window.location.pathname === '/member/find') {
+				    window.location.href = '/'; // 메인 페이지로 이동
+				} else {
+				    window.location.href = window.location.href; // 현재 페이지 새로고침
+				}
 	        }
 		})
 		.catch(error => {

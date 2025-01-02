@@ -26,7 +26,7 @@
 	
 	<!-- 공연 상세페이지 조회 -->
 	<select id="detail">
-		SELECT MT20ID, POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE
+		SELECT MT20ID, POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE, PRFREVIEW_RANK
 		FROM TB_PERFORMANCES_DETAIL
 		WHERE MT20ID = #{mt20id}
 	</select>
@@ -124,13 +124,6 @@
 			WHERE ROWNUM <= 10
 		]]>
 	</select>
-		
-    <!-- 공연관리자가 등록한 공연 목록 조회  -->
-    <select id="selectPerformancesByManager">
-		SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER
-		FROM TB_PERFORMANCES_DETAIL
-		WHERE GENRENM = #{genre}
-    </select>
     
     <!-- 리뷰 등록 -->
     <insert id="insertReview">
@@ -158,7 +151,9 @@
     <!-- 리뷰 수정 -->
     <update id="updateReview">
     	UPDATE TB_PERFORMANCE_REVIEW
-    	SET REVIEW_CONTENT = #{reviewContent}
+    	SET 
+    		REVIEW_CONTENT = #{reviewContent},
+    		REVIEW_STAR = #{reviewStar}
     	WHERE REVIEW_NO = #{reviewNo}
     </update>
     
@@ -175,5 +170,13 @@
 		FROM TB_PERFORMANCE_REVIEW JOIN TB_MEMBER USING(MEMBER_NO)
 		WHERE MT20ID = #{mt20id}
     </select>
+    
+    <!-- 관리자 공연 등록
+    	-> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기
+   	 -->
+   	 <select id="selectVenueList">
+   	 	SELECT MT10ID, FCLTYNM, ADRES, SEATSCALE
+   	 	FROM TB_VENUE
+   	 </select>
 	
 </mapper>

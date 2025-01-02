@@ -48,13 +48,6 @@ public interface PerformanceService {
 	 * @return
 	 */
 	List<PerformanceRanking> performanceRanking();
-	
-	/** 공연관리자가 등록한 공연 목록 조회 
-	 * @param memberNo
-	 * @return
-	 * @author 우수민
-	 */
-	List<Performance> getPerformancesByManager(int memberNo);
 
 	
 	/** 리뷰 등록
@@ -94,4 +87,10 @@ public interface PerformanceService {
 	 */
 	List<Review> getReviewsByPerformanceId(String mt20id);
 
+    /** 관리자 공연 등록
+     *  -> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기
+	 * @return
+	 * @author 우수민
+	 */
+	List<Map<String, Object>> getVenueList();
 }

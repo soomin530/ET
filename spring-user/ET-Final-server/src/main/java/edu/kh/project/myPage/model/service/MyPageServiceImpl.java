@@ -3,6 +3,7 @@ package edu.kh.project.myPage.model.service;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class MyPageServiceImpl implements MyPageService {
     
     private final MyPageMapper mapper;
     private final BCryptPasswordEncoder bcrypt;
+   
    
     
     
@@ -41,8 +43,25 @@ public class MyPageServiceImpl implements MyPageService {
 		
 		return mapper.getMemberInfo(memberNo);
 	}
-
 	
+	
+	// 이메일 중복 체크
+	@Override
+	public int verifyEmail(String verificationEmail) {
+		
+		return mapper.verifyEmail(verificationEmail);
+	}
+	
+	// 닉네임 중복검사(수정)
+	@Override
+	public int updateNickname(String userNickname) {
+		
+		return mapper.updateNickname(userNickname);
+	}
+	
+	
+	
+
 	// 비밀번호 변경
 	@Override
 	public int changePw(int memberNo, String newPassword) {
@@ -85,6 +104,15 @@ public class MyPageServiceImpl implements MyPageService {
 	public int membershipOut(int memberNo) {
 		return mapper.membershipOut(memberNo);
 	}
-
+	
+	
+	
+	
+	// 회원 정보 수정
+	@Override
+	public int updateMember(Member member) {
+		
+		 return mapper.updateMember(member);
+	}
     
 }

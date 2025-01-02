@@ -324,6 +324,15 @@ public class MemberController {
 	public int checkNickname(@RequestParam("memberNickname") String memberNickname) {
 		return service.checkNickname(memberNickname);
 	}
+	
+	
+	/** Id Pw 찾기 페이지
+	 * @return
+	 */
+	@GetMapping("find")
+	public String findIdPw() {
+		return "common/findMember";
+	}
 
 	@GetMapping("perform-and-save")
 	public String performAndSaveVenues() {

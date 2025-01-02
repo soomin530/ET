@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper	namespace="edu.kh.project.notice.model.mapper.NoticeMapper">
+
+
+	<!-- 최근 공지사항 4개 가져오기 -->
+	<select id="getRecentNotices" resultType="Notice">
+		<![CDATA[
+		    SELECT * 
+				FROM (
+					SELECT 
+					    ANNOUNCE_NO,
+					    ANNOUNCE_TITLE,
+					    ANNOUNCE_CONTENT,
+					    TO_CHAR(ANNOUNCE_WRITE_DATE, 'YYYY-MM-DD') AS ANNOUNCE_WRITE_DATE
+					FROM 
+					    ANNOUNCEMENT
+					WHERE ANNOUNCE_DEL_FL = 'N'
+					ORDER BY 
+					    ANNOUNCE_WRITE_DATE DESC
+				) 
+			WHERE ROWNUM <= 4
+		]]>
+	</select>
+
+
+	<!-- 공지사항 상세 조회 -->
+	<select id="detailNotice">	
+		SELECT 
+		    ANNOUNCE_NO,
+		    ANNOUNCE_TITLE,
+		    ANNOUNCE_CONTENT,
+		    TO_CHAR(ANNOUNCE_WRITE_DATE, 'YYYY-MM-DD') AS ANNOUNCE_WRITE_DATE
+		FROM 
+		    ANNOUNCEMENT
+		WHERE ANNOUNCE_DEL_FL = 'N'
+		AND ANNOUNCE_NO = #{noticeId}
+	</select>
+
+</mapper>

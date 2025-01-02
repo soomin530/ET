@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import edu.kh.project.member.model.dto.Member;
+import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.Review;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
@@ -89,26 +90,6 @@ public class PerformanceController {
 		return "performance/performance-detail-calander";
 	}
 
-	/**
-	 * 공연관리자가 등록한 공연 목록 조회
-	 * 
-	 * @return
-	 * @author 우수민
-	 */
-	@GetMapping("/manager")
-	public String manager(@SessionAttribute("loginMember") Member loginMember, Model model) {
-
-		// 로그인된 관리자 정보 가져오기
-		int memberNo = loginMember.getMemberNo();
-
-		// 등록된 공연 목록 가져오기 (서비스 호출)
-		List<Performance> performances = performanceService.getPerformancesByManager(memberNo);
-
-		// 모델에 공연 목록 추가
-		model.addAttribute("performances", performances);
-
-		return "performance/performance-manager";
-	}
 
 	/**
 	 * 리뷰 등록

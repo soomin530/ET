@@ -5,7 +5,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>티켓팅 시스템</title>
-	<link rel="stylesheet" href="/css/main-style.css">
 	<th:block th:replace="~{common/common}"></th:block>
 	<style>
 		.performance-container {
@@ -299,7 +298,7 @@
 				return;
 			}
 
-			fetch(`/genre/more?page=${page + 1}&genre=${encodeURIComponent(currentGenre)}`)
+			fetch(`/performanceApi/genre/more?page=${page + 1}&genre=${encodeURIComponent(currentGenre)}`)
 				.then(response => {
 					if (!response.ok) {
 						throw new Error(`HTTP error! status: ${response.status}`);

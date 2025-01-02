@@ -1,0 +1,23 @@
+<!-- templates/common/modals/signup-select.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="selectModal" id="selectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>회원 선택</h2>
+            </div>
+            <div class="modal-body">
+                <button class="user-button" 
+                        onclick="openModal('userSignupModal'); closeModal('selectModal')">
+                    사용자
+                </button>
+                <button class="manager-button" 
+                        onclick="openModal('peradmSignupModal'); closeModal('selectModal')">
+                    공연관리자
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

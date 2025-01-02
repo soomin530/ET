@@ -34,9 +34,34 @@ public class Performance {
 	private String styurl;			// 소개이미지
 	private String fcltla;			// 위도
 	private String fcltlo;			// 경도
+	private int concertManagerNo;	// 공연 등록 관리자 번호
+	private int prfreviewRank;		// 공연 리뷰 점수
 	
 	
 	private Map<String, List<ScheduleInfo>> schedule; // 스케줄 정보 추가
 	
+	// 공연 등록을 위한 추가 정보
+    private List<PriceInfo> prices; // 가격 정보
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PriceInfo {
+        private String grade;      // 좌석 등급
+        private int price;         // 가격
+    }
+
+    // 공연 등록 시 요일별 시간 정보를 위한 필드
+    private List<DaySchedule> daySchedules;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DaySchedule {
+        private List<String> days;     // 요일 목록
+        private List<String> times;    // 시간 목록
+    }
 
 }

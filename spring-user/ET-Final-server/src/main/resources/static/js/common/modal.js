@@ -33,5 +33,12 @@ window.onclick = function(event) {
 		closeModal('selectModal');
 		closeModal('userSignupModal');
 		closeModal('peradmSignupModal');
+		closeModal('noticeDetailModal');
+		closeModal('findIdPwModal');
+		
+	} else if(event.target.classList.contains('noticeModal')) {
+		closeModal('noticeDetailModal');
+		
 	}
+	
 }

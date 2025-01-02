@@ -21,6 +21,18 @@ public interface MyPageMapper {
 	 */
 	Member getMemberInfo(int memberNo);
 
+	/** 이메일 중복 체크
+	 * @param verificationEmail
+	 * @return
+	 */
+	int verifyEmail(String verificationEmail);
+
+	/** 닉네임 중복검사(수정)
+	 * @param userNickname
+	 * @return
+	 */
+	int updateNickname(String userNickname);
+	
 	/** 비밀번호 변경
 	 * @param paramMap
 	 * @return
@@ -44,5 +56,11 @@ public interface MyPageMapper {
 	 * @return
 	 */
 	String memberPwCheck(int memberNo);
+
+	/** 회원정보 수정
+	 * @param member
+	 * @return
+	 */
+	int updateMember(Member member);
 
 }
