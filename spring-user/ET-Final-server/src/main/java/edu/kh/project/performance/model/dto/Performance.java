@@ -16,28 +16,6 @@ import lombok.ToString;
 @AllArgsConstructor
 public class Performance {
 	
-<<<<<<< HEAD
-	private String mt20id;			// 공연아이디
-	private String prfnm; 			// 공연이름
-	private String prfpdfrom; 		// 공연시작날짜
-	private String prfpdto; 		// 공연종료날짜
-	private String fcltynm;  		// 공연장소
-	private String prfcast;			// 출연진
-	private String prfruntime;		// 공연시간
-	private String entrpsnm;		// 공연기획사
-	private String pcseguidance;	// 공연가격
-	private String poster;			// 공연포스터
-	private String dtguidance;		// 공연기간
-	private String area;			// 공연지역
-	private String genrenm;			// 공연장르
-	private String prfstate;		// 공연상태
-	private String mt10id;			// 공연시설
-	private String description;		// 소개글
-	private String fcltla;			// 위도
-	private String fcltlo;			// 경도
-	private int concertManagerNo;	// 공연 등록 관리자 번호
-	private int prfreviewRank;		// 공연 리뷰 점수
-=======
 	private String mt20id;				// 공연아이디
 	private String prfnm; 				// 공연이름
 	private String prfpdfrom; 			// 공연시작날짜
@@ -59,8 +37,6 @@ public class Performance {
 	private int concertManagerNo;		// 공연 등록 관리자 번호
 	private int prfreviewRank;			// 공연 리뷰 점수
 	private Boolean performance_del_fl;	// 공연 삭제 여부(N/Y)
-	
->>>>>>> acc19ac073aaf58cef3343a802941de8bbb6c7f7
 	
 	
 	private Map<String, List<ScheduleInfo>> schedule; // 스케줄 정보 추가
