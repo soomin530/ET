@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
 import edu.kh.project.performance.model.dto.Review;
+import edu.kh.project.performance.model.dto.ScheduleInfo;
 
 @Mapper
 public interface PerformanceMapper {
@@ -45,6 +46,12 @@ public interface PerformanceMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> getScheduleData(String mt20id);
+	
+	/** 잔여 좌석 조회
+	 * @param paramMap
+	 * @return
+	 */
+	ScheduleInfo getRemainingSeats(Map<String, Object> paramMap);
 	
 	/** 공연 위도, 경도 조회
 	 * @param mt20id
@@ -138,6 +145,5 @@ public interface PerformanceMapper {
 	 * @author 우수민
 	 */
 	List<Map<String, Object>> selectVenueList();
-
 
 }

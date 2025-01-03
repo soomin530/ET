@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRegistrationDTO;
+import edu.kh.project.performance.model.dto.ScheduleInfo;
 import edu.kh.project.performance.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,36 @@ public class PerformanceApiController {
 
 	@Autowired
 	private PerformanceService performanceService;
+	
+	
+	
+	/**
+	 * 잔여 좌석 개수 조회
+	 * 
+	 * @param page
+	 * @param genre
+	 * @return
+	 */
+	@GetMapping("/remainingSeats/{performanceId}/{selectedDate}")
+	@ResponseBody
+	public ResponseEntity<?> remainingSeats(@PathVariable("performanceId") String performanceId,
+											@PathVariable("selectedDate") String selectedDate) {
+		try {
+			Map<String, Object> paramMap = new HashMap<>();
+			
+			paramMap.put("performanceId", performanceId);
+			paramMap.put("selectedDate", selectedDate);
+			
+			// 잔여 좌석 개수 조회
+			ScheduleInfo seatsInfo = performanceService.remainingSeats(paramMap);
+
+			return ResponseEntity.ok(seatsInfo);
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+	
 
 	/**
 	 * 무한 스크롤 데이터

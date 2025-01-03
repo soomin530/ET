@@ -31,6 +31,25 @@ function initializeKakaoMap() {
 	});
 }
 
+// 잔여 좌석 조회 함수
+async function fetchAvailableSeats(performanceId, selectedDate) {
+	try {
+		const response = await fetch(`/performanceApi/remainingSeats/${performanceId}/${selectedDate}`);
+		if (!response.ok) throw new Error("잔여 좌석 조회 실패");
+
+		const result = await response.json();
+		if (result != null) {
+			return result; // [{ time: "14:00", seats: 50 }, ...]
+		} else {
+			console.error("API 오류:", result.message);
+			return [];
+		}
+	} catch (error) {
+		console.error("서버 통신 오류:", error);
+		return [];
+	}
+}
+
 /**
  * 공연 예매를 위한 캘린더 클래스
  * 날짜 선택, 시간대 선택, 예매 기능을 제공합니다.
@@ -188,53 +207,41 @@ class Calendar {
 	 * 선택된 날짜의 공연 시간대를 표시합니다.
 	 * @param {Date} date - 선택된 날짜
 	 */
-	handleDateSelection(date) {
+	async handleDateSelection(date) {
 		const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
-		let dayOfWeek = date.getDay(); // 0(일요일) ~ 6(토요일) 값 반환
-		if (dayOfWeek === 0) {
-			console.log(dayOfWeek);
-			dayOfWeek = 7;
-		};
+		const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay();
 
 		document.getElementById(
 			"selected-date"
 		).innerText = `선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
-		document.getElementById("dayOfWeek").value = dayOfWeek; // hidden input에 값 설정
+		document.getElementById("dayOfWeek").value = dayOfWeek;
 
-		// dayOfWeek 요소가 존재하는 경우에만 값을 설정
-		const dayOfWeekInput = document.getElementById("dayOfWeek");
-		if (dayOfWeekInput) {
-			dayOfWeekInput.value = dayOfWeek;
-		} else {
-			console.warn("dayOfWeek 요소를 찾을 수 없습니다.");
-		}
+		const performanceId = this.performance.id;
+		const selectedDate = this.formatDisplayDate(date).replace(/\./g, "-");
+		const availableSlots = await fetchAvailableSeats(performanceId, selectedDate);
 
 		const timeSlotsContainer = document.getElementById("time-slots");
 		timeSlotsContainer.innerHTML = "";
-
-		// 선택된 날짜의 공연 시간대 표시
-		if (this.performance.schedule[dayName]) {
-			this.performance.schedule[dayName].forEach((slot) => {
-				const timeSlot = document.createElement("div");
-				timeSlot.className = "time-slot";
-				timeSlot.innerHTML = `
+		
+		if (availableSlots != null) {
+			console.log(availableSlots);
+			const timeSlot = document.createElement("div");
+			timeSlot.className = "time-slot";
+			timeSlot.innerHTML = `
                     <div>
-                        <div class="time">${slot.time}</div>
+                        <div class="time">${availableSlots.time}</div>
                     </div>
-                    <span class="seat-info">(잔여: ${slot.seats}석)</span>
+                    <span class="seat-info">(잔여: ${availableSlots.seats}석)</span>
                 `;
-				timeSlot.onclick = () => this.selectTimeSlot(timeSlot, slot.time);
-				timeSlotsContainer.appendChild(timeSlot);
-			});
+			timeSlot.onclick = () => this.selectTimeSlot(timeSlot, availableSlots.time);
+			timeSlotsContainer.appendChild(timeSlot);
 		} else {
 			timeSlotsContainer.innerHTML = "<p>해당 날짜에는 공연이 없습니다.</p>";
 		}
 
-		// 새로운 날짜 선택 시 예매 버튼 비활성화
 		document.getElementById("booking-btn").disabled = true;
-
 		this.selectedDate = date;
-		this.dayOfWeek = dayOfWeek; // 0(일)~6(토) 값을 저장
+		this.dayOfWeek = dayOfWeek;
 	}
 
 	/**

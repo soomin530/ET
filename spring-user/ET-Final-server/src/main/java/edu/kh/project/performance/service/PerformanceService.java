@@ -33,12 +33,19 @@ public interface PerformanceService {
 	 */
 	Performance getPerformanceById(String mt20id);
 
-	/** 스케줄 및 잔여 좌석 조회
+	/** 스케줄 조회
 	 * @param mt20id
 	 * @return
 	 * @author 우수민
 	 */
 	Map<String, List<ScheduleInfo>> getScheduleWithAvailableSeats(String mt20id);
+	
+	/** 잔여 좌석 조회
+	 * @param performanceId
+	 * @param selectedDate
+	 * @return
+	 */
+	ScheduleInfo remainingSeats(Map<String, Object> paramMap);
 
 	/** 메인 페이지 주요 공연 소개
 	 * @return
@@ -49,7 +56,6 @@ public interface PerformanceService {
 	 * @return
 	 */
 	List<PerformanceRanking> performanceRanking();
-
 	
 	/** 리뷰 등록
 	 * @param review

@@ -85,7 +85,6 @@ public class PerformanceServiceImpl implements PerformanceService {
 			if (dayOfWeek != null) {
 				ScheduleInfo info = new ScheduleInfo();
 				info.setTime((String) data.get("TIME"));
-				info.setSeats(((BigDecimal) data.get("SEATS")).intValue());
 				info.setSeatStatus((String) data.get("STATUS"));
 
 				scheduleMap.computeIfAbsent(dayOfWeek, k -> new ArrayList<>()).add(info);
@@ -93,6 +92,16 @@ public class PerformanceServiceImpl implements PerformanceService {
 		}
 
 		return scheduleMap;
+	}
+	
+	// 스케줄 및 잔여 좌석 조회
+	@Override
+	public ScheduleInfo remainingSeats(Map<String, Object> paramMap) {
+		// 1. 매퍼를 통해 SQL 쿼리 실행
+		ScheduleInfo scheduleData = mapper.getRemainingSeats(paramMap);
+	    
+	    // 5. 결과 반환
+	    return scheduleData;
 	}
 
 	// 요일 값 받아서 출력
