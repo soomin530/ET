@@ -35,9 +35,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.kh.project.common.jwt.JwtTokenUtil;
 import edu.kh.project.common.jwt.JwtTokenUtil.TokenInfo;
 import edu.kh.project.member.model.dto.Member;
@@ -48,6 +45,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,8 +80,8 @@ public class MemberController {
 	 * @return
 	 */
 	@PostMapping("login")
-	public ResponseEntity<?> login(Member inputMember, RedirectAttributes ra, Model model,
-			@RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
+	public ResponseEntity<?> login(Member inputMember, RedirectAttributes ra, HttpServletRequest request,
+	        @RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
 
 		// 로그인 서비스 호출
 		Member loginMember = service.login(inputMember);
@@ -92,8 +90,10 @@ public class MemberController {
 		if (loginMember == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
 		}
-		// Session scope에 loginMember 추가
-		model.addAttribute("loginMember", loginMember);
+		
+		// 세션 처리 (HttpSession 직접 사용)
+	    HttpSession session = request.getSession();
+	    session.setAttribute("loginMember", loginMember);	
 
 		// 로그인 성공 처리
 		String memberNo = String.valueOf(loginMember.getMemberNo());
