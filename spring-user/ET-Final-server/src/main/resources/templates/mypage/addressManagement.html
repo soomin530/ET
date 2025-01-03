@@ -370,6 +370,81 @@
     margin-bottom: 10px;
 }
 
+
+/*0103 추가*/
+.address-list {
+    margin-top: 20px;
+}
+
+.address-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.address-item:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.receiver {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.address-detail {
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.adsPhone {
+    color: #666;
+    font-size: 14px;
+}
+
+.no-address {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.default-badge {
+    background-color: #007bff;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.set-default-btn {
+    padding: 5px 10px;
+    border: 1px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.set-default-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.set-default-btn:disabled {
+    border-color: #ccc;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
 </style>
 
 </head>
@@ -431,8 +506,8 @@
 			                    <div class="address-search-group">
 			                        <input type="text" id="adsPostcode" readonly required>
 			                        
-															<button type="button" id="adsSearchAddress" 
-															class="address-search-btn">주소 검색</button>
+								<button type="button" id="adsSearchAddress" 
+								class="address-search-btn">주소 검색</button>
 
 			                    </div>
 			                </div>

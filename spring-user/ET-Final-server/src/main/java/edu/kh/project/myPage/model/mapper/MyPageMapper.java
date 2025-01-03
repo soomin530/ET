@@ -1,5 +1,6 @@
 package edu.kh.project.myPage.model.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -9,6 +10,7 @@ import edu.kh.project.myPage.model.dto.AddressDTO;
 
 @Mapper
 public interface MyPageMapper {
+	
     
     /** 암호화된 비밀번호 조회
      * @param memberNo
@@ -64,11 +66,53 @@ public interface MyPageMapper {
 	 */
 	int updateMember(Member member);
 
+	
+	
+	
+
+	/** 배송지 목록 조회(로드)
+	 * @param memberNo
+	 * @return
+	 */
+	List<AddressDTO> selectAddressList(int memberNo);
+
+	
 	/** 배송지 추가
 	 * @param addressDTO
 	 * @return
 	 */
 	int insertAddress(AddressDTO addressDTO);
+
+	
+	/** 중복 주소 체크
+	 * @param addressDTO
+	 * @param memberNo
+	 * @return
+	 */
+	int countDuplicateAddress(AddressDTO addressDTO, int memberNo);
+	
+	/** 주소 개수 체크
+	 * @param memberNo
+	 * @return
+	 */
+	int getAddressCount(int memberNo);
+
+	
+	/**  기본 배송지 등록하기
+	 * @param memberNo
+	 */
+	int resetBasicAddress(int memberNo);
+	int basicAddress(int addressNo, int memberNo);
+
+	
+
+
+	
+
+
+
+	
+	
 	
 	
 

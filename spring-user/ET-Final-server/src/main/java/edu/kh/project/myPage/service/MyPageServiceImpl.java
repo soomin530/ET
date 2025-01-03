@@ -1,6 +1,7 @@
 package edu.kh.project.myPage.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class MyPageServiceImpl implements MyPageService {
+	
+	
+	
+	
     
     private final MyPageMapper mapper;
     
@@ -115,14 +120,61 @@ public class MyPageServiceImpl implements MyPageService {
 		 return mapper.updateMember(member);
 	}
 	
+	
+	
+	// 배송지 목록 조회(로드)
+	@Override
+	public List<AddressDTO> getAddressList(int memberNo) {
+			
+	 return myPageMapper.selectAddressList(memberNo);
+	 
+    }
+		
+		
+		
 	// 배송지 추가
-	 @Autowired
-	    private MyPageMapper myPageMapper;
+	@Autowired
+    private MyPageMapper myPageMapper;
 
-	    @Override
-	    public int addAddress(AddressDTO addressDTO) {
-	        return myPageMapper.insertAddress(addressDTO);
-	    }
+	@Override
+    public int addAddress(AddressDTO addressDTO) {
+		
+         return myPageMapper.insertAddress(addressDTO);
+         
+	}
+	
+	
+	// 중복 주소 체크
+	@Override
+	public boolean isAddressDuplicated(AddressDTO addressDTO, int memberNo) {
+		int count = myPageMapper.countDuplicateAddress(addressDTO, memberNo);
+        return count > 0;
+	}
+
+	// 주소 개수 체크
+	public int getAddressCount(int memberNo) {
+		
+	     return myPageMapper.getAddressCount(memberNo);
+	}
+	
+
+	// 기본 배송지 등록하기
+	@Override
+	public int basicAddress(int addressNo, int memberNo) {
+		
+		// 기존 기본 배송지를 모두 N으로 변경
+        myPageMapper.resetBasicAddress(memberNo);
+        // 선택한 배송지를 기본 배송지로 설정
+        return myPageMapper.basicAddress(addressNo, memberNo);
+	}
+
+	
+	
+	
+
+	
+	
+	
 
 
 	

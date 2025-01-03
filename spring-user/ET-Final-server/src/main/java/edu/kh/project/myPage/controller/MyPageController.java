@@ -1,5 +1,7 @@
 package edu.kh.project.myPage.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +31,81 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SessionAttributes({ "loginMember" })
 public class MyPageController {
+	
+	 @GetMapping("addressManagement")
+	    public String addressManagement() {
+	        return "mypage/addressManagement"; // View 이름 반환
+	    }
+	
+	/** 배송지 목록 조회(로드)
+	 * @param loginMember
+	 * @return
+	 */
+	@GetMapping("addressList")
+	@ResponseBody
+	public ResponseEntity<List<AddressDTO>> getAddressList(@SessionAttribute("loginMember") Member loginMember) {
+	    List<AddressDTO> addressList = myPageService.getAddressList(loginMember.getMemberNo());
+	    return ResponseEntity.ok(addressList);
+	}
+	
+	
+	@Autowired
+    private MyPageService myPageService;
+
+    /** 배송지 등록 하기
+     * @param addressDTO
+     * @param loginMember
+     * @return
+     */
+    @PostMapping("addAddress")
+    @ResponseBody
+    public ResponseEntity<String> addAddress(
+        @RequestBody AddressDTO addressDTO,
+        @SessionAttribute("loginMember") Member loginMember 
+    ) {
+        addressDTO.setMemberNo(loginMember.getMemberNo()); // getMemberNo()로 회원 번호 설정
+        
+     // 주소 개수 체크
+        int addressCount = myPageService.getAddressCount(loginMember.getMemberNo());
+        if(addressCount >= 10) {
+            return ResponseEntity.status(400).body("배송지는 최대 10개까지만 등록할 수 있습니다.");
+        }
+        
+        // 중복 주소 체크
+        boolean isDuplicated = myPageService.isAddressDuplicated(addressDTO, loginMember.getMemberNo());
+        if (isDuplicated) {
+            return ResponseEntity.status(400).body("이미 등록된 주소입니다.");
+        }
+        
+        int result = myPageService.addAddress(addressDTO);
+        if (result > 0) {
+            return ResponseEntity.ok("배송지가 등록되었습니다.");
+        } else {
+            return ResponseEntity.status(500).body("배송지 등록에 실패했습니다.");
+        }
+    }
+    
+    
+    /** 기본 배송지 등록하기
+     * @param addressNo
+     * @param loginMember
+     * @return
+     */
+    @PostMapping("basicAddress")
+    @ResponseBody
+    public ResponseEntity<String> basicAddress(
+    	    @RequestParam int addressNo,
+    	    @SessionAttribute("loginMember") Member loginMember
+    	) {
+    	    int result = myPageService.basicAddress(addressNo, loginMember.getMemberNo());
+    	    if (result > 0) {
+    	        return ResponseEntity.ok("기본 배송지가 변경되었습니다.");
+    	    } else {
+    	        return ResponseEntity.status(500).body("기본 배송지 변경에 실패했습니다.");
+    	    }
+    	}
+	
+	
 
 	private final EmailService emailService;
 	private final MyPageService service;
@@ -180,27 +257,7 @@ public class MyPageController {
     
     
     
-    @Autowired
-    private MyPageService myPageService;
-
-    /**
-     * 배송지 추가
-     * @param addressDTO
-     * @param loginMember 세션에서 로그인한 회원 정보
-     * @return 성공 메시지
-     */
-    @PostMapping("/addAddress")
-    @ResponseBody
-    public ResponseEntity<String> addAddress(@RequestBody AddressDTO addressDTO, @SessionAttribute("loginMember") int memberNo) {
-        addressDTO.setMemberNo(memberNo); // 세션에서 가져온 회원 번호 설정
-
-        int result = myPageService.addAddress(addressDTO);
-        if (result > 0) {
-            return ResponseEntity.ok("배송지가 등록되었습니다.");
-        } else {
-            return ResponseEntity.status(500).body("배송지 등록에 실패했습니다.");
-        }
-    }
+   
     
     
 }

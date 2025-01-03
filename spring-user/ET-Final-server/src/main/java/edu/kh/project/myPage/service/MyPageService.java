@@ -1,9 +1,16 @@
 package edu.kh.project.myPage.service;
 
+import java.util.List;
+
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
 
 public interface MyPageService {
+	
+	
+	
+	
+	
 	
 	/** 비밀번호 검증
      * @param memberPw : 입력한 비밀번호
@@ -70,18 +77,50 @@ public interface MyPageService {
 	 */
 	int updateMember(Member member);
 
-
+	
+	
+	
+	/** 배송지 목록 조회(로드) 
+	 * @param memberNo
+	 * @return
+	 */
+	List<AddressDTO> getAddressList(int memberNo);
+	
+	
+	
 	/** 배송지 추가
 	 * @param addressDTO
 	 */
 	int addAddress(AddressDTO addressDTO);
+
+
+	/** 주소 개수 체크
+	 * @param memberNo
+	 * @return
+	 */
+	int getAddressCount(int memberNo);
+
+
+	/** 기본 배송지 등록하기
+	 * @param addressNo
+	 * @param memberNo
+	 * @return
+	 */
+	int basicAddress(int addressNo, int memberNo);
+
+
+	/** 중복 주소 체크
+	 * @param addressDTO
+	 * @param memberNo
+	 * @return
+	 */
+	boolean isAddressDuplicated(AddressDTO addressDTO, int memberNo);
+
+
+
 	
-	
-	
-	
-	
-	
-	
+
+
 	
 
 }
