@@ -7,7 +7,7 @@ const concertManagerLoginPw = document.getElementById("concertManagerLoginPw");
 
 // 로그인
 const perfmgrLogin = () => {
-
+	// 입력 검증
 	if (concertManagerLoginId.value.length === 0) {
 		alert("아이디를 입력해주세요.");
 		concertManagerLoginId.focus();
@@ -19,25 +19,37 @@ const perfmgrLogin = () => {
 		concertManagerLoginPw.focus();
 		return;
 	}
-	
+
 	const form = new FormData();
-    form.append('concertManagerId', concertManagerLoginId.value);
-    form.append('concertManagerPw', concertManagerLoginPw.value);
+	form.append('concertManagerId', concertManagerLoginId.value);
+	form.append('concertManagerPw', concertManagerLoginPw.value);
 
 	fetch("/perfmgr/login", {
 		method: "POST",
 		body: form
 	})
-	.then(response => {
-	        if(response.redirected) {
-	            window.location.href = response.url;
-	        }
-	    })
-	    .catch(error => {
-	        console.error("로그인 에러:", error);
-	        alert("로그인 처리 중 오류가 발생했습니다.");
-	    });
+		.then(response => {
+			if (response.status === 401) {
+				throw new Error("인증 실패");
+			}
+			return response.json();
+		})
+		.then(data => {
+			// 로컬 스토리지에 액세스 토큰 저장
+			localStorage.setItem('accessToken', data.accessToken);
+			localStorage.setItem('userType', 'perfmgr'); // 공연관리자 타입 저장
 
+			// 성공시 페이지 리다이렉트
+			window.location.href = '/';
+		})
+		.catch(error => {
+			if (error.message === "인증 실패") {
+				alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+			} else {
+				console.error("로그인 에러:", error);
+				alert("로그인 처리 중 오류가 발생했습니다.");
+			}
+		});
 };
 
 // 로그인 버튼 클릭 이벤트
@@ -45,13 +57,13 @@ perfmgrBtn.addEventListener("click", perfmgrLogin);
 
 // id/pw 입력 필드에서 엔터키 누를 때 로그인 수행
 concertManagerLoginId.addEventListener("keydown", (event) => {
-	if (event.key === "Enter") {  // 엔터키가 눌렸을 때
+	if (event.key === "Enter") {
 		perfmgrLogin();
 	}
 });
 
 concertManagerLoginPw.addEventListener("keydown", (event) => {
-	if (event.key === "Enter") {  // 엔터키가 눌렸을 때
+	if (event.key === "Enter") {
 		perfmgrLogin();
 	}
 });
@@ -59,17 +71,34 @@ concertManagerLoginPw.addEventListener("keydown", (event) => {
 // JWT 토큰을 사용한 로그아웃
 function perfLogoutSession() {
 	fetch("/perfmgr/logout", {
-		method: "POST"
+		method: "POST",
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+		}
 	})
 		.then(response => {
+			// localStorage에서 토큰과 관련 정보 제거
+			localStorage.removeItem('accessToken');
+			localStorage.removeItem('userType');
+
+			// 쿠키에서 관련 정보 제거
+			document.cookie = 'Refresh-Token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+			document.cookie = 'Access-Token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
 			// 메인 페이지로 이동
 			window.location.href = "/";
 		})
 		.catch(error => {
 			console.error("로그아웃 중 오류 발생:", error);
+
+			// 에러 발생시에도 토큰과 정보 제거
+			localStorage.removeItem('accessToken');
+			localStorage.removeItem('userType');
+			document.cookie = 'Refresh-Token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+			document.cookie = 'Access-Token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
 			alert("로그아웃 중 문제가 발생했습니다.");
 			window.location.href = "/";
-
 		});
 }
 
