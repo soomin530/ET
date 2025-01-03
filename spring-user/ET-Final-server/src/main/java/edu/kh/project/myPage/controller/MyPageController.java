@@ -98,12 +98,16 @@ public class MyPageController {
     	    @SessionAttribute("loginMember") Member loginMember
     	) {
     	    int result = myPageService.basicAddress(addressNo, loginMember.getMemberNo());
+    	    
     	    if (result > 0) {
     	        return ResponseEntity.ok("기본 배송지가 변경되었습니다.");
+    	        
     	    } else {
     	        return ResponseEntity.status(500).body("기본 배송지 변경에 실패했습니다.");
     	    }
-    	}
+    	    
+    	    
+    	} 
 	
 	
 

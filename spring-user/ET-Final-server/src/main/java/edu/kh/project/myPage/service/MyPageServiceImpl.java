@@ -160,12 +160,18 @@ public class MyPageServiceImpl implements MyPageService {
 
 	// 기본 배송지 등록하기
 	@Override
+	@Transactional
 	public int basicAddress(int addressNo, int memberNo) {
 		
-		// 기존 기본 배송지를 모두 N으로 변경
-        myPageMapper.resetBasicAddress(memberNo);
-        // 선택한 배송지를 기본 배송지로 설정
-        return myPageMapper.basicAddress(addressNo, memberNo);
+		// 매개변수를 Map으로 생성
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("addressNo", addressNo);
+	    paramMap.put("memberNo", memberNo);
+
+	    // 기존 기본 배송지 해제
+	    myPageMapper.resetBasicAddress(memberNo);
+	    // 새로운 기본 배송지 설정
+	    return myPageMapper.basicAddress(paramMap);
 	}
 
 	

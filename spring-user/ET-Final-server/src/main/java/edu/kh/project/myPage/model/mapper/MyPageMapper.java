@@ -102,7 +102,8 @@ public interface MyPageMapper {
 	 * @param memberNo
 	 */
 	int resetBasicAddress(int memberNo);
-	int basicAddress(int addressNo, int memberNo);
+
+	int basicAddress(Map<String, Object> paramMap);  // Map 형태로 매개변수 변경
 
 	
 

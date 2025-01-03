@@ -24,9 +24,8 @@ if(adsSearchAddress) {
 	adsSearchAddress.addEventListener("click", adsExecDaumPostcode);
 }
 
-
-		  
 document.addEventListener('DOMContentLoaded', function () {
+	loadAddressList();
 	const adsModal = document.getElementById('adsModal');
 	const addButton = document.querySelector('.add-button');
 	const adsCancelBtn = document.getElementById('adsCancelBtn');
@@ -80,15 +79,15 @@ addressForm.addEventListener('submit', async function (e) {
             adsModal.classList.remove('show');
             addressForm.reset();
 
-						// // address-list에 추가
-						// const addressItem = document.createElement('div');
-						// addressItem.className = 'address-item';
-						// addressItem.innerHTML = `
-						// 		<p><strong>${formData.receiverName}</strong></p>
-						// 		<p>${formData.address} ${formData.detailAddress} (${formData.postcode})</p>
-						// 		<p>${formData.phone}${formData.extraPhone ? ` / ${formData.extraPhone}` : ''}</p>
-						// `;
-						// addressList.appendChild(addressItem);
+						// address-list에 추가
+						const addressItem = document.createElement('div');
+						addressItem.className = 'address-item';
+						addressItem.innerHTML = `
+								<p><strong>${formData.receiverName}</strong></p>
+								<p>${formData.address} ${formData.detailAddress} (${formData.postcode})</p>
+								<p>${formData.phone}${formData.extraPhone ? ` / ${formData.extraPhone}` : ''}</p>
+						`;
+						addressList.appendChild(addressItem);
 
 						// // 모달 닫기 및 폼 초기화
 						// adsModal.classList.remove('show');
@@ -188,7 +187,9 @@ function displayAddressList(addresses) {
 											alert('기본 배송지가 변경되었습니다.');
 											loadAddressList(); // 목록 새로고침
 									} else {
-											throw new Error('기본 배송지 변경에 실패했습니다.');
+											const errorText = await response.text();
+											console.error('Error:', errorText);
+                      alert('기본 배송지 변경에 실패했습니다.');
 									}
 							} catch (error) {
 									console.error('Error:', error);
@@ -209,44 +210,44 @@ function displayAddressList(addresses) {
 
 
 
-// 배송지 추가 전 개수 체크
-addressForm.addEventListener('submit', async function (e) {
-	e.preventDefault();
+// // 배송지 추가 전 개수 체크
+// addressForm.addEventListener('submit', async function (e) {
+// 	e.preventDefault();
 
-	// 폼 데이터 수집
-	const formData = {
-			receiverName: document.getElementById('receiverName').value,
-			postcode: document.getElementById('adsPostcode').value,
-			address: document.getElementById('adsAddress').value,
-			detailAddress: document.getElementById('adsDetailAddress').value,
-			phone: document.getElementById('adsPhone').value,
-			extraPhone: document.getElementById('adsExtraPhone').value,
-			basicAddress: 'N'  // 기본값은 'N'으로 설정
-	};
+// 	// 폼 데이터 수집
+// 	const formData = {
+// 			receiverName: document.getElementById('receiverName').value,
+// 			postcode: document.getElementById('adsPostcode').value,
+// 			address: document.getElementById('adsAddress').value,
+// 			detailAddress: document.getElementById('adsDetailAddress').value,
+// 			phone: document.getElementById('adsPhone').value,
+// 			extraPhone: document.getElementById('adsExtraPhone').value,
+// 			basicAddress: 'N'  // 기본값은 'N'으로 설정
+// 	};
 
-	try {
-			const response = await fetch('/mypage/addAddress', {
-					method: 'POST',
-					headers: {
-							'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(formData),
-			});
+// 	try {
+// 			const response = await fetch('/mypage/addAddress', {
+// 					method: 'POST',
+// 					headers: {
+// 							'Content-Type': 'application/json',
+// 					},
+// 					body: JSON.stringify(formData),
+// 			});
 
-			const result = await response.text();
-			if (response.ok) {
-					alert(result);
-					loadAddressList();
-					adsModal.classList.remove('show');
-					addressForm.reset();
-			} else {
-					alert(result);
-			}
-	} catch (error) {
-			console.error('Error:', error);
-			alert('배송지 등록에 실패했습니다.');
-	}
-});
+// 			const result = await response.text();
+// 			if (response.ok) {
+// 					alert(result);
+// 					loadAddressList();
+// 					adsModal.classList.remove('show');
+// 					addressForm.reset();
+// 			} else {
+// 					alert(result);
+// 			}
+// 	} catch (error) {
+// 			console.error('Error:', error);
+// 			alert('배송지 등록에 실패했습니다.');
+// 	}
+// });
 
 
 // // 새 배송지 추가 후 목록 새로고침
