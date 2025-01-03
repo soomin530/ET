@@ -23,7 +23,9 @@
             <table class="info-table">
               <tr>
                 <th>공연명</th>
-                <td class="performance-title"><input type="text" placeholder="공연명을 입력해주세요" size="50"></td>
+                <td class="performance-title">
+                  <input type="text" th:value="${performance.prfnm}" placeholder="공연명을 입력해주세요" size="50" style="padding-left: 5px;" required>
+                </td>
               </tr>
               <tr>
                 <th>장소</th>
@@ -35,11 +37,15 @@
               </tr>
               <tr>
                 <th>공연시간</th>
-                <td class="performance-runtime"><input type="text" placeholder="공연시간을 입력해주세요" size="50"></td>
+                <td class="performance-runtime">
+                  <input type="text" th:value="${performance.prfruntime}" placeholder="공연시간을 입력해주세요" size="50" style="padding-left: 5px;" required>
+                </td>
               </tr>
               <tr>
                 <th>출연진</th>
-                <td class="performance-actor"><input type="text" placeholder="출연진을 입력해주세요" size="50"></td>
+                <td class="performance-actor">
+                  <input type="text" th:value="${performance.prfcast}" placeholder="출연진을 입력해주세요" size="50" style="padding-left: 5px;" required>
+                </td>
               </tr>
               <tr>
                 <th>가격</th>

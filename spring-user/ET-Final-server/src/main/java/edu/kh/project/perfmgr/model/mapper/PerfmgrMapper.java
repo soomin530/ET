@@ -1,6 +1,7 @@
 package edu.kh.project.perfmgr.model.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -59,5 +60,20 @@ public interface PerfmgrMapper {
 	 * @return
 	 */
 	Performance selectModifyPerformance(String mt20id);
+
+	/** 수정된 내용으로 상세페이지, DB 업데이트
+	 * @param updateData
+	 * @param params
+	 * @return
+	 */
+	int updatePerformance(Performance updateData);
+
+	/** 관리자 상세 정보 페이지에서 삭제 버튼 누를 시
+     *  PERFORMANCE_DEL_FL 값을 'Y'로 업데이트
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
+	boolean updatePerformanceDeleteFlag(String mt20id);
 
 }
