@@ -4,6 +4,11 @@ body {
 	-webkit-text-size-adjust: none;
 }
 
+input{
+	border: 1px solid rgb(161, 161, 161);
+	border-radius: 0.4rem;
+}
+
 .performance-container {
 	max-width: 1200px;
 	margin: 0 auto;
