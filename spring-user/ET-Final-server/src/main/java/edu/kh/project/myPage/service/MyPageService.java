@@ -71,7 +71,7 @@ public interface MyPageService {
 	int updateMember(Member member);
 
 
-	/** 배송지 등록
+	/** 배송지 추가
 	 * @param addressDTO
 	 */
 	int addAddress(AddressDTO addressDTO);

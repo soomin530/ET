@@ -64,5 +64,13 @@ public interface MyPageMapper {
 	 */
 	int updateMember(Member member);
 
+	/** 배송지 추가
+	 * @param addressDTO
+	 * @return
+	 */
+	int insertAddress(AddressDTO addressDTO);
+	
+	
+
 	
 }

@@ -86,5 +86,17 @@
         MEMBER_GENDER = #{memberGender}
         WHERE MEMBER_NO = #{memberNo}
     </update>
+    
+    
+     <!-- 배송지 추가 -->
+    <insert id="insertAddress" parameterType="edu.kh.project.myPage.model.dto.AddressDTO">
+        INSERT INTO TB_ADDRESS (
+            MEMBER_NO, RECEIVERNAME, POSTCODE, ADDRESS, DETAILADDRESS, PHONE, EXTRAPHONE
+        ) VALUES (
+            #{memberNo}, #{receiverName}, #{postcode}, #{address}, #{detailAddress}, #{phone}, #{extraPhone}
+        )
+    </insert>
+    
+    
 
 </mapper>

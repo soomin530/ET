@@ -1,5 +1,6 @@
 package edu.kh.project.myPage.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -176,30 +177,36 @@ public class MyPageController {
     }
     
     
-    /** 배송지 관리
-     * @return
-     */
-    @GetMapping("addressManagement")
-    public String addressManagement() {
-        return "mypage/addressManagement"; // 배송지 관리 페이지 HTML 파일
-    }
+    
+    
+    
+    @Autowired
+    private MyPageService myPageService;
 
-    /** 배송지 등록
+    /**
+     * 배송지 추가
      * @param addressDTO
-     * @return
+     * @param loginMember 세션에서 로그인한 회원 정보
+     * @return 성공 메시지
      */
     @PostMapping("/addAddress")
     @ResponseBody
-    public ResponseEntity<String> addAddress(@RequestBody AddressDTO addressDTO) {
-        // 서비스 계층에서 배송지 저장 처리
-        // int result = service.addAddress(addressDTO);
+    public ResponseEntity<String> addAddress(@RequestBody AddressDTO addressDTO, @SessionAttribute("loginMember") int memberNo) {
+        addressDTO.setMemberNo(memberNo); // 세션에서 가져온 회원 번호 설정
 
-        return ResponseEntity.ok("배송지가 등록되었습니다.");
+        int result = myPageService.addAddress(addressDTO);
+        if (result > 0) {
+            return ResponseEntity.ok("배송지가 등록되었습니다.");
+        } else {
+            return ResponseEntity.status(500).body("배송지 등록에 실패했습니다.");
+        }
     }
     
+    
+}
 	
 	
 	
 	
 
-}
+
