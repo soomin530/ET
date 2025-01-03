@@ -5,6 +5,7 @@ import java.util.Map;
 
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
+import edu.kh.project.performance.model.dto.PerformanceRegistrationDTO;
 import edu.kh.project.performance.model.dto.Review;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
 
@@ -86,6 +87,24 @@ public interface PerformanceService {
 	 * 
 	 */
 	List<Review> getReviewsByPerformanceId(String mt20id);
+	
+	/** 공연장 좌석 정보 목록
+	 * @param mt10id
+	 * @return
+	 */
+	List<Map<String, Object>> priceSeatInfoList(String mt10id);
+	
+	/** 공연 일정 중복 체크
+	 * @param paramMap
+	 * @return
+	 */
+	List<Map<String, Object>> reservedDates(String mt10id);
+	
+	/** 공연 등록
+	 * @param dto
+	 * @return
+	 */
+	int registerPerformance(PerformanceRegistrationDTO dto) throws Exception;
 
     /** 관리자 공연 등록
      *  -> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기
@@ -93,4 +112,6 @@ public interface PerformanceService {
 	 * @author 우수민
 	 */
 	List<Map<String, Object>> getVenueList();
+
+
 }

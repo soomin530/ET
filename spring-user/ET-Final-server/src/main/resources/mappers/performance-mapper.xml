@@ -89,7 +89,7 @@
 		       JOIN TB_PERFORMANCES_DETAIL pd ON vsi.MT10ID = pd.MT10ID
 		       WHERE pd.MT20ID = p.MT20ID
 		   ), 0) - COUNT(CASE 
-		       WHEN ts.SEAT_STATUS = 'booked' 
+		       WHEN ts.SEAT_STATUS != 'booked' 
 		       AND ts.SHOW_DATE >= TRUNC(SYSDATE) 
 		       THEN 1 
 		   END) as seats,
@@ -200,6 +200,66 @@
 		FROM TB_PERFORMANCE_REVIEW JOIN TB_MEMBER USING(MEMBER_NO)
 		WHERE MT20ID = #{mt20id}
     </select>
+    
+    <!-- 공연장 좌석 목록 -->
+    <select id="priceSeatInfoList">
+    	SELECT
+    		SEAT_COUNT,
+    		GRADE_ID,
+    		GRADE_NAME
+    	FROM TB_VENUE_SEAT_INFO
+    	JOIN TB_SEAT_GRADE USING(GRADE_ID)
+    	WHERE MT10ID = #{mt10id}
+    </select>
+    
+    <!-- 공연 일정 중복 체크 -->
+    <select id="getReservedDates">
+    	<![CDATA[
+	    	SELECT 
+			    TO_CHAR(TO_DATE(PRFPDFROM, 'YYYY-MM-DD'), 'YYYY-MM-DD') AS PRFPDFROM,
+				TO_CHAR(TO_DATE(PRFPDTO, 'YYYY-MM-DD'), 'YYYY-MM-DD') AS PRFPDTO
+			FROM TB_PERFORMANCES_DETAIL
+			WHERE MT10ID = #{mt10id}
+			AND TO_DATE(PRFPDTO, 'YYYY-MM-DD') >= TRUNC(SYSDATE)
+			AND PRFSTATE != '공연취소'
+			ORDER BY TO_DATE(PRFPDFROM, 'YYYY-MM-DD')
+		]]>
+    </select>
+    
+    <!-- 공연 기본 정보 저장 -->
+    <insert id="insertPerformance">
+        INSERT INTO TB_PERFORMANCES_DETAIL (
+            MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM,
+            PRFCAST, PRFRUNTIME, PCSEGUIDANCE, DTGUIDANCE, AREA,
+            GENRENM, PRFSTATE, DESCRIPTION, MT10ID, CONCERT_MANAGER_NO
+        ) VALUES (
+            #{mt20id}, #{prfnm}, #{prfpdfrom}, #{prfpdto}, #{fcltynm},
+            #{prfcast}, #{prfruntime}, #{pcseguidance}, #{dtguidance}, #{area},
+            #{genrenm}, #{prfstate}, #{description}, #{mt10id}, #{concertManagerNo}
+        )
+    </insert>
+    
+    <!-- 공연 가격 정보 저장 -->
+    <insert id="insertPerformancePrice">
+        INSERT INTO TB_PERFORMANCE_SEAT_PRICE (
+            PRICE_ID, MT20ID, GRADE_ID, PRICE
+        ) VALUES (
+            SEQ_PRICE_ID.NEXTVAL,
+            #{mt20id},
+            #{grade},
+            #{price}
+        )
+    </insert>
+    
+    <!-- 공연 시간 정보 저장 -->
+    <insert id="insertPerformanceTime">
+        INSERT INTO TB_PERFORMANCE_TIME (
+            MT20ID, DAY_OF_WEEK, PERFORMANCE_TIME
+        ) VALUES (
+            #{mt20id}, #{dayOfWeek}, #{performanceTime}
+        )
+    </insert>
+    
     
     <!-- 관리자 공연 등록
     	-> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기

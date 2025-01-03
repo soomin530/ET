@@ -101,6 +101,36 @@ public interface PerformanceMapper {
 	 * @author 우수민
 	 */
 	List<Review> selectReviewsByPerformanceId(String mt20id);
+	
+	/** 공연장 좌석 목록
+	 * @param mt10id
+	 * @return
+	 */
+	List<Map<String, Object>> priceSeatInfoList(String mt10id);
+	
+	/** 공연 일정 중복 체크
+	 * @param paramMap
+	 * @return
+	 */
+	List<Map<String, Object>> getReservedDates(String mt10id);
+	
+	/** 공연 정보 등록(TB_PERFORMANCES_DETAIL)
+	 * @param performanceMap
+	 * @return
+	 */
+	int insertPerformance(Map<String, Object> performanceMap);
+
+	/** 좌석별 가격 정보등록(TB_PERFORMANCE_SEAT_PRICE)
+	 * @param priceMap
+	 * @return
+	 */
+	int insertPerformancePrice(Map<String, Object> priceMap);
+
+	/** 공연 요일, 시간 등록(TB_PERFORMANCE_TIME)
+	 * @param timeMap
+	 * @return
+	 */
+	int insertPerformanceTime(Map<String, Object> timeMap);
 
     /** 관리자 공연 등록
      *  -> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기
