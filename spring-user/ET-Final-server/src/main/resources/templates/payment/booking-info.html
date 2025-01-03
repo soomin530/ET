@@ -5,21 +5,35 @@
     <meta charset="UTF-8">
     <title>예매자 정보 확인</title>
     <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             background-color: #f8f9fa;
+            animation: fadeIn 0.5s ease-out;
+            color: #333;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* 진행 단계 헤더 스타일 */
+        /* 진행 단계 헤더 */
         .progress-header {
+            background: linear-gradient(to right, #fff, #fff9f8);
+            border-bottom: 1px solid rgba(255, 69, 0, 0.1);
             width: 100%;
-            background-color: white;
             padding: 20px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -36,8 +50,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            z-index: 1;
         }
 
         .step-number {
@@ -50,6 +62,12 @@
             justify-content: center;
             font-weight: bold;
             margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step:not(.active) .step-number:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
         }
 
         .step-text {
@@ -82,14 +100,12 @@
             top: 20px;
             left: 70px;
             width: 50%;
-            /* 2단계이므로 50% */
             height: 2px;
             background-color: #ff4500;
             transition: width 0.3s ease;
-            z-index: 0;
         }
 
-        /* 폼 스타일 */
+        /* 예약자 정보 컨테이너 */
         .booking-container {
             background-color: white;
             padding: 30px;
@@ -97,6 +113,11 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 600px;
+            transition: all 0.3s ease;
+        }
+
+        .booking-container:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .info-section {
@@ -105,18 +126,15 @@
             border-bottom: 1px solid #eee;
         }
 
-        .btn-group {
-            display: flex;
-            /* 플렉스 컨테이너로 설정 */
-            justify-content: center;
-            /* 버튼을 중앙 정렬 */
-            gap: 10px;
-            /* 버튼 간격 */
+        .info-section h2 {
+            color: #ff4500;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
 
-        /*이전 단계 버튼 색상*/
-        .prev-btn {
-            background-color: #b6b2b0;
+        .info-section h3 {
+            font-size: 16px;
+            margin: 10px 0;
         }
 
         .form-group {
@@ -135,21 +153,71 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #ff4500;
+            box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1);
+            outline: none;
+        }
+
+        input:invalid {
+            border-color: #ff6b6b;
+        }
+
+        input:valid {
+            border-color: #51cf66;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
 
         button {
-            background-color: #ff4500;
-            color: white;
+            flex: 1;
+            padding: 15px 25px;
             border: none;
-            padding: 12px 24px;
-            font-size: 16px;
             border-radius: 4px;
+            font-size: 16px;
             cursor: pointer;
-            width: 100%;
+            transition: all 0.2s ease;
         }
 
         button:hover {
-            background-color: #ff5722;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .prev-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .prev-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .next-btn {
+            background-color: #ff4500;
+            color: white;
+        }
+
+        .next-btn:hover {
+            background-color: #e03e00;
+        }
+
+        @media (max-width: 768px) {
+            .booking-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .progress-container {
+                padding: 0 15px;
+            }
         }
     </style>
 
@@ -214,14 +282,8 @@
         } else {
             // 좌석 정보 생성
             const seatInfo = selectedSeats.map(seat => {
-                if (typeof seat === 'object' && seat.seatId) {
-                    return seat.seatId; // 전체 좌석 ID 출력
-                } else if (typeof seat === 'string') {
-                    return seat; // 단순 문자열 처리
-                } else {
-                    console.error('Unexpected seat format:', seat);
-                    return '알 수 없음';
-                }
+                const parts = seat.seatId.split('-');
+                return parts.slice(1).join('-'); // mt20id 제거 후 나머지 정보 표시
             }).join(', ');
 
             // 좌석 정보 출력
