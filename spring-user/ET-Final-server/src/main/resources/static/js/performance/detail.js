@@ -109,18 +109,42 @@ class Calendar {
 	 * @returns {boolean} 예약 가능 여부
 	 */
 	isDateAvailable(date) {
-		// 오늘 날짜의 자정 시간으로 설정 (시간, 분, 초 제거)
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
+	    const today = new Date();
+	    today.setHours(0, 0, 0, 0);
+		
+	    const compareDate = new Date(date);
+	    compareDate.setHours(0, 0, 0, 0);
+		
+	    if (compareDate < today) {
+	        return false;
+	    }
 
-		// 지난 날짜인지 확인
-		if (date < today) {
-			return false;
-		}
+	    const startDateCompare = new Date(this.startDate);
+	    startDateCompare.setHours(0, 0, 0, 0);
+	    const endDateCompare = new Date(this.endDate);
+	    endDateCompare.setHours(0, 0, 0, 0);
+		
+	    if (compareDate < startDateCompare || compareDate > endDateCompare) {
+	        return false;
+	    }
 
-		// 해당 요일에 공연이 있는지 확인
-		const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
-		return this.performance.schedule[dayName] !== undefined;
+	    if (Object.keys(this.performance.schedule).length === 0) {
+	        return true;
+	    }
+
+	    const dayMap = {
+	        1: "월요일",
+	        2: "화요일",
+	        3: "수요일",
+	        4: "목요일",
+	        5: "금요일",
+	        6: "토요일",
+	        7: "일요일"  // 0 대신 7로 변경
+	    };
+	    
+	    const day = compareDate.getDay() || 7;  // 일요일(0)을 7로 변환
+	    const dayName = dayMap[day];
+	    return this.performance.schedule[dayName] !== undefined;
 	}
 
 	/**
@@ -129,7 +153,10 @@ class Calendar {
 	 * @returns {boolean} 기간 내 포함 여부
 	 */
 	isDateInRange(date) {
-		return date >= this.startDate && date <= this.endDate;
+	    const compareDate = new Date(date).setHours(0,0,0,0);
+	    const startDate = new Date(this.startDate).setHours(0,0,0,0);
+	    const endDate = new Date(this.endDate).setHours(0,0,0,0);
+	    return compareDate >= startDate && compareDate <= endDate;
 	}
 
 	/**
