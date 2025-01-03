@@ -157,18 +157,20 @@ public class paymentController {
 	        
 	        // 이미 예약된 좌석 조회
 	        List<Seat> bookedSeats = service.getBookedSeats(mt20id, selectedDate, selectedTime);
+	        
+	        // mt20id를 seatId에 포함시켜 반환
+//	        bookedSeats.forEach(seat -> {
+//	            seat.setSeatId(mt20id + "-" + seat.getSeatId());  // seatId를 mt20id와 결합
+//	        });
 
 	        // 결과를 Map으로 반환
 	        Map<String, Object> result = new HashMap<>();
 	        result.put("seats", seats);
 	        result.put("bookedSeats", bookedSeats);
 	        
-	        
-	        
 	        return ResponseEntity.ok(result);
 	        
 	        
-
 	    } catch (Exception e) {
 	        log.error("좌석 조회 중 오류 발생", e);
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -262,13 +264,16 @@ public class paymentController {
 			for (Map<String, Object> seatMap : paymentData.getSeatIds()) {
 				
 				// 필수 값 확인
-			    if (seatMap.get("seatId") == null || seatMap.get("gradeId") == null) {
+				if (seatMap.get("seatId") == null || seatMap.get("gradeId") == null) {
 			        log.warn("좌석 데이터가 올바르지 않습니다: {}", seatMap);
-			        continue; // 해당 좌석 데이터를 건너뜁니다
+			        continue; // 해당 좌석 데이터는 건너뜀
 			    }
+				
+			    String seatIdWithMt20id  = (String) seatMap.get("seatId");
+			    log.info("생성된 seatIdWithMt20id: {}", seatIdWithMt20id);
 
 			    Seat seatData = Seat.builder()
-			        .seatId((String) seatMap.get("seatId"))
+			    	.seatId(seatIdWithMt20id) // seatIdWithMt20id 직접 전달
 			        .gradeId((String) seatMap.get("gradeId")) // gradeId 명시적으로 설정
 			        .seatStatus("BOOKED")
 			        .mt20id(paymentData.getMt20id())

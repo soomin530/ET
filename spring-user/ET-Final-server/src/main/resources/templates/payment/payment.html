@@ -26,6 +26,7 @@
             padding: 20px 0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
+            border-radius: 8px;
         }
 
         .progress-container {
@@ -57,14 +58,14 @@
             margin-bottom: 8px;
         }
 
-        .step-text {
-            font-size: 14px;
-            color: #666;
-        }
-
         .progress-step.active .step-number {
             background-color: #ff4500;
             color: white;
+        }
+
+        .progress-step .step-text {
+            font-size: 14px;
+            color: #999;
         }
 
         .progress-step.active .step-text {
@@ -78,7 +79,7 @@
             left: 70px;
             right: 70px;
             height: 2px;
-            background-color: #e8e8e8;
+            background-color: #ddd;
             z-index: 0;
         }
 
@@ -94,60 +95,148 @@
             z-index: 0;
         }
 
-        /* 결제 페이지 스타일 */
-        .payment-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
+        /* 페이지 로드 애니메이션 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
+        /* 컨테이너 스타일 개선 */
+        .payment-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .payment-container:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 정보 섹션 개선 */
         .info-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
         }
 
         .info-section h3 {
             margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-section span {
+            font-weight: bold;
             color: #333;
         }
 
+        .info-section .total-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff4500;
+        }
+
+        /* 결제 버튼 그룹 개선 */
         .payment-buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        /*이전 단계 버튼 색상*/
-        .prev-btn {
-            background-color: #b6b2b0;
-        }
-
-        button {
-            flex: 1;
-            padding: 15px 25px;
+        .payment-buttons button {
+            padding: 15px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            font-weight: 600;
+            transition: transform 0.2s;
         }
 
-        #cardPay {
-            background-color: #ff4500;
+        .payment-buttons button:hover {
+            transform: translateY(-3px);
+        }
+
+        /* 이전 단계 버튼 */
+        .prev-btn {
+            background-color: #757575;
             color: white;
         }
 
-        #kakaoPay {
-            background-color: #FEE500;
-            color: #000000;
+        .prev-btn:hover {
+            background-color: #5a6268;
         }
 
-        button:hover {
-            opacity: 0.9;
+        /* 카드 결제 버튼 */
+        #cardPay {
+            background-color: #ff5722;
+            color: white;
+        }
+
+        #cardPay:hover {
+            background-color: #e64a19;
+        }
+
+        /* 카카오페이 버튼 */
+        #kakaoPay {
+            background-color: #fee500;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #kakaoPay:before {
+            content: "";
+            /* 카카오페이 로고를 추가할 수 있는 공간 */
+            width: 24px;
+            height: 24px;
+        }
+
+        /* 반응형 디자인 개선 */
+        @media (max-width: 768px) {
+            .payment-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .payment-buttons {
+                flex-direction: column;
+            }
+
+            .payment-buttons button {
+                width: 100%;
+            }
+        }
+
+        /* 총 결제 금액 강조 */
+        .info-section h3:last-child {
+            font-size: 18px;
+            color: #ff4500;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #eee;
+        }
+
+        .info-section h3:last-child span {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff4500;
         }
     </style>
 </head>
@@ -197,20 +286,11 @@
         const impCode = 'imp00237821'; // 아임포트 가맹점 코드
 
         const seatInfo = JSON.parse(localStorage.getItem('selectedSeats')).map(seat => {
-            if (typeof seat === 'string') {
-                // seat이 문자열인 경우 처리
-                return seat; // 전석-7-17 등의 전체 문자열 반환
-            } else if (typeof seat === 'object' && seat.seatId) {
-                // seat이 객체인 경우 처리
-                return seat.seatId; // 객체의 seatId를 그대로 반환
-            } else {
-                console.error('Unexpected seat format:', seat);
-                return '알 수 없음';
-            }
-        }).join(', '); // 좌석 정보들을 쉼표로 구분하여 문자열로 합침
+            const parts = seat.seatId.split('-');
+            return parts.slice(1).join('-'); // mt20id 제거 후 나머지 부분 합치기
+        }).join(', ');
 
-        // 수정된 좌석 정보를 결제 페이지에 출력
-        document.getElementById('seat-info').textContent = seatInfo;
+        document.getElementById('seat-info').textContent = seatInfo; // mt20id 제거된 좌석 정보 출력F
 
         const bookingInfo = JSON.parse(localStorage.getItem('bookingInfo'));
         const totalPrice = localStorage.getItem('totalPrice');
