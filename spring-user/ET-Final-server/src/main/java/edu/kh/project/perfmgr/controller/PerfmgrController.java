@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,13 +20,10 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import edu.kh.project.common.jwt.JwtTokenUtil;
-import edu.kh.project.member.model.dto.Member;
-import edu.kh.project.member.service.MemberService;
 import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.perfmgr.service.PerfmgrService;
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.redis.model.service.RedisService;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,50 +44,72 @@ public class PerfmgrController {
 
 	private final RedisService redisService;
 
+	/** 공연 관리자 로그인
+	 * @param inputMember
+	 * @param request
+	 * @param saveId
+	 * @param resp
+	 * @return
+	 */
 	@PostMapping("login")
-	public String login(PerfMgr inputMember, HttpSession session, RedirectAttributes ra, Model model,
-			@RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
+	public ResponseEntity<?> login(PerfMgr inputMember, HttpServletRequest request,
+	        @RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
 
-		// 로그인 서비스 호출
-		PerfMgr perfmgrLoginMember = service.login(inputMember);
+	    // 로그인 서비스 호출
+	    PerfMgr perfmgrLoginMember = service.login(inputMember);
 
-		String path = null;
+	    // 로그인 실패 시
+	    if (perfmgrLoginMember == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                .body("아이디 또는 비밀번호가 일치하지 않습니다.");
+	    }
 
-		// 로그인 실패 시
-		if (inputMember == null) {
-			ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다.");
-			path = "login";
-		} else {
-			// Session scope에 loginMember 추가
-			model.addAttribute("loginMember", perfmgrLoginMember);
+	    // 세션 처리
+	    HttpSession session = request.getSession();
+	    session.setAttribute("loginMember", perfmgrLoginMember);
 
-			// JWT 토큰 생성
-			String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
-			String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
+	    // JWT 토큰 생성
+	    String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
+	    String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
 
-			// 토큰 생성 및 Redis에 저장
-			JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
+	    // 토큰 생성 및 Redis에 저장
+	    JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
-			// Access Token을 HttpOnly 쿠키에 저장
-			Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
-			accessTokenCookie.setHttpOnly(true);
-			accessTokenCookie.setSecure(false); // 개발환경은 false
-			accessTokenCookie.setPath("/");
-			accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-			resp.addCookie(accessTokenCookie);
+	    // Access Token을 HttpOnly 쿠키에 저장
+	    Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
+	    accessTokenCookie.setHttpOnly(true);
+	    accessTokenCookie.setSecure(false); // 개발환경은 false
+	    accessTokenCookie.setPath("/");
+	    accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
+	    resp.addCookie(accessTokenCookie);
 
-			// Refresh Token을 HttpOnly 쿠키에 저장
-			Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
-			refreshTokenCookie.setHttpOnly(true);
-			refreshTokenCookie.setSecure(false); // 개발환경은 false
-			refreshTokenCookie.setPath("/api/auth/refresh");
-			refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
-			resp.addCookie(refreshTokenCookie);
+	    // Refresh Token을 HttpOnly 쿠키에 저장
+	    Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+	    refreshTokenCookie.setHttpOnly(true);
+	    refreshTokenCookie.setSecure(false);
+	    refreshTokenCookie.setPath("/api/auth/refresh");
+	    refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+	    resp.addCookie(refreshTokenCookie);
 
-			path = "/";
-		}
+	    // saveId 쿠키 처리
+	    if (saveId != null) {
+	        Cookie cookie = new Cookie("saveId", perfmgrLoginMember.getConcertManagerId());
+	        cookie.setPath("/");
+	        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+	        resp.addCookie(cookie);
+	    } else {
+	        Cookie cookie = new Cookie("saveId", perfmgrLoginMember.getConcertManagerId());
+	        cookie.setPath("/");
+	        cookie.setMaxAge(0);
+	        resp.addCookie(cookie);
+	    }
 
-		return "redirect:" + path;
+	    // 응답 데이터 구성
+	    Map<String, Object> responseData = new HashMap<>();
+	    responseData.put("accessToken", tokenInfo.accessToken());
+	    responseData.put("memberInfo", perfmgrLoginMember);
+	    
+	    return ResponseEntity.ok(responseData);
 	}
 
 	/**
@@ -228,9 +247,9 @@ public class PerfmgrController {
 	 * @return
 	 * @author 우수민
 	 */
-	@GetMapping("performance-registration-fixed")
+	@GetMapping("performance-registration")
 	public String updatePerformance() {
-		return "perfmgr/performance-registration-fixed";
+		return "perfmgr/performance-registration";
 	}
 
 	/**
