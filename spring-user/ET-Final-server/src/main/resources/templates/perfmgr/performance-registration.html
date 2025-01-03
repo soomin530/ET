@@ -1,186 +1,141 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>공연 등록 페이지</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-	
-	<link rel="stylesheet" href="/css/perfmgr/performance-registration.css">
-	
-	<th:block th:replace="~{common/common}"></th:block>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공연 등록 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/perfmgr/performance-registration.css">
+    <th:block th:replace="~{common/common}"></th:block>
 </head>
-
 <body>
-	<th:block th:replace="~{common/header}"></th:block>
-	<div class="container" style="margin-top: 20px;">
-		<h1>공연 등록</h1>
-		<form id="performance-form">
+    <th:block th:replace="~{common/header}"></th:block>
+    <div class="container" style="margin-top: 20px;">
+        <h1>공연 등록</h1>
+        <form id="performance-form">
+            <!-- 공연 장소 정보 -->
+            <div class="section-title">
+                <h4>공연 장소</h4>
+            </div>
+            <div class="form-group">
+                <label for="venue-search">장소 검색</label>
+                <div class="input-group mb-3">
+                    <input type="text" id="venue-search" class="form-control" placeholder="공연장 이름 또는 주소로 검색">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="search-venue">검색</button>
+                    </div>
+                </div>
+            </div>
+
 			<!-- 공연 장소 정보 -->
-			<div class="section-title">
-				<h4>공연 장소</h4>
-			</div>
+            <div class="form-group">
+                <label for="venue-select">공연장 선택</label>
+                <select id="venue-select" class="form-control" required>
+                    <option value="">공연장을 선택하세요</option>
+                </select>
+            </div>
 
-			<div class="form-group">
-				<label for="venue-search">장소 검색</label>
-				<div class="input-group mb-3">
-					<input type="text" id="venue-search" class="form-control" placeholder="공연장 이름 또는 주소로 검색">
-					<div class="input-group-append">
-						<button class="btn btn-outline-secondary" type="button" id="search-venue">
-							검색
-						</button>
-					</div>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label for="venue-select">공연장 선택</label>
-				<select id="venue-select" class="form-control" required>
-					<option value="">공연장을 선택하세요</option>
-				</select>
-			</div>
-
-			<div id="venue-info" class="card mt-3" style="display: none;">
-				<div class="card-body">
-					<h5 class="card-title">선택된 공연장 정보</h5>
-					<p class="card-text">
-						<strong>주소:</strong> <span id="venue-address"></span><br>
-						<strong>좌석수:</strong> <span id="venue-seats"></span>석
-					</p>
-				</div>
-			</div>
+			<!-- 선택한 공연장 정보 -->
+            <div id="venue-info" class="card mt-3" style="display: none;">
+                <div class="card-body">
+                    <h5 class="card-title">선택된 공연장 정보</h5>
+                    <p class="card-text">
+                        <strong>주소:</strong> <span id="venue-address"></span><br>
+                        <strong>좌석수:</strong> <span id="venue-seats"></span>석
+                    </p>
+                </div>
+            </div>
 			
-			<!-- 공연 기본 정보 -->
-			<div class="section-title">
-				<h4>기본 정보</h4>
-			</div>
-
-			<!-- 공연명 입력 -->
-			<div class="form-group">
-				<label for="prfnm">공연명</label>
-				<input type="text" id="prfnm" name="prfnm" class="form-control" required>
-			</div>
-
-			<!-- 런타임 입력 -->
-			<div class="form-group">
-				<label for="runtime">런타임(분)</label>
-				<input type="number" id="runtime" name="runtime" class="form-control" placeholder="런타임을 입력하세요" required>
-			</div>
-
-			<!-- 출연진 입력 -->
-			<div class="form-group">
-				<label for="cast">출연진</label>
-				<textarea id="cast" name="cast" class="form-control" placeholder="출연진을 입력하세요" rows="3"
-					required></textarea>
-			</div>
-
-			<!-- 장르 입력 -->
-			<div class="form-group">
-				<label for="genere">장르</label>
-				<textarea id="genere" name="genere" class="form-control" placeholder="장르를 입력하세요" rows="3"
-					required></textarea>
-			</div>
-
-			<!-- 공연 기간 -->
-			<div class="section-title">
-				<h4>공연 기간</h4>
-			</div>
-
-			<div class="row">
-				<div class="col-md-6">
-					<div class="form-group">
-						<label for="prfpdfrom">시작일</label>
-						<input type="text" id="prfpdfrom" name="prfpdfrom" class="form-control" required>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="form-group">
-						<label for="prfpdto">종료일</label>
-						<input type="text" id="prfpdto" name="prfpdto" class="form-control" required>
-					</div>
-				</div>
-			</div>
-
-			<!-- 공연 시간 -->
-			<div class="section-title">
-				<h4>공연 시간</h4>
-			</div>
-
-			<div id="schedule-container">
-				<div class="schedule-group">
-					<span class="remove-schedule">✕</span>
-					<div class="form-group">
-						<label>요일 선택 (여러 개 선택 가능)</label>
-						<select class="form-control days-select" multiple>
-							<option value="월요일">월요일</option>
-							<option value="화요일">화요일</option>
-							<option value="수요일">수요일</option>
-							<option value="목요일">목요일</option>
-							<option value="금요일">금요일</option>
-							<option value="토요일">토요일</option>
-							<option value="일요일">일요일</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label>공연 시간 (콤마로 구분)</label>
-						<input type="text" class="form-control times-input" placeholder="예: 14:00,19:30">
-					</div>
-				</div>
-			</div>
-			<button type="button" class="btn btn-success add-btn" id="add-schedule">+ 공연 시간 추가</button>
-
 			<!-- 가격 정보 -->
-			<div class="section-title">
-				<h4>티켓 가격</h4>
-			</div>
+            <div class="section-title">
+                <h4>티켓 가격</h4>
+            </div>
+            <div id="price-container">
+				<!-- 선택한 공연장 좌석 등급 비동기 조회 -->
+            </div>
+			
+			<!-- 공연 기간 정보 -->
+            <div class="section-title">
+                <h4>공연 기간</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="prfpdfrom">시작일</label>
+                        <input type="text" id="prfpdfrom" name="prfpdfrom" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="prfpdto">종료일</label>
+                        <input type="text" id="prfpdto" name="prfpdto" class="form-control" required>
+                    </div>
+                </div>
+            </div>
 
-			<div id="price-container">
-				<div class="price-group">
-					<span class="remove-schedule">✕</span>
-					<div class="form-group">
-						<label>좌석 등급</label>
-						<select class="form-control grade-select">
-							<option value="VIP">VIP석</option>
-							<option value="R">R석</option>
-							<option value="S">S석</option>
-							<option value="A">A석</option>
-							<option value="B">B석</option>
-							<option value="전석">전석</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label>가격</label>
-						<input type="number" class="form-control price-input" min="0" step="1000"
-							placeholder="가격을 입력하세요">
-					</div>
-				</div>
-			</div>
-			<button type="button" class="btn btn-success add-btn" id="add-price">+ 가격 정보 추가</button>
+            <!-- 공연 시간 -->
+            <div class="section-title">
+                <h4>공연 시간</h4>
+            </div>
+            <div id="schedule-container">
+            </div>
+            <button type="button" class="btn btn-success add-btn" id="add-schedule">+ 공연 시간 추가</button>
 
-			<!-- 공연 설명 -->
+			<!-- 공연 포스터 정보 -->
 			<div class="form-group">
-				<label for="description">공연 설명</label>
-				<textarea id="description" name="description" class="form-control"></textarea>
+			    <label for="poster">공연 포스터</label>
+			    <div class="custom-file">
+			        <input type="file" class="custom-file-input" id="poster" accept="image/*" required>
+			        <label class="custom-file-label" for="poster">포스터 이미지를 선택하세요</label>
+			    </div>
+			    <div id="poster-preview" class="mt-2" style="display: none;">
+			        <img src="" alt="포스터 미리보기" style="max-width: 200px; max-height: 300px;">
+			    </div>
 			</div>
 
-			<button type="submit" class="btn btn-primary btn-lg btn-block mt-5">공연 등록</button>
-		</form>
-	</div>
+            <!-- 공연 기본 정보 -->
+            <div class="section-title">
+                <h4>기본 정보</h4>
+            </div>
+            <div class="form-group">
+                <label for="prfnm">공연명</label>
+                <input type="text" id="prfnm" name="prfnm" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="runtime">런타임(분)</label>
+                <input type="number" id="runtime" name="runtime" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="cast">출연진</label>
+                <textarea id="cast" name="cast" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="genere">장르</label>
+                <textarea id="genere" name="genere" class="form-control" rows="3" required></textarea>
+            </div>
 
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.js"></script>
-	
-	<script src="/js/perfmgr/performance-registration.js"></script>
 
-	<th:block th:replace="~{common/footer}"></th:block>
+            <!-- 공연 설명 -->
+            <div class="form-group">
+                <label for="description">공연 설명</label>
+                <textarea id="description" name="description" class="form-control"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-block mt-5">공연 등록</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.js"></script>
+    <script src="/js/perfmgr/performance-registration.js"></script>
+
+    <th:block th:replace="~{common/footer}"></th:block>
 </body>
-
 </html>
