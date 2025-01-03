@@ -58,6 +58,14 @@ public class FileConfig implements WebMvcConfigurer{
 	private String boardResourceLocation; // file:///C:/uploadFiles/board/
 	
 	
+	// 포스터 이미지 경로
+	@Value("${my.performance.resource-handler}")
+    private String performanceResourceHandler; // /images/performance/**
+
+    @Value("${my.performance.resource-location}")
+    private String performanceResourceLocation; // file:///C:/uploadFiles/performance/
+	
+	
 	
 	
 	// 요청 주소에 따라
@@ -84,6 +92,10 @@ public class FileConfig implements WebMvcConfigurer{
 		registry
 		.addResourceHandler(boardResourceHandler)
 		.addResourceLocations(boardResourceLocation);
+		
+		registry
+		.addResourceHandler(performanceResourceHandler)
+		.addResourceLocations(performanceResourceLocation);
 		
 		
 	}
