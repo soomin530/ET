@@ -1,6 +1,7 @@
 package edu.kh.project.perfmgr.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -100,5 +101,30 @@ public class PerfmgrServiceImpl implements PerfmgrService {
 	public Performance getPerformanceDetail(String mt20id) {
 		return mapper.selectModifyPerformance(mt20id);
 	}
-	
+
+	// 수정된 내용으로 상세페이지, DB 업데이트
+	public boolean modifyPerformanceUpdate(Performance updateData) {  // 매개변수를 하나로
+	    try {
+	        // mapper 호출하여 업데이트 수행
+	        int result = mapper.updatePerformance(updateData);
+	        
+	        // 업데이트 성공 여부 반환 (1 이상이면 성공)
+	        return result > 0;
+	        
+	    } catch (Exception e) {
+	        // 에러 로깅
+	        log.error("공연 수정 중 오류 발생: ", e);
+	        return false;
+	    }
+	}
+
+	// 관리자 상세 정보 페이지에서 삭제 버튼 누를 시
+    // PERFORMANCE_DEL_FL 값을 'Y'로 업데이트
+	@Override
+	public boolean updatePerformanceDeleteFlag(String mt20id) {
+		return mapper.updatePerformanceDeleteFlag(mt20id);
+	}
 }
+
+	
+

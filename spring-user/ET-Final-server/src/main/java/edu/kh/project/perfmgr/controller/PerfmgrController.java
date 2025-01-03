@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -286,6 +287,7 @@ public class PerfmgrController {
 	@GetMapping("/modifyPerformance")
 	public String modifyPerformance(@RequestParam("mt20id") String mt20id, Model model) {
 	    try {
+	    	
 	        // 공연 정보 조회
 	        Performance performance = service.getPerformanceDetail(mt20id);
 	        
@@ -299,4 +301,53 @@ public class PerfmgrController {
 	        return "error/error";  // 에러 페이지로 리다이렉트
 	    }
 	}
+	
+
+	/** 수정된 내용으로 상세페이지, DB 업데이트
+	 * @param mt20id
+	 * @param performances
+	 * @return
+	 */
+	@PostMapping("/modifyPerformance/{mt20id}")
+	public ResponseEntity<?> modifyPerformanceUpdate(
+	    @PathVariable("mt20id") String mt20id,
+	    @RequestBody Performance performance) {
+
+	    Performance updateData = new Performance();
+	    updateData.setMt20id(mt20id);
+	    updateData.setPrfnm(performance.getPrfnm());
+	    updateData.setPrfruntime(performance.getPrfruntime());
+	    updateData.setPrfcast(performance.getPrfcast());
+
+	    boolean isUpdated = service.modifyPerformanceUpdate(updateData);
+
+	    if (isUpdated) {
+	    	
+	        // JSON 형식으로 응답
+	        return ResponseEntity.ok().body(Map.of("message", "수정 성공"));
+	    }
+	    
+	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                        .body(Map.of("message", "수정 실패"));
+	}
+	
+    /** 관리자 상세 정보 페이지에서 삭제 버튼 누를 시
+     *  PERFORMANCE_DEL_FL 값을 'Y'로 업데이트
+     * @param mt20id
+     * @param request
+     * @return
+     * @author 우수민
+     */
+    @PostMapping("/delete/{mt20id}")
+    public ResponseEntity<String> deletePerformance(@PathVariable("mt20id") String mt20id) {
+
+        boolean updated = service.updatePerformanceDeleteFlag(mt20id);
+
+        if (updated) {
+            return ResponseEntity.ok("공연이 성공적으로 삭제되었습니다.");
+            
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("공연 삭제 중 오류가 발생했습니다.");
+        }
+    }
 }
