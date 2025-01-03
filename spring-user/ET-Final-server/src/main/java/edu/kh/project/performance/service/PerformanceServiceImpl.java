@@ -233,8 +233,7 @@ public class PerformanceServiceImpl implements PerformanceService {
 			String dtguidance = createDtguidance(dto.getSchedules());
 			performanceMap.put("dtguidance", dtguidance);
 			
-			int result = 0;
-			//int result = mapper.insertPerformance(performanceMap);
+			int result = mapper.insertPerformance(performanceMap);
 			if (result == 0)
 				throw new Exception("공연 정보 저장 실패");
 
@@ -245,7 +244,7 @@ public class PerformanceServiceImpl implements PerformanceService {
 				priceMap.put("grade", price.getGrade());
 				priceMap.put("price", price.getPrice());
 
-				//result = mapper.insertPerformancePrice(priceMap);
+				result = mapper.insertPerformancePrice(priceMap);
 				if (result == 0)
 					throw new Exception("가격 정보 저장 실패");
 			}
@@ -259,7 +258,7 @@ public class PerformanceServiceImpl implements PerformanceService {
 						timeMap.put("dayOfWeek", convertDayToNumber(day));
 						timeMap.put("performanceTime", time);
 
-						//result = mapper.insertPerformanceTime(timeMap);
+						result = mapper.insertPerformanceTime(timeMap);
 						if (result == 0)
 							throw new Exception("시간 정보 저장 실패");
 					}
