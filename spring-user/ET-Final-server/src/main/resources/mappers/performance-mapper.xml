@@ -108,24 +108,27 @@
 	<!-- 스케줄 조회 -->
 	<select id="getRemainingSeats">
 		<![CDATA[
-	        SELECT v.MT10ID,
-			       v.FCLTYNM,
-			       ts.SHOW_TIME as time,
-			       (v.SEATSCALE - NVL((
-			           SELECT COUNT(*)
-			           FROM ETFIVE.TB_TICKET_SEAT ts_sub
-			           WHERE ts_sub.MT20ID = #{performanceId}
-			             AND ts_sub.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-			             AND ts_sub.SEAT_STATUS != 'available'
-			             AND ts_sub.SHOW_TIME = ts.SHOW_TIME
-			       ), 0)) AS SEATS,
-			       'available' as seatStatus
-			FROM ETFIVE.TB_VENUE v
-			JOIN ETFIVE.TB_PERFORMANCES_DETAIL pd ON v.MT10ID = pd.MT10ID
-			LEFT JOIN ETFIVE.TB_TICKET_SEAT ts ON pd.MT20ID = ts.MT20ID AND ts.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-			WHERE pd.MT20ID = #{performanceId}
-			AND v.SEATSCALE > 0
-			GROUP BY v.MT10ID, v.FCLTYNM, ts.SHOW_TIME, v.SEATSCALE
+	        SELECT 
+		        pt.PERFORMANCE_TIME as time,
+		        (v.SEATSCALE - NVL((
+		            SELECT COUNT(*)
+		            FROM ETFIVE.TB_TICKET_SEAT ts_sub
+		            WHERE ts_sub.MT20ID = #{performanceId}
+		            AND ts_sub.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+		            AND ts_sub.SEAT_STATUS = 'BOOKED'
+		            AND ts_sub.SHOW_TIME = pt.PERFORMANCE_TIME
+		        ), 0)) AS seats,
+		        'available' as seatStatus
+		    FROM ETFIVE.TB_VENUE v
+		    JOIN ETFIVE.TB_PERFORMANCES_DETAIL pd ON v.MT10ID = pd.MT10ID
+		    JOIN ETFIVE.TB_PERFORMANCE_TIME pt ON pd.MT20ID = pt.MT20ID
+		    WHERE pd.MT20ID = #{performanceId}
+		    AND pt.DAY_OF_WEEK = CASE 
+		        WHEN TO_CHAR(TO_DATE(#{selectedDate}, 'YYYY-MM-DD'), 'D') = '1' THEN 7  -- 일요일
+		        ELSE TO_CHAR(TO_DATE(#{selectedDate}, 'YYYY-MM-DD'), 'D') - 1
+		    END
+		    AND v.SEATSCALE > 0
+		    ORDER BY pt.PERFORMANCE_TIME
 		]]>
     </select>
    
@@ -245,11 +248,11 @@
     <!-- 공연 기본 정보 저장 -->
     <insert id="insertPerformance">
         INSERT INTO TB_PERFORMANCES_DETAIL (
-            MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM,
+            MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER,
             PRFCAST, PRFRUNTIME, PCSEGUIDANCE, DTGUIDANCE, AREA,
             GENRENM, PRFSTATE, DESCRIPTION, MT10ID, CONCERT_MANAGER_NO
         ) VALUES (
-            #{mt20id}, #{prfnm}, #{prfpdfrom}, #{prfpdto}, #{fcltynm},
+            #{mt20id}, #{prfnm}, #{prfpdfrom}, #{prfpdto}, #{fcltynm}, #{poster},
             #{prfcast}, #{prfruntime}, #{pcseguidance}, #{dtguidance}, #{area},
             #{genrenm}, #{prfstate}, #{description}, #{mt10id}, #{concertManagerNo}
         )

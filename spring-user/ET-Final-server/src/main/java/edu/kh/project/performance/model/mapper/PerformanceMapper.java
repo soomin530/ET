@@ -51,7 +51,7 @@ public interface PerformanceMapper {
 	 * @param paramMap
 	 * @return
 	 */
-	ScheduleInfo getRemainingSeats(Map<String, Object> paramMap);
+	List<ScheduleInfo> getRemainingSeats(Map<String, Object> paramMap);
 	
 	/** 공연 위도, 경도 조회
 	 * @param mt20id

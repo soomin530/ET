@@ -18,9 +18,9 @@ function initializeComponents() {
 
 	// 공연장 목록 로드
 	loadVenues();
-	
+
 	// 포스터 미리보기 초기화 추가
-    setupPosterPreview();
+	setupPosterPreview();
 }
 
 // 공연장 관련 함수들
@@ -151,23 +151,34 @@ function initializeDatePickers(reservedRanges) {
 				const maxDate = new Date(selectedDates[0]);
 				maxDate.setDate(maxDate.getDate() + 13);
 
+				// 시작일부터 maxDate 사이의 가능한 날짜들 찾기
+				const availableDates = [];
+				let currentDate = new Date(selectedDates[0]);
+
+				while (currentDate <= maxDate) {
+					// 예약된 날짜와 겹치지 않는지 확인
+					const isReserved = reservedRanges.some(range =>
+						currentDate >= range.from && currentDate <= range.to
+					);
+
+					if (!isReserved) {
+						availableDates.push(new Date(currentDate));
+					}
+					currentDate.setDate(currentDate.getDate() + 1);
+				}
+
 				// 종료일 데이트피커 업데이트
 				toDatePicker.set('minDate', selectedDates[0]);
 				toDatePicker.set('maxDate', maxDate);
-				toDatePicker.set('enable', [
-					{
-						from: selectedDates[0],
-						to: maxDate
-					}
-				]);
+				toDatePicker.set('enable', availableDates);
 			}
 		}
 	});
 
 	// 종료일 데이트피커 
 	toDatePicker = flatpickr("#prfpdto", {
-		...commonConfig,
-		disable: [...commonConfig.disable, { from: "1900-01-01", to: "2100-12-31" }] // 초기에는 모든 날짜 비활성화
+		...commonConfig, // 예약된 일정이 포함된 날짜도 선택 불가능하도록 commonConfig 사용
+		disable: [{ from: "1900-01-01", to: "2100-12-31" }] // 초기에는 모든 날짜 비활성화
 	});
 }
 
@@ -435,21 +446,26 @@ function submitPerformance(formData) {
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(data),
-				success: function(response) {
-					if (response.success) {
+				success: function(response, textStatus, xhr) {
+					// HTTP 상태 코드로 성공 여부 확인
+					if (xhr.status === 200) {
 						alert('공연이 성공적으로 등록되었습니다.');
-						window.location.href = '/performance/list';
+						window.location.href = '/perfmgr/performance-management';
 					} else {
-						alert(response.message || '공연 등록 중 오류가 발생했습니다.');
+						alert('공연 등록 중 오류가 발생했습니다.');
 					}
 				},
 				error: function(xhr) {
-					alert(xhr.responseJSON?.message || '공연 등록 중 오류가 발생했습니다.');
+					if (xhr.status === 500) {
+						alert('서버 내부 오류가 발생했습니다.');
+					} else {
+						alert('공연 등록 중 오류가 발생했습니다. 상태 코드: ' + xhr.status);
+					}
 				}
 			});
 		})
 		.catch(error => {
-			alert(error);
+			alert('데이터 처리 중 오류가 발생했습니다: ' + error);
 		});
 }
 
@@ -540,7 +556,7 @@ function collectPrices() {
 		if (grade && price) {
 			prices.push({
 				grade: parseInt(grade),
-				gradeName : gradeName,
+				gradeName: gradeName,
 				price: parseInt(price)
 			});
 		}

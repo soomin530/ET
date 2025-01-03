@@ -37,13 +37,8 @@ async function fetchAvailableSeats(performanceId, selectedDate) {
 		const response = await fetch(`/performanceApi/remainingSeats/${performanceId}/${selectedDate}`);
 		if (!response.ok) throw new Error("잔여 좌석 조회 실패");
 
-		const result = await response.json();
-		if (result != null) {
-			return result; // [{ time: "14:00", seats: 50 }, ...]
-		} else {
-			console.error("API 오류:", result.message);
-			return [];
-		}
+		const scheduleList = await response.json(); // 리스트로 받음
+		return scheduleList; // [{time: "14:00", seats: 50, seatStatus: "available"}, ...]
 	} catch (error) {
 		console.error("서버 통신 오류:", error);
 		return [];
@@ -211,30 +206,30 @@ class Calendar {
 		const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
 		const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay();
 
-		document.getElementById(
-			"selected-date"
-		).innerText = `선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
+		document.getElementById("selected-date").innerText =
+			`선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
 		document.getElementById("dayOfWeek").value = dayOfWeek;
 
 		const performanceId = this.performance.id;
 		const selectedDate = this.formatDisplayDate(date).replace(/\./g, "-");
-		const availableSlots = await fetchAvailableSeats(performanceId, selectedDate);
+		const scheduleList = await fetchAvailableSeats(performanceId, selectedDate);
 
 		const timeSlotsContainer = document.getElementById("time-slots");
 		timeSlotsContainer.innerHTML = "";
-		
-		if (availableSlots != null) {
-			console.log(availableSlots);
-			const timeSlot = document.createElement("div");
-			timeSlot.className = "time-slot";
-			timeSlot.innerHTML = `
-                    <div>
-                        <div class="time">${availableSlots.time}</div>
-                    </div>
-                    <span class="seat-info">(잔여: ${availableSlots.seats}석)</span>
-                `;
-			timeSlot.onclick = () => this.selectTimeSlot(timeSlot, availableSlots.time);
-			timeSlotsContainer.appendChild(timeSlot);
+
+		if (scheduleList && scheduleList.length > 0) {
+			scheduleList.forEach(schedule => {
+				const timeSlot = document.createElement("div");
+				timeSlot.className = "time-slot";
+				timeSlot.innerHTML = `
+	                <div>
+	                    <div class="time">${schedule.time}</div>
+	                </div>
+	                <span class="seat-info">(잔여: ${schedule.seats}석)</span>
+	            `;
+				timeSlot.onclick = () => this.selectTimeSlot(timeSlot, schedule.time);
+				timeSlotsContainer.appendChild(timeSlot);
+			});
 		} else {
 			timeSlotsContainer.innerHTML = "<p>해당 날짜에는 공연이 없습니다.</p>";
 		}
