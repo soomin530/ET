@@ -120,17 +120,24 @@ function loadVenueSchedule(mt10id) {
 		},
 		error: function() {
 			alert('공연장 일정을 불러오는데 실패했습니다.');
+			initializeDatePickers([]);
 		}
 	});
 }
 
 function initializeDatePickers(reservedRanges) {
+	// 오늘 날짜 설정
+	const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
 	const commonConfig = {
 		locale: "ko",
 		dateFormat: "Y-m-d",
-		minDate: "today",
+		minDate: tomorrow,  // 오늘 이후만 선택 가능
 		disable: [
 			function(date) {
+				// 예약된 날짜 범위와 겹치는지 확인
 				return reservedRanges.some(range => {
 					return date >= range.from && date <= range.to;
 				});
@@ -138,16 +145,16 @@ function initializeDatePickers(reservedRanges) {
 		]
 	};
 
-	// 이전 인스턴스 제거
-	const fpInstances = [fromDatePicker, toDatePicker];
-	fpInstances.forEach(fp => fp?.destroy());
+	// 이전 인스턴스가 있다면 제거
+	if (fromDatePicker) fromDatePicker.destroy();
+	if (toDatePicker) toDatePicker.destroy();
 
 	// 시작일 데이트피커
 	fromDatePicker = flatpickr("#prfpdfrom", {
 		...commonConfig,
 		onChange: function(selectedDates) {
 			if (selectedDates[0]) {
-				// 시작일로부터 2주 후까지
+				// 시작일로부터 2주 후까지만 선택 가능
 				const maxDate = new Date(selectedDates[0]);
 				maxDate.setDate(maxDate.getDate() + 13);
 
@@ -171,14 +178,15 @@ function initializeDatePickers(reservedRanges) {
 				toDatePicker.set('minDate', selectedDates[0]);
 				toDatePicker.set('maxDate', maxDate);
 				toDatePicker.set('enable', availableDates);
+				toDatePicker.set('disable', []);  // 기존 disable 설정 초기화
 			}
 		}
 	});
 
-	// 종료일 데이트피커 
+	// 종료일 데이트피커
 	toDatePicker = flatpickr("#prfpdto", {
-		...commonConfig, // 예약된 일정이 포함된 날짜도 선택 불가능하도록 commonConfig 사용
-		disable: [{ from: "1900-01-01", to: "2100-12-31" }] // 초기에는 모든 날짜 비활성화
+		...commonConfig,
+		disable: [{ from: "1900-01-01", to: "2100-12-31" }]  // 초기에는 모든 날짜 비활성화
 	});
 }
 
@@ -375,7 +383,7 @@ function collectFormData() {
 			prfnm: $('#prfnm').val().trim(),
 			runtime: $('#runtime').val(),
 			prfcast: $('#cast').val().trim(),
-			genrenm: $('#genere').val().trim(),
+			genrenm: $('#genere').val(),
 			prfpdfrom: $('#prfpdfrom').val(),
 			prfpdto: $('#prfpdto').val(),
 			description: $('#description').summernote('code'),

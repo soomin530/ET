@@ -111,9 +111,14 @@
                 <label for="cast">출연진</label>
                 <textarea id="cast" name="cast" class="form-control" rows="3" required></textarea>
             </div>
-            <div class="form-group">
+			<div class="form-group">
                 <label for="genere">장르</label>
-                <textarea id="genere" name="genere" class="form-control" rows="3" required></textarea>
+                <select id="genere" name="genere" class="form-control" required>
+                    <option value="">장르를 선택하세요</option>
+                    <option value="연극">연극</option>
+                    <option value="뮤지컬">뮤지컬</option>
+                    <option value="클래식">클래식</option>
+                </select>
             </div>
 
 
