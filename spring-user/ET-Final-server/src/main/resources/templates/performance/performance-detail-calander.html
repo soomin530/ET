@@ -90,6 +90,9 @@
 						<!-- 상세 설명 탭 -->
 						<div class="tab-content" id="description">
 							<div class="performance-description" th:utext="${performance.description}"></div>
+							<div class="no-description" th:unless="${performance.description != null and !#strings.isEmpty(performance.description)}">
+						        <p>상세 설명 데이터가 없습니다.</p>
+						    </div>
 						</div>
 
 						<!-- 지도/위치 탭 -->
