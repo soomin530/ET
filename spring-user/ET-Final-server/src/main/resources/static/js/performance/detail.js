@@ -1,11 +1,84 @@
 /**
+ * 페이지 전체 초기화
+ */
+function initialize() {
+	initializeTabs();
+	initializeKakaoMap();
+	window.calendarInstance = new Calendar();
+	initializeReviews();
+	initializeWish();
+}
+
+/**
+ * 탭 기능 초기화
+ */
+function initializeTabs() {
+	const tabButtons = document.querySelectorAll('.tab-button');
+	const tabContents = document.querySelectorAll('.tab-content');
+
+	function switchTab(tabId) {
+		// 모든 탭 버튼과 컨텐츠의 active 클래스 제거
+		tabButtons.forEach(button => button.classList.remove('active'));
+		tabContents.forEach(content => content.classList.remove('active'));
+
+		// 선택된 탭 버튼과 컨텐츠에 active 클래스 추가
+		const selectedButton = document.querySelector(`[data-tab="${tabId}"]`);
+		const selectedContent = document.getElementById(tabId);
+
+		if (selectedButton && selectedContent) {
+			selectedButton.classList.add('active');
+			selectedContent.classList.add('active');
+
+			// 지도 탭이 선택되었을 때 지도 리사이즈
+			if (tabId === 'location' && window.kakaoMap) {
+				window.kakaoMap.relayout();
+				// 지도 중심점 재설정
+				const fcltla = document.getElementById('fcltla').value;
+				const fcltlo = document.getElementById('fcltlo').value;
+				const newCenter = new kakao.maps.LatLng(fcltla, fcltlo);
+				window.kakaoMap.setCenter(newCenter);
+			}
+		}
+	}
+
+	// 탭 버튼 클릭 이벤트 리스너
+	tabButtons.forEach(button => {
+		button.addEventListener('click', () => {
+			const tabId = button.getAttribute('data-tab');
+			switchTab(tabId);
+		});
+	});
+
+	// 초기 탭 설정
+	switchTab('info');
+
+	// URL 해시값에 따른 탭 전환
+	window.addEventListener('hashchange', handleHashChange);
+	handleHashChange(); // 초기 로드 시에도 확인
+}
+
+/**
+ * URL 해시 변경 처리
+ */
+function handleHashChange() {
+	const hash = window.location.hash.slice(1) || 'info';
+	const validTabs = ['info', 'description', 'location', 'review'];
+	if (validTabs.includes(hash)) {
+		const tabButton = document.querySelector(`[data-tab="${hash}"]`);
+		if (tabButton) {
+			tabButton.click();
+		}
+	}
+}
+
+/**
  * 카카오맵 초기화
  */
 function initializeKakaoMap() {
+	const mapContainer = document.getElementById('map');
 	const fcltla = document.getElementById('fcltla').value;
 	const fcltlo = document.getElementById('fcltlo').value;
 
-	const mapContainer = document.getElementById('map');
 	const mapOption = {
 		center: new kakao.maps.LatLng(fcltla, fcltlo),
 		level: 3
@@ -17,18 +90,17 @@ function initializeKakaoMap() {
 	});
 	marker.setMap(map);
 
-	kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-		const latlng = mouseEvent.latLng;
-		marker.setPosition(latlng);
+	// 전역 변수로 지도 객체 저장
+	window.kakaoMap = map;
 
-		const message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ' +
-			'경도는 ' + latlng.getLng() + ' 입니다';
-
-		const resultDiv = document.getElementById('clickLatlng');
-		if (resultDiv) {
-			resultDiv.innerHTML = message;
-		}
-	});
+	// 위치 정보 추가
+	const infoContainer = document.createElement('div');
+	infoContainer.className = 'location-info mt-4';
+	infoContainer.innerHTML = `
+        <h3 class="text-lg font-bold">공연장 위치</h3>
+        <p class="mt-2">${document.querySelector('.performance-venue').textContent}</p>
+    `;
+	mapContainer.parentElement.appendChild(infoContainer);
 }
 
 // 잔여 좌석 조회 함수
@@ -109,42 +181,42 @@ class Calendar {
 	 * @returns {boolean} 예약 가능 여부
 	 */
 	isDateAvailable(date) {
-	    const today = new Date();
-	    today.setHours(0, 0, 0, 0);
-		
-	    const compareDate = new Date(date);
-	    compareDate.setHours(0, 0, 0, 0);
-		
-	    if (compareDate < today) {
-	        return false;
-	    }
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
 
-	    const startDateCompare = new Date(this.startDate);
-	    startDateCompare.setHours(0, 0, 0, 0);
-	    const endDateCompare = new Date(this.endDate);
-	    endDateCompare.setHours(0, 0, 0, 0);
-		
-	    if (compareDate < startDateCompare || compareDate > endDateCompare) {
-	        return false;
-	    }
+		const compareDate = new Date(date);
+		compareDate.setHours(0, 0, 0, 0);
 
-	    if (Object.keys(this.performance.schedule).length === 0) {
-	        return true;
-	    }
+		if (compareDate < today) {
+			return false;
+		}
 
-	    const dayMap = {
-	        1: "월요일",
-	        2: "화요일",
-	        3: "수요일",
-	        4: "목요일",
-	        5: "금요일",
-	        6: "토요일",
-	        7: "일요일"  // 0 대신 7로 변경
-	    };
-	    
-	    const day = compareDate.getDay() || 7;  // 일요일(0)을 7로 변환
-	    const dayName = dayMap[day];
-	    return this.performance.schedule[dayName] !== undefined;
+		const startDateCompare = new Date(this.startDate);
+		startDateCompare.setHours(0, 0, 0, 0);
+		const endDateCompare = new Date(this.endDate);
+		endDateCompare.setHours(0, 0, 0, 0);
+
+		if (compareDate < startDateCompare || compareDate > endDateCompare) {
+			return false;
+		}
+
+		if (Object.keys(this.performance.schedule).length === 0) {
+			return true;
+		}
+
+		const dayMap = {
+			1: "월요일",
+			2: "화요일",
+			3: "수요일",
+			4: "목요일",
+			5: "금요일",
+			6: "토요일",
+			7: "일요일"  // 0 대신 7로 변경
+		};
+
+		const day = compareDate.getDay() || 7;  // 일요일(0)을 7로 변환
+		const dayName = dayMap[day];
+		return this.performance.schedule[dayName] !== undefined;
 	}
 
 	/**
@@ -153,10 +225,10 @@ class Calendar {
 	 * @returns {boolean} 기간 내 포함 여부
 	 */
 	isDateInRange(date) {
-	    const compareDate = new Date(date).setHours(0,0,0,0);
-	    const startDate = new Date(this.startDate).setHours(0,0,0,0);
-	    const endDate = new Date(this.endDate).setHours(0,0,0,0);
-	    return compareDate >= startDate && compareDate <= endDate;
+		const compareDate = new Date(date).setHours(0, 0, 0, 0);
+		const startDate = new Date(this.startDate).setHours(0, 0, 0, 0);
+		const endDate = new Date(this.endDate).setHours(0, 0, 0, 0);
+		return compareDate >= startDate && compareDate <= endDate;
 	}
 
 	/**
@@ -552,9 +624,11 @@ function initializeReviews() {
 * 페이지 초기화
 */
 function initialize() {
+	initializeTabs(); // 탭 초기화 추가
 	initializeKakaoMap();
-	window.calendarInstance = new Calendar();
 	initializeReviews();
+	initializeWish();
+	window.calendarInstance = new Calendar();
 }
 
 // DOM 로드 완료 시 초기화
@@ -629,77 +703,74 @@ document.getElementById("booking-btn").onclick = function() {
 
 // 찜하기 기능 초기화
 function initializeWish() {
-    const wishBtn = document.getElementById('wishBtn');
-    const mt20id = document.getElementById('mt20id').value;
-    
-    if (!wishBtn) return;
+	const wishBtn = document.getElementById('wishBtn');
+	const mt20id = document.getElementById('mt20id').value;
 
-    // 초기 찜 상태 확인
-    checkWishStatus();
+	if (!wishBtn) return;
 
-    wishBtn.addEventListener('click', async function() {
-        try {
-            const response = await fetch('/performance/wish', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    mt20id: mt20id
-                })
-            });
+	// 초기 찜 상태 확인
+	checkWishStatus();
 
-            const result = await response.json();
+	wishBtn.addEventListener('click', async function() {
+		try {
+			const response = await fetch('/performance/wish', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					mt20id: mt20id
+				})
+			});
 
-            if (result.success) {
-                const wishIcon = document.getElementById('wishIcon');
-                const wishText = document.getElementById('wishText');
+			const result = await response.json();
 
-                if (result.isWished) {
-                    wishBtn.classList.add('active');
-                    wishIcon.classList.remove('far');
-                    wishIcon.classList.add('fas');
-                    wishText.textContent = '찜취소';
-                } else {
-                    wishBtn.classList.remove('active');
-                    wishIcon.classList.remove('fas');
-                    wishIcon.classList.add('far');
-                    wishText.textContent = '찜하기';
-                }
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error('찜하기 처리 중 오류 발생:', error);
-            alert('찜하기 처리 중 오류가 발생했습니다.');
-        }
-    });
+			if (result.success) {
+				const wishIcon = document.getElementById('wishIcon');
+				const wishText = document.getElementById('wishText');
+
+				if (result.isWished) {
+					wishBtn.classList.add('active');
+					wishIcon.classList.remove('far');
+					wishIcon.classList.add('fas');
+					wishText.textContent = '찜취소';
+				} else {
+					wishBtn.classList.remove('active');
+					wishIcon.classList.remove('fas');
+					wishIcon.classList.add('far');
+					wishText.textContent = '찜하기';
+				}
+			} else {
+				alert(result.message);
+			}
+		} catch (error) {
+			console.error('찜하기 처리 중 오류 발생:', error);
+			alert('찜하기 처리 중 오류가 발생했습니다.');
+		}
+	});
 }
 
 // 찜 상태 확인
 async function checkWishStatus() {
-    const wishBtn = document.getElementById('wishBtn');
-    const wishIcon = document.getElementById('wishIcon');
-    const wishText = document.getElementById('wishText');
-    const mt20id = document.getElementById('mt20id').value;
+	const wishBtn = document.getElementById('wishBtn');
+	const wishIcon = document.getElementById('wishIcon');
+	const wishText = document.getElementById('wishText');
+	const mt20id = document.getElementById('mt20id').value;
 
-    try {
-        const response = await fetch(`/performance/wish/check/${mt20id}`);
-        const result = await response.json();
+	try {
+		const response = await fetch(`/performance/wish/check/${mt20id}`);
+		const result = await response.json();
 
-        if (result.isWished) {
-            wishBtn.classList.add('active');
-            wishIcon.classList.remove('far');
-            wishIcon.classList.add('fas');
-            wishText.textContent = '찜취소';
-        }
-    } catch (error) {
-        console.error('찜 상태 확인 중 오류 발생:', error);
-    }
+		if (result.isWished) {
+			wishBtn.classList.add('active');
+			wishIcon.classList.remove('far');
+			wishIcon.classList.add('fas');
+			wishText.textContent = '찜취소';
+		}
+	} catch (error) {
+		console.error('찜 상태 확인 중 오류 발생:', error);
+	}
 }
 
-// 페이지 로드 완료 시 캘린더 인스턴스 생성
-window.addEventListener("DOMContentLoaded", () => {
-	initializeWish();
-	window.calendarInstance = new Calendar();
-});
+// DOM 로드 완료 시 초기화
+window.addEventListener("DOMContentLoaded", initialize);

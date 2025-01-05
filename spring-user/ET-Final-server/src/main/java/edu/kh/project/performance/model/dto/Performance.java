@@ -31,7 +31,7 @@ public class Performance {
 	private String genrenm;				// 공연장르
 	private String prfstate;			// 공연상태
 	private String mt10id;				// 공연시설
-	private String styurl;				// 소개이미지
+	private String description;			// 공연설명
 	private String fcltla;				// 위도
 	private String fcltlo;				// 경도
 	private int concertManagerNo;		// 공연 등록 관리자 번호
