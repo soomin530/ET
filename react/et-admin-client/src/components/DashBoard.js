@@ -26,10 +26,10 @@ export default function DashBoard() {
       <div className='dash-board-container'>
           <h1>관리자 페이지</h1>
 
-          <div className='admin-info'>
+          {/* <div className='admin-info'>
             <p>현재 접속 관리자 : {globalState.user.memberNickname}</p>
             <button onClick={globalState.handleLogout}>로그아웃</button>
-          </div>
+          </div> */}
 
           <div className='main-show-container'>
             <div className='router-tab-box'>
