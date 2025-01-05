@@ -627,7 +627,79 @@ document.getElementById("booking-btn").onclick = function() {
 	}
 };
 
+// 찜하기 기능 초기화
+function initializeWish() {
+    const wishBtn = document.getElementById('wishBtn');
+    const mt20id = document.getElementById('mt20id').value;
+    
+    if (!wishBtn) return;
+
+    // 초기 찜 상태 확인
+    checkWishStatus();
+
+    wishBtn.addEventListener('click', async function() {
+        try {
+            const response = await fetch('/performance/wish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mt20id: mt20id
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const wishIcon = document.getElementById('wishIcon');
+                const wishText = document.getElementById('wishText');
+
+                if (result.isWished) {
+                    wishBtn.classList.add('active');
+                    wishIcon.classList.remove('far');
+                    wishIcon.classList.add('fas');
+                    wishText.textContent = '찜취소';
+                } else {
+                    wishBtn.classList.remove('active');
+                    wishIcon.classList.remove('fas');
+                    wishIcon.classList.add('far');
+                    wishText.textContent = '찜하기';
+                }
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('찜하기 처리 중 오류 발생:', error);
+            alert('찜하기 처리 중 오류가 발생했습니다.');
+        }
+    });
+}
+
+// 찜 상태 확인
+async function checkWishStatus() {
+    const wishBtn = document.getElementById('wishBtn');
+    const wishIcon = document.getElementById('wishIcon');
+    const wishText = document.getElementById('wishText');
+    const mt20id = document.getElementById('mt20id').value;
+
+    try {
+        const response = await fetch(`/performance/wish/check/${mt20id}`);
+        const result = await response.json();
+
+        if (result.isWished) {
+            wishBtn.classList.add('active');
+            wishIcon.classList.remove('far');
+            wishIcon.classList.add('fas');
+            wishText.textContent = '찜취소';
+        }
+    } catch (error) {
+        console.error('찜 상태 확인 중 오류 발생:', error);
+    }
+}
+
 // 페이지 로드 완료 시 캘린더 인스턴스 생성
 window.addEventListener("DOMContentLoaded", () => {
+	initializeWish();
 	window.calendarInstance = new Calendar();
 });

@@ -549,3 +549,30 @@ body {
 .review-edit-form .edit-content {
     margin: 10px 0;
 }
+
+.wish-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: white;
+    border: 2px solid #f43142;
+    border-radius: 20px;
+    color: #f43142;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.wish-btn:hover {
+    background-color: #f43142;
+    color: white;
+}
+
+.wish-btn.active {
+    background-color: #f43142;
+    color: white;
+}
+
+.wish-btn i {
+    font-size: 1.2em;
+}

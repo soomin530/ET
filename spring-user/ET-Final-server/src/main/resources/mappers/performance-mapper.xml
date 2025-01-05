@@ -109,7 +109,7 @@
     </select>
    
     
-	<!-- 스케줄 조회 -->
+	<!-- 좌석 조회 -->
 	<select id="getRemainingSeats">
 		<![CDATA[
 	        SELECT 
