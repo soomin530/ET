@@ -53,7 +53,7 @@ public class PerformanceApiController {
 	 */
 	@GetMapping("/remainingSeats/{performanceId}/{selectedDate}")
 	@ResponseBody
-	public ResponseEntity<?> remainingSeats(@PathVariable("performanceId") String performanceId,
+	public ResponseEntity<List<ScheduleInfo>> remainingSeats(@PathVariable("performanceId") String performanceId,
 											@PathVariable("selectedDate") String selectedDate) {
 		try {
 			Map<String, Object> paramMap = new HashMap<>();
@@ -62,7 +62,7 @@ public class PerformanceApiController {
 			paramMap.put("selectedDate", selectedDate);
 			
 			// 잔여 좌석 개수 조회
-			ScheduleInfo seatsInfo = performanceService.remainingSeats(paramMap);
+			List<ScheduleInfo> seatsInfo = performanceService.remainingSeats(paramMap);
 
 			return ResponseEntity.ok(seatsInfo);
 

@@ -70,7 +70,7 @@ public class PerformanceServiceImpl implements PerformanceService {
 		return performance;
 	}
 
-	// 스케줄 및 잔여 좌석 조회
+	// 스케줄 조회
 	@Override
 	public Map<String, List<ScheduleInfo>> getScheduleWithAvailableSeats(String mt20id) {
 		List<Map<String, Object>> scheduleData = mapper.getScheduleData(mt20id);
@@ -94,11 +94,11 @@ public class PerformanceServiceImpl implements PerformanceService {
 		return scheduleMap;
 	}
 	
-	// 스케줄 및 잔여 좌석 조회
+	// 잔여 좌석 조회
 	@Override
-	public ScheduleInfo remainingSeats(Map<String, Object> paramMap) {
+	public List<ScheduleInfo> remainingSeats(Map<String, Object> paramMap) {
 		// 1. 매퍼를 통해 SQL 쿼리 실행
-		ScheduleInfo scheduleData = mapper.getRemainingSeats(paramMap);
+		List<ScheduleInfo> scheduleData = mapper.getRemainingSeats(paramMap);
 	    
 	    // 5. 결과 반환
 	    return scheduleData;

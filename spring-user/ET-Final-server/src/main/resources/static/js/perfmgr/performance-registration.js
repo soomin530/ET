@@ -18,9 +18,9 @@ function initializeComponents() {
 
 	// 공연장 목록 로드
 	loadVenues();
-	
+
 	// 포스터 미리보기 초기화 추가
-    setupPosterPreview();
+	setupPosterPreview();
 }
 
 // 공연장 관련 함수들
@@ -120,17 +120,24 @@ function loadVenueSchedule(mt10id) {
 		},
 		error: function() {
 			alert('공연장 일정을 불러오는데 실패했습니다.');
+			initializeDatePickers([]);
 		}
 	});
 }
 
 function initializeDatePickers(reservedRanges) {
+	// 오늘 날짜 설정
+	const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
 	const commonConfig = {
 		locale: "ko",
 		dateFormat: "Y-m-d",
-		minDate: "today",
+		minDate: tomorrow,  // 오늘 이후만 선택 가능
 		disable: [
 			function(date) {
+				// 예약된 날짜 범위와 겹치는지 확인
 				return reservedRanges.some(range => {
 					return date >= range.from && date <= range.to;
 				});
@@ -138,36 +145,48 @@ function initializeDatePickers(reservedRanges) {
 		]
 	};
 
-	// 이전 인스턴스 제거
-	const fpInstances = [fromDatePicker, toDatePicker];
-	fpInstances.forEach(fp => fp?.destroy());
+	// 이전 인스턴스가 있다면 제거
+	if (fromDatePicker) fromDatePicker.destroy();
+	if (toDatePicker) toDatePicker.destroy();
 
 	// 시작일 데이트피커
 	fromDatePicker = flatpickr("#prfpdfrom", {
 		...commonConfig,
 		onChange: function(selectedDates) {
 			if (selectedDates[0]) {
-				// 시작일로부터 2주 후까지
+				// 시작일로부터 2주 후까지만 선택 가능
 				const maxDate = new Date(selectedDates[0]);
 				maxDate.setDate(maxDate.getDate() + 13);
+
+				// 시작일부터 maxDate 사이의 가능한 날짜들 찾기
+				const availableDates = [];
+				let currentDate = new Date(selectedDates[0]);
+
+				while (currentDate <= maxDate) {
+					// 예약된 날짜와 겹치지 않는지 확인
+					const isReserved = reservedRanges.some(range =>
+						currentDate >= range.from && currentDate <= range.to
+					);
+
+					if (!isReserved) {
+						availableDates.push(new Date(currentDate));
+					}
+					currentDate.setDate(currentDate.getDate() + 1);
+				}
 
 				// 종료일 데이트피커 업데이트
 				toDatePicker.set('minDate', selectedDates[0]);
 				toDatePicker.set('maxDate', maxDate);
-				toDatePicker.set('enable', [
-					{
-						from: selectedDates[0],
-						to: maxDate
-					}
-				]);
+				toDatePicker.set('enable', availableDates);
+				toDatePicker.set('disable', []);  // 기존 disable 설정 초기화
 			}
 		}
 	});
 
-	// 종료일 데이트피커 
+	// 종료일 데이트피커
 	toDatePicker = flatpickr("#prfpdto", {
 		...commonConfig,
-		disable: [...commonConfig.disable, { from: "1900-01-01", to: "2100-12-31" }] // 초기에는 모든 날짜 비활성화
+		disable: [{ from: "1900-01-01", to: "2100-12-31" }]  // 초기에는 모든 날짜 비활성화
 	});
 }
 
@@ -364,7 +383,7 @@ function collectFormData() {
 			prfnm: $('#prfnm').val().trim(),
 			runtime: $('#runtime').val(),
 			prfcast: $('#cast').val().trim(),
-			genrenm: $('#genere').val().trim(),
+			genrenm: $('#genere').val(),
 			prfpdfrom: $('#prfpdfrom').val(),
 			prfpdto: $('#prfpdto').val(),
 			description: $('#description').summernote('code'),
@@ -435,21 +454,26 @@ function submitPerformance(formData) {
 				method: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify(data),
-				success: function(response) {
-					if (response.success) {
+				success: function(response, textStatus, xhr) {
+					// HTTP 상태 코드로 성공 여부 확인
+					if (xhr.status === 200) {
 						alert('공연이 성공적으로 등록되었습니다.');
-						window.location.href = '/performance/list';
+						window.location.href = '/perfmgr/performance-management';
 					} else {
-						alert(response.message || '공연 등록 중 오류가 발생했습니다.');
+						alert('공연 등록 중 오류가 발생했습니다.');
 					}
 				},
 				error: function(xhr) {
-					alert(xhr.responseJSON?.message || '공연 등록 중 오류가 발생했습니다.');
+					if (xhr.status === 500) {
+						alert('서버 내부 오류가 발생했습니다.');
+					} else {
+						alert('공연 등록 중 오류가 발생했습니다. 상태 코드: ' + xhr.status);
+					}
 				}
 			});
 		})
 		.catch(error => {
-			alert(error);
+			alert('데이터 처리 중 오류가 발생했습니다: ' + error);
 		});
 }
 
@@ -540,7 +564,7 @@ function collectPrices() {
 		if (grade && price) {
 			prices.push({
 				grade: parseInt(grade),
-				gradeName : gradeName,
+				gradeName: gradeName,
 				price: parseInt(price)
 			});
 		}

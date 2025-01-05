@@ -9,54 +9,58 @@
 	    WHERE GENRENM = #{genre}
 	</select>
 	
-	<!-- 장르별 공연 목록 페이징 조회 -->
+	<!-- 공연 목록 페이징 조회 (장르 선택적) -->
 	<select id="genreWithPaging" resultType="Performance">
-	    SELECT *
-	    FROM (
-	        SELECT
-	            p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, p.PRFREVIEW_RANK,
-	            <if test="filter == 'rating'">
-	                COALESCE(p.PRFREVIEW_RANK, 0) as RATING,
-	            </if>
-	            ROW_NUMBER() OVER (
-	                ORDER BY
-	                <choose>
-	                    <when test="filter == 'rating'">
-	                        COALESCE(p.PRFREVIEW_RANK, 0) DESC, p.PRFPDFROM DESC
-	                    </when>
-	                    <when test="filter == 'upcoming'">
-	                        p.PRFPDFROM ASC
-	                    </when>
-	                    <when test="filter == 'ongoing'">
-	                        p.PRFPDTO ASC
-	                    </when>
-	                    <otherwise>
-	                        p.PRFPDFROM DESC
-	                    </otherwise>
-	                </choose>
-	            ) AS RN
-	        FROM TB_PERFORMANCES_DETAIL p
-	        WHERE p.GENRENM = #{genre}
-	        <if test="filter == 'upcoming'">
-	       	<![CDATA[
-	            AND p.PRFPDFROM > TRUNC(SYSDATE)
-	        ]]>
-	        </if>
-	        <if test="filter == 'ongoing'">
-	        <![CDATA[
-	            AND p.PRFPDFROM <= TRUNC(SYSDATE)
-	            AND p.PRFPDTO >= TRUNC(SYSDATE)
-	        ]]>
-	        </if>
-	    )
-    <![CDATA[
-	    WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
-	]]>
+		SELECT *
+			FROM (
+			    SELECT
+			        p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, p.PRFREVIEW_RANK,
+			        <if test="filter == 'rating'">
+			        COALESCE(p.PRFREVIEW_RANK, 0) as RATING,
+			        </if>
+			        ROW_NUMBER() OVER (
+			            ORDER BY
+			            <choose>
+			                <when test="filter == 'rating'">
+			                    COALESCE(p.PRFREVIEW_RANK, 0) DESC, p.PRFPDFROM DESC
+			                </when>
+			                <when test="filter == 'upcoming'">
+			                    p.PRFPDFROM ASC
+			                </when>
+			                <when test="filter == 'ongoing'">
+			                    p.PRFPDTO ASC
+			                </when>
+			                <otherwise>
+			                    p.PRFPDFROM DESC
+			                </otherwise>
+			            </choose>
+			        ) AS RN
+			    FROM TB_PERFORMANCES_DETAIL p
+			    <where>
+			        <if test="genre != null and genre != ''">
+			            AND p.GENRENM = #{genre}
+			        </if>
+			        <if test="filter == 'upcoming'">
+			            <![CDATA[
+			            AND p.PRFPDFROM > TRUNC(SYSDATE)
+			            ]]>
+			        </if>
+			        <if test="filter == 'ongoing'">
+			            <![CDATA[
+			            AND p.PRFPDFROM <= TRUNC(SYSDATE)
+			            AND p.PRFPDTO >= TRUNC(SYSDATE)
+			            ]]>
+			        </if>
+			    </where>
+			)
+		<![CDATA[
+		WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
+		]]>
 	</select>
 	
 	<!-- 공연 상세페이지 조회 -->
 	<select id="detail">
-		SELECT MT20ID, POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE, PRFREVIEW_RANK
+		SELECT MT20ID, POSTER, PRFNM, FCLTYNM, PRFPDFROM, PRFPDTO,  PRFRUNTIME, PRFCAST, PCSEGUIDANCE, PRFREVIEW_RANK, DESCRIPTION
 		FROM TB_PERFORMANCES_DETAIL
 		WHERE MT20ID = #{mt20id}
 	</select>
@@ -105,27 +109,30 @@
     </select>
    
     
-	<!-- 스케줄 조회 -->
+	<!-- 좌석 조회 -->
 	<select id="getRemainingSeats">
 		<![CDATA[
-	        SELECT v.MT10ID,
-			       v.FCLTYNM,
-			       ts.SHOW_TIME as time,
-			       (v.SEATSCALE - NVL((
-			           SELECT COUNT(*)
-			           FROM ETFIVE.TB_TICKET_SEAT ts_sub
-			           WHERE ts_sub.MT20ID = #{performanceId}
-			             AND ts_sub.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-			             AND ts_sub.SEAT_STATUS != 'available'
-			             AND ts_sub.SHOW_TIME = ts.SHOW_TIME
-			       ), 0)) AS SEATS,
-			       'available' as seatStatus
-			FROM ETFIVE.TB_VENUE v
-			JOIN ETFIVE.TB_PERFORMANCES_DETAIL pd ON v.MT10ID = pd.MT10ID
-			LEFT JOIN ETFIVE.TB_TICKET_SEAT ts ON pd.MT20ID = ts.MT20ID AND ts.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-			WHERE pd.MT20ID = #{performanceId}
-			AND v.SEATSCALE > 0
-			GROUP BY v.MT10ID, v.FCLTYNM, ts.SHOW_TIME, v.SEATSCALE
+	        SELECT 
+		        pt.PERFORMANCE_TIME as time,
+		        (v.SEATSCALE - NVL((
+		            SELECT COUNT(*)
+		            FROM ETFIVE.TB_TICKET_SEAT ts_sub
+		            WHERE ts_sub.MT20ID = #{performanceId}
+		            AND ts_sub.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+		            AND ts_sub.SEAT_STATUS = 'BOOKED'
+		            AND ts_sub.SHOW_TIME = pt.PERFORMANCE_TIME
+		        ), 0)) AS seats,
+		        'available' as seatStatus
+		    FROM ETFIVE.TB_VENUE v
+		    JOIN ETFIVE.TB_PERFORMANCES_DETAIL pd ON v.MT10ID = pd.MT10ID
+		    JOIN ETFIVE.TB_PERFORMANCE_TIME pt ON pd.MT20ID = pt.MT20ID
+		    WHERE pd.MT20ID = #{performanceId}
+		    AND pt.DAY_OF_WEEK = CASE 
+		        WHEN TO_CHAR(TO_DATE(#{selectedDate}, 'YYYY-MM-DD'), 'D') = '1' THEN 7  -- 일요일
+		        ELSE TO_CHAR(TO_DATE(#{selectedDate}, 'YYYY-MM-DD'), 'D') - 1
+		    END
+		    AND v.SEATSCALE > 0
+		    ORDER BY pt.PERFORMANCE_TIME
 		]]>
     </select>
    
@@ -215,6 +222,7 @@
 		SELECT MT20ID, REVIEW_STAR, REVIEW_CONTENT, CREATE_DATE, MEMBER_NO, REVIEW_NO, MEMBER_NICKNAME 
 		FROM TB_PERFORMANCE_REVIEW JOIN TB_MEMBER USING(MEMBER_NO)
 		WHERE MT20ID = #{mt20id}
+		ORDER BY CREATE_DATE DESC
     </select>
     
     <!-- 공연장 좌석 목록 -->
@@ -245,11 +253,11 @@
     <!-- 공연 기본 정보 저장 -->
     <insert id="insertPerformance">
         INSERT INTO TB_PERFORMANCES_DETAIL (
-            MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM,
+            MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER,
             PRFCAST, PRFRUNTIME, PCSEGUIDANCE, DTGUIDANCE, AREA,
             GENRENM, PRFSTATE, DESCRIPTION, MT10ID, CONCERT_MANAGER_NO
         ) VALUES (
-            #{mt20id}, #{prfnm}, #{prfpdfrom}, #{prfpdto}, #{fcltynm},
+            #{mt20id}, #{prfnm}, #{prfpdfrom}, #{prfpdto}, #{fcltynm}, #{poster},
             #{prfcast}, #{prfruntime}, #{pcseguidance}, #{dtguidance}, #{area},
             #{genrenm}, #{prfstate}, #{description}, #{mt10id}, #{concertManagerNo}
         )
