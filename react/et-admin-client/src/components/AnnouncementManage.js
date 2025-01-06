@@ -9,6 +9,8 @@ export default function AnnouncementManage() {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true); // 로딩 상태
   
+  const navigate = useNavigate();
+  
   const handleChange = (e) => {
     setSelectedValue(e.target.value);
   };
@@ -122,6 +124,16 @@ export default function AnnouncementManage() {
         <div className="main-table-container">
           <AnnouncementList announcementList={announcementList} />
         </div>
+
+        <div className="write-button-container">
+        <button 
+          className="write-button"
+          onClick={() => navigate('/quill')}
+        >
+          글쓰기
+        </button>
+        </div>
+
       </div>
     );
   }

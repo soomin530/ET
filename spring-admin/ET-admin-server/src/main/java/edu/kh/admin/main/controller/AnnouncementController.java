@@ -78,7 +78,7 @@ public class AnnouncementController {
 		 * @throws IOException
 		 */
 		 @PostMapping("upload")
-		 public int Upload(
+		 public int upload(
 				    @RequestPart("title") String title,
 				    @RequestPart("content") String content
 
@@ -136,7 +136,6 @@ public class AnnouncementController {
 		     if (file != null) {
 		         String fileName = file.getOriginalFilename();
 		         log.info("Received file: {}", fileName);
-		         // 파일 저장 처리
 		     }
 
 		     int result = service.update(title, content, announceNo);

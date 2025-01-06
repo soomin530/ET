@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import '../css/ManagerEnrollDetail.css'
 
 const ManagerEnrollDetail = () => {
   const { concertManagerNo } = useParams(); // URL에서 memberNo 가져오기
@@ -65,62 +66,73 @@ const ManagerEnrollDetail = () => {
   }
 
   return (
-    <div>
-      <h1>회원 정보 수정</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>닉네임:</label>
-          <input
-            type="text"
-            name="nickname"
-            value={formData.nickname || ''}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>전화번호:</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.tel || ''}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>회사명:</label>
-          <input
-            type="text"
-            name="tel"
-            value={formData.company || ''}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>코멘트:</label>
-          <input
-            type="text"
-            name="tel"
-            value={formData.comment || ''}
-            onChange={handleChange}
-            readOnly
-          />
-        </div>
-        <div>
-          <label>이메일:</label>
-          <input
-            type="text"
-            name="tel"
-            value={formData.email || ''}
-            onChange={handleChange}
-          />
-        </div>
-        <button type="button" onClick={() => window.history.back()}>
-        뒤로가기
-        </button>
-        <button type="submit">수정하기</button>
-      </form>
+    <div className="manager-enroll-container">
+      <div className="manager-enroll-form-wrapper">
+        <h1 className="manager-enroll-title">회원 정보 수정</h1>
+        <form onSubmit={handleSubmit} className="manager-enroll-form">
+          <div className="form-group">
+            <label className="form-label">닉네임:</label>
+            <input
+              type="text"
+              name="nickname"
+              value={formData.nickname || ''}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">전화번호:</label>
+            <input
+              type="text"
+              name="tel"
+              value={formData.tel || ''}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">회사명:</label>
+            <input
+              type="text"
+              name="company"
+              value={formData.company || ''}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">코멘트:</label>
+            <input
+              type="text"
+              name="comment"
+              value={formData.comment || ''}
+              onChange={handleChange}
+              className="form-input"
+              readOnly
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">이메일:</label>
+            <input
+              type="text"
+              name="email"
+              value={formData.email || ''}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          <div className="button-group">
+            <button type="button" onClick={() => window.history.back()} className="back-button">
+              뒤로가기
+            </button>
+            <button type="submit" className="submit-button">
+              수정하기
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-  );
-};
+   );
+  };
 
 export default ManagerEnrollDetail;
