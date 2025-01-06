@@ -339,7 +339,7 @@ function showEmptyState() {
                 <div class="empty-icon">🎭</div>
                 <h3>찜한 공연이 없습니다</h3>
                 <p>관심있는 공연을 찜해보세요!</p>
-                <button class="suggestion-btn" onclick="location.href='/performance/list'">
+                <button class="suggestion-btn" onclick="location.href='/performance/genre/musical'">
                     공연 둘러보기
                 </button>
             </div>
