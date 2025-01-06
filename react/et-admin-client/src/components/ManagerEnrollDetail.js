@@ -114,6 +114,9 @@ const ManagerEnrollDetail = () => {
             onChange={handleChange}
           />
         </div>
+        <button type="button" onClick={() => window.history.back()}>
+        뒤로가기
+        </button>
         <button type="submit">수정하기</button>
       </form>
     </div>

@@ -40,7 +40,7 @@ function Write() {
 
     try {
       await axiosApi({
-        url: '/announcementDetail/upload',
+        url: '/announcement/upload',
         method: 'POST',
         data: formData,
         headers: {

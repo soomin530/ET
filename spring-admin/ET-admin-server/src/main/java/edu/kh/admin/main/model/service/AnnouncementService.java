@@ -15,6 +15,11 @@ public interface AnnouncementService {
 	List<Announcement> showAnnouncementList();
 	
 	
+	/** 상세 내용 정보
+	 * @param announceNo
+	 * @return
+	 */
+	List<Announcement> announcementDetail(int announceNo);
 	
 	/** 내용 업로드 메서드
 	 * @param title
@@ -25,11 +30,13 @@ public interface AnnouncementService {
 
 
 
-	/** 상세 내용 정보
+	/** 내용 수정 메서드
+	 * @param title
+	 * @param content
 	 * @param announceNo
 	 * @return
 	 */
-	List<Announcement> announcementDetail(int announceNo);
+	int update(String title, String content, String announceNo);
 
 	
 }

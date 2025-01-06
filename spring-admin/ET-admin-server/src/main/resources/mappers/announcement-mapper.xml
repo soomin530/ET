@@ -5,8 +5,15 @@
 	<select id="showAnnouncementList">
 	SELECT * FROM ANNOUNCEMENT WHERE ANNOUNCEMENT.ANNOUNCE_DEL_FL ='N'
 	</select>
-
-
+	
+	
+	<select id="announceDetail">
+	SELECT ANNOUNCE_TITLE,ANNOUNCE_CONTENT 
+	FROM ANNOUNCEMENT
+	WHERE ANNOUNCE_NO = #{announceNo}
+	</select>
+	
+	
 	<insert id="upload">
 	INSERT INTO ANNOUNCEMENT VALUES (
 	announce_no_seq.NEXTVAL,
@@ -17,10 +24,10 @@
 	)
 	</insert>
 	
-	<select id="announceDetail">
-	SELECT ANNOUNCE_TITLE,ANNOUNCE_CONTENT 
-	FROM ANNOUNCEMENT
+	<update id="update">
+	UPDATE ANNOUNCEMENT
+	SET ANNOUNCE_TITLE = #{title} , ANNOUNCE_CONTENT = #{content}
 	WHERE ANNOUNCE_NO = #{announceNo}
-	</select>
+	</update>
 
 </mapper>

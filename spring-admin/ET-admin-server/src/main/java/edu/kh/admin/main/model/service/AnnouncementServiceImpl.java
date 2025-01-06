@@ -30,16 +30,24 @@ public class AnnouncementServiceImpl implements AnnouncementService{
 			
 		}
 		
-		// 검색 찾기
-		@Override
-		public int upload(String title, String content) {
-			return mapper.upload(title,content);
-		}
 		
 		// 상세 목록 띄우기
 		@Override
 		public List<Announcement> announcementDetail(int announceNo) {
 		return mapper.announceDetail(announceNo);
 		}
+		
+		// 게시글 작성
+		@Override
+		public int upload(String title, String content) {
+			return mapper.upload(title,content);
+		}
+		
+		// 게시글 수정
+		@Override
+		public int update(String title, String content,String announceNo) {
+			return mapper.update(title,content,announceNo);
+		}
+
 	
 }

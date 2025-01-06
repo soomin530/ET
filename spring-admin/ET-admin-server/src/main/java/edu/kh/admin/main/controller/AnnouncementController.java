@@ -71,18 +71,6 @@ public class AnnouncementController {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	 /** Quill의 내용 저장 메서드
 		 * @param file
 		 * @return ResponseEntity.ok(uuidFileName);
@@ -90,7 +78,6 @@ public class AnnouncementController {
 		 * @throws IOException
 		 */
 		 @PostMapping("upload")
-		    // @RequestParam은 자바스크립트에서 설정한 이름과 반드시 같아야합니다.
 		 public int Upload(
 				    @RequestPart("title") String title,
 				    @RequestPart("content") String content
@@ -134,8 +121,34 @@ public class AnnouncementController {
 			}
 		
 		 
-		 
+		 @PostMapping("update")
+		 public int update(
+		         @RequestPart("title") String title,
+		         @RequestPart("content") String content,
+		         @RequestPart("announceNo") String announceNo,
+		         @RequestPart(value = "file", required = false) MultipartFile file) throws IllegalStateException, IOException {
 
+		     log.info("Received title: {}", title);
+		     log.info("Content: {}", content);
+		     log.info("announceNo: {}", announceNo);
+
+		     // 파일이 있을 경우 처리
+		     if (file != null) {
+		         String fileName = file.getOriginalFilename();
+		         log.info("Received file: {}", fileName);
+		         // 파일 저장 처리
+		     }
+
+		     int result = service.update(title, content, announceNo);
+
+		     if (result > 0) {
+		         log.info("Update successful");
+		     } else {
+		         log.info("Update failed");
+		     }
+
+		     return result;
+		 }
 	
 	
 	

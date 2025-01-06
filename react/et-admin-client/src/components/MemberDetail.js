@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import '../css/MemberDetail.css'
 
 const MemberUpdate = () => {
-  const { memberNo } = useParams(); // URL에서 memberNo 가져오기
+  const { memberNo } = useParams();
   const [formData, setFormData] = useState({
     nickname: '',
     address: '',
     tel: '',
   });
-  const [isLoading, setIsLoading] = useState(true); // 데이터 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`http://localhost:8081/member/${memberNo}`)
       .then((response) => {
         console.log("API 응답 데이터:", response.data);
-        // response.data[0]로 접근해야 함 (배열의 첫 번째 요소)
-        const memberData = response.data[0];  // 여기를 수정
+        const memberData = response.data[0];
         setFormData({
           nickname: memberData.memberNickname || '',
           address: memberData.memberAddress || '',
@@ -40,7 +40,6 @@ const MemberUpdate = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // 서버 형식에 맞게 데이터 변환
     const serverFormData = {
       memberNickname: formData.nickname,
       memberAddress: formData.address,
@@ -59,42 +58,54 @@ const MemberUpdate = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // 로딩 중일 때 로딩 메시지 출력
+    return <div className="loading-spinner">Loading...</div>;
   }
 
   return (
-    <div>
-      <h1>회원 정보 수정</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>닉네임:</label>
-          <input
-            type="text"
-            name="nickname"
-            value={formData.nickname || ''}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>주소:</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address || ''}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>전화번호:</label>
-          <input
-            type="text"
-            name="tel"
-            value={formData.tel || ''}
-            onChange={handleChange}
-          />
-        </div>
-        <button type="submit">수정하기</button>
-      </form>
+    <div className="member-update-container">
+      <div className="member-update-form-wrapper">
+        <h1 className="member-update-title">회원 정보 수정</h1>
+        <form onSubmit={handleSubmit} className="member-update-form">
+          <div className="form-group">
+            <label className="form-label">닉네임:</label>
+            <input
+              type="text"
+              name="nickname"
+              value={formData.nickname || ''}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">주소:</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address || ''}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">전화번호:</label>
+            <input
+              type="text"
+              name="tel"
+              value={formData.tel || ''}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          <div className="button-group">
+            <button type="button" onClick={() => window.history.back()} className="back-button">
+              뒤로가기
+            </button>
+            <button type="submit" className="submit-button">
+              수정하기
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
