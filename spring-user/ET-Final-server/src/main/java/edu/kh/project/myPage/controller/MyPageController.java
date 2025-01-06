@@ -1,5 +1,7 @@
 package edu.kh.project.myPage.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import edu.kh.project.common.jwt.JwtTokenUtil;
 import edu.kh.project.email.model.service.EmailService;
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import edu.kh.project.myPage.model.dto.ticketInfoDTO;
 import edu.kh.project.myPage.service.MyPageService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -197,9 +200,42 @@ public class MyPageController {
         return ResponseEntity.ok("배송지가 등록되었습니다.");
     }
     
+    
+    
+	/** 1/6 나찬웅 작성
+	 * @return
+	 */
+	@GetMapping("mypageInfo")
+	public String mypageInfo() {
+        return "mypage/mypageInfo"; // (예매내역/찜목록) 관리 페이지 HTML 파일
+    }
 	
+	/** 1/6 나찬웅 작성
+	 * 마이페이지 -> 예매 내역
+	 * @return
+	 */
+	@GetMapping("ticketInfo")
+	public String ticketInfo() {
+        return "mypage/ticketInfo"; // 예매내역 페이지 HTML 파일
+    }
 	
+	// 예매 내역 조회 
+	@ResponseBody
+	@GetMapping("ticketInfo/data")
+	public ResponseEntity<List<ticketInfoDTO>> getTicketInfo(@SessionAttribute("loginMember") Member loginMember) {
+	    int memberNo = loginMember.getMemberNo();  // 로그인된 회원의 번호 가져오기
+	    List<ticketInfoDTO> bookingList = service.getBookingHistory(memberNo);  // 예매 내역 조회
+	    return ResponseEntity.ok(bookingList);  // JSON 형식으로 반환
+	}
+
 	
-	
+	/** 1/6 나찬웅 작성
+	 * 마이페이지 -> 찜목록
+	 * @return
+	 */
+	@GetMapping("favList")
+	public String favList() {
+        return "mypage/favList"; // 찜목록 페이지 HTML 파일
+    }
 
 }

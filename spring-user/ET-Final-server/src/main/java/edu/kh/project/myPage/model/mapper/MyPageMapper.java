@@ -1,11 +1,13 @@
 package edu.kh.project.myPage.model.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import edu.kh.project.myPage.model.dto.ticketInfoDTO;
 
 @Mapper
 public interface MyPageMapper {
@@ -63,6 +65,8 @@ public interface MyPageMapper {
 	 * @return
 	 */
 	int updateMember(Member member);
+
+	List<ticketInfoDTO> selectBookingHistory(int memberNo);
 
 	
 }
