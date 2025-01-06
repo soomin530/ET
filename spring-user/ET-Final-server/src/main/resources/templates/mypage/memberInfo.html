@@ -2,85 +2,83 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>회원정보 관리</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>회원정보 관리</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 	<link rel="stylesheet" href="/css/main-style.css">
 
-    <link rel="stylesheet" href="/css/myPage/memberInfo.css">
-	
+	<link rel="stylesheet" href="/css/myPage/memberInfo.css">
+
 	<th:block th:replace="~{common/common}"></th:block>
 </head>
 
 <body>
 
-    <th:block th:replace="~{common/header}"></th:block>
+	<th:block th:replace="~{common/header}"></th:block>
 
-	
+
 	<div class="container">
-	    <!-- th:classappend를 사용하여 네이버 로그인 시 클래스 추가 -->
-	    <div class="member-container" th:classappend="${session.loginMember != null && session.loginMember.naverFl == 'Y'} ? 'naver-user' : ''">
-	        <div class="updateInfo" onclick="handlePageAccess('updateInfo')">
-	            <h2>회원 정보 수정</h2>
-	        </div>
+		<!-- th:classappend를 사용하여 네이버 로그인 시 클래스 추가 -->
+		<div class="member-container"
+			th:classappend="${session.loginMember != null && session.loginMember.naverFl == 'Y'} ? 'naver-user' : ''">
+			<div class="updateInfo" onclick="handlePageAccess('updateInfo')">
+				<h2>회원 정보 수정</h2>
+			</div>
 
-	        <!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
-	        <div class="changePw"
-	            th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}"
-	            onclick="handlePageAccess('changePw')">
-	            <h2>비밀번호 변경</h2>
-	        </div>
+			<!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+			<div class="changePw" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}"
+				onclick="handlePageAccess('changePw')">
+				<h2>비밀번호 변경</h2>
+			</div>
 
-	        <div class="addressManagement" 
-				onclick="handlePageAccess('addressManagement')">
-	            <h2>배송지 관리</h2>
-	        </div>
+			<div class="addressManagement" onclick="handlePageAccess('addressManagement')">
+				<h2>배송지 관리</h2>
+			</div>
 
-	        <div class="membershipOut" 
-				onclick="handlePageAccess('membershipOut')">
-	            <h2>회원탈퇴</h2>
-	        </div>
-	    </div>
+			<div class="membershipOut" onclick="handlePageAccess('membershipOut')">
+				<h2>회원탈퇴</h2>
+			</div>
+		</div>
 	</div>
 
 
 	<!-- 비밀번호 확인 모달 -->
 	<div id="passwordModal" class="pwModal">
-	    <div class="modalContent">
-	        <span class="modal-cls" id="clsModal">&times;</span>
-	        <div class="verify-box">
-	            <div class="verify-title">정보 보호를 위해<br>비밀번호를 다시 한 번 확인합니다</div>
-	            <div class="input-group">
-	                <input type="password" id="passwordInput" placeholder="비밀번호를 입력하세요">
-	            </div>
-	            <div class="error-message" id="errorMsg">비밀번호가 일치하지 않습니다.</div>
-	            <div class="button-group">
-	                <button onclick="clsModal()" class="btn-cancel">취소</button>
-	                <button id="verifyBtn" class="btn-verify">확인</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
-	<!-- 로딩 스피너 -->
-	<div id="loadingSpinner" style="display: none;">
-	    <div class="spinner"></div> <!-- Spinner 스타일 정의 필요 -->
+		<div class="modalContent">
+			<span class="modal-cls" id="clsModal">&times;</span>
+			<div class="verify-box">
+				<div class="verify-title">정보 보호를 위해<br>비밀번호를 다시 한 번 확인합니다</div>
+				<div class="input-group">
+					<input type="password" id="passwordInput" placeholder="비밀번호를 입력하세요">
+				</div>
+				<div class="error-message" id="errorMsg">비밀번호가 일치하지 않습니다.</div>
+				<div class="button-group">
+					<button onclick="clsModal()" class="btn-cancel">취소</button>
+					<button id="verifyBtn" class="btn-verify">확인</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
-    <!-- common/footer 추가-->
+	<!-- 로딩 스피너 -->
+	<div id="loadingSpinner" style="display: none;">
+		<div class="spinner"></div> <!-- Spinner 스타일 정의 필요 -->
+	</div>
+
+	<!-- common/footer 추가-->
 	<th:block th:replace="~{common/footer}"></th:block>
 
 
-    <script>
+	<script>
 
-    </script>
-	
+	</script>
+
 	<script src="/js/myPage/memberInfo.js"></script>
-	
+
 </body>
 
 </html>
