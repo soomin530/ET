@@ -92,15 +92,6 @@ function initializeKakaoMap() {
 
 	// 전역 변수로 지도 객체 저장
 	window.kakaoMap = map;
-
-	// 위치 정보 추가
-	const infoContainer = document.createElement('div');
-	infoContainer.className = 'location-info mt-4';
-	infoContainer.innerHTML = `
-        <h3 class="text-lg font-bold">공연장 위치</h3>
-        <p class="mt-2">${document.querySelector('.performance-venue').textContent}</p>
-    `;
-	mapContainer.parentElement.appendChild(infoContainer);
 }
 
 // 잔여 좌석 조회 함수

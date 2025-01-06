@@ -38,6 +38,8 @@ public class Performance {
 	private int prfreviewRank;			// 공연 리뷰 점수
 	private Boolean performance_del_fl;	// 공연 삭제 여부(N/Y)
 	
+	private String adres;				// 공연장 위치
+	
 	
 	private Map<String, List<ScheduleInfo>> schedule; // 스케줄 정보 추가
 	
