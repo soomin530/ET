@@ -68,10 +68,11 @@
 		</div>
 	</div>
 
-	<!-- carousel-section 다음에 추가 -->
+	<!-- 통계 섹션 -->
 	<div class="section statistics-section" id="performance-stats">
 		<div class="section-header">
 			<h2 class="main-title">공연 통계</h2>
+			<p class="statistics-period">지난달 통계</p>
 		</div>
 
 		<!-- 공연 통계 테이블 -->
@@ -91,49 +92,19 @@
 							<th>예매 수</th>
 							<th>취소 예매 수</th>
 							<th>총 예매 수</th>
-							<th>총 예매 금액</th>
+							<th>총 예매 금액(원)</th>
 						</tr>
 					</thead>
 					<tbody>
-						<!-- 연극 데이터 -->
-						<tr>
-							<td>연극</td>
-							<td>422</td>
-							<td>6305</td>
-							<td>192932</td>
-							<td>69216</td>
-							<td>123716</td>
-							<td>3,278,347,195</td>
-						</tr>
-						<!-- 서양음악(클래식) 데이터 -->
-						<tr>
-							<td>서양음악(클래식)</td>
-							<td>1054</td>
-							<td>1325</td>
-							<td>201572</td>
-							<td>60655</td>
-							<td>140917</td>
-							<td>3,516,942,954</td>
-						</tr>
-						<!-- 뮤지컬 데이터 -->
-						<tr>
-							<td>뮤지컬</td>
-							<td>668</td>
-							<td>7228</td>
-							<td>766050</td>
-							<td>357941</td>
-							<td>408109</td>
-							<td>28,605,122,773</td>
-						</tr>
-						<!-- 합계 데이터 -->
-						<tr>
-							<td>합계</td>
-							<td>2144</td>
-							<td>14858</td>
-							<td>1160554</td>
-							<td>487812</td>
-							<td>672742</td>
-							<td>35,399,462,922</td>
+						<tr th:each="stat : ${statList}">
+							<td th:text="${stat.statCategory}">카테고리</td>
+							<td th:text="${stat.statPrfcnt}">0</td>
+							<td th:text="${stat.statPrfdtcnt}">0</td>
+							<td th:text="${stat.statNtssnmrssm}">0</td>
+							<td th:text="${stat.statCancelnmrssm}">0</td>
+							<td th:text="${stat.statNtssnmrssm - stat.statCancelnmrssm}">0</td>
+							<td th:text="${#numbers.formatDecimal(stat.statNtssamountsm, 0, 'COMMA', 0, 'POINT') + '원'}">0
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -197,6 +168,11 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
 
 	<script src="/js/main.js"></script>
+	
+	<script th:inline="javascript">
+		// 통계 데이터를 JavaScript 변수로 변환
+		const statisticsData = /*[[${statList}]]*/ [];
+	</script>
 
 </body>
 

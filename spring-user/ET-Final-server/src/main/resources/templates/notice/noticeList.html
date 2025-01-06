@@ -41,7 +41,7 @@
 					</div>
 					<div th:id="'notice-content-' + ${notice.announceNo}" class="notice-content">
 						<div class="notice-content-inner">
-							<p th:text="${notice.announceContent}">내용</p>
+							<p th:utext="${notice.announceContent}">내용</p>
 						</div>
 					</div>
 				</div>

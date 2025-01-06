@@ -15,6 +15,8 @@ import edu.kh.project.notice.model.service.NoticeService;
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.PerformanceRanking;
 import edu.kh.project.performance.service.PerformanceService;
+import edu.kh.project.statistics.model.dto.Statistics;
+import edu.kh.project.statistics.service.StatisticsBatchService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -24,6 +26,8 @@ public class MainController {
 	private final PerformanceService service;
 
 	private final NoticeService noticeService;
+	
+	private final StatisticsBatchService statBatchService;
 
 	/** 메인 페이지
 	 * @param model
@@ -50,7 +54,10 @@ public class MainController {
 		// 최근 공지사항 4개 조회해서 모델에 추가
         List<Notice> recentNotices = noticeService.getRecentNotices();
         
+        // 통계 데이터 조회(지난달)
+        List<Statistics> statList = statBatchService.getStatList();
         
+        model.addAttribute("statList", statList);
         model.addAttribute("notices", recentNotices);
 		model.addAttribute("mainPerform", mainPerform);
 		model.addAttribute("performanceRanking", performanceRanking);
