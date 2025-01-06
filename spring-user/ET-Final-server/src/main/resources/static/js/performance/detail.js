@@ -2,12 +2,58 @@
  * 페이지 전체 초기화
  */
 function initialize() {
-	initializeTabs();
-	initializeKakaoMap();
-	window.calendarInstance = new Calendar();
-	initializeReviews();
-	initializeWish();
+    initializeTabs();
+    initializeKakaoMap();
+    initializeReviews();
+    initializeWish();
+    window.calendarInstance = new Calendar();
+    
+    // 스크롤 버튼 이벤트 리스너 등록
+    scrollToTopButton.addEventListener('click', scrollToTop);
+    window.addEventListener('scroll', throttle(toggleScrollButton, 100), { passive: true });
 }
+
+// 스크롤 버튼 관련 코드
+const scrollToTopButton = document.getElementById('scrollToTop');
+
+// 스크롤 버튼 표시/숨김 처리
+function toggleScrollButton() {
+    if (window.scrollY > 300) {
+        scrollToTopButton.classList.add('visible');
+    } else {
+        scrollToTopButton.classList.remove('visible');
+    }
+}
+
+// 최상단으로 스크롤
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+// 스로틀 함수
+function throttle(func, limit) {
+	let inThrottle;
+	return function(...args) {
+		if (!inThrottle) {
+			func.apply(this, args);
+			inThrottle = true;
+			setTimeout(() => inThrottle = false, limit);
+		}
+	}
+}
+
+// 스크롤 이벤트 핸들러
+const scrollHandler = throttle(() => {
+	if (isLoading || !hasMoreData) return;
+
+	const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+	if (scrollTop + clientHeight >= scrollHeight - 300) {
+		loadMorePerformances();
+	}
+}, 150);
 
 /**
  * 탭 기능 초기화
@@ -649,19 +695,12 @@ function initializeReviews() {
 	loadReviews();
 }
 
-/**
-* 페이지 초기화
-*/
-function initialize() {
-	initializeTabs(); // 탭 초기화 추가
-	initializeKakaoMap();
-	initializeReviews();
-	initializeWish();
-	window.calendarInstance = new Calendar();
-}
-
-// DOM 로드 완료 시 초기화
-window.addEventListener('DOMContentLoaded', initialize);
+// 정리 (기존 코드에서 수정)
+window.addEventListener('unload', () => {
+    window.removeEventListener('scroll', scrollHandler);
+    window.removeEventListener('scroll', toggleScrollButton);
+    scrollToTopButton.removeEventListener('click', scrollToTop);
+});
 
 // 기존의 예매 버튼 클릭 이벤트를 수정
 document.getElementById("booking-btn").onclick = function() {
