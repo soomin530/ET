@@ -12,59 +12,126 @@
 
 <body>
 	<th:block th:replace="~{common/header}"></th:block>
+	<!-- HTML 수정 부분 -->
 	<div class="performance-container" style="margin-top: 20px;">
 		<div class="performance-content">
 			<!-- 왼쪽: 공연 정보 -->
 			<div class="performance-info">
 				<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image">
-				<table class="info-table">
-					<tr>
-						<th>공연명</th>
-						<td class="performance-title" th:text="${performance.prfnm}"></td>
-					</tr>
-					<tr>
-						<th>장소</th>
-						<td class="performance-venue" th:text="${performance.fcltynm}"></td>
-					</tr>
-					<tr>
-						<th>공연기간</th>
-						<td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}"></td>
-					</tr>
-					<tr>
-						<th>공연시간</th>
-						<td class="performance-runtime" th:text="${performance.prfruntime}"></td>
-					</tr>
-					<tr>
-						<th>출연진</th>
-						<td class="performance-actor" th:text="${performance.prfcast}"></td>
-					</tr>
-					<tr>
-						<th>가격</th>
-						<td class="performance-price" th:text="${performance.pcseguidance}"></td>
-					</tr>
-					
-					<tr>
-					    <th>별점</th>
-					    <td class="performance-rank">
-					        <div class="review-stars">
-					            <th:block th:with="stars=${performance.prfreviewRank}">
-					                <span class="static-stars" th:text="${'★'.repeat(stars) + '☆'.repeat(5 - stars)}"></span>
-					                <span class="numeric-rating" th:text="|${stars}/5|"></span>
-					            </th:block>
-					        </div>
-					    </td>
-					</tr>
-					
-					<!-- 위도, 경도 -->
-					<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
-					<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
+				<!-- 탭 컨테이너 추가 -->
+				<div class="tab-container">
+					<!-- 탭 버튼들 -->
+					<div class="tab-buttons">
+						<button class="tab-button active" data-tab="info">공연 정보</button>
+						<button class="tab-button" data-tab="description">상세 설명</button>
+						<button class="tab-button" data-tab="location">지도/위치</button>
+						<button class="tab-button" data-tab="review">관람후기</button>
+					</div>
 
-				</table>
+					<!-- 탭 컨텐츠 -->
+					<div class="tab-contents">
+						<!-- 공연 정보 탭 -->
+						<div class="tab-content active" id="info">
+							<table class="info-table">
+								<tr>
+									<th>찜하기</th>
+									<td>
+										<button id="wishBtn" class="wish-btn" th:if="${session.loginMember != null}">
+											<i class="far fa-heart" id="wishIcon"></i>
+											<span id="wishText">찜하기</span>
+										</button>
+										<button class="wish-btn" th:unless="${session.loginMember != null}"
+											onclick="alert('로그인 후 이용해주세요.')">
+											<i class="far fa-heart"></i>
+											<span>찜하기</span>
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<th>공연명</th>
+									<td class="performance-title" th:text="${performance.prfnm}"></td>
+								</tr>
+								<tr>
+									<th>장소</th>
+									<td class="performance-venue" th:text="${performance.fcltynm}"></td>
+								</tr>
+								<tr>
+									<th>공연기간</th>
+									<td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}">
+									</td>
+								</tr>
+								<tr>
+									<th>공연시간</th>
+									<td class="performance-runtime" th:text="${performance.prfruntime}"></td>
+								</tr>
+								<tr>
+									<th>출연진</th>
+									<td class="performance-actor" th:text="${performance.prfcast}"></td>
+								</tr>
+								<tr>
+									<th>가격</th>
+									<td class="performance-price" th:text="${performance.pcseguidance}"></td>
+								</tr>
+								<tr>
+									<th>별점</th>
+									<td class="performance-rank">
+										<div class="review-stars">
+											<th:block th:with="stars=${performance.prfreviewRank}">
+												<span class="static-stars"
+													th:text="${'★'.repeat(stars) + '☆'.repeat(5 - stars)}"></span>
+												<span class="numeric-rating" th:text="|${stars}/5|"></span>
+											</th:block>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
 
-				<div id="map" style="width: 600px; height: 400px;"></div>
+						<!-- 상세 설명 탭 -->
+						<div class="tab-content" id="description">
+							<div class="performance-description" th:utext="${performance.description}"></div>
+							<div class="no-description" th:unless="${performance.description != null and !#strings.isEmpty(performance.description)}">
+						        <p>상세 설명 데이터가 없습니다.</p>
+						    </div>
+						</div>
+
+						<!-- 지도/위치 탭 -->
+						<div class="tab-content" id="location">
+							<div id="map" style="width: 100%; height: 400px;"></div>
+							<div class="location-info">
+								<h3 class="text-lg font-bold mt-4">공연장 정보</h3>
+								<p class="mt-2" th:text="${performance.fcltynm}"></p>
+							</div>
+							<div class="location-info mt-4">
+								<h3 class="text-lg font-bold">공연장 위치</h3>
+						        <p class="mt-2"th:text="${performance.adres}"></p>
+							</div>
+						</div>
+
+						<!-- 관람후기 탭 -->
+						<div class="tab-content" id="review">
+							<!-- 리뷰 작성 폼 -->
+							<div class="review-form">
+								<div class="star-rating mb-3">
+									<input type="radio" name="rating" value="1" id="rate1"><label for="rate1">★</label>
+									<input type="radio" name="rating" value="2" id="rate2"><label for="rate2">★</label>
+									<input type="radio" name="rating" value="3" id="rate3"><label for="rate3">★</label>
+									<input type="radio" name="rating" value="4" id="rate4"><label for="rate4">★</label>
+									<input type="radio" name="rating" value="5" id="rate5"><label for="rate5">★</label>
+								</div>
+								<textarea id="reviewContent" rows="3" placeholder="공연에 대한 리뷰를 남겨주세요."></textarea>
+								<button id="submitReview">리뷰 등록하기</button>
+							</div>
+							<!-- 리뷰 목록 -->
+							<div id="reviewList" class="review-list">
+								<!-- 리뷰 아이템들이 여기에 동적으로 추가됨 -->
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			<!-- 오른쪽: 예매 영역 -->
+			<!-- 오른쪽: 예매 영역 (기존 코드 유지) -->
 			<div class="performance-booking">
 				<div class="datepicker">
 					<div class="calendar-header">
@@ -92,42 +159,13 @@
 				<button class="booking-btn" id="booking-btn" disabled>예매하기</button>
 			</div>
 		</div>
-
-		<!-- 리뷰 섹션 추가 -->
-		<div class="review-section">
-			<h3 class="text-xl font-bold mb-4">공연 리뷰</h3>
-
-			<!-- 리뷰 작성 폼 -->
-			<div class="review-form"
-				style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-				<div class="star-rating mb-3">
-					<input type="radio" name="rating" value="1" id="rate1"><label for="rate1">★</label>
-					<input type="radio" name="rating" value="2" id="rate2"><label for="rate2">★</label>
-					<input type="radio" name="rating" value="3" id="rate3"><label for="rate3">★</label>
-					<input type="radio" name="rating" value="4" id="rate4"><label for="rate4">★</label>
-					<input type="radio" name="rating" value="5" id="rate5"><label for="rate5">★</label>
-				</div>
-				<textarea id="reviewContent"
-					style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px; resize: vertical;"
-					rows="3" placeholder="공연에 대한 리뷰를 남겨주세요."></textarea>
-				<button id="submitReview"
-					style="width: 100%; padding: 15px; background-color: #f43142; color: white; border: none; border-radius: 4px; font-size: 1.1em; cursor: pointer; transition: all 0.2s ease;">
-					리뷰 등록하기
-				</button>
-			</div>
-
-			<!-- 리뷰 목록 -->
-			<div id="reviewList" class="review-list">
-				<!-- 리뷰 아이템들이 여기에 동적으로 추가됨 -->
-			</div>
-		</div>
 	</div>
 
 	<!-- hidden inputs -->
 	<th:block th:if="${session.loginMember != null}">
-	    <th:block th:if="${!#strings.equals(session.loginMember.memberAuth, '3')}">
-	        <input type="hidden" id="currentMemberNo" th:value="${session.loginMember.memberNo}" />
-	    </th:block>
+		<th:block th:if="${!#strings.equals(session.loginMember.memberAuth, '3')}">
+			<input type="hidden" id="currentMemberNo" th:value="${session.loginMember.memberNo}" />
+		</th:block>
 	</th:block>
 	<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
 	<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
@@ -138,15 +176,15 @@
 	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d1dfe0ce3f0c48b81c2a2534d1f3446a"></script>
 
 	<script th:inline="javascript">
-	    const performanceData = {
-	        id: /*[[${performance.mt20id}]]*/ '',
-	        startDate: /*[[${performance.prfpdfrom}]]*/ '',
-	        endDate: /*[[${performance.prfpdto}]]*/ '',
-	        runtime: /*[[${performance.prfruntime}]]*/ '',
-	        cast: /*[[${performance.prfcast}]]*/ '',
-	        venue: /*[[${performance.fcltynm}]]*/ '',
-	        schedule: /*[[${performance.schedule}]]*/ {}
-	    };
+		const performanceData = {
+			id: /*[[${performance.mt20id}]]*/ '',
+			startDate: /*[[${performance.prfpdfrom}]]*/ '',
+			endDate: /*[[${performance.prfpdto}]]*/ '',
+			runtime: /*[[${performance.prfruntime}]]*/ '',
+			cast: /*[[${performance.prfcast}]]*/ '',
+			venue: /*[[${performance.fcltynm}]]*/ '',
+			schedule: /*[[${performance.schedule}]]*/ {}
+		};
 	</script>
 
 	<script src="/js/performance/detail.js"></script>

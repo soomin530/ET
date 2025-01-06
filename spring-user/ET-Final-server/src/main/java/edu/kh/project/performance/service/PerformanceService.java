@@ -45,7 +45,7 @@ public interface PerformanceService {
 	 * @param selectedDate
 	 * @return
 	 */
-	ScheduleInfo remainingSeats(Map<String, Object> paramMap);
+	List<ScheduleInfo> remainingSeats(Map<String, Object> paramMap);
 
 	/** 메인 페이지 주요 공연 소개
 	 * @return

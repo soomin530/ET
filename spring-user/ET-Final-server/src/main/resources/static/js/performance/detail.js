@@ -1,11 +1,84 @@
 /**
+ * 페이지 전체 초기화
+ */
+function initialize() {
+	initializeTabs();
+	initializeKakaoMap();
+	window.calendarInstance = new Calendar();
+	initializeReviews();
+	initializeWish();
+}
+
+/**
+ * 탭 기능 초기화
+ */
+function initializeTabs() {
+	const tabButtons = document.querySelectorAll('.tab-button');
+	const tabContents = document.querySelectorAll('.tab-content');
+
+	function switchTab(tabId) {
+		// 모든 탭 버튼과 컨텐츠의 active 클래스 제거
+		tabButtons.forEach(button => button.classList.remove('active'));
+		tabContents.forEach(content => content.classList.remove('active'));
+
+		// 선택된 탭 버튼과 컨텐츠에 active 클래스 추가
+		const selectedButton = document.querySelector(`[data-tab="${tabId}"]`);
+		const selectedContent = document.getElementById(tabId);
+
+		if (selectedButton && selectedContent) {
+			selectedButton.classList.add('active');
+			selectedContent.classList.add('active');
+
+			// 지도 탭이 선택되었을 때 지도 리사이즈
+			if (tabId === 'location' && window.kakaoMap) {
+				window.kakaoMap.relayout();
+				// 지도 중심점 재설정
+				const fcltla = document.getElementById('fcltla').value;
+				const fcltlo = document.getElementById('fcltlo').value;
+				const newCenter = new kakao.maps.LatLng(fcltla, fcltlo);
+				window.kakaoMap.setCenter(newCenter);
+			}
+		}
+	}
+
+	// 탭 버튼 클릭 이벤트 리스너
+	tabButtons.forEach(button => {
+		button.addEventListener('click', () => {
+			const tabId = button.getAttribute('data-tab');
+			switchTab(tabId);
+		});
+	});
+
+	// 초기 탭 설정
+	switchTab('info');
+
+	// URL 해시값에 따른 탭 전환
+	window.addEventListener('hashchange', handleHashChange);
+	handleHashChange(); // 초기 로드 시에도 확인
+}
+
+/**
+ * URL 해시 변경 처리
+ */
+function handleHashChange() {
+	const hash = window.location.hash.slice(1) || 'info';
+	const validTabs = ['info', 'description', 'location', 'review'];
+	if (validTabs.includes(hash)) {
+		const tabButton = document.querySelector(`[data-tab="${hash}"]`);
+		if (tabButton) {
+			tabButton.click();
+		}
+	}
+}
+
+/**
  * 카카오맵 초기화
  */
 function initializeKakaoMap() {
+	const mapContainer = document.getElementById('map');
 	const fcltla = document.getElementById('fcltla').value;
 	const fcltlo = document.getElementById('fcltlo').value;
 
-	const mapContainer = document.getElementById('map');
 	const mapOption = {
 		center: new kakao.maps.LatLng(fcltla, fcltlo),
 		level: 3
@@ -17,18 +90,8 @@ function initializeKakaoMap() {
 	});
 	marker.setMap(map);
 
-	kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-		const latlng = mouseEvent.latLng;
-		marker.setPosition(latlng);
-
-		const message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ' +
-			'경도는 ' + latlng.getLng() + ' 입니다';
-
-		const resultDiv = document.getElementById('clickLatlng');
-		if (resultDiv) {
-			resultDiv.innerHTML = message;
-		}
-	});
+	// 전역 변수로 지도 객체 저장
+	window.kakaoMap = map;
 }
 
 // 잔여 좌석 조회 함수
@@ -37,13 +100,8 @@ async function fetchAvailableSeats(performanceId, selectedDate) {
 		const response = await fetch(`/performanceApi/remainingSeats/${performanceId}/${selectedDate}`);
 		if (!response.ok) throw new Error("잔여 좌석 조회 실패");
 
-		const result = await response.json();
-		if (result != null) {
-			return result; // [{ time: "14:00", seats: 50 }, ...]
-		} else {
-			console.error("API 오류:", result.message);
-			return [];
-		}
+		const scheduleList = await response.json(); // 리스트로 받음
+		return scheduleList; // [{time: "14:00", seats: 50, seatStatus: "available"}, ...]
 	} catch (error) {
 		console.error("서버 통신 오류:", error);
 		return [];
@@ -114,17 +172,41 @@ class Calendar {
 	 * @returns {boolean} 예약 가능 여부
 	 */
 	isDateAvailable(date) {
-		// 오늘 날짜의 자정 시간으로 설정 (시간, 분, 초 제거)
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 
-		// 지난 날짜인지 확인
-		if (date < today) {
+		const compareDate = new Date(date);
+		compareDate.setHours(0, 0, 0, 0);
+
+		if (compareDate < today) {
 			return false;
 		}
 
-		// 해당 요일에 공연이 있는지 확인
-		const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
+		const startDateCompare = new Date(this.startDate);
+		startDateCompare.setHours(0, 0, 0, 0);
+		const endDateCompare = new Date(this.endDate);
+		endDateCompare.setHours(0, 0, 0, 0);
+
+		if (compareDate < startDateCompare || compareDate > endDateCompare) {
+			return false;
+		}
+
+		if (Object.keys(this.performance.schedule).length === 0) {
+			return true;
+		}
+
+		const dayMap = {
+			1: "월요일",
+			2: "화요일",
+			3: "수요일",
+			4: "목요일",
+			5: "금요일",
+			6: "토요일",
+			7: "일요일"  // 0 대신 7로 변경
+		};
+
+		const day = compareDate.getDay() || 7;  // 일요일(0)을 7로 변환
+		const dayName = dayMap[day];
 		return this.performance.schedule[dayName] !== undefined;
 	}
 
@@ -134,7 +216,10 @@ class Calendar {
 	 * @returns {boolean} 기간 내 포함 여부
 	 */
 	isDateInRange(date) {
-		return date >= this.startDate && date <= this.endDate;
+		const compareDate = new Date(date).setHours(0, 0, 0, 0);
+		const startDate = new Date(this.startDate).setHours(0, 0, 0, 0);
+		const endDate = new Date(this.endDate).setHours(0, 0, 0, 0);
+		return compareDate >= startDate && compareDate <= endDate;
 	}
 
 	/**
@@ -211,30 +296,30 @@ class Calendar {
 		const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
 		const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay();
 
-		document.getElementById(
-			"selected-date"
-		).innerText = `선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
+		document.getElementById("selected-date").innerText =
+			`선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
 		document.getElementById("dayOfWeek").value = dayOfWeek;
 
 		const performanceId = this.performance.id;
 		const selectedDate = this.formatDisplayDate(date).replace(/\./g, "-");
-		const availableSlots = await fetchAvailableSeats(performanceId, selectedDate);
+		const scheduleList = await fetchAvailableSeats(performanceId, selectedDate);
 
 		const timeSlotsContainer = document.getElementById("time-slots");
 		timeSlotsContainer.innerHTML = "";
-		
-		if (availableSlots != null) {
-			console.log(availableSlots);
-			const timeSlot = document.createElement("div");
-			timeSlot.className = "time-slot";
-			timeSlot.innerHTML = `
-                    <div>
-                        <div class="time">${availableSlots.time}</div>
-                    </div>
-                    <span class="seat-info">(잔여: ${availableSlots.seats}석)</span>
-                `;
-			timeSlot.onclick = () => this.selectTimeSlot(timeSlot, availableSlots.time);
-			timeSlotsContainer.appendChild(timeSlot);
+
+		if (scheduleList && scheduleList.length > 0) {
+			scheduleList.forEach(schedule => {
+				const timeSlot = document.createElement("div");
+				timeSlot.className = "time-slot";
+				timeSlot.innerHTML = `
+	                <div>
+	                    <div class="time">${schedule.time}</div>
+	                </div>
+	                <span class="seat-info">(잔여: ${schedule.seats}석)</span>
+	            `;
+				timeSlot.onclick = () => this.selectTimeSlot(timeSlot, schedule.time);
+				timeSlotsContainer.appendChild(timeSlot);
+			});
 		} else {
 			timeSlotsContainer.innerHTML = "<p>해당 날짜에는 공연이 없습니다.</p>";
 		}
@@ -530,9 +615,11 @@ function initializeReviews() {
 * 페이지 초기화
 */
 function initialize() {
+	initializeTabs(); // 탭 초기화 추가
 	initializeKakaoMap();
-	window.calendarInstance = new Calendar();
 	initializeReviews();
+	initializeWish();
+	window.calendarInstance = new Calendar();
 }
 
 // DOM 로드 완료 시 초기화
@@ -605,7 +692,76 @@ document.getElementById("booking-btn").onclick = function() {
 	}
 };
 
-// 페이지 로드 완료 시 캘린더 인스턴스 생성
-window.addEventListener("DOMContentLoaded", () => {
-	window.calendarInstance = new Calendar();
-});
+// 찜하기 기능 초기화
+function initializeWish() {
+	const wishBtn = document.getElementById('wishBtn');
+	const mt20id = document.getElementById('mt20id').value;
+
+	if (!wishBtn) return;
+
+	// 초기 찜 상태 확인
+	checkWishStatus();
+
+	wishBtn.addEventListener('click', async function() {
+		try {
+			const response = await fetch('/performance/wish', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					mt20id: mt20id
+				})
+			});
+
+			const result = await response.json();
+
+			if (result.success) {
+				const wishIcon = document.getElementById('wishIcon');
+				const wishText = document.getElementById('wishText');
+
+				if (result.isWished) {
+					wishBtn.classList.add('active');
+					wishIcon.classList.remove('far');
+					wishIcon.classList.add('fas');
+					wishText.textContent = '찜취소';
+				} else {
+					wishBtn.classList.remove('active');
+					wishIcon.classList.remove('fas');
+					wishIcon.classList.add('far');
+					wishText.textContent = '찜하기';
+				}
+			} else {
+				alert(result.message);
+			}
+		} catch (error) {
+			console.error('찜하기 처리 중 오류 발생:', error);
+			alert('찜하기 처리 중 오류가 발생했습니다.');
+		}
+	});
+}
+
+// 찜 상태 확인
+async function checkWishStatus() {
+	const wishBtn = document.getElementById('wishBtn');
+	const wishIcon = document.getElementById('wishIcon');
+	const wishText = document.getElementById('wishText');
+	const mt20id = document.getElementById('mt20id').value;
+
+	try {
+		const response = await fetch(`/performance/wish/check/${mt20id}`);
+		const result = await response.json();
+
+		if (result.isWished) {
+			wishBtn.classList.add('active');
+			wishIcon.classList.remove('far');
+			wishIcon.classList.add('fas');
+			wishText.textContent = '찜취소';
+		}
+	} catch (error) {
+		console.error('찜 상태 확인 중 오류 발생:', error);
+	}
+}
+
+// DOM 로드 완료 시 초기화
+window.addEventListener("DOMContentLoaded", initialize);
