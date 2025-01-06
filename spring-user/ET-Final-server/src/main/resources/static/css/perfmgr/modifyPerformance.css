@@ -70,6 +70,16 @@ input{
 	cursor: pointer;
 }
 
+.btn-cancel {
+	background-color: #e69500 !important;
+	color: white !important;
+	border: none;
+}
+
+.btn-cancel:hover {
+	background-color: #a06902 !important;
+}
+
 .btn-modify {
 	background-color: #007bff !important;
 	color: white !important;

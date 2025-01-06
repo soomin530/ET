@@ -1,5 +1,12 @@
-function modifyPerformance() {
-  // 필수 입력 필드들 확인
+function cancelPerformance(mt20id) {
+    alert("수정이 취소되었습니다.");
+    window.location.href = `/perfmgr/performance-manager-detail/${mt20id}`;
+}
+
+
+function modifyPerformance() { // 등록 버튼 눌렀을 때
+
+  // 필수 입력 필드
   const prfnm = document.querySelector('.performance-title input').value.trim();
   const runtime = document.querySelector('.performance-runtime input').value.trim();
   const cast = document.querySelector('.performance-actor input').value.trim();
@@ -33,7 +40,7 @@ function modifyPerformance() {
       prfcast: cast
   };
 
-  fetch(`/perfmgr/modifyPerformance/${mt20id}`, {
+  fetch(`/perfmgr/performance-modifyPerformance/${mt20id}`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'

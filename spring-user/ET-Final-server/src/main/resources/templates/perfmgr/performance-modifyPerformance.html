@@ -44,7 +44,7 @@
               <tr>
                 <th>출연진</th>
                 <td class="performance-actor">
-                  <input type="text" th:value="${performance.prfcast}" placeholder="출연진을 입력해주세요" size="50" style="padding-left: 5px;" required>
+                  <input type="text" th:value="${performance.prfcast}" placeholder="출연진을 입력해주세요" size="70" style="padding-left: 5px;" required>
                 </td>
               </tr>
               <tr>
@@ -55,9 +55,10 @@
           </div>
         </div>
 
-        <!-- 등록 버튼을 폼 내용 맨 아래로 이동 -->
+        <!-- 취소, 등록 버튼을 폼 내용 맨 아래로 이동 -->
         <div class="action-buttons" style="margin-top: 20px; text-align: center;">
           <button type="button" class="btn btn-modify" onclick="modifyPerformance()">등록</button>
+          <button type="button" class="btn btn-cancel" th:onclick="cancelPerformance([[${performance.mt20id}]])">취소</button>
         </div>
       </div>
       

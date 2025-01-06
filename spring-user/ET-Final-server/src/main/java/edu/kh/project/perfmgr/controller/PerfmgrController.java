@@ -263,6 +263,7 @@ public class PerfmgrController {
 	 */
 	@GetMapping("/performance-manager-detail/{mt20id}")
 	public String managerDetail(@PathVariable("mt20id") String mt20id, Model model) {
+		
 		log.info("Fetching performance details for ID: {}", mt20id);
 
 		Performance performance = service.getPerformanceById(mt20id);
@@ -284,7 +285,7 @@ public class PerfmgrController {
      * @return
      * @author 우수민
      */
-	@GetMapping("/modifyPerformance")
+	@GetMapping("/performance-modifyPerformance")
 	public String modifyPerformance(@RequestParam("mt20id") String mt20id, Model model) {
 	    try {
 	    	
@@ -294,7 +295,7 @@ public class PerfmgrController {
 	        // 모델에 공연 정보 추가
 	        model.addAttribute("performance", performance);
 	        
-	        return "perfmgr/modifyPerformance";
+	        return "perfmgr/performance-modifyPerformance";
 	        
 	    } catch (Exception e) {
 	        log.error("공연 수정 페이지 로딩 중 에러 발생: ", e);
@@ -308,7 +309,7 @@ public class PerfmgrController {
 	 * @param performances
 	 * @return
 	 */
-	@PostMapping("/modifyPerformance/{mt20id}")
+	@PostMapping("/performance-modifyPerformance/{mt20id}")
 	public ResponseEntity<?> modifyPerformanceUpdate(
 	    @PathVariable("mt20id") String mt20id,
 	    @RequestBody Performance performance) {
