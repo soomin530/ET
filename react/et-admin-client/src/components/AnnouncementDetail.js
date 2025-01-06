@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { axiosApi } from '../api/axoisAPI';
 import ReactQuill from 'react-quill';
+import '../css/AnnouncementDetail.css'
 
 
 function Write() {
@@ -94,30 +95,43 @@ function Write() {
   };
 
   return (
-    <>
-      <div>
-        <label htmlFor="title">제목</label>
-        <input id="title" type="text" value={title} onChange={handleTitleChange} />
-      
-        <ReactQuill
-          style={{ width: "800px", height: "600px" }}
-          modules={modules}
-          value={content} 
-          onChange={setContent}
-        />
+    <div className="write-container">
+      <div className="write-form-wrapper">
+        <div className="input-group">
+          <label htmlFor="title" className="form-label">제목</label>
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+            className="form-input"
+          />
+        </div>
+        
+        <div className="editor-wrapper">
+          <ReactQuill
+            className="quill-editor"
+            modules={modules}
+            value={content} 
+            onChange={setContent}
+          />
+        </div>
+        
+        <div className="button-group">
+          <button 
+            className="back-button"
+            onClick={() => window.history.back()}>
+            뒤로가기
+          </button>
+          <button 
+            className="submit-button"
+            onClick={handleSubmit}>
+            제출
+          </button>
+        </div>
       </div>
-      
-      <div className='Btn-Box'>
-      <button onClick={() => window.history.back()}>
-        뒤로가기
-      </button>
-      <button style={{ marginTop: "10px" }} onClick={handleSubmit}>
-        제출
-      </button>
-      </div>
-      
-    </>
+    </div>
   );
-}
+ }
 
 export default Write;
