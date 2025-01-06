@@ -39,6 +39,7 @@ public class Performance {
 	private Boolean performance_del_fl;	// 공연 삭제 여부(N/Y)
 	
 	private String adres;				// 공연장 위치
+	private int memberNo;				// 회원 번호
 	
 	
 	

@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/css/main-style.css">
 
   <link rel="stylesheet" href="/css/myPage/ticketInfo.css">
+  
 
   <th:block th:replace="~{common/common}"></th:block>
 </head>
@@ -22,6 +23,7 @@
 
   <div class="container">
 
+    <h1>예매 내역</h1>
     <main class="content-area">
       <div class="ticket-filter">
         <select id="statusFilter">
@@ -31,8 +33,7 @@
         </select>
         <input type="date" id="dateFilter" />
       </div>
-
-      <h1>예매 내역</h1>
+      
       <div class="ticket-table-container">
         <table class="ticket-table">
           <thead>
@@ -43,10 +44,8 @@
                   <th>공연명</th>
                   <th>공연일시</th>
                   <th>매수</th>
-                  <th>좌석 정보</th>
                   <th>취소 가능일</th>
                   <th>상태</th>
-                  <th>결제 금액</th>
                   <th>상세</th>
               </tr>
           </thead>

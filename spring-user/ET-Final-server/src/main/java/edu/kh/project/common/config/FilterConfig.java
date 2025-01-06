@@ -26,7 +26,7 @@ public class FilterConfig {
 		
 		// 필터가 동작할 URL 세팅
 		// /myPage/* : myPage로 시작하는 모든 요청
-		String[] filteringURL = { "/editBoard/*", "/adminBoard/*", "/mypage/*"}; /* myPage 작업때문에 임시로 빼놓음 "/myPage/*"  */
+		String[] filteringURL = { "/mypage/*", "/perfmgr/*"}; /* myPage 작업때문에 임시로 빼놓음 "/myPage/*"  */
 		
 		// String[] 을 List로 변환
 		// Arrays.asList(filteringURL)
@@ -40,6 +40,7 @@ public class FilterConfig {
 		
 		return filter; // 반환된 객체가 필터를 생성해서 Bean 으로 등록
 	}
+	
 	
 	
 	

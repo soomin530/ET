@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
 import edu.kh.project.myPage.model.dto.ticketInfoDTO;
+import edu.kh.project.performance.model.dto.Performance;
 
 @Mapper
 public interface MyPageMapper {
@@ -65,8 +67,35 @@ public interface MyPageMapper {
 	 * @return
 	 */
 	int updateMember(Member member);
+	
+	/** 사용자 찜 목록 조회
+	 * @param offset
+	 * @param pageSize
+	 * @param memberNo
+	 * @return
+	 */
+	List<Performance> userWishList(@Param("offset") int offset, 
+			@Param("pageSize") int pageSize, 
+			@Param("memberNo") int memberNo);
+	
+	/** 찜한 내역 삭제
+	 * @param paramMap
+	 * @return
+	 */
+	int deleteWishlistItems(Map<String, Object> paramMap);
 
+	/** 예약 내역 조회
+	 * @param memberNo
+	 * @return
+	 */
 	List<ticketInfoDTO> selectBookingHistory(int memberNo);
+
+	/** 예약 상세 내용 조회
+	 * @param bookingId
+	 * @param memberNo
+	 * @return
+	 */
+	ticketInfoDTO selectBookingDetail(@Param("bookingId") String bookingId, @Param("memberNo") int memberNo);
 
 	
 }

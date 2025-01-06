@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.project.statistics.model.mapper.StatisticsBatchMapper">
+
+	<!-- 지난달 통계 데이터 등록(뮤지컬, 연극, 클래식) -->
+	<insert id="saveStatistics" parameterType="Statistics">
+		INSERT INTO "TB_STATISTICS"
+		VALUES(
+			SEQ_STAT_NO.NEXTVAL,
+			#{statCategory},
+			#{statPrfcnt},
+			#{statPrfdtcnt},
+			#{statNtssnmrssm},
+			#{statCancelnmrssm},
+			#{statNtssamountsm},
+			#{categoryCode},
+			DEFAULT,
+			#{statStartDate},
+            #{statEndDate}
+		)	
+	</insert>
+	
+	<!-- 지난달 통계 데이터 조회 -->
+    <select id="getStatList" resultType="Statistics">
+        SELECT 
+            STAT_NO, STAT_CATEGORY, STAT_PRFCNT,
+            STAT_PRFDTCNT, STAT_NTSSNMRSSM, STAT_CANCELNMRSSM,
+            STAT_NTSSAMOUNTSM, CATEGORY_CODE, PROCESS_DATE,
+            STAT_START_DATE, STAT_END_DATE
+        FROM TB_STATISTICS
+        WHERE TRUNC(STAT_START_DATE, 'MM') = TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM')
+        ORDER BY STAT_NO DESC
+    </select>
+
+
+</mapper>

@@ -133,6 +133,42 @@ footer {
   background-color: #e0e0e0;
 }
 
+
+/* 예약 내역 강조 처리*/
+.highlight-performance{
+  font-weight: bold;
+  color: #de7776 !important; /* 공연일시 강조 색 */
+}
+
+.highlight-ticket-count {
+  font-weight: bold;
+  color: #de7776 !important; 
+}
+
+.status-booked {
+  color: #7692de !important;
+  font-weight: bold;
+}
+
+.status-canceled {
+  color: #ff0000; /* 취소된 상태 강조 */
+  font-weight: bold;
+}
+
+.btn-detail {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-detail:hover {
+  background-color: #0056b3;
+
+}
+
 /* Loading Spinner */
 .loading-spinner {
   display: none;
@@ -155,3 +191,4 @@ footer {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
