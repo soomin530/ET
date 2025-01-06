@@ -3,7 +3,48 @@ let page = 1;
 let isLoading = false;
 let hasMoreData = true;
 let currentFilter = 'all';
-let initialLoadComplete = false; // 초기 로드 체크 변수 추
+let initialLoadComplete = false; // 초기 로드 체크 변수 추가
+
+// 검색 관련 변수 추가
+let searchKeyword = '';
+let searchType = 'all';
+
+// 검색 이벤트 핸들러
+function handleSearch() {
+	const keyword = document.getElementById('performanceSearchInput').value.trim();  // ID 변경
+	const type = document.getElementById('performanceSearchType').value;  // ID 변경
+
+	searchKeyword = keyword;
+	searchType = type;
+
+	// 검색 시 상태 초기화
+	page = 1;
+	hasMoreData = true;
+	const grid = document.getElementById('performanceGrid');
+	grid.innerHTML = '';
+
+	loadMorePerformances();
+}
+
+// 스크롤 버튼 관련 코드
+const scrollToTopButton = document.getElementById('scrollToTop');
+
+// 스크롤 버튼 표시/숨김 처리
+function toggleScrollButton() {
+	if (window.scrollY > 300) {
+		scrollToTopButton.classList.add('visible');
+	} else {
+		scrollToTopButton.classList.remove('visible');
+	}
+}
+
+// 최상단으로 스크롤
+function scrollToTop() {
+	window.scrollTo({
+		top: 0,
+		behavior: 'smooth'
+	});
+}
 
 // HTML 이스케이프 함수
 function escapeHtml(unsafe) {
@@ -60,13 +101,13 @@ function createPerformanceElement(performance) {
 		}
 		this.onerror = null;
 	};
-	
+
 	// 별점 생성 함수
-    const createStarRating = (rating) => {
-        const fullStars = '★'.repeat(Math.floor(rating));
-        const emptyStars = '☆'.repeat(5 - Math.floor(rating));
-        return `${fullStars}${emptyStars}`;
-    };
+	const createStarRating = (rating) => {
+		const fullStars = '★'.repeat(Math.floor(rating));
+		const emptyStars = '☆'.repeat(5 - Math.floor(rating));
+		return `${fullStars}${emptyStars}`;
+	};
 
 	div.innerHTML = `
         <div class="image-container"></div>
@@ -93,47 +134,51 @@ function createPerformanceElement(performance) {
 }
 
 function createNoDataMessage(filter) {
-    const div = document.createElement('div');
-    div.className = 'no-data-message';
-	
-	console.log(filter);
-    
-    let message, suggestion;
-    switch(filter) {
-        case 'rating':
-			message = '등록된 공연이 없습니다';
-            suggestion = `<p>다른 카테고리를 확인해보세요</p>
-                         <div class="filter-suggestions">
-                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'rating\\']').click()">인기 공연</span>
-                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">예정된 공연</span>
-                         </div>`;
-			break;
-        case 'upcoming':
-            message = '예정된 공연이 없습니다';
-            suggestion = `<p>다른 장르의 공연을 확인해보세요</p>
-                         <div class="genre-buttons">
-                             <button class="suggestion-btn" onclick="location.href='/performance/genre/musical'">뮤지컬</button>
-                             <button class="suggestion-btn" onclick="location.href='/performance/genre/theater'">연극</button>
-                             <button class="suggestion-btn" onclick="location.href='/performance/genre/classic'">클래식</button>
-                         </div>`;
-            break;
-        case 'ongoing':
-            message = '현재 진행중인 공연이 없습니다';
-            suggestion = `<p>곧 시작될 공연을 확인해보세요</p>
-                         <button class="suggestion-btn" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">
-                             공연 예정작 보기
-                         </button>`;
-            break;
-        default:
-            message = '등록된 공연이 없습니다';
-            suggestion = `<p>다른 카테고리를 확인해보세요</p>
-                         <div class="filter-suggestions">
-                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'rating\\']').click()">인기 공연</span>
-                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">예정된 공연</span>
-                         </div>`;
-    }
+	const div = document.createElement('div');
+	div.className = 'no-data-message';
 
-    div.innerHTML = `
+	let message, suggestion;
+
+	if (searchKeyword) {
+		message = '검색 결과가 없습니다';
+		suggestion = `<p>다른 검색어로 시도해보세요</p>`;
+	} else {
+		switch (filter) {
+			case 'rating':
+				message = '등록된 공연이 없습니다';
+				suggestion = `<p>다른 카테고리를 확인해보세요</p>
+	                         <div class="filter-suggestions">
+	                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'rating\\']').click()">인기 공연</span>
+	                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">예정된 공연</span>
+	                         </div>`;
+				break;
+			case 'upcoming':
+				message = '예정된 공연이 없습니다';
+				suggestion = `<p>다른 장르의 공연을 확인해보세요</p>
+	                         <div class="genre-buttons">
+	                             <button class="suggestion-btn" onclick="location.href='/performance/genre/musical'">뮤지컬</button>
+	                             <button class="suggestion-btn" onclick="location.href='/performance/genre/theater'">연극</button>
+	                             <button class="suggestion-btn" onclick="location.href='/performance/genre/classic'">클래식</button>
+	                         </div>`;
+				break;
+			case 'ongoing':
+				message = '현재 진행중인 공연이 없습니다';
+				suggestion = `<p>곧 시작될 공연을 확인해보세요</p>
+	                         <button class="suggestion-btn" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">
+	                             공연 예정작 보기
+	                         </button>`;
+				break;
+			default:
+				message = '등록된 공연이 없습니다';
+				suggestion = `<p>다른 카테고리를 확인해보세요</p>
+	                         <div class="filter-suggestions">
+	                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'rating\\']').click()">인기 공연</span>
+	                             <span class="filter-tag" onclick="document.querySelector('[data-filter=\\'upcoming\\']').click()">예정된 공연</span>
+	                         </div>`;
+		}
+	}
+
+	div.innerHTML = `
         <div class="empty-state">
             <div class="empty-icon">🎭</div>
             <h3>${message}</h3>
@@ -141,15 +186,16 @@ function createNoDataMessage(filter) {
         </div>
     `;
 
-    return div;
+	return div;
 }
 
 // loadMorePerformances 함수
 function loadMorePerformances() {
 	if (isLoading || !hasMoreData) return;
 
-	// 이미 초기 로드가 완료되었고, 현재 페이지가 0이면 스킵
-	if (initialLoadComplete && page === 0) {
+	// 검색어가 있고, 첫 페이지 이후라면 추가 로드 중단
+	if (searchKeyword && page > 1) {
+		hasMoreData = false;
 		return;
 	}
 
@@ -162,26 +208,42 @@ function loadMorePerformances() {
 		console.error('Genre not found');
 		return;
 	}
+	
+	// URL에 검색 파라미터 추가
+	const searchParams = new URLSearchParams({
+		page: page,
+		genre: currentGenre,
+		filter: currentFilter,
+		searchKeyword: searchKeyword,
+		searchType: searchType
+	});
 
-	const url = `/performanceApi/genre/more?page=${page}&genre=${encodeURIComponent(currentGenre)}&filter=${currentFilter}`;
-
-	fetch(url)
+	fetch(`/performanceApi/genre/more?${searchParams.toString()}`)
 		.then(response => {
 			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 			return response.json();
 		})
 		.then(performances => {
+			const grid = document.getElementById('performanceGrid');
 			if (performances && performances.length > 0) {
-				const grid = document.getElementById('performanceGrid');
+				// Remove any existing no-data message if data is loaded
+				const existingNoDataMessage = document.querySelector('.no-data-message');
+				if (existingNoDataMessage) {
+					existingNoDataMessage.remove();
+				}
+
 				performances.forEach(performance => {
 					grid.appendChild(createPerformanceElement(performance));
 				});
 				page += 1;
 			} else {
-			    const perforContainer = document.querySelector('.performance-container');
-			    hasMoreData = false;
-			    const noDataMessage = createNoDataMessage(currentFilter);
-			    perforContainer.appendChild(noDataMessage);
+				// Only show no-data message if it's the first load (page === 1) and grid is empty
+				if (page === 1 && grid.children.length === 0) {
+					const perforContainer = document.querySelector('.performance-container');
+					const noDataMessage = createNoDataMessage(currentFilter);
+					perforContainer.appendChild(noDataMessage);
+				}
+				hasMoreData = false;
 			}
 			// 초기 로드 완료 표시
 			initialLoadComplete = true;
@@ -230,17 +292,18 @@ function handleTabClick(button) {
 
 	const performanceGrid = document.getElementById('performanceGrid');
 	const noDataMessage = document.querySelector('.no-data-message');
-	    if (noDataMessage) {
-	        noDataMessage.remove();
-	    }
-		
+	if (noDataMessage) {
+		noDataMessage.remove();
+	}
+
 	performanceGrid.innerHTML = '';
 
 	// 상태 초기화
+	currentFilter = button.dataset.filter;
 	page = 1;
 	hasMoreData = true;
-	isLoading = false;
-	initialLoadComplete = false; // 초기 로드 상태도 초기화
+	const grid = document.getElementById('performanceGrid');
+	grid.innerHTML = '';
 
 	loadMorePerformances();
 }
@@ -251,6 +314,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	const tabButtons = document.querySelectorAll('.tab-button');
 	tabButtons.forEach(button => {
 		button.addEventListener('click', () => handleTabClick(button));
+	});
+
+	// 검색 관련 이벤트 리스너 추가
+	document.getElementById('performanceSearchButton').addEventListener('click', handleSearch);
+
+	document.getElementById('performanceSearchInput').addEventListener('keypress', function(e) {
+		if (e.key === 'Enter') {
+			handleSearch();
+		}
 	});
 
 	// 스크롤 이벤트 등록 (throttle 적용)
@@ -272,10 +344,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-// 스크롤 이벤트 등록
+// 이벤트 리스너 등록
+scrollToTopButton.addEventListener('click', scrollToTop);
+window.addEventListener('scroll', throttle(toggleScrollButton, 100));
 window.addEventListener('scroll', scrollHandler, { passive: true });
 
 // 정리
 window.addEventListener('unload', () => {
+	scrollToTopButton.removeEventListener('click', scrollToTop);
 	window.removeEventListener('scroll', scrollHandler);
 });

@@ -18,6 +18,23 @@
 		<h3 th:text="${genre}">장르</h3>
 	</div>
 	
+	<!-- 검색 영역을 별도의 클래스명으로 변경 -->
+	<div class="performance-search-container">
+		<div class="performance-search-box">
+			<input type="text" class="performance-search-input" id="performanceSearchInput"
+				placeholder="공연명 또는 공연장을 입력하세요">
+			<select class="performance-search-type" id="performanceSearchType">
+				<option value="all">전체</option>
+				<option value="title">공연명</option>
+				<option value="venue">공연장</option>
+			</select>
+			<button class="performance-search-button" id="performanceSearchButton">
+				<i class="fas fa-search"></i>
+				검색
+			</button>
+		</div>
+	</div>
+	
 	<!-- 탭 버튼 추가 -->
 	<div class="tab-container">
 	    <div class="tab-buttons">
@@ -35,6 +52,10 @@
 			Loading...
 		</div>
 	</div>
+	
+	<button id="scrollToTop" class="scroll-to-top" aria-label="페이지 최상단으로 이동">
+	    <span>↑</span>
+	</button>
 
 	<th:block th:replace="~{common/footer}"></th:block>
 
