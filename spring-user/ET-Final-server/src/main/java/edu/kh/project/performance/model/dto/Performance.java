@@ -41,6 +41,8 @@ public class Performance {
 	private String adres;				// 공연장 위치
 	
 	
+	
+	
 	private Map<String, List<ScheduleInfo>> schedule; // 스케줄 정보 추가
 	
 	// 공연 등록을 위한 추가 정보

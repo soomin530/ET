@@ -17,7 +17,7 @@
         <!-- 버튼 추가 -->
         <div class="action-buttons">
             <button type="button" class="btn btn-primary"
-                onclick="location.href='/perfmgr/modifyPerformance?mt20id=' + document.getElementById('mt20id').value">수정</button>
+                onclick="location.href='/perfmgr/performance-modifyPerformance?mt20id=' + document.getElementById('mt20id').value">수정</button>
             <button type="button" class="btn btn-danger" onclick="deletePerformance()">삭제</button>
         </div>
 
@@ -52,6 +52,11 @@
                             <th>가격</th>
                             <td class="performance-price" th:text="${performance.pcseguidance}"></td>
                         </tr>
+                        <tr>
+                            <th>공연정보</th>
+                            <td class="performance-description" th:utext="${performance.description}"></td>
+                        </tr>
+
                     </table>
                 </div>
             </div>
