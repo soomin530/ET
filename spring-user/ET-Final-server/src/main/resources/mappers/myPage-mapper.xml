@@ -137,5 +137,67 @@
 	    </foreach>
 	</delete>
     
-
+    <!-- 예약 내역 조회 -->
+	<select id="selectBookingHistory" resultType="edu.kh.project.myPage.model.dto.ticketInfoDTO">
+	    SELECT 
+		    tb.BOOKING_DATE AS bookingDate,
+		    tp.PAID_AT AS paidAt,
+		    tb.MERCHANT_UID AS bookingId,  
+		    pd.PRFNM AS performanceName,   
+		    TO_CHAR(ts.SHOW_DATE, 'YYYY-MM-DD') || ' ' || ts.SHOW_TIME AS showDateTime,  
+		    COUNT(ts.SEATS_ID) AS ticketCount,   
+		    TRUNC(ts.SHOW_DATE - 1) AS cancelableUntil,  
+		    CASE 
+		        WHEN ts.SEAT_STATUS = 'BOOKED' THEN '예매'
+		        WHEN ts.SEAT_STATUS = 'CANCELED' THEN '취소'
+		        ELSE '기타'
+		    END AS bookingStatus
+		FROM 
+		    TB_TICKET_BOOKING tb
+		JOIN TB_TICKET_SEAT ts 
+		    ON tb.MT20ID = ts.MT20ID 
+		    AND tb.MEMBER_NO = ts.MEMBER_NO
+		JOIN TB_PERFORMANCES_DETAIL pd 
+		    ON tb.MT20ID = pd.MT20ID
+		JOIN TB_PAYMENT tp 
+		    ON tb.MERCHANT_UID = tp.MERCHANT_UID
+		WHERE 
+		    tb.MEMBER_NO = #{memberNo}
+		GROUP BY 
+		    tb.BOOKING_DATE, tp.PAID_AT, tb.MERCHANT_UID, pd.PRFNM, ts.SHOW_DATE, ts.SHOW_TIME, ts.SEAT_STATUS
+	</select>
+	
+	
+	<!-- 예매 상세 정보 조회 -->
+	<select id="selectBookingDetail" resultType="edu.kh.project.myPage.model.dto.ticketInfoDTO">
+	    SELECT 
+	        tb.BOOKING_DATE AS bookingDate,
+	        tp.PAID_AT AS paidAt,
+	        tb.MERCHANT_UID AS bookingId,
+	        pd.PRFNM AS performanceName,
+	        TO_CHAR(ts.SHOW_DATE, 'YYYY-MM-DD') || ' ' || ts.SHOW_TIME AS showDateTime,
+	        COUNT(ts.SEATS_ID) AS ticketCount,
+	        LISTAGG(ts.SEATS_ID, ', ') WITHIN GROUP (ORDER BY ts.SEATS_ID) AS seatInfo,
+	        TRUNC(ts.SHOW_DATE - 1) AS cancelableUntil,
+	        CASE 
+	            WHEN ts.SEAT_STATUS = 'BOOKED' THEN '예매'
+	            WHEN ts.SEAT_STATUS = 'CANCELED' THEN '취소'
+	            ELSE '기타'
+	        END AS bookingStatus,
+	        tp.PAID_AMOUNT AS totalPaid
+	    FROM 
+	        TB_TICKET_BOOKING tb
+	    JOIN TB_TICKET_SEAT ts 
+		    ON tb.MT20ID = ts.MT20ID 
+		    AND tb.MEMBER_NO = ts.MEMBER_NO
+	    JOIN TB_PERFORMANCES_DETAIL pd ON tb.MT20ID = pd.MT20ID
+	    JOIN TB_PAYMENT tp ON tb.MERCHANT_UID = tp.MERCHANT_UID
+	    WHERE 
+	        tb.MERCHANT_UID = #{bookingId}
+	        AND tb.MEMBER_NO = #{memberNo}
+	    GROUP BY 
+	        tb.BOOKING_DATE, tp.PAID_AT, tb.MERCHANT_UID, pd.PRFNM, ts.SHOW_DATE, ts.SHOW_TIME, ts.SEAT_STATUS, tp.PAID_AMOUNT
+	</select>
+	
+	
 </mapper>

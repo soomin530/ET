@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -219,13 +220,35 @@ public class MyPageController {
         return "mypage/ticketInfo"; // 예매내역 페이지 HTML 파일
     }
 	
-	// 예매 내역 조회 
+	// 예매 내역 데이터 조회 
 	@ResponseBody
 	@GetMapping("ticketInfo/data")
 	public ResponseEntity<List<ticketInfoDTO>> getTicketInfo(@SessionAttribute("loginMember") Member loginMember) {
 	    int memberNo = loginMember.getMemberNo();  // 로그인된 회원의 번호 가져오기
 	    List<ticketInfoDTO> bookingList = service.getBookingHistory(memberNo);  // 예매 내역 조회
 	    return ResponseEntity.ok(bookingList);  // JSON 형식으로 반환
+	}
+	
+	/** 1/6 나찬웅 작성
+	 * 마이페이지 -> 예매 내역 -> 예매 상세 정보
+	 * @return
+	 */
+	/** 예매 상세 정보 페이지로 이동 */
+	@GetMapping("ticketDetail/{bookingId}")
+	public String ticketDetail(@PathVariable("bookingId") String bookingId) {
+	    return "mypage/ticketDetail"; // 예매 내역 상세 페이지 HTML
+	}
+
+	
+	// 예매 상세 정보에서 데이터 조회
+	@ResponseBody
+	@GetMapping("ticketDetail/data/{bookingId}")
+	public ResponseEntity<ticketInfoDTO> getTicketDetail(
+			@PathVariable("bookingId") String bookingId,
+	        @SessionAttribute("loginMember") Member loginMember) {
+		
+	    ticketInfoDTO detail = service.getBookingDetail(bookingId, loginMember.getMemberNo());
+	    return ResponseEntity.ok(detail);
 	}
 
 	
@@ -237,5 +260,8 @@ public class MyPageController {
 	public String favList() {
         return "mypage/favList"; // 찜목록 페이지 HTML 파일
     }
+	
+	
+	
 
 }

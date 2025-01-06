@@ -84,7 +84,18 @@ public interface MyPageMapper {
 	 */
 	int deleteWishlistItems(Map<String, Object> paramMap);
 
+	/** 예약 내역 조회
+	 * @param memberNo
+	 * @return
+	 */
 	List<ticketInfoDTO> selectBookingHistory(int memberNo);
+
+	/** 예약 상세 내용 조회
+	 * @param bookingId
+	 * @param memberNo
+	 * @return
+	 */
+	ticketInfoDTO selectBookingDetail(@Param("bookingId") String bookingId, @Param("memberNo") int memberNo);
 
 	
 }

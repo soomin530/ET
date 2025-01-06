@@ -103,5 +103,12 @@ public interface MyPageService {
 	List<ticketInfoDTO> getBookingHistory(int memberNo);
 
 
-
+	/** 예매 내역 상세 조회
+	 * @param bookingId
+	 * @param memberNo
+	 * @return
+	 */
+	ticketInfoDTO getBookingDetail(String bookingId, int memberNo);
+	
+	
 }
