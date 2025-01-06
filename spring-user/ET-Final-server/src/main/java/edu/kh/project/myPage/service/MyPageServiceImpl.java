@@ -12,11 +12,14 @@ import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
 import edu.kh.project.myPage.model.dto.ticketInfoDTO;
 import edu.kh.project.myPage.model.mapper.MyPageMapper;
+import edu.kh.project.performance.model.dto.Performance;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class MyPageServiceImpl implements MyPageService {
     
     private final MyPageMapper mapper;
@@ -121,6 +124,45 @@ public class MyPageServiceImpl implements MyPageService {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	
+	// 찜한 목록 조회
+	@Override
+	public List<Performance> userWishList(int page, int memberNo) {
+		int pageSize = 20;
+		
+		// 시작 위치 계산
+		int offset = (page - 1) * pageSize;	
+		
+		return mapper.userWishList(offset, pageSize, memberNo);
+	}
+	
+	
+	// 찜한 내역 삭제
+	@Override
+	public boolean deleteWishlistItems(List<String> performanceIds, int memberNo) {
+		try {
+	        // 입력값 검증
+	        if(performanceIds == null || performanceIds.isEmpty()) {
+	            return false;
+	        }
+	        
+	        // Map에 memberNo와 performanceIds를 담아서 전달
+	        Map<String, Object> paramMap = new HashMap<>();
+	        paramMap.put("memberNo", memberNo);
+	        paramMap.put("performanceIds", performanceIds);
+	        
+	        // 실제 삭제된 행의 수를 확인
+	        int result = mapper.deleteWishlistItems(paramMap);
+	        
+	        // 모든 선택된 항목이 성공적으로 삭제되었는지 확인
+	        return result == performanceIds.size();
+	        
+	    } catch(Exception e) {
+	        log.error("찜목록 삭제 중 오류 발생: {}", e.getMessage());
+	        return false;
+	    }
+	}
 
 	
 	/**
@@ -131,9 +173,4 @@ public class MyPageServiceImpl implements MyPageService {
 		return mapper.selectBookingHistory(memberNo);
 	}
 
-
-	
-
-	
-    
 }
