@@ -367,6 +367,23 @@ function initializeStarRating(container) {
 	const labels = container.querySelectorAll('label');
 	const inputs = container.querySelectorAll('input[type="radio"]');
 	let selectedRating = 0;
+	
+	// 별점 업데이트 함수
+	const updateStars = (rating) => {
+		labels.forEach((label, index) => {
+			label.style.color = index < rating ? '#ffca28' : '#ddd';
+		});
+	};
+	
+	// 별점 초기화 함수
+	const resetStars = () => {
+		selectedRating = 0;
+		inputs.forEach(input => input.checked = false);
+		labels.forEach(label => label.style.color = '#ddd');
+	};
+
+	// container에 resetStars 함수 추가
+	container.resetStars = resetStars;
 
 	// 별점 선택 이벤트
 	inputs.forEach(input => {
@@ -488,6 +505,13 @@ function initializeReviews() {
 					alert('리뷰가 등록되었습니다.');
 					$('#reviewContent').val('');
 					$('input[name="rating"]').prop('checked', false);
+					
+					// 별점 완전 초기화
+					const mainStarRating = document.querySelector('.star-rating');
+					if (mainStarRating && mainStarRating.resetStars) {
+						mainStarRating.resetStars();
+					}
+					
 					loadReviews();
 				} else {
 					alert(response.message);
@@ -573,6 +597,13 @@ function initializeReviews() {
 			success: function(response) {
 				if (response.success) {
 					alert('리뷰가 수정되었습니다.');
+					
+					// 별점 완전 초기화
+					const mainStarRating = document.querySelector('.star-rating');
+					if (mainStarRating && mainStarRating.resetStars) {
+						mainStarRating.resetStars();
+					}
+					
 					loadReviews();
 				} else {
 					alert(response.message);
@@ -596,6 +627,13 @@ function initializeReviews() {
 			success: function(response) {
 				if (response.success) {
 					alert('리뷰가 삭제되었습니다.');
+					
+					// 별점 완전 초기화
+					const mainStarRating = document.querySelector('.star-rating');
+					if (mainStarRating && mainStarRating.resetStars) {
+						mainStarRating.resetStars();
+					}
+					
 					loadReviews();
 				} else {
 					alert(response.message);
