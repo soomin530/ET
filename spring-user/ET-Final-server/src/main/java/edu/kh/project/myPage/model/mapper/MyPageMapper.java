@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
@@ -66,7 +67,18 @@ public interface MyPageMapper {
 	 */
 	int updateMember(Member member);
 
+	/** 예약 내역 조회
+	 * @param memberNo
+	 * @return
+	 */
 	List<ticketInfoDTO> selectBookingHistory(int memberNo);
+
+	/** 예약 상세 내용 조회
+	 * @param bookingId
+	 * @param memberNo
+	 * @return
+	 */
+	ticketInfoDTO selectBookingDetail(@Param("bookingId") String bookingId, @Param("memberNo") int memberNo);
 
 	
 }
