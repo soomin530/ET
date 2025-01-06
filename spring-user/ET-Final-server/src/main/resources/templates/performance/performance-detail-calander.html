@@ -17,7 +17,9 @@
 		<div class="performance-content">
 			<!-- 왼쪽: 공연 정보 -->
 			<div class="performance-info">
-				<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image">
+				<img th:src="${performance.poster != null ? performance.poster : '/images/default-poster.png'}" 
+				     th:alt="${performance.prfnm}" 
+				     class="performance-image">
 				<!-- 탭 컨테이너 추가 -->
 				<div class="tab-container">
 					<!-- 탭 버튼들 -->

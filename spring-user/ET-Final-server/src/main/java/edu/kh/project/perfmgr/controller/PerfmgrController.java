@@ -215,7 +215,7 @@ public class PerfmgrController {
 	 * @return
 	 * @author 우수민
 	 */
-	@GetMapping("performance-management")
+	@GetMapping("/performance-management")
 	public String performanceManagement() {
 		return "perfmgr/performance-management";
 	}
@@ -248,7 +248,7 @@ public class PerfmgrController {
 	 * @return
 	 * @author 우수민
 	 */
-	@GetMapping("performance-registration")
+	@GetMapping("/performance-registration")
 	public String updatePerformance() {
 		return "perfmgr/performance-registration";
 	}
