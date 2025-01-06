@@ -1,5 +1,7 @@
 package edu.kh.project.member.service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +29,12 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Member login(Member inputMember) {
 		// 암호화 진행
-
 		String bcryptPassword = bcrypt.encode(inputMember.getMemberPw());
 
-		// 1. 이메일이 일치하면서 탈퇴하지 않은 회원 조회
+		// 1. 아이디 일치하면서 탈퇴하지 않은 회원 조회
 		Member loginMember = mapper.login(inputMember.getMemberId());
 
-		// 2. 만약에 일치하는 이메일이 없어서 조회 결과가 null 인 경우
+		// 2. 만약에 일치하는 아이디가 없어서 조회 결과가 null 인 경우
 		if (loginMember == null)
 			return null;
 
@@ -52,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
 		return loginMember;
 	}
 
-	// 이메일 중복 체큰
+	// 이메일 중복 체크
 	@Override
 	public int checkEmail(String memberEmail) {
 		return mapper.checkEmail(memberEmail);
@@ -90,6 +91,54 @@ public class MemberServiceImpl implements MemberService {
 		// 회원 가입 매퍼 메서드 호출
 		return mapper.signup(inputMember);
 	}
+	
+	// 네이버 로그인
+	@Override
+	public Member loginNaver(Member naverMember) {
+        
+        // 기존 네이버 회원인지 조회
+        Member existingMember = mapper.selectNaverMember(naverMember.getMemberId());
+        
+        if(existingMember == null) {
+        	String encPw = bcrypt.encode(naverMember.getMemberPw());
+        	naverMember.setMemberPw(encPw);
+            // 새로운 네이버 회원인 경우 회원가입 처리
+            mapper.insertNaverMember(naverMember);
+            return naverMember;
+        }
+        
+        return existingMember;
+    }
+
+	
+	// 이메일로 회원 아이디 조회
+	@Override
+	public Member findByEmail(String email) {
+		return mapper.findByEmail(email);
+	}
+	
+	
+	// 이메일 아이디로 회원 정보 조회
+	@Override
+	public Member findByIdAndEmail(Map<String, Object> paramMap) {
+		return mapper.findByIdAndEmail(paramMap);
+	}
+	
+	
+	// 비밀번호 수정
+	@Override
+	public int updatePassword(int memberNo, String password) {
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		String encPw = bcrypt.encode(password);
+		
+		paramMap.put("encPw", encPw);
+		paramMap.put("memberNo", memberNo);
+		
+		return mapper.updatePassword(paramMap);
+	}
+
 
 	@Override
 	public void insertVenue(Map<String, Object> venue) {
@@ -99,6 +148,26 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void insertPerf(Map<String, Object> perfMap) {
 		mapper.insertPerf(perfMap);
+	}
+
+	@Override
+	public void insertPerfTime(Map<String, Object> perfTime) {
+		mapper.insertPerfTime(perfTime);
+	}
+
+	@Override
+	public void insertTicketInto(Map<String, Object> ticketInfo) {
+		mapper.insertTicketInto(ticketInfo);
+	}
+
+	@Override
+	public List<Map<String, String>> performanceDetails() {
+		return mapper.performanceDetails();
+	}
+
+	@Override
+	public void insertVenueSeat(Map<String, Object> seat) {
+		mapper.insertVenueSeat(seat);
 	}
 
 }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>회원탈퇴</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<link rel="stylesheet" href="/css/myPage/membershipOut.css">
+	<th:block th:replace="~{common/common}"></th:block>
+
+</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+
+	<div class="mypage-container">
+		<!-- 사이드바 -->
+		<div class="sidebar">
+			<nav class="sidebar-nav">
+				<ul class="menu-list">
+					<li class="menu-item">
+						<a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+					</li>
+					<!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+					<li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+						<a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+
+		<div class="main-content">
+			<h2 class="page-title">회원 탈퇴</h2>
+
+			<div class="withdrawal-container">
+				<div class="notice-box">
+					<h3>회원 탈퇴 전 꼭 확인해주세요!</h3>
+					<ul>
+						<li>회원 탈퇴 시 모든 개인정보가 삭제되며, 복구가 불가능합니다.</li>
+						<li>진행 중인 주문이 있는 경우 탈퇴가 제한될 수 있습니다.</li>
+						<li>작성하신 게시글 및 댓글은 삭제되지 않습니다.</li>
+						<li>보유하신 포인트는 모두 소멸되며, 환불되지 않습니다.</li>
+					</ul>
+				</div>
+
+				<div class="agreement-box">
+					<label class="checkbox-wrapper">
+						<input type="checkbox" id="agreementCheck">
+						위 내용을 모두 확인하였으며, 회원 탈퇴에 동의합니다.
+					</label>
+				</div>
+
+				<!-- 네이버 회원이 아닌 경우에만 비밀번호 입력 필드 표시 -->
+				<div class="password-box" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+					<input type="password" id="memberOutPw" placeholder="비밀번호를 입력해주세요">
+					<p class="error-message" style="display: none;">비밀번호가 일치하지 않습니다.</p>
+				</div>
+
+				<div class="button-box">
+					<button type="button" class="cancel-btn">취소</button>
+					<button type="button" class="withdraw-btn" onclick="confirmWithdrawal()">회원탈퇴</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<th:block th:replace="~{common/footer}"></th:block>
+
+	<script src="/js/myPage/membershipOut.js"></script>
+</body>
+
+</html>

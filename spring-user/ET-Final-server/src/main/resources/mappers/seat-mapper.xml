@@ -3,49 +3,103 @@
 <mapper namespace="edu.kh.project.payment.model.mapper.paymentMapper">
 
 	<!-- 특정 공연 좌석 조회 -->
-	<select id="selectSeatsByShow">
-		SELECT TS.SEATS_ID AS seatId,
-			TS.GRADE_ID AS gradeId,
-			SG.GRADE_NAME AS gradeName,
-			PSP.PRICE AS price,
-			TS.SEAT_STATUS AS status,
-			TS.SHOW_DATE AS showDate,
-			TS.SHOW_TIME AS showTime
-		FROM TB_TICKET_SEAT TS
-		JOIN TB_SEAT_GRADE SG ON TS.GRADE_ID = SG.GRADE_ID
-		JOIN TB_PERFORMANCE_SEAT_PRICE PSP
-		ON TS.GRADE_ID = PSP.GRADE_ID AND TS.MT20ID = PSP.MT20ID
-		WHERE TS.SHOW_DATE = TO_DATE(#{showDate}, 'YYYY-MM-DD')
-		AND TS.SHOW_TIME = #{showTime}
+	<select id="selectSeatsByShow" parameterType="map" resultType="map">
+		  SELECT
+		    S.MT20ID,
+		    S.DAY_OF_WEEK AS dayOfWeek,
+		    S.PERFORMANCE_TIME AS performanceTime,
+		    S.SEAT_COUNT AS totalSeatCount,
+		    S.GRADE_ID AS gradeId,
+		    S.GRADE_NAME AS gradeName,
+		    S.PRICE AS gradePrice,
+		    S.SEAT_COUNT - COUNT(CASE WHEN TTS.SEAT_STATUS = 'BOOKED' THEN 1 END) AS availableSeatCount
+		FROM (
+		    SELECT
+		        TPF.MT20ID,
+		        TPT.DAY_OF_WEEK,
+		        TPT.PERFORMANCE_TIME,
+		        TVSI.SEAT_COUNT,
+		        SG.GRADE_ID,
+		        SG.GRADE_NAME,
+		        PSP.PRICE
+		    FROM TB_PERFORMANCES_DETAIL TPF
+		    JOIN TB_PERFORMANCE_TIME TPT ON TPF.MT20ID = TPT.MT20ID
+		    JOIN TB_VENUE_SEAT_INFO TVSI ON TPF.MT10ID = TVSI.MT10ID
+		    JOIN TB_SEAT_GRADE SG ON SG.GRADE_ID = TVSI.GRADE_ID
+		    JOIN TB_PERFORMANCE_SEAT_PRICE PSP
+		        ON TPF.MT20ID = PSP.MT20ID
+		        AND TVSI.GRADE_ID = PSP.GRADE_ID
+		    WHERE TPF.MT20ID = #{mt20id}
+		    AND TPT.DAY_OF_WEEK = #{dayOfWeek}
+		    AND TPT.PERFORMANCE_TIME = #{selectedTime}
+		) S
+		LEFT JOIN TB_TICKET_SEAT TTS
+		    ON S.MT20ID = TTS.MT20ID
+		    AND S.GRADE_ID = TTS.GRADE_ID
+		    AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+		    AND TTS.SHOW_TIME = #{selectedTime}
+		GROUP BY
+		    S.MT20ID,
+		    S.DAY_OF_WEEK,
+		    S.PERFORMANCE_TIME,
+		    S.SEAT_COUNT,
+		    S.GRADE_ID,
+		    S.GRADE_NAME,
+		    S.PRICE
+		ORDER BY
+		    S.GRADE_ID
 	</select>
+
 	
 	<!-- 좌석 업데이트 -->
 	<update id="updateSeatStatus">
-	    UPDATE TB_TICKET_SEAT
-	    SET SEAT_STATUS = #{status}
-	    WHERE SEATS_ID = #{seatId}
-	</update>
+    UPDATE TB_TICKET_SEAT
+    SET SEAT_STATUS = 'BOOKED'
+    WHERE SEATS_ID = #{seatId}
+      AND SHOW_DATE = TO_DATE(#{showDate}, 'YYYY-MM-DD')
+      AND SHOW_TIME = #{showTime}
+</update>
 
+
+	<!-- 좌석 가격 -->
 	<select id="selectSeatPrice" resultType="int">
 	    SELECT PRICE
 	    FROM TB_PERFORMANCE_SEAT_PRICE
 	    WHERE GRADE_ID = #{gradeId}
 	</select>
 	
+	<!-- 공연 상세 정보 출력 -->
+	<select id="getPerformanceDetail" resultType="edu.kh.project.performance.model.dto.Performance">
+		SELECT 
+		   PD.MT20ID AS mt20id,
+	  	   PD.MT10ID AS mt10id, 	
+		   PD.PRFNM AS prfnm,
+		   PD.PRFPDFROM AS prfpdfrom,
+		   PD.PRFPDTO AS prfpdto,
+		   PD.FCLTYNM AS fcltynm,
+		   PD.PRFRUNTIME AS prfruntime,
+		   PD.POSTER AS poster
+		FROM "TB_PERFORMANCES_DETAIL" PD
+		WHERE PD.MT20ID = #{performanceId}
+	</select>
 	
-	<!-- 결제 내역 저장 -->
-	<insert id="insertPayment">
-		 INSERT INTO TB_PAYMENT (
-	        PAY_NO, IMP_UID, MERCHANT_UID, PAY_METHOD, PG_PROVIDER, PG_TYPE, PG_TID, NAME,
-	        PAID_AMOUNT, CURRENCY, BUYER_NAME, BUYER_TEL, BUYER_ADDR,
-	        BUYER_POSTCODE, BUYER_EMAIL, STATUS, PAID_AT, RECEIPT_URL
-	    ) VALUES (
-	        PAY_NO_SEQ.NEXTVAL, #{impUid}, #{merchantUid}, #{payMethod}, #{pgProvider}, #{pgType}, #{pgTid},
-	        #{name}, #{paidAmount}, #{currency}, #{buyerName}, #{buyerTel},
-	        #{buyerAddr}, #{buyerPostcode}, #{buyerEmail},
-	        #{status}, #{paidAt}, #{receiptUrl}
-	    )
-	</insert>
+	<!-- 이미 예약된 좌석 조회 -->
+	<select id="selectBookedSeats" parameterType="map" resultType="Seat">
+	    SELECT 
+	        SEATS_ID AS seatId,
+	        GRADE_ID AS gradeId,
+	        MT20ID AS mt20id,
+	        SEAT_STATUS AS seatStatus,
+	        SHOW_DATE AS showDate,
+	        SHOW_TIME AS showTime
+	    FROM TB_TICKET_SEAT
+	    WHERE MT20ID = #{mt20id}
+	      AND SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+	      AND SHOW_TIME = #{selectedTime}
+	      AND SEAT_STATUS = 'BOOKED'
+	</select>
+	
+	
 
 
 </mapper>

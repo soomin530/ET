@@ -2,6 +2,7 @@ package edu.kh.project.payment.model.dto;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +39,15 @@ public class Payment {
 	
     // 추가된 필드
 	private String seatId; // 단일 좌석 ID
-	private List<String> seatIds; // 여러 좌석 ID
+	private List<Map<String,Object>> seatIds; // 여러 좌석 ID
+	private String mt20id; // 공연 ID (추가)
+	private String mt10id; // 공연시설 ID (추가)
+	private int memberNo; // 로그인된 회원 번호 (추가)
+	
+	private String showDate;       // 공연 날짜
+	private String showTime;       // 공연 시간
+	private String gradeId;        // 좌석 등급 ID
+
+	
 
 }

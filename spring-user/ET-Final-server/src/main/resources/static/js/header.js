@@ -1,3 +1,27 @@
+// 페이지 로드 시 실행되는 코드
+document.addEventListener('DOMContentLoaded', function() {
+});
+
+// 쿠키에서 매개변수로 전달받은 key가 일치하는 value 얻어오기 함수
+const getCookie = (key) => {
+
+
+	const cookies = document.cookie;
+	const cookieList = cookies.split("; ")
+		.map(el => el.split("="));
+
+	const obj = {}; // 비어있는 객체 선언
+
+	for (let i = 0; i < cookieList.length; i++) {
+		const k = cookieList[i][0];
+		const v = cookieList[i][1];
+		obj[k] = v;
+	}
+
+	return obj[key];
+
+}
+
 // 다음 주소 API
 function execDaumPostcode() {
 	new daum.Postcode({
@@ -30,7 +54,7 @@ document.querySelector("#searchAddress").addEventListener("click", execDaumPostc
 // 필수 입력 항목의 유효성 검사 여부를 체크하기 위한 객체
 // - true  == 해당 항목은 유효한 형식으로 작성됨
 // - false == 해당 항목은 유효하지 않은 형식으로 작성됨
-const checkObj = {
+let checkObj = {
 	"memberEmail": false,
 	"memberId": false,
 	"memberPw": false,
@@ -48,9 +72,23 @@ const loginBtn = document.getElementById("login-Btn");
 const memberLoginId = document.getElementById("memberLoginId");
 const memberLoginPw = document.getElementById("memberLoginPw");
 
-// 로그인
+if (memberLoginId != null) {
+
+	// 쿠키 중 key 값이 "saveId" 인 요소의 value 얻어오기
+	const saveId = getCookie("saveId");
+
+	// saveId 값이 있을 경우
+	if (saveId != undefined) {
+		memberLoginId.value = saveId;
+
+		// 아이디 저장 체크박스에 체크해두기
+		document.getElementById('saveIdCheckbox').checked = true;
+	}
+
+}
+
 const performLogin = () => {
-	
+	// 입력 검증
 	if (memberLoginId.value.length === 0) {
 		alert("아이디를 입력해주세요.");
 		memberLoginId.focus();
@@ -63,30 +101,46 @@ const performLogin = () => {
 		return;
 	}
 
-	const data = {
-		memberId: memberLoginId.value,
-		memberPw: memberLoginPw.value
+	const form = new FormData();
+	form.append('memberId', memberLoginId.value);
+	form.append('memberPw', memberLoginPw.value);
+
+	// saveId 체크박스가 있다면
+	const saveIdCheckbox = document.getElementById('saveIdCheckbox');
+	console.log(saveIdCheckbox);
+	if (saveIdCheckbox && saveIdCheckbox.checked) {
+		form.append('saveId', 'on');
 	}
 
 	fetch("/member/login", {
 		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(data)
+		body: form
 	})
-		.then(resp => resp.json())
+		.then(response => {
+			if (response.status === 401) {
+				throw new Error("인증 실패");
+			}
+			return response.json();
+		})
 		.then(data => {
-			console.log("로그인 성공:", data);
+			// 로컬 스토리지에 액세스 토큰 저장
+			localStorage.setItem('accessToken', data.accessToken);
 
-			if (data.status === "success") {
-				// 로그인 성공: redirectUrl로 이동
-				window.location.href = data.redirectUrl;
-
+			// 페이지 리다이렉트
+			if (window.location.pathname === '/member/find') {
+				window.location.href = '/';
 			} else {
-				// 로그인 실패: 메시지 표시
-				alert(data.message);
+				window.location.href = window.location.href;
+			}
+		})
+		.catch(error => {
+			if (error.message === "인증 실패") {
+				alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+			} else {
+				console.error("로그인 에러:", error);
+				alert("로그인 처리 중 오류가 발생했습니다.");
 			}
 		});
-
 };
 
 // 로그인 버튼 클릭 이벤트
@@ -105,21 +159,61 @@ memberLoginPw.addEventListener("keydown", (event) => {
 	}
 });
 
-// JWT 토큰을 사용한 로그아웃
+// JWT 토큰을 사용한 회원 로그아웃
 function logoutSession() {
 	fetch("/member/logout", {
 		method: "POST"
 	})
 		.then(response => {
+			// localStorage에서 토큰 제거
+			localStorage.removeItem('accessToken');
+
 			// 메인 페이지로 이동
 			window.location.href = "/";
 		})
 		.catch(error => {
 			console.error("로그아웃 중 오류 발생:", error);
+			
+			// 에러 발생시에도 토큰 제거
+			localStorage.removeItem('accessToken');
+
 			alert("로그아웃 중 문제가 발생했습니다.");
 			window.location.href = "/";
-			
 		});
+}
+
+// JWT 토큰을 사용한 네이버 로그아웃 수정
+function naverLogoutSession() {
+    fetch("/naver/logout", {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+    })
+    .then(response => {
+        // localStorage에서 토큰과 관련 정보 제거
+        localStorage.removeItem('accessToken');
+        
+        // 쿠키에서 네이버 관련 정보 제거
+        document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = 'Refresh-Token=; path=/api/auth/refresh; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        
+        // 메인 페이지로 이동
+        window.location.href = "/";
+    })
+    .catch(error => {
+        console.error("네이버 로그아웃 중 오류 발생:", error);
+        
+        // 에러 발생시에도 토큰과 정보 제거
+        localStorage.removeItem('accessToken');
+        
+        // 쿠키도 삭제
+        document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = 'Refresh-Token=; path=/api/auth/refresh; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        
+        alert("로그아웃 중 문제가 발생했습니다.");
+        window.location.href = "/";
+    });
 }
 
 
@@ -651,18 +745,3 @@ signUpForm.addEventListener("submit", e => {
 		}
 	}
 });
-
-// 취소버튼 눌렀을때 로그인 페이지로 돌아가기
-document.querySelectorAll('#cancelButton').forEach(button => {
-	button.addEventListener('click', function() {
-		if (confirm("회원가입을 취소하고 로그인 페이지로 이동 하시겠습니까?")) {
-			window.location.href = '/member/login';
-		}
-	});
-});
-
-function fetchProtectedResource() {
-	
-	window.location.href = "/member/perform-and-save";
-	
-}

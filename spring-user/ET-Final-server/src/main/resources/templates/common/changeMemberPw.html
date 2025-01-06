@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비밀번호 재설정</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <th:block th:replace="~{common/common}"></th:block>
+    <link rel="stylesheet" href="/css/common/findMember.css">
+</head>
+
+<body>
+    <th:block th:replace="~{common/header}"></th:block>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>비밀번호 재설정</h2>
+        </div>
+
+        <form id="resetPasswordForm" class="find-form">
+            <input type="hidden" id="resetToken" th:value="${token}">
+            
+            <div class="input-group">
+                <input type="password" 
+                       id="newPassword" 
+                       class="input-field" 
+                       placeholder="새 비밀번호" 
+                       required>
+                <div class="message" id="newPasswordMessage"></div>
+            </div>
+
+            <div class="input-group">
+                <input type="password" 
+                       id="confirmPassword" 
+                       class="input-field" 
+                       placeholder="새 비밀번호 확인" 
+                       required>
+                <div class="message" id="confirmPasswordMessage"></div>
+            </div>
+
+            <button type="submit" class="submit-button find-pw-submit">
+                비밀번호 변경하기
+            </button>
+
+        </form>
+    </div>
+
+    <th:block th:replace="~{common/footer}"></th:block>
+
+	<script src="/js/common/changeMemberPw.js"></script>
+	
+</body>
+</html>

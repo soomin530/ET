@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공연 예매 사이트</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/perfmgr/modifyPerformance.css">
+  <th:block th:replace="~{common/common}"></th:block>
+</head>
+
+<body>
+  <th:block th:replace="~{common/header}"></th:block>
+  <div class="performance-container" style="margin-top: 20px;">
+    <form id="performanceForm">
+      <!-- null 체크 추가 -->
+      <div th:if="${performance != null}">
+        <div class="performance-content">
+          <!-- 왼쪽: 공연 정보 -->
+          <div class="performance-info">
+            <img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image">
+            <table class="info-table">
+              <tr>
+                <th>공연명</th>
+                <td class="performance-title">
+                  <input type="text" th:value="${performance.prfnm}" placeholder="공연명을 입력해주세요" size="50" style="padding-left: 5px;" required>
+                </td>
+              </tr>
+              <tr>
+                <th>장소</th>
+                <td class="performance-venue" th:text="${performance.fcltynm}"></td>
+              </tr>
+              <tr>
+                <th>공연기간</th>
+                <td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}"></td>
+              </tr>
+              <tr>
+                <th>공연시간</th>
+                <td class="performance-runtime">
+                  <input type="text" th:value="${performance.prfruntime}" placeholder="공연시간을 입력해주세요" size="50" style="padding-left: 5px;" required>
+                </td>
+              </tr>
+              <tr>
+                <th>출연진</th>
+                <td class="performance-actor">
+                  <input type="text" th:value="${performance.prfcast}" placeholder="출연진을 입력해주세요" size="50" style="padding-left: 5px;" required>
+                </td>
+              </tr>
+              <tr>
+                <th>가격</th>
+                <td class="performance-price" th:text="${performance.pcseguidance}"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 등록 버튼을 폼 내용 맨 아래로 이동 -->
+        <div class="action-buttons" style="margin-top: 20px; text-align: center;">
+          <button type="button" class="btn btn-modify" onclick="modifyPerformance()">등록</button>
+        </div>
+      </div>
+      
+      <div th:unless="${performance != null}">
+        <p>공연 정보를 찾을 수 없습니다.</p>
+      </div>
+    </form>
+  </div>
+
+  <!-- hidden inputs -->
+  <input type="hidden" id="currentMemberNo"
+    th:value="${session.loginMember != null ? session.loginMember.memberNo : ''}" />
+  <input type="hidden" id="fcltla" th:value="${performance.fcltla}">
+  <input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
+  <input type="hidden" id="mt20id" name="mt20id" th:value="${performance.mt20id}">
+
+  <script th:inline="javascript">
+    const performanceData = {
+      id: /*[[${performance.mt20id}]]*/ '',
+      startDate: /*[[${performance.prfpdfrom}]]*/ '',
+      endDate: /*[[${performance.prfpdto}]]*/ '',
+      runtime: /*[[${performance.prfruntime}]]*/ '',
+      cast: /*[[${performance.prfcast}]]*/ '',
+      venue: /*[[${performance.fcltynm}]]*/ '',
+      schedule: /*[[${performance.schedule}]]*/ {}
+    };
+  </script>
+
+  <script src="/js/perfmgr/modifyPerformance.js"></script>
+  <th:block th:replace="~{common/footer}"></th:block>
+</body>
+
+</html>

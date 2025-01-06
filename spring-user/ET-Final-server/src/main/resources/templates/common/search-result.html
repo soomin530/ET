@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>티켓팅 시스템</title>
+	<th:block th:replace="~{common/common}"></th:block>
+	<link rel="stylesheet" href="/css/common/search-result.css">
+</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+
+	<div class="search-results-container">
+		<h2>검색 결과: <span th:text="${query}"></span></h2>
+
+		<div class="tab-buttons">
+			<div class="tab-button active" onclick="showTab('performances')">공연</div>
+			<div class="tab-button" onclick="showTab('notices')">공지사항</div>
+		</div>
+
+		<div id="performances" class="tab-content active">
+			<div th:if="${not #lists.isEmpty(results.performances)}" class="performance-grid">
+				<div th:each="performance : ${results.performances}" class="performance-card">
+					<img th:src="${performance.poster}" alt="공연 포스터">
+					<h4 th:text="${performance.prfnm}"></h4>
+					<div class="performance-info">
+						<span th:text="${performance.fcltynm}"></span>
+						<span th:text="${performance.prfpdto}"></span>
+					</div>
+				</div>
+			</div>
+			<div th:if="${#lists.isEmpty(results.performances)}" class="no-results">
+				<p>공연 검색 결과가 없습니다.</p>
+			</div>
+		</div>
+
+		<div id="notices" class="tab-content">
+			<div th:if="${not #lists.isEmpty(results.notices)}" class="notice-list">
+				<div th:each="notice : ${results.notices}" class="notice-item">
+					<h4>
+						<a th:href="@{'/notice/' + ${notice.announceNo}}" th:text="${notice.announceTitle}"></a>
+					</h4>
+					<p class="notice-preview" th:utext="${notice.announceContent}"></p>
+					<p class="notice-info">
+						<span th:text="${notice.announceWriteDate}"></span>
+					</p>
+				</div>
+			</div>
+			<div th:if="${#lists.isEmpty(results.notices)}" class="no-results">
+				<p>공지사항 검색 결과가 없습니다.</p>
+			</div>
+		</div>
+	</div>
+
+	<th:block th:replace="~{common/footer}"></th:block>
+
+	<script>
+		function showTab(tabName) {
+			const tabContents = document.querySelectorAll('.tab-content');
+			tabContents.forEach(content => {
+				content.classList.remove('active');
+			});
+
+			const tabButtons = document.querySelectorAll('.tab-button');
+			tabButtons.forEach(button => {
+				button.classList.remove('active');
+			});
+
+			document.getElementById(tabName).classList.add('active');
+			const activeButton = Array.from(tabButtons).find(
+				button => button.textContent === (tabName === 'performances' ? '공연' : '공지사항')
+			);
+			if (activeButton) {
+				activeButton.classList.add('active');
+			}
+		}
+	</script>
+</body>
+
+</html>

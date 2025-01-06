@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>티켓팅 시스템</title>
+	<th:block th:replace="~{common/common}"></th:block>
+
+	<link rel="stylesheet" href="/css/performance/genre.css">
+
+</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+
+	<div class="parent">
+		<h2 th:text="${genre}">장르</h2>
+	</div>
+	
+	<!-- 탭 버튼 추가 -->
+	<div class="tab-container">
+	    <div class="tab-buttons">
+	        <button class="tab-button active" data-filter="all">전체</button>
+	        <button class="tab-button" data-filter="rating">평점순</button>
+	        <button class="tab-button" data-filter="upcoming">공연예정</button>
+	        <button class="tab-button" data-filter="ongoing">공연중</button>
+	    </div>
+	</div>
+
+	<div class="performance-container">
+		<div class="performance-grid" id="performanceGrid">
+		</div>
+		<div class="loading-spinner" style="display: none;">
+			Loading...
+		</div>
+	</div>
+
+	<th:block th:replace="~{common/footer}"></th:block>
+
+	<script th:inline="javascript">
+		const genre = /*[[${genre}]]*/ null;
+		const imageCache = new Map();
+		
+	</script>
+	
+	<script src="/js/performance/genre.js"></script>
+</body>
+
+</html>
