@@ -1,6 +1,7 @@
 package edu.kh.project.myPage.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import edu.kh.project.myPage.model.dto.ticketInfoDTO;
 import edu.kh.project.myPage.model.mapper.MyPageMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -118,6 +120,15 @@ public class MyPageServiceImpl implements MyPageService {
 	public int addAddress(AddressDTO addressDTO) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	
+	/**
+	 * 예매 내역 조회
+	 */
+	@Override
+	public List<ticketInfoDTO> getBookingHistory(int memberNo) {
+		return mapper.selectBookingHistory(memberNo);
 	}
 
 

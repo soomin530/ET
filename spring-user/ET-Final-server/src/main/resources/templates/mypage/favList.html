@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공연 예매 사이트</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/main-style.css">
+
+  <link rel="stylesheet" href="/css/myPage/favList.css">
+
+  <th:block th:replace="~{common/common}"></th:block>
+</head>
+
+<body>
+  <th:block th:replace="~{common/header}"></th:block>
+  <!-- HTML 수정 부분 -->
+
+  <div class="container">
+   
+  </div>
+
+
+
+  <!-- 로딩 스피너 -->
+  <div id="loadingSpinner" style="display: none;">
+    <div class="spinner"></div> <!-- Spinner 스타일 정의 필요 -->
+  </div>
+
+  <script src="/js/myPage/favList.js"></script>
+
+  <th:block th:replace="~{common/footer}"></th:block>
+</body>
+
+</html>
