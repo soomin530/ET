@@ -322,5 +322,39 @@
    	 	SELECT MT10ID, FCLTYNM, ADRES, SEATSCALE
    	 	FROM TB_VENUE
    	 </select>
+   	 
+   	 <!-- 찜 추가 -->
+   	 <insert id="insertWishList">
+   	 	INSERT INTO TB_PERFORMANCE_WISH
+   	 	VALUES(
+   	 		SEQ_WISH_NO.NEXTVAL,
+   	 		#{memberNo},
+   	 		#{mt20id},
+   	 		DEFAULT
+   	 	)
+   	 </insert>
+   	 
+   	 <!-- 찜 취소 -->
+   	 <delete id="deleteWishList">
+ 	    DELETE FROM TB_PERFORMANCE_WISH
+	    WHERE MEMBER_NO = #{memberNo}
+	    AND MT20ID = #{mt20id}
+   	 </delete>
+   	 
+   	 <!-- 찜 목록 조회 -->
+   	 <select id="checkWishList">
+   	 	SELECT COUNT(*)
+   	 	FROM TB_PERFORMANCE_WISH
+   	 	WHERE MEMBER_NO = #{memberNo}
+	    AND MT20ID = #{mt20id}
+   	 </select>
+   	 
+   	 <!-- 찜 상태 확인 -->
+   	 <select id="selectWishList">
+   	 	SELECT COUNT(*)
+   	 	FROM TB_PERFORMANCE_WISH
+   	 	WHERE MEMBER_NO = #{memberNo}
+   	 	AND MT20ID = #{mt20id}
+   	 </select>
 	
 </mapper>

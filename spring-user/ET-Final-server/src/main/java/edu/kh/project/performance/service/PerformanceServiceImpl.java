@@ -349,4 +349,36 @@ public class PerformanceServiceImpl implements PerformanceService {
 		return mapper.selectVenueList();
 	}
 
+	// 찜 버튼
+	@Override
+	public boolean wishList(Map<String, Object> paramMap) {
+		
+	    // 현재 찜 상태 확인
+	    int count = mapper.checkWishList(paramMap);
+	    
+	    if(count > 0) {
+	        // 이미 찜한 상태면 삭제 (찜 취소)
+	        mapper.deleteWishList(paramMap);
+	        return false;
+	        
+	    } else {
+	        // 찜하지 않은 상태면 추가
+	        mapper.insertWishList(paramMap);
+	        return true;
+	    }
+	}
+
+	// 찜 상태 확인
+	@Override
+	public boolean selectWishList(int memberNo, String mt20id) {
+		Map<String, Object> params = new HashMap<>();
+
+		params.put("memberNo", memberNo);
+		params.put("mt20id", mt20id);
+
+		int wishCount = mapper.selectWishList(params);
+
+		return wishCount > 0;
+	}
+
 }

@@ -42,6 +42,8 @@ public class Performance {
 	private int memberNo;				// 회원 번호
 	
 	
+	
+	
 	private Map<String, List<ScheduleInfo>> schedule; // 스케줄 정보 추가
 	
 	// 공연 등록을 위한 추가 정보

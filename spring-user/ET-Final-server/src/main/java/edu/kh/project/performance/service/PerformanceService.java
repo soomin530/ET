@@ -121,5 +121,20 @@ public interface PerformanceService {
 	 */
 	List<Map<String, Object>> getVenueList();
 
+	/** 찜 버튼
+	 * @param paramMap
+	 * @return
+	 * @author 우수민
+	 */
+	boolean wishList(Map<String, Object> paramMap);
+
+	/** 찜 상태 확인
+	 * @param memberNo
+	 * @return
+	 * @author 우수민
+	 * @param mt20id 
+	 */
+	boolean selectWishList(int memberNo, String mt20id);
+
 
 }

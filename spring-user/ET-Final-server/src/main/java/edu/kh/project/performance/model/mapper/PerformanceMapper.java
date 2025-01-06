@@ -179,4 +179,31 @@ public interface PerformanceMapper {
 	 */
 	List<Map<String, Object>> selectVenueList();
 
+	/** 찜 추가
+	 * @param paramMap
+	 * @author 우수민
+	 */
+	int insertWishList(Map<String, Object> paramMap);
+
+	/** 찜 취소
+	 * @param paramMap
+	 * @return
+	 * @author 우수민
+	 */
+	int deleteWishList(Map<String, Object> paramMap);
+
+	/** 찜 목록 조회
+	 * @param paramMap
+	 * @return
+	 * @author 우수민
+	 */
+	int checkWishList(Map<String, Object> paramMap);
+
+
+	/** 찜 상태 확인
+	 * @param params
+	 * @return
+	 */
+	int selectWishList(Map<String, Object> params);
+
 }

@@ -2,15 +2,15 @@
  * 페이지 전체 초기화
  */
 function initialize() {
-    initializeTabs();
-    initializeKakaoMap();
-    initializeReviews();
-    initializeWish();
-    window.calendarInstance = new Calendar();
-    
-    // 스크롤 버튼 이벤트 리스너 등록
-    scrollToTopButton.addEventListener('click', scrollToTop);
-    window.addEventListener('scroll', throttle(toggleScrollButton, 100), { passive: true });
+	initializeTabs();
+	initializeKakaoMap();
+	initializeReviews();
+	initializeWish();
+	window.calendarInstance = new Calendar();
+
+	// 스크롤 버튼 이벤트 리스너 등록
+	scrollToTopButton.addEventListener('click', scrollToTop);
+	window.addEventListener('scroll', throttle(toggleScrollButton, 100), { passive: true });
 }
 
 // 스크롤 버튼 관련 코드
@@ -18,19 +18,19 @@ const scrollToTopButton = document.getElementById('scrollToTop');
 
 // 스크롤 버튼 표시/숨김 처리
 function toggleScrollButton() {
-    if (window.scrollY > 300) {
-        scrollToTopButton.classList.add('visible');
-    } else {
-        scrollToTopButton.classList.remove('visible');
-    }
+	if (window.scrollY > 300) {
+		scrollToTopButton.classList.add('visible');
+	} else {
+		scrollToTopButton.classList.remove('visible');
+	}
 }
 
 // 최상단으로 스크롤
 function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+	window.scrollTo({
+		top: 0,
+		behavior: 'smooth'
+	});
 }
 
 // 스로틀 함수
@@ -59,28 +59,28 @@ const scrollHandler = throttle(() => {
  * 탭 기능 초기화
  */
 function initializeTabs() {
-	const tabButtons = document.querySelectorAll('.tab-button');
-	const tabContents = document.querySelectorAll('.tab-content');
+	const tabButtons = document.querySelectorAll(".tab-button");
+	const tabContents = document.querySelectorAll(".tab-content");
 
 	function switchTab(tabId) {
 		// 모든 탭 버튼과 컨텐츠의 active 클래스 제거
-		tabButtons.forEach(button => button.classList.remove('active'));
-		tabContents.forEach(content => content.classList.remove('active'));
+		tabButtons.forEach((button) => button.classList.remove("active"));
+		tabContents.forEach((content) => content.classList.remove("active"));
 
 		// 선택된 탭 버튼과 컨텐츠에 active 클래스 추가
 		const selectedButton = document.querySelector(`[data-tab="${tabId}"]`);
 		const selectedContent = document.getElementById(tabId);
 
 		if (selectedButton && selectedContent) {
-			selectedButton.classList.add('active');
-			selectedContent.classList.add('active');
+			selectedButton.classList.add("active");
+			selectedContent.classList.add("active");
 
 			// 지도 탭이 선택되었을 때 지도 리사이즈
-			if (tabId === 'location' && window.kakaoMap) {
+			if (tabId === "location" && window.kakaoMap) {
 				window.kakaoMap.relayout();
 				// 지도 중심점 재설정
-				const fcltla = document.getElementById('fcltla').value;
-				const fcltlo = document.getElementById('fcltlo').value;
+				const fcltla = document.getElementById("fcltla").value;
+				const fcltlo = document.getElementById("fcltlo").value;
 				const newCenter = new kakao.maps.LatLng(fcltla, fcltlo);
 				window.kakaoMap.setCenter(newCenter);
 			}
@@ -88,18 +88,18 @@ function initializeTabs() {
 	}
 
 	// 탭 버튼 클릭 이벤트 리스너
-	tabButtons.forEach(button => {
-		button.addEventListener('click', () => {
-			const tabId = button.getAttribute('data-tab');
+	tabButtons.forEach((button) => {
+		button.addEventListener("click", () => {
+			const tabId = button.getAttribute("data-tab");
 			switchTab(tabId);
 		});
 	});
 
 	// 초기 탭 설정
-	switchTab('info');
+	switchTab("info");
 
 	// URL 해시값에 따른 탭 전환
-	window.addEventListener('hashchange', handleHashChange);
+	window.addEventListener("hashchange", handleHashChange);
 	handleHashChange(); // 초기 로드 시에도 확인
 }
 
@@ -107,8 +107,8 @@ function initializeTabs() {
  * URL 해시 변경 처리
  */
 function handleHashChange() {
-	const hash = window.location.hash.slice(1) || 'info';
-	const validTabs = ['info', 'description', 'location', 'review'];
+	const hash = window.location.hash.slice(1) || "info";
+	const validTabs = ["info", "description", "location", "review"];
 	if (validTabs.includes(hash)) {
 		const tabButton = document.querySelector(`[data-tab="${hash}"]`);
 		if (tabButton) {
@@ -121,18 +121,18 @@ function handleHashChange() {
  * 카카오맵 초기화
  */
 function initializeKakaoMap() {
-	const mapContainer = document.getElementById('map');
-	const fcltla = document.getElementById('fcltla').value;
-	const fcltlo = document.getElementById('fcltlo').value;
+	const mapContainer = document.getElementById("map");
+	const fcltla = document.getElementById("fcltla").value;
+	const fcltlo = document.getElementById("fcltlo").value;
 
 	const mapOption = {
 		center: new kakao.maps.LatLng(fcltla, fcltlo),
-		level: 3
+		level: 3,
 	};
 
 	const map = new kakao.maps.Map(mapContainer, mapOption);
 	const marker = new kakao.maps.Marker({
-		position: map.getCenter()
+		position: map.getCenter(),
 	});
 	marker.setMap(map);
 
@@ -143,7 +143,9 @@ function initializeKakaoMap() {
 // 잔여 좌석 조회 함수
 async function fetchAvailableSeats(performanceId, selectedDate) {
 	try {
-		const response = await fetch(`/performanceApi/remainingSeats/${performanceId}/${selectedDate}`);
+		const response = await fetch(
+			`/performanceApi/remainingSeats/${performanceId}/${selectedDate}`
+		);
 		if (!response.ok) throw new Error("잔여 좌석 조회 실패");
 
 		const scheduleList = await response.json(); // 리스트로 받음
@@ -248,10 +250,10 @@ class Calendar {
 			4: "목요일",
 			5: "금요일",
 			6: "토요일",
-			7: "일요일"  // 0 대신 7로 변경
+			7: "일요일", // 0 대신 7로 변경
 		};
 
-		const day = compareDate.getDay() || 7;  // 일요일(0)을 7로 변환
+		const day = compareDate.getDay() || 7; // 일요일(0)을 7로 변환
 		const dayName = dayMap[day];
 		return this.performance.schedule[dayName] !== undefined;
 	}
@@ -342,8 +344,9 @@ class Calendar {
 		const dayName = date.toLocaleDateString("ko-KR", { weekday: "long" });
 		const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay();
 
-		document.getElementById("selected-date").innerText =
-			`선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
+		document.getElementById(
+			"selected-date"
+		).innerText = `선택된 날짜: ${this.formatDisplayDate(date)} (${dayName})`;
 		document.getElementById("dayOfWeek").value = dayOfWeek;
 
 		const performanceId = this.performance.id;
@@ -354,7 +357,7 @@ class Calendar {
 		timeSlotsContainer.innerHTML = "";
 
 		if (scheduleList && scheduleList.length > 0) {
-			scheduleList.forEach(schedule => {
+			scheduleList.forEach((schedule) => {
 				const timeSlot = document.createElement("div");
 				timeSlot.className = "time-slot";
 				timeSlot.innerHTML = `
@@ -413,14 +416,14 @@ function initializeStarRating(container) {
 	const labels = container.querySelectorAll('label');
 	const inputs = container.querySelectorAll('input[type="radio"]');
 	let selectedRating = 0;
-	
+
 	// 별점 업데이트 함수
 	const updateStars = (rating) => {
 		labels.forEach((label, index) => {
 			label.style.color = index < rating ? '#ffca28' : '#ddd';
 		});
 	};
-	
+
 	// 별점 초기화 함수
 	const resetStars = () => {
 		selectedRating = 0;
@@ -432,8 +435,8 @@ function initializeStarRating(container) {
 	container.resetStars = resetStars;
 
 	// 별점 선택 이벤트
-	inputs.forEach(input => {
-		input.addEventListener('change', () => {
+	inputs.forEach((input) => {
+		input.addEventListener("change", () => {
 			selectedRating = parseInt(input.value);
 			updateStars(selectedRating);
 		});
@@ -441,24 +444,24 @@ function initializeStarRating(container) {
 
 	// 호버 이벤트
 	labels.forEach((label, index) => {
-		label.addEventListener('mouseenter', () => {
+		label.addEventListener("mouseenter", () => {
 			const rating = index + 1;
 			labels.forEach((l, i) => {
 				if (i <= index) {
-					l.style.color = '#ffca28';
+					l.style.color = "#ffca28";
 				} else {
-					l.style.color = '#ddd';
+					l.style.color = "#ddd";
 				}
 			});
 		});
 
-		container.addEventListener('mouseleave', () => {
+		container.addEventListener("mouseleave", () => {
 			if (selectedRating > 0) {
 				labels.forEach((l, i) => {
-					l.style.color = i < selectedRating ? '#ffca28' : '#ddd';
+					l.style.color = i < selectedRating ? "#ffca28" : "#ddd";
 				});
 			} else {
-				labels.forEach(l => l.style.color = '#ddd');
+				labels.forEach((l) => (l.style.color = "#ddd"));
 			}
 		});
 	});
@@ -469,17 +472,17 @@ function initializeStarRating(container) {
  */
 function initializeReviews() {
 	const mt20id = performanceData.id;
-	const currentMemberNo = document.getElementById('currentMemberNo')?.value;
+	const currentMemberNo = document.getElementById("currentMemberNo")?.value;
 
 	// 초기 별점 초기화
-	const mainStarRating = document.querySelector('.star-rating');
+	const mainStarRating = document.querySelector(".star-rating");
 	if (mainStarRating) {
 		initializeStarRating(mainStarRating);
 	}
 
 	function loadReviews() {
 		$.get(`/performance/review/list/${mt20id}`, function(reviews) {
-			const reviewList = $('#reviewList');
+			const reviewList = $("#reviewList");
 			reviewList.empty();
 
 			if (reviews.length === 0) {
@@ -491,26 +494,33 @@ function initializeReviews() {
 				return;
 			}
 
-			reviews.forEach(review => {
-				const stars = '★'.repeat(review.reviewStar) + '☆'.repeat(5 - review.reviewStar);
+			reviews.forEach((review) => {
+				const stars =
+					"★".repeat(review.reviewStar) + "☆".repeat(5 - review.reviewStar);
 				const reviewHtml = `
 	                    <div class="review-item">
 	                        <div class="review-header">
 	                            <div class="reviewer-info">
-	                                <span class="reviewer-name">${review.memberNickname}</span>
-	                                <span class="review-date">${new Date(review.createDate).toLocaleDateString()}</span>
+	                                <span class="reviewer-name">${review.memberNickname
+					}</span>
+	                                <span class="review-date">${new Date(
+						review.createDate
+					).toLocaleDateString()}</span>
 	                            </div>
 	                            <div class="review-stars">${stars}</div>
 	                        </div>
 	                        <div class="review-content">
 	                            ${review.reviewContent}
 	                        </div>
-	                        ${Number(review.memberNo) === Number(currentMemberNo) ? `
+	                        ${Number(review.memberNo) === Number(currentMemberNo)
+						? `
 	                            <div class="review-actions">
 	                                <button class="review-action-btn edit-review" data-review-no="${review.reviewNo}">수정</button>
 	                                <button class="review-action-btn delete-review" data-review-no="${review.reviewNo}">삭제</button>
 	                            </div>
-	                        ` : ''}
+	                        `
+						: ""
+					}
 	                    </div>
 	                `;
 				reviewList.append(reviewHtml);
@@ -519,26 +529,26 @@ function initializeReviews() {
 	}
 
 	// 리뷰 등록
-	$('#submitReview').click(function() {
+	$("#submitReview").click(function() {
 		if (!currentMemberNo) {
-			alert('로그인 후 이용해주세요.');
+			alert("로그인 후 이용해주세요.");
 			return;
 		}
 
 		if (!$('input[name="rating"]:checked').val()) {
-			alert('별점을 선택해주세요.');
+			alert("별점을 선택해주세요.");
 			return;
 		}
 
-		if (!$('#reviewContent').val().trim()) {
-			alert('리뷰 내용을 입력해주세요.');
+		if (!$("#reviewContent").val().trim()) {
+			alert("리뷰 내용을 입력해주세요.");
 			return;
 		}
 
 		const reviewData = {
 			mt20id: mt20id,
 			reviewStar: $('input[name="rating"]:checked').val(),
-			reviewContent: $('#reviewContent').val()
+			reviewContent: $("#reviewContent").val(),
 		};
 
 		$.ajax({
@@ -551,13 +561,13 @@ function initializeReviews() {
 					alert('리뷰가 등록되었습니다.');
 					$('#reviewContent').val('');
 					$('input[name="rating"]').prop('checked', false);
-					
+
 					// 별점 완전 초기화
 					const mainStarRating = document.querySelector('.star-rating');
 					if (mainStarRating && mainStarRating.resetStars) {
 						mainStarRating.resetStars();
 					}
-					
+
 					loadReviews();
 				} else {
 					alert(response.message);
@@ -570,24 +580,25 @@ function initializeReviews() {
 	});
 
 	// 리뷰 수정 시 별점 초기화
-	$(document).on('click', '.edit-review', function() {
-		const reviewNo = $(this).data('review-no');
-		const reviewItem = $(this).closest('.review-item');
-		const content = reviewItem.find('.review-content').text().trim();
-		const currentStars = reviewItem.find('.review-stars').text().trim().split('★').length - 1;
+	$(document).on("click", ".edit-review", function() {
+		const reviewNo = $(this).data("review-no");
+		const reviewItem = $(this).closest(".review-item");
+		const content = reviewItem.find(".review-content").text().trim();
+		const currentStars =
+			reviewItem.find(".review-stars").text().trim().split("★").length - 1;
 
 		reviewItem.html(`
 	            <div class="review-edit-form">
 	                <div class="star-rating">
-	                    <input type="radio" name="edit-rating-${reviewNo}" value="1" id="edit-rate1-${reviewNo}" ${currentStars === 1 ? 'checked' : ''}>
+	                    <input type="radio" name="edit-rating-${reviewNo}" value="1" id="edit-rate1-${reviewNo}" ${currentStars === 1 ? "checked" : ""}>
 	                    <label for="edit-rate1-${reviewNo}">★</label>
-	                    <input type="radio" name="edit-rating-${reviewNo}" value="2" id="edit-rate2-${reviewNo}" ${currentStars === 2 ? 'checked' : ''}>
+	                    <input type="radio" name="edit-rating-${reviewNo}" value="2" id="edit-rate2-${reviewNo}" ${currentStars === 2 ? "checked" : ""}>
 	                    <label for="edit-rate2-${reviewNo}">★</label>
-	                    <input type="radio" name="edit-rating-${reviewNo}" value="3" id="edit-rate3-${reviewNo}" ${currentStars === 3 ? 'checked' : ''}>
+	                    <input type="radio" name="edit-rating-${reviewNo}" value="3" id="edit-rate3-${reviewNo}" ${currentStars === 3 ? "checked" : ""}>
 	                    <label for="edit-rate3-${reviewNo}">★</label>
-	                    <input type="radio" name="edit-rating-${reviewNo}" value="4" id="edit-rate4-${reviewNo}" ${currentStars === 4 ? 'checked' : ''}>
+	                    <input type="radio" name="edit-rating-${reviewNo}" value="4" id="edit-rate4-${reviewNo}" ${currentStars === 4 ? "checked" : ""}>
 	                    <label for="edit-rate4-${reviewNo}">★</label>
-	                    <input type="radio" name="edit-rating-${reviewNo}" value="5" id="edit-rate5-${reviewNo}" ${currentStars === 5 ? 'checked' : ''}>
+	                    <input type="radio" name="edit-rating-${reviewNo}" value="5" id="edit-rate5-${reviewNo}" ${currentStars === 5 ? "checked" : ""}>
 	                    <label for="edit-rate5-${reviewNo}">★</label>
 	                </div>
 	                <textarea class="edit-content">${content}</textarea>
@@ -599,35 +610,37 @@ function initializeReviews() {
 	        `);
 
 		// 수정 폼의 별점 초기화
-		const editStarRating = reviewItem.find('.star-rating')[0];
+		const editStarRating = reviewItem.find(".star-rating")[0];
 		initializeStarRating(editStarRating);
 		if (currentStars > 0) {
-			const labels = editStarRating.querySelectorAll('label');
+			const labels = editStarRating.querySelectorAll("label");
 			labels.forEach((l, i) => {
-				l.style.color = i < currentStars ? '#ffca28' : '#ddd';
+				l.style.color = i < currentStars ? "#ffca28" : "#ddd";
 			});
 		}
 	});
 
 	// 리뷰 수정 취소
-	$(document).on('click', '.cancel-edit', function() {
+	$(document).on("click", ".cancel-edit", function() {
 		loadReviews();
 	});
 
 	// 리뷰 수정 저장
-	$(document).on('click', '.save-edit', function() {
-		const reviewNo = $(this).data('review-no');
-		const reviewItem = $(this).closest('.review-item');
-		const newContent = reviewItem.find('.edit-content').val();
-		const newRating = reviewItem.find(`input[name="edit-rating-${reviewNo}"]:checked`).val();
+	$(document).on("click", ".save-edit", function() {
+		const reviewNo = $(this).data("review-no");
+		const reviewItem = $(this).closest(".review-item");
+		const newContent = reviewItem.find(".edit-content").val();
+		const newRating = reviewItem
+			.find(`input[name="edit-rating-${reviewNo}"]:checked`)
+			.val();
 
 		if (!newContent.trim()) {
-			alert('리뷰 내용을 입력해주세요.');
+			alert("리뷰 내용을 입력해주세요.");
 			return;
 		}
 
 		if (!newRating) {
-			alert('별점을 선택해주세요.');
+			alert("별점을 선택해주세요.");
 			return;
 		}
 
@@ -643,13 +656,13 @@ function initializeReviews() {
 			success: function(response) {
 				if (response.success) {
 					alert('리뷰가 수정되었습니다.');
-					
+
 					// 별점 완전 초기화
 					const mainStarRating = document.querySelector('.star-rating');
 					if (mainStarRating && mainStarRating.resetStars) {
 						mainStarRating.resetStars();
 					}
-					
+
 					loadReviews();
 				} else {
 					alert(response.message);
@@ -662,10 +675,10 @@ function initializeReviews() {
 	});
 
 	// 리뷰 삭제
-	$(document).on('click', '.delete-review', function() {
-		if (!confirm('리뷰를 삭제하시겠습니까?')) return;
+	$(document).on("click", ".delete-review", function() {
+		if (!confirm("리뷰를 삭제하시겠습니까?")) return;
 
-		const reviewNo = $(this).data('review-no');
+		const reviewNo = $(this).data("review-no");
 
 		$.ajax({
 			url: `/performance/review/delete/${reviewNo}`,
@@ -673,13 +686,13 @@ function initializeReviews() {
 			success: function(response) {
 				if (response.success) {
 					alert('리뷰가 삭제되었습니다.');
-					
+
 					// 별점 완전 초기화
 					const mainStarRating = document.querySelector('.star-rating');
 					if (mainStarRating && mainStarRating.resetStars) {
 						mainStarRating.resetStars();
 					}
-					
+
 					loadReviews();
 				} else {
 					alert(response.message);
@@ -697,9 +710,9 @@ function initializeReviews() {
 
 // 정리 (기존 코드에서 수정)
 window.addEventListener('unload', () => {
-    window.removeEventListener('scroll', scrollHandler);
-    window.removeEventListener('scroll', toggleScrollButton);
-    scrollToTopButton.removeEventListener('click', scrollToTop);
+	window.removeEventListener('scroll', scrollHandler);
+	window.removeEventListener('scroll', toggleScrollButton);
+	scrollToTopButton.removeEventListener('click', scrollToTop);
 });
 
 // 기존의 예매 버튼 클릭 이벤트를 수정
@@ -771,72 +784,81 @@ document.getElementById("booking-btn").onclick = function() {
 
 // 찜하기 기능 초기화
 function initializeWish() {
-	const wishBtn = document.getElementById('wishBtn');
-	const mt20id = document.getElementById('mt20id').value;
+	const wishBtn = document.getElementById("wishBtn");
+	const mt20id = document.getElementById("mt20id").value;
 
 	if (!wishBtn) return;
 
 	// 초기 찜 상태 확인
 	checkWishStatus();
 
-	wishBtn.addEventListener('click', async function() {
+	wishBtn.addEventListener("click", async function() {
+
+		// 로그인 여부 체크
+		const isLoggedIn = document.getElementById("currentMemberNo") !== null;
+
+		if (!isLoggedIn) {
+			alert("로그인을 하신 후 서비스 이용이 가능합니다.");
+			return;
+		}
+
 		try {
-			const response = await fetch('/performance/wish', {
-				method: 'POST',
+			const response = await fetch("/performance/wish", {
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					mt20id: mt20id
-				})
+					mt20id: mt20id,
+				}),
 			});
 
 			const result = await response.json();
 
 			if (result.success) {
-				const wishIcon = document.getElementById('wishIcon');
-				const wishText = document.getElementById('wishText');
+				const wishIcon = document.getElementById("wishIcon");
+				const wishText = document.getElementById("wishText");
 
 				if (result.isWished) {
-					wishBtn.classList.add('active');
-					wishIcon.classList.remove('far');
-					wishIcon.classList.add('fas');
-					wishText.textContent = '찜취소';
+					wishBtn.classList.add("active");
+					wishIcon.classList.remove("far");
+					wishIcon.classList.add("fas");
+					wishText.textContent = "찜취소";
 				} else {
-					wishBtn.classList.remove('active');
-					wishIcon.classList.remove('fas');
-					wishIcon.classList.add('far');
-					wishText.textContent = '찜하기';
+					wishBtn.classList.remove("active");
+					wishIcon.classList.remove("fas");
+					wishIcon.classList.add("far");
+					wishText.textContent = "찜하기";
 				}
 			} else {
 				alert(result.message);
 			}
 		} catch (error) {
-			console.error('찜하기 처리 중 오류 발생:', error);
-			alert('찜하기 처리 중 오류가 발생했습니다.');
+			console.error("찜하기 처리 중 오류 발생:", error);
+			alert("찜하기 처리 중 오류가 발생했습니다.");
 		}
 	});
 }
 
 // 찜 상태 확인
 async function checkWishStatus() {
-	const wishBtn = document.getElementById('wishBtn');
-	const wishIcon = document.getElementById('wishIcon');
-	const wishText = document.getElementById('wishText');
-	const mt20id = document.getElementById('mt20id').value;
+	const wishBtn = document.getElementById("wishBtn");
+	const wishIcon = document.getElementById("wishIcon");
+	const wishText = document.getElementById("wishText");
+	const mt20id = document.getElementById("mt20id").value;
 
 	try {
 		const response = await fetch(`/performance/wish/check/${mt20id}`);
 		const result = await response.json();
 
 		if (result.isWished) {
-			wishBtn.classList.add('active');
-			wishIcon.classList.remove('far');
-			wishIcon.classList.add('fas');
-			wishText.textContent = '찜취소';
+			wishBtn.classList.add("active");
+			wishIcon.classList.remove("far");
+			wishIcon.classList.add("fas");
+			wishText.textContent = "찜취소";
 		}
 	} catch (error) {
-		console.error('찜 상태 확인 중 오류 발생:', error);
+		console.error("찜 상태 확인 중 오류 발생:", error);
 	}
 }
 
