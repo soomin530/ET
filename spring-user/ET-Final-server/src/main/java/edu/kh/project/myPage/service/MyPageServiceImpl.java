@@ -158,13 +158,10 @@ public class MyPageServiceImpl implements MyPageService {
 	 * 예매 내역 조회
 	 */
 	@Override
-	public List<ticketInfoDTO> getBookingHistory(int memberNo) {
-		List<ticketInfoDTO> bookingHistory = mapper.selectBookingHistory(memberNo);
-		if (bookingHistory == null) {
-			return new ArrayList<>(); // Null 방지를 위해 빈 리스트 반환
-		}
-		return bookingHistory;
+	public List<Map<String, Object>> getBookingHistory(String bookingId, int memberNo) {
+		 return mapper.selectBookingHistory(bookingId);
 	}
+	
 
 	/** 나찬웅 1/6
 	 * 예매 상세 내용 조회
@@ -173,4 +170,8 @@ public class MyPageServiceImpl implements MyPageService {
 	public ticketInfoDTO getBookingDetail(String bookingId, int memberNo) {
 		return mapper.selectBookingDetail(bookingId, memberNo);
 	}
+
+	
+
+	
 }

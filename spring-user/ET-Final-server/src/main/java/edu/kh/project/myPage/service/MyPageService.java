@@ -1,6 +1,7 @@
 package edu.kh.project.myPage.service;
 
 import java.util.List;
+import java.util.Map;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
@@ -100,8 +101,7 @@ public interface MyPageService {
 	 * @param memberNo
 	 * @return
 	 */
-	List<ticketInfoDTO> getBookingHistory(int memberNo);
-
+	List<Map<String, Object>> getBookingHistory(String bookingId, int memberNo);
 
 	/** 예매 내역 상세 조회
 	 * @param bookingId
@@ -109,6 +109,15 @@ public interface MyPageService {
 	 * @return
 	 */
 	ticketInfoDTO getBookingDetail(String bookingId, int memberNo);
+
+
+	
+
+
+	
+
+
+	
 	
 	
 }

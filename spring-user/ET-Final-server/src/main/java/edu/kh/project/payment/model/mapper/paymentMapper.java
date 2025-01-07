@@ -35,6 +35,9 @@ public interface paymentMapper {
 	// 이미 예약된 좌석 조회
 	List<Seat> selectBookedSeats(Map<String, Object> params);
 
+	// 예매 내역 데이터 삽입 (TB_BOOKING_HISTORY)
+	int insertBookingHistory(Map<String, Object> params);
+
 	
 
 }
