@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공연 예매 사이트</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/perfmgr/performance-manager-detail.css">
+    <link rel="stylesheet" href="/css/perfmgr/perfmgr-manager-detail.css">
     <th:block th:replace="~{common/common}"></th:block>
 </head>
 
@@ -17,7 +17,7 @@
         <!-- 버튼 추가 -->
         <div class="action-buttons">
             <button type="button" class="btn btn-primary"
-                onclick="location.href='/perfmgr/performance-modifyPerformance?mt20id=' + document.getElementById('mt20id').value">수정</button>
+                onclick="location.href='/perfmgr/perfmgr-modifyPerformance?mt20id=' + document.getElementById('mt20id').value">수정</button>
             <button type="button" class="btn btn-danger" onclick="deletePerformance()">삭제</button>
         </div>
 
@@ -67,6 +67,10 @@
         <!-- 여기까지 null 체크 추가 -->
     </div>
 
+    <button id="scrollToTop" class="scroll-to-top" aria-label="페이지 최상단으로 이동">
+        <span>↑</span>
+    </button>
+
     <!-- hidden inputs -->
     <input type="hidden" id="currentMemberNo"
         th:value="${session.loginMember != null ? session.loginMember.memberNo : ''}" />
@@ -86,7 +90,7 @@
         };
     </script>
 
-    <script src="/js/perfmgr/performance-manager-detail.js"></script>
+    <script src="/js/perfmgr/perfmgr-manager-detail.js"></script>
     <th:block th:replace="~{common/footer}"></th:block>
 </body>
 
