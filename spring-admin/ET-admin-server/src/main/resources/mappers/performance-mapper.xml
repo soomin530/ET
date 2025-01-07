@@ -2,7 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="edu.kh.admin.main.model.mapper.PerformanceMapper">
 
-
+	<!-- 모든 공연장 정보 조회 -->
+	<select id="showPerformanceList">
+	SELECT * FROM TB_VENUE
+	</select>
+	
 	<!-- 검색된 모든 공연 조회 -->
 	<select id="searchPerformanceList"> 
 	    SELECT 
@@ -28,6 +32,38 @@
 			PERFORMANCE_NO ASC     
 	</select>
 
+	<insert id="insert">
+	INSERT INTO TB_VENUE (
+       MT10ID,
+       FCLTYNM,
+       MT13CNT,
+       FCLTYCHARTR,
+       OPENDE,
+       SEATSCALE,
+       TELNO,
+       RELATEURL,
+       ADRES,
+       FCLTLA,
+       FCLTLO
+   ) VALUES (
+       #{MT10ID},
+       #{FCLTYNM},
+       #{MT13CNT},
+       #{FCLTYCHARTR},
+       #{OPENDE},
+       #{SEATSCALE},
+       #{TELNO},
+       #{RELATEURL},
+       #{ADRES},
+       #{FCLTLA},
+       #{FCLTLO}
+   )
+	</insert> 
 	
+	<select id="performanceDetailList">
+	SELECT * 
+	FROM TB_VENUE
+	WHERE MT10ID = ${mt10ID}
+	</select>
 
 </mapper>
