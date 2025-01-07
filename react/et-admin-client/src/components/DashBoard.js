@@ -2,7 +2,9 @@ import React, { useContext } from 'react';
 import '../css/DashBoard.css';
 import UserManage from './UserManage.js';
 import PerformanceManage from './PerformanceManage.js';
+import BookedSeatDetail from './BookedSeatDetail.js';
 import BookedSeatManage from './BookedSeatManage.js';
+import SeatSelection from './SeatSelection.js';
 import AnnouncementManage from './AnnouncementManage.js';
 import ManagerEnroll from './ManagerEnroll.js';
 import MemberDetail from './MemberDetail.js';
@@ -53,6 +55,8 @@ export default function DashBoard() {
               <Route path="/member/:memberNo" element={<MemberDetail />} /> 
               <Route path="/announcement/:announceNo" element={<AnnouncementDetail />} /> 
               <Route path="/manager/:concertManagerNo" element={<ManagerEnrollDetail />} />
+              <Route path="/seatManage/detail/:mt20id" element={<BookedSeatDetail />} />
+              <Route path="/seatManage/bookingSeat" element={<SeatSelection />} />
             </Routes>
           </div>
     </div>

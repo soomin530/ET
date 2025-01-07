@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.admin.main.model.mapper.BookedSeatManageMapper">
+
+
+	<select id="performanceList">
+	    SELECT 
+	    	MT20ID, 
+	    	PRFNM, 
+	    	PRFPDFROM, 
+	    	PRFPDTO, 
+	    	FCLTYNM, 
+	    	POSTER, 
+	    	PRFREVIEW_RANK
+	    FROM TB_PERFORMANCES_DETAIL
+	</select>
+	
+	<!-- 공연 상세페이지 조회 -->
+	<select id="detail">
+		SELECT 
+			TPD.MT20ID, 
+			TPD.POSTER, 
+			TPD.PRFNM, 
+			TPD.FCLTYNM, 
+			TPD.PRFPDFROM, 
+			TPD.PRFPDTO,  
+			TPD.PRFRUNTIME, 
+			TPD.PRFCAST, 
+			TPD.PCSEGUIDANCE, 
+			TPD.PRFREVIEW_RANK, 
+			TPD.DESCRIPTION,
+			TV.ADRES
+		FROM TB_PERFORMANCES_DETAIL TPD
+		JOIN TB_VENUE TV USING(MT10ID)
+		WHERE MT20ID = #{mt20id}
+	</select>
+	
+	<!-- 공연 위도, 경도 조회 -->
+	<select id="selectPerformanceById">
+		SELECT FCLTLA, FCLTLO
+		FROM TB_VENUE JOIN TB_PERFORMANCES_DETAIL USING(MT10ID)
+		WHERE MT20ID = #{mt20id}
+	</select>
+	
+	<!-- 스케줄 조회 -->
+	<select id="getScheduleData" resultType="map">
+        SELECT 
+		   p.MT20ID,
+		   pt.DAY_OF_WEEK,
+		   CASE 
+		       WHEN pt.DAY_OF_WEEK = 1 THEN '월요일'
+		       WHEN pt.DAY_OF_WEEK = 2 THEN '화요일'
+		       WHEN pt.DAY_OF_WEEK = 3 THEN '수요일'
+		       WHEN pt.DAY_OF_WEEK = 4 THEN '목요일'
+		       WHEN pt.DAY_OF_WEEK = 5 THEN '금요일'
+		       WHEN pt.DAY_OF_WEEK = 6 THEN '토요일'
+		       WHEN pt.DAY_OF_WEEK = 7 THEN '일요일'
+		   END AS day_name,
+		   pt.PERFORMANCE_TIME as time,
+		   'available' as status  
+		FROM 
+		   TB_PERFORMANCES_DETAIL p
+		   INNER JOIN TB_PERFORMANCE_TIME pt ON p.MT20ID = pt.MT20ID
+		   LEFT JOIN TB_TICKET_SEAT ts ON (
+		       ts.MT20ID = p.MT20ID
+		       AND ts.SHOW_TIME = pt.PERFORMANCE_TIME
+		       AND ts.SHOW_DATE >= TRUNC(SYSDATE)
+		   )
+		WHERE 
+		   p.MT20ID = #{mt20id}
+		   AND pt.DAY_OF_WEEK IS NOT NULL
+		GROUP BY 
+		   p.MT20ID,
+		   pt.DAY_OF_WEEK,
+		   pt.PERFORMANCE_TIME
+		ORDER BY 
+		   pt.DAY_OF_WEEK, 
+		   pt.PERFORMANCE_TIME
+    </select>
+    
+    <!-- 특정 공연 좌석 조회 -->
+	<select id="selectSeatsByShow" parameterType="map" resultType="map">
+		  SELECT
+		    S.MT20ID,
+		    S.DAY_OF_WEEK AS dayOfWeek,
+		    S.PERFORMANCE_TIME AS performanceTime,
+		    S.SEAT_COUNT AS totalSeatCount,
+		    S.GRADE_ID AS gradeId,
+		    S.GRADE_NAME AS gradeName,
+		    S.PRICE AS gradePrice,
+		    S.SEAT_COUNT - COUNT(CASE WHEN TTS.SEAT_STATUS = 'BOOKED' THEN 1 END) AS availableSeatCount
+		FROM (
+		    SELECT
+		        TPF.MT20ID,
+		        TPT.DAY_OF_WEEK,
+		        TPT.PERFORMANCE_TIME,
+		        TVSI.SEAT_COUNT,
+		        SG.GRADE_ID,
+		        SG.GRADE_NAME,
+		        PSP.PRICE
+		    FROM TB_PERFORMANCES_DETAIL TPF
+		    JOIN TB_PERFORMANCE_TIME TPT ON TPF.MT20ID = TPT.MT20ID
+		    JOIN TB_VENUE_SEAT_INFO TVSI ON TPF.MT10ID = TVSI.MT10ID
+		    JOIN TB_SEAT_GRADE SG ON SG.GRADE_ID = TVSI.GRADE_ID
+		    JOIN TB_PERFORMANCE_SEAT_PRICE PSP
+		        ON TPF.MT20ID = PSP.MT20ID
+		        AND TVSI.GRADE_ID = PSP.GRADE_ID
+		    WHERE TPF.MT20ID = #{mt20id}
+		    AND TPT.DAY_OF_WEEK = #{dayOfWeek}
+		    AND TPT.PERFORMANCE_TIME = #{selectedTime}
+		) S
+		LEFT JOIN TB_TICKET_SEAT TTS
+		    ON S.MT20ID = TTS.MT20ID
+		    AND S.GRADE_ID = TTS.GRADE_ID
+		    AND TTS.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+		    AND TTS.SHOW_TIME = #{selectedTime}
+		GROUP BY
+		    S.MT20ID,
+		    S.DAY_OF_WEEK,
+		    S.PERFORMANCE_TIME,
+		    S.SEAT_COUNT,
+		    S.GRADE_ID,
+		    S.GRADE_NAME,
+		    S.PRICE
+		ORDER BY
+		    S.GRADE_ID
+	</select>
+	
+	<!-- 이미 예약된 좌석 조회 -->
+	<select id="selectBookedSeats" parameterType="map" resultType="Seat">
+	    SELECT 
+	        SEATS_ID AS seatId,
+	        GRADE_ID AS gradeId,
+	        MT20ID AS mt20id,
+	        SEAT_STATUS AS seatStatus,
+	        SHOW_DATE AS showDate,
+	        SHOW_TIME AS showTime
+	    FROM TB_TICKET_SEAT
+	    WHERE MT20ID = #{mt20id}
+	      AND SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+	      AND SHOW_TIME = #{selectedTime}
+	      AND SEAT_STATUS IN ('BOOKED', 'BLOCKED')
+	</select>
+	
+	<!-- 좌석이 이미 예약되어 있는지 확인 -->
+    <select id="countBookedSeat" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_TICKET_SEAT
+        WHERE SEATS_ID = #{seatId}
+        AND MT20ID = #{mt20id}
+        AND TO_CHAR(SHOW_DATE, 'YYYY-MM-DD') = #{selectedDate}
+        AND SHOW_TIME = #{selectedTime}
+        AND SEAT_STATUS = 'BOOKED'
+    </select>
+
+    <!-- 좌석 위치 변경 -->
+    <update id="updateSeatLocation" parameterType="map">
+        UPDATE TB_TICKET_SEAT
+        SET SEATS_ID = #{newSeatId}
+        WHERE SEATS_ID = #{oldSeatId}
+        AND MT20ID = #{mt20id}
+        AND TO_CHAR(SHOW_DATE, 'YYYY-MM-DD') = #{selectedDate}
+        AND SHOW_TIME = #{selectedTime}
+        AND GRADE_ID = #{gradeId}
+    </update>
+    
+    <!-- 좌석 등급명으로 등급 ID 조회 -->
+	<select id="getGradeIdByName" parameterType="string" resultType="int">
+	    SELECT GRADE_ID 
+	    FROM TB_SEAT_GRADE 
+	    WHERE GRADE_NAME = #{gradeName}
+	</select>
+
+    <!-- 비활성화된 좌석 추가 -->
+	<insert id="insertBlockedSeat" parameterType="map">
+	    INSERT INTO TB_TICKET_SEAT (
+	        SEATS_ID, 
+	        MT20ID, 
+	        SHOW_DATE, 
+	        SHOW_TIME, 
+	        GRADE_ID,
+	        SEAT_STATUS
+	    ) VALUES (
+	        #{seatId},
+	        #{mt20id},
+	        TO_DATE(#{selectedDate}, 'YYYY-MM-DD'),
+	        #{selectedTime},
+	        #{gradeId},
+	        'BLOCKED'
+	    )
+	</insert>
+	
+	<!-- 비활성화된 좌석 제거 -->
+	<delete id="removeBlockedSeat" parameterType="map">
+	    DELETE FROM TB_TICKET_SEAT
+	    WHERE SEATS_ID = #{seatId}
+	    AND MT20ID = #{mt20id}
+	    AND TO_CHAR(SHOW_DATE, 'YYYY-MM-DD') = #{selectedDate}
+	    AND SHOW_TIME = #{selectedTime}
+	    AND SEAT_STATUS = 'BLOCKED'
+	</delete>
+
+</mapper>
