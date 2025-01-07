@@ -88,14 +88,20 @@ public interface MyPageMapper {
 	 * @param memberNo
 	 * @return
 	 */
-	List<ticketInfoDTO> selectBookingHistory(int memberNo);
+	List<Map<String, Object>> selectBookingHistory(String bookingId);
 
 	/** 예약 상세 내용 조회
 	 * @param bookingId
 	 * @param memberNo
 	 * @return
 	 */
-	ticketInfoDTO selectBookingDetail(@Param("bookingId") String bookingId, @Param("memberNo") int memberNo);
+	ticketInfoDTO selectBookingDetail(String bookingId, int memberNo);
+
+
+
+
+
+
 
 	
 }

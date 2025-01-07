@@ -60,7 +60,7 @@ function escapeHtml(unsafe) {
 function createPerformanceElement(performance) {
 	const div = document.createElement('div');
 	div.className = 'performance-item';
-	div.onclick = () => location.href = `/perfmgr/performance-manager-detail/${performance.mt20id}`;
+	div.onclick = () => location.href = `/perfmgr/perfmgr-manager-detail/${performance.mt20id}`;
 
 	const img = new Image();
 	img.src = performance.poster || '/images/default-poster.png';

@@ -830,6 +830,7 @@ function initializeWish() {
 					wishIcon.classList.add("far");
 					wishText.textContent = "찜하기";
 				}
+        alert(result.message);
 			} else {
 				alert(result.message);
 			}
@@ -848,8 +849,8 @@ async function checkWishStatus() {
 	const mt20id = document.getElementById("mt20id").value;
 
 	try {
-		const response = await fetch(`/performance/wish/check/${mt20id}`);
-		const result = await response.json();
+		const response = await fetch(`/performance/wish/check/${mt20id}`); // fetch 메서드를 통해 해당 경로로 엔드포인트에 요청을 보냄
+		const result = await response.json(); // 백엔드에서 반환된 JSON 데이터
 
 		if (result.isWished) {
 			wishBtn.classList.add("active");

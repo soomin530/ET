@@ -4,6 +4,11 @@ body {
 	-webkit-text-size-adjust: none;
 }
 
+input{
+	border: 1px solid rgb(161, 161, 161);
+	border-radius: 0.4rem;
+}
+
 .performance-container {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -51,6 +56,43 @@ body {
 	padding: 10px;
 }
 
+.scroll-to-top {
+	position: fixed;
+	bottom: 30px;
+	right: 30px;
+	width: 50px;
+	height: 50px;
+	background-color: #004CFF;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.scroll-to-top span {
+	font-size: 24px;
+	line-height: 1;
+}
+
+.scroll-to-top:hover {
+	background-color: #0039e5;
+	transform: translateY(-3px);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-to-top.visible {
+	opacity: 1;
+	visibility: visible;
+}
+
 .action-buttons {
 	display: flex;
 	justify-content: flex-end;
@@ -65,22 +107,22 @@ body {
 	cursor: pointer;
 }
 
-.btn-primary {
-	background-color: #007bff;
-	color: white;
+.btn-cancel {
+	background-color: #e69500 !important;
+	color: white !important;
 	border: none;
 }
 
-.btn-primary:hover {
-	background-color: #0056b3;
+.btn-cancel:hover {
+	background-color: #a06902 !important;
 }
 
-.btn-danger {
-	background-color: #dc3545;
-	color: white;
+.btn-modify {
+	background-color: #007bff !important;
+	color: white !important;
 	border: none;
 }
 
-.btn-danger:hover {
-	background-color: #c82333;
+.btn-modify:hover {
+	background-color: #0056b3 !important;
 }

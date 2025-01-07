@@ -288,8 +288,15 @@ public class paymentController {
 			    }
 			}
 			
+			// 5. 예매 내역 TB_BOOKING_HISTORY 데이터 삽입
+
+			boolean historySaved = service.saveBookingHistory(paymentData, loginMember);
+			if (!historySaved) {
+			    log.error("예매 내역 저장 실패");
+			    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예매 내역 저장 중 오류가 발생했습니다.");
+			}
 			
-			return ResponseEntity.ok("결제가 성공적으로 저장되었고 좌석 상태가 업데이트되었습니다.");
+			return ResponseEntity.ok("결제가 성공적으로 저장되었고 모든 데이터가 업데이트되었습니다.");
 
 		} catch (Exception e) {
 			log.error("결제 처리 중 오류 발생", e);
