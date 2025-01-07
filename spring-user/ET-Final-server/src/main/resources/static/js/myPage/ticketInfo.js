@@ -23,21 +23,24 @@ async function fetchTicketInfo() {
     data.forEach((booking) => {
       const row = document.createElement("tr");
       const statusClass = booking.bookingStatus === "예매" ? "status-booked" : "status-canceled";
+      const bookingDate = booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : "정보 없음";
+      const paidAt = booking.paidAt ? new Date(booking.paidAt).toLocaleString() : "-";
+      const showDateTime = booking.showDateTime || "미정";
 
       row.innerHTML = `
-          <td>${new Date(booking.bookingDate).toLocaleDateString()}</td>
-          <td>${booking.paidAt ? new Date(booking.paidAt).toLocaleString() : "-"}</td>
-          <td>${booking.bookingId}</td>
-          <td>${booking.performanceName}</td>
-          <td class="highlight-performance">${booking.showDateTime}</td>
-          <td class="highlight-ticket-count">${booking.ticketCount}매</td>
-          <td>${new Date(booking.cancelableUntil).toLocaleDateString()}</td>
-          <td class="${statusClass}">${booking.bookingStatus}</td>
-          <td>
-            <a href="/mypage/ticketDetail/${booking.bookingId}">
-              <button class="btn-detail">상세</button>
-            </a>
-          </td>
+        <td>${bookingDate}</td>
+        <td>${paidAt}</td>
+        <td>${booking.bookingId || "없음"}</td>
+        <td>${booking.performanceName || "공연명 없음"}</td>
+        <td class="highlight-performance">${showDateTime}</td>
+        <td class="highlight-ticket-count">${booking.ticketCount || "0"}매</td>
+        <td>${booking.cancelableUntil ? new Date(booking.cancelableUntil).toLocaleDateString() : "정보 없음"}</td>
+        <td class="${statusClass}">${booking.bookingStatus || "상태 없음"}</td>
+        <td>
+          <a href="/mypage/ticketDetail/${booking.bookingId}">
+            <button class="btn-detail">상세</button>
+          </a>
+        </td>
       `;
       tableBody.appendChild(row);
 

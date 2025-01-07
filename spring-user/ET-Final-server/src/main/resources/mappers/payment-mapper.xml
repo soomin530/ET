@@ -34,6 +34,13 @@
 	        #{seatId}, 'BOOKED', #{mt20id}, #{memberNo}, TO_DATE(#{showDate}, 'YYYY-MM-DD'), #{gradeId}, #{showTime}
 	    )
 	</insert>
+	
+	<!-- 예매 내역 데이터 삽입 -->
+  <insert id="insertBookingHistory" parameterType="map">
+  	INSERT INTO TB_BOOKING_HISTORY (BOOKING_DATE, PAID_AT, BOOKING_ID, PERFORMANCE_NAME, SHOW_DATE_TIME, TICKET_COUNT, CANCELABLE_UNTIL, BOOKING_STATUS)
+  	VALUES (#{bookingDate}, #{paidAt}, #{bookingId}, #{performanceName}, #{showDateTime}, #{ticketCount}, #{cancelableUntil}, #{bookingStatus})
+  </insert>
+
 
 
 </mapper>
