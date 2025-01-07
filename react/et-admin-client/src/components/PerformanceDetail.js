@@ -33,20 +33,20 @@ const PerformanceForm = () => {
       .then((response) => {
         console.log("API 응답 데이터:", response.data);
         const performanceData = response.data[0];
-        
+        console.log(performanceData);
         // 데이터가 있는지 확인하고 대문자로 변환하여 설정
         setFormData({
-          MT10ID: performanceData?.MT10ID?.toUpperCase() || '',
-          FCLTYNM: performanceData?.FCLTYNM?.toUpperCase() || '',
-          MT13CNT: performanceData?.MT13CNT || '',
-          FCLTYCHARTR: performanceData?.FCLTYCHARTR?.toUpperCase() || '공공(문예회관)',
-          OPENDE: performanceData?.OPENDE || '',
-          SEATSCALE: performanceData?.SEATSCALE || '',
-          TELNO: performanceData?.TELNO || '',
-          RELATEURL: performanceData?.RELATEURL || '',
-          ADRES: performanceData?.ADRES || '',
-          FCLTLA: performanceData?.FCLTLA || '',
-          FCLTLO: performanceData?.FCLTLO || ''
+          MT10ID: performanceData?.mt10ID || '',
+          FCLTYNM: performanceData?.fcltynm || '',
+          MT13CNT: performanceData?.mt13CNT || '',
+          FCLTYCHARTR: performanceData?.fcltychartr || '공공(문예회관)',
+          OPENDE: performanceData?.opende || '',
+          SEATSCALE: performanceData?.seatscale || '',
+          TELNO: performanceData?.telno || '',
+          RELATEURL: performanceData?.relateurl || '',
+          ADRES: performanceData?.adres || '',
+          FCLTLA: performanceData?.fcltla || '',
+          FCLTLO: performanceData?.fcltlo || ''
         });
 
         // 값이 제대로 설정되었는지 확인
@@ -74,10 +74,10 @@ useEffect(() => {
     e.preventDefault();
     
     axios
-      .post('http://localhost:8081/performance/insert', formData)
+      .post('http://localhost:8081/performance/update', formData)
       .then((response) => {
-        if(response.data > 0) {alert('시설 정보가 성공적으로 등록되었습니다.');}
-        else alert("등록 실패하였습니다");
+        if(response.data > 0) {alert('시설 정보가 변경되었습니다.');}
+        else alert("변경 실패하였습니다");
       })
       .catch((error) => {
         console.error(error);
@@ -123,6 +123,29 @@ useEffect(() => {
     loadMap();
   }, []);
 
+  useEffect(() => {
+    if (formData.FCLTLA && formData.FCLTLO && mapInstanceRef.current) {
+      const coords = new window.kakao.maps.LatLng(formData.FCLTLA, formData.FCLTLO);
+      
+      // 지도 중심 이동
+      mapInstanceRef.current.setCenter(coords);
+      
+      // 기존 마커가 있다면 제거
+      if (mapInstanceRef.current.marker) {
+        mapInstanceRef.current.marker.setMap(null);
+      }
+      
+      // 새 마커 생성
+      const marker = new window.kakao.maps.Marker({
+        map: mapInstanceRef.current,
+        position: coords
+      });
+      
+      // 마커 참조 저장
+      mapInstanceRef.current.marker = marker;
+    }
+  }, [formData.FCLTLA, formData.FCLTLO]);
+
   const handlePlaceClick = (place) => {
     setSearchKeyword(place.place_name);
     const coords = new window.kakao.maps.LatLng(place.y, place.x);
@@ -159,6 +182,7 @@ useEffect(() => {
               value={formData.MT10ID}
               onChange={handleChange}
               required
+              readOnly
             />
           </div>
           <div>

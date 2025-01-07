@@ -51,7 +51,7 @@ public class PerformanceController {
 	public ResponseEntity<Object> performanceDetail(@PathVariable("mt10ID") String mt10ID) {
 		
 		List<Performance> performanceDetailList = service.performanceDetailList(mt10ID);
-		
+		log.info(performanceDetailList.toString());
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(performanceDetailList);
 		} catch (Exception e) {
@@ -59,7 +59,6 @@ public class PerformanceController {
 					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
 		}
 	} 
-	
 	
 	
 	@PostMapping("searchPerformanceList")
@@ -81,7 +80,7 @@ public class PerformanceController {
 	public ResponseEntity<Object> insert(@RequestBody Map<String, Object> formdata)  {
 			
 			int result = service.insert(formdata);
-			log.info(result+"");
+			//log.info(result+"");
 			
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -91,7 +90,19 @@ public class PerformanceController {
 		}
 	}
 	
-	
+	@PostMapping("update")
+	public ResponseEntity<Object> update(@RequestBody Map<String, Object> formdata)  {
+
+			int result = service.update(formdata);
+			//log.info(result+"");
+			
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(result);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+		}
+	}
 	
 	
 	

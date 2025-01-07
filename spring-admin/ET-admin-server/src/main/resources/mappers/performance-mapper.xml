@@ -63,7 +63,24 @@
 	<select id="performanceDetailList">
 	SELECT * 
 	FROM TB_VENUE
-	WHERE MT10ID = ${mt10ID}
+	WHERE MT10ID = #{mt10ID}
 	</select>
+	
+	<update id="update">
+		UPDATE TB_VENUE
+	SET 
+	    FCLTYNM = #{FCLTYNM},
+	    MT13CNT = #{MT13CNT},
+	    FCLTYCHARTR = #{FCLTYCHARTR},
+	    OPENDE = #{OPENDE},
+	    SEATSCALE = #{SEATSCALE},
+	    TELNO = #{TELNO},
+	    RELATEURL = #{RELATEURL},
+	    ADRES = #{ADRES},
+	    FCLTLA = #{FCLTLA},
+	    FCLTLO = #{FCLTLO}
+	WHERE 
+	    MT10ID = #{MT10ID}
+	</update>
 
 </mapper>

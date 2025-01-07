@@ -36,7 +36,10 @@ const PerformanceForm = () => {
     axios
       .post('http://localhost:8081/performance/insert', formData)
       .then((response) => {
-        if(response.data > 0) {alert('시설 정보가 성공적으로 등록되었습니다.');}
+        if(response.data > 0) {
+          alert('시설 정보가 성공적으로 등록되었습니다.');
+          window.history.back();
+        }
         else alert("등록 실패하였습니다");
       })
       .catch((error) => {

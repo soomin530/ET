@@ -41,4 +41,9 @@ public class PerformanceServiceImpl implements PerformanceService{
 		public List<Performance> performanceDetailList(String mt10id) {
 		return mapper.performanceDetailList(mt10id);
 		}
+		
+		@Override
+		public int update(Map<String, Object> formdata) {
+		return mapper.update(formdata);
+		}
 }

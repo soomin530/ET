@@ -24,6 +24,12 @@ public interface MemberService {
 	 */
 	List<Member> memberDetail(int memberNo);
 
+	/** 회원 강제 탈퇴
+	 * @param memberNo
+	 * @return
+	 */
+	int delete(int memberNo);
+
 	
 	
 }

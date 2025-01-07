@@ -35,5 +35,11 @@ public interface PerformanceMapper {
 	 */
 	List<Performance> performanceDetailList(String mt10id);
 
+	/** 공연장 정보 변경
+	 * @param formdata
+	 * @return
+	 */
+	int update(Map<String, Object> formdata);
+
 
 }

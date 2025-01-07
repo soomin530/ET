@@ -25,6 +25,18 @@ public interface ConcertManagerService {
 	 */
 	List<ConcertManager> concertManagerDetail(int concertManagerNo);
 
+	/** 계정 요청 수락
+	 * @param concertManagerNo
+	 * @return
+	 */
+	int agree(int concertManagerNo);
+
+	/** 계정 삭제
+	 * @param concertManagerNo
+	 * @return
+	 */
+	int delete(int concertManagerNo);
+
 
 	
 }

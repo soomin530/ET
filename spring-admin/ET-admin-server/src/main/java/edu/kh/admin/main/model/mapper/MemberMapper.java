@@ -8,6 +8,9 @@ import org.apache.ibatis.annotations.Param;
 
 import edu.kh.admin.main.model.dto.Member;
 
+/**
+ * 
+ */
 @Mapper
 public interface MemberMapper {
 
@@ -27,5 +30,11 @@ public interface MemberMapper {
 	 * @return
 	 */
 	List<Member> memberDetail(int memberNo);
+
+	/** 회원 강제 삭제
+	 * @param memberNo
+	 * @return
+	 */
+	int delete(int memberNo);
 
 }

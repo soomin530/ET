@@ -48,5 +48,18 @@
 	WHERE CONCERT_MANAGER_NO = ${concertManagerNo}
 	</select>
 	
+	<update id="agree">
+	UPDATE TB_CONCERT_MANAGER
+	SET 
+	    CONCERT_MANAGER_DEL_FL = 'N'
+	WHERE 
+	    CONCERT_MANAGER_NO = #{concertManagerNo}
+	</update>
+	
+	<delete id="delete">
+	DELETE FROM TB_CONCERT_MANAGER
+	WHERE CONCERT_MANAGER_NO = #{concertManagerNo}	
+	</delete>
+	
 
 </mapper>
