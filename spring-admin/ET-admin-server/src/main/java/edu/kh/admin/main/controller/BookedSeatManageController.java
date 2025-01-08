@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -53,8 +54,34 @@ public class BookedSeatManageController {
 			return ResponseEntity.status(HttpStatus.OK).body(performanceList);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("공연 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+					.body("공연 목록 조회 중 문제가 발생했습니다 : " + e.getMessage());
 		}
+	}
+	
+	/**
+	 * 공연 목록 검색
+	 * 
+	 * @param formData 검색 조건을 담은 폼 데이터
+	 * @return 검색된 공연 목록
+	 */
+	@GetMapping("/searchPerformanceList")
+	@ResponseBody
+	public ResponseEntity<Object> searchPerformanceList(@RequestParam("selectedValue") String selectedValue,
+		    @RequestParam("inputValue") String inputValue) {
+	    try {
+	    	Map<String, Object> formData = new HashMap<>();
+	        formData.put("selectedValue", selectedValue);
+	        formData.put("inputValue", inputValue);
+	    	
+	        // formData에서 검색 조건 추출하여 서비스로 전달
+	        List<BookedSeatManageDTO> performanceList = service.searchPerformanceList(formData);
+	        return ResponseEntity.status(HttpStatus.OK).body(performanceList);
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	        return ResponseEntity
+	                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("공연 목록 검색 중 문제가 발생했습니다: " + e.getMessage());
+	    }
 	}
 
 	/**
@@ -96,11 +123,6 @@ public class BookedSeatManageController {
 
 			// 이미 예약된 좌석 조회
 			List<Seat> bookedSeats = service.getBookedSeats(mt20id, selectedDate, selectedTime);
-
-			// mt20id를 seatId에 포함시켜 반환
-//		        bookedSeats.forEach(seat -> {
-//		            seat.setSeatId(mt20id + "-" + seat.getSeatId());  // seatId를 mt20id와 결합
-//		        });
 
 			// 결과를 Map으로 반환
 			Map<String, Object> result = new HashMap<>();

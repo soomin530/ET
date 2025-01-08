@@ -30,6 +30,12 @@ public class BookedSeatManageServiceImpl implements BookedSeatManageService {
 	public List<BookedSeatManageDTO> performanceList() {
 		return mapper.performanceList();
 	}
+	
+	// 공연 목록 검색
+	@Override
+	public List<BookedSeatManageDTO> searchPerformanceList(Map<String, Object> formData) {
+		return mapper.searchPerformanceList(formData);
+	}
 
 	// 공연 상세페이지 조회
 	@Override

@@ -1,4 +1,4 @@
-package edu.kh.project.common.jwt;
+package edu.kh.admin.common.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -83,10 +83,10 @@ public class JwtTokenUtil {
 
         // Refresh Token에서 사용자 정보 추출
         String memberNo = getMemberNoFromToken(refreshToken);
-        String roles = getRolesFromToken(refreshToken);
+        String memberEmail = getMemberEmailFromToken(refreshToken);
 
         // 새로운 Access Token 발급
-        return createToken(memberNo, roles, accessTokenValidityInMilliseconds);
+        return createToken(memberNo, memberEmail, accessTokenValidityInMilliseconds);
     }
 
     /**

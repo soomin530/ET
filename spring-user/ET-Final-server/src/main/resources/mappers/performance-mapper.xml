@@ -62,7 +62,7 @@
 			            	AND p.PRFPDFROM > TRUNC(SYSDATE)
 			            ]]>
 			        </if>
-			        <if test="filter == 'ongoing'">
+			        <if test="filter == 'ongoing' or filter == 'rating'">
 			            <![CDATA[
 				            AND p.PRFPDFROM <= TRUNC(SYSDATE)
 				            AND p.PRFPDTO >= TRUNC(SYSDATE)
@@ -149,7 +149,7 @@
 		            FROM ETFIVE.TB_TICKET_SEAT ts_sub
 		            WHERE ts_sub.MT20ID = #{performanceId}
 		            AND ts_sub.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
-		            AND ts_sub.SEAT_STATUS = 'BOOKED'
+		            AND ts_sub.SEAT_STATUS IN ('BOOKED', 'BLOCKED')
 		            AND ts_sub.SHOW_TIME = pt.PERFORMANCE_TIME
 		        ), 0)) AS seats,
 		        'available' as seatStatus
@@ -176,12 +176,13 @@
 				PRFNM
 			FROM
 				(
-					SELECT MT20ID, POSTER, PRFNM
+					SELECT MT20ID, POSTER, PRFNM, PRFSTATE
 					FROM TB_PERFORMANCES_DETAIL
 					ORDER BY
 					DBMS_RANDOM.VALUE )
 			WHERE
 				ROWNUM <= 3
+			AND PRFSTATE = '공연중'
 			ORDER BY PRFNM
 		]]>
     </select>
@@ -194,6 +195,7 @@
 			FROM (
 			    SELECT 
 			        MT20ID,
+			        PRFSTATE,
 			        PRFNM,
 			        POSTER,
 			        PRFREVIEW_RANK,
@@ -205,6 +207,7 @@
 			        PRFREVIEW_RANK DESC, AVG_RATING DESC
 			) 
 			WHERE ROWNUM <= 10
+			AND PRFSTATE = '공연중'
 		]]>
 	</select>
     

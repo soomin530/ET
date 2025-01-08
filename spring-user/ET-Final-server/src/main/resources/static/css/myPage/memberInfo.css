@@ -122,6 +122,7 @@ footer {
 	background-color: #fff;
 	cursor: pointer;
 	transition: background-color 0.2s;
+	border-bottom: 1px solid #ddd;
 }
 
 .addressManagement:hover {
@@ -146,6 +147,7 @@ footer {
 	background-color: #fff;
 	cursor: pointer;
 	transition: background-color 0.2s;
+	border-bottom: 1px solid #ddd;
 }
 
 .membershipOut:hover {
@@ -158,6 +160,30 @@ footer {
 
 
 .membershipOut h3 {
+	font-size: 16px;
+	font-weight: normal;
+	color: #333;
+}
+
+.memberInquiryt {
+	padding: 40px 20px;
+	text-align: center;
+	background-color: #fff;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	border-top: 1px solid #ddd;
+}
+
+.memberInquiryt:hover {
+	background-color: #f8f8f8;
+}
+
+.memberInquiryt:nth-child(odd) {
+	border-right: 1px solid #ddd;
+}
+
+
+.memberInquiryt h3 {
 	font-size: 16px;
 	font-weight: normal;
 	color: #333;
@@ -250,6 +276,14 @@ footer {
 	font-size: 12px;
 	display: none;
 }
+
+.signUp-message {
+  font-size: 13px;
+}
+
+/* 메세지 색상 지정 */
+.confirm{ color : green; }
+.error{ color : red; }
 
 .button-group {
 	margin-top: 20px;
@@ -504,4 +538,11 @@ footer {
 		opacity: 1;
 		transform: scale(1);
 	}
+}
+
+/* Caps Lock 메세지 */
+#memberPwCheck {
+	color: #FF0000;
+	font-size: 12px;
+	font-weight: bold;
 }

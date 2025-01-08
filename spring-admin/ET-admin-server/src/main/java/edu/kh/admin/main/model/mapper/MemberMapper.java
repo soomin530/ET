@@ -37,10 +37,18 @@ public interface MemberMapper {
 	 */
 	int delete(int memberNo);
 
+
 	/** 회원 정보 수정
 	 * @param formdata
 	 * @return
 	 */
 	int update(Map<String, Object> formdata);
+
+	/** 이메일로 관리자 확인
+	 * @param memberEmail
+	 * @return
+	 */
+	Member findByEmail(Map<String, Object> paramMap);
+
 
 }

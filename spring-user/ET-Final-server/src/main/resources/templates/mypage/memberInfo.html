@@ -42,6 +42,15 @@
 			<div class="membershipOut" onclick="handlePageAccess('membershipOut')">
 				<h2>회원탈퇴</h2>
 			</div>
+			
+			<div class="memberInquiryt" onclick="handlePageAccess('memberInquiryt')">
+				<h2>1:1문의</h2>
+			</div>
+			
+			<div class="memberInquiryt" onclick="handlePageAccess('memberInquirytList')">
+				<h2>문의내역</h2>
+			</div>
+			
 		</div>
 	</div>
 
@@ -53,7 +62,8 @@
 			<div class="verify-box">
 				<div class="verify-title">정보 보호를 위해<br>비밀번호를 다시 한 번 확인합니다</div>
 				<div class="input-group">
-					<input type="password" id="passwordInput" placeholder="비밀번호를 입력하세요">
+					<input type="password" id="passwordInput" onkeyup="checkCapsLock(event)" placeholder="비밀번호를 입력하세요">
+					<div id="memberPwCheck"></div>
 				</div>
 				<div class="error-message" id="errorMsg">비밀번호가 일치하지 않습니다.</div>
 				<div class="button-group">

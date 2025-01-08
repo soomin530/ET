@@ -6,9 +6,9 @@
 
 .notice-header-section {
 	text-align: center;
-	margin-bottom: 50px;
-	padding: 20px 0;
-	border-bottom: 1px solid #eee;
+	/* margin-bottom: 50px; */
+	/* padding: 20px 0; */
+	/* border-bottom: 1px solid #eee; */
 }
 
 .notice-title {
@@ -171,5 +171,92 @@
 
 	.notice-subject {
 		font-size: 1rem;
+	}
+}
+
+/* 우수민 공지사항 검색 추가 */
+.notice-search-container {
+	justify-self: center;
+	width: 60%;
+	border-bottom: 1px solid #e9ecef;
+	padding: 30px 0;
+	margin-bottom: 30px;
+}
+
+.notice-search-box {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+.notice-search-input {
+	flex: 1;
+	height: 42px;
+	padding: 0 16px;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	font-size: 15px;
+	transition: all 0.2s;
+}
+
+.notice-search-input:focus {
+	outline: none;
+	border-color: #4263eb;
+	box-shadow: 0 0 0 3px rgba(66, 99, 235, 0.1);
+}
+
+.notice-search-type {
+	height: 42px;
+	padding: 0 12px;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	background-color: white;
+	font-size: 15px;
+	min-width: 120px;
+	cursor: pointer;
+}
+
+.notice-search-button {
+	height: 42px;
+	padding: 0 24px;
+	background-color: #4263eb;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-weight: 500;
+	font-size: 15px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.notice-search-button:hover {
+	background-color: #364fc7;
+}
+
+@media (max-width: 768px) {
+	.notice-search-box {
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.notice-search-input {
+		width: 100%;
+		flex: none;
+	}
+
+	.notice-search-type {
+		width: calc(50% - 4px);
+		min-width: 0;
+	}
+
+	.notice-search-button {
+		width: calc(50% - 4px);
 	}
 }

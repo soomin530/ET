@@ -1,5 +1,6 @@
 package edu.kh.admin.main.model.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,6 +101,17 @@ public class MemberServiceImpl implements MemberService{
 		@Override
 		public int delete(int memberNo) {
 		return mapper.delete(memberNo);
+		}
+
+		// 이메일, 회원번호로 관리자 확인
+		@Override
+		public Member findByEmail(String memberEmail, String memberNo) {
+			Map<String, Object> paramMap = new HashMap<>();
+			
+			paramMap.put("memberEmail", memberEmail);
+			paramMap.put("memberNo", memberNo);
+			
+			return mapper.findByEmail(paramMap);
 		}
 		
 		

@@ -15,6 +15,12 @@ public interface BookedSeatManageMapper {
 	 * @return
 	 */
 	List<BookedSeatManageDTO> performanceList();
+	
+	/** 공연 목록 검색
+	 * @param formData
+	 * @return
+	 */
+	List<BookedSeatManageDTO> searchPerformanceList(Map<String, Object> formData);
 
 	/** 공연 상세정보 조회
 	 * @param mt20id
