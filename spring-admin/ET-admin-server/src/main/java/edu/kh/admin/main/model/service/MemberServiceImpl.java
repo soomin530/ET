@@ -102,7 +102,10 @@ public class MemberServiceImpl implements MemberService{
 		}
 		
 		
-		
+		@Override
+		public int delete(int memberNo) {
+		return mapper.delete(memberNo);
+		}
 		
 		
 		

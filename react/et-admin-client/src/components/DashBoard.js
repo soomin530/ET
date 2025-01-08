@@ -7,9 +7,11 @@ import BookedSeatManage from './BookedSeatManage.js';
 import SeatSelection from './SeatSelection.js';
 import AnnouncementManage from './AnnouncementManage.js';
 import ManagerEnroll from './ManagerEnroll.js';
-import MemberDetail from './MemberDetail.js';
+import UserManageDetail from './UserManageDetail.js'
 import AnnouncementDetail from './AnnouncementDetail.js';
-import Quill from './Quill.jsx';
+import PerformanceNew from './PerformanceNew.js';
+import PerformanceDetail from './PerformanceDetail.js';
+
 import { AuthContext } from './AuthContext.js';
 
 import { NavLink, Route, Routes } from 'react-router';
@@ -25,40 +27,39 @@ export default function DashBoard() {
   const globalState = useContext(AuthContext);
 
   return (
-      <div className='dash-board-container'>
-          <h1>관리자 페이지</h1>
-
-          {/* <div className='admin-info'>
-            <p>현재 접속 관리자 : {globalState.user.memberNickname}</p>
-            <button onClick={globalState.handleLogout}>로그아웃</button>
-          </div> */}
-
-          <div className='main-show-container'>
-            <div className='router-tab-box'>
-              <NavLink to="/UserManage">유저관리</NavLink>
-              <NavLink to="/PerformanceManage">공연관리</NavLink>
-              <NavLink to="/BookedSeatManage">예매 좌석 관리</NavLink>
-              <NavLink to="/AnnouncementManage">공지사항 관리</NavLink>
-              <NavLink to="/ManagerEnroll">업체계정 신청</NavLink>
-              <NavLink to="/Quill">퀼 연습</NavLink>
-            </div>
-
-            
-            <Routes>
-              <Route path='/' element={<h1>DashBoard 메인</h1>}/>
-              <Route path='/UserManage' element={<UserManage />}/>
-              <Route path='/PerformanceManage' element={<PerformanceManage/>}/>
-              <Route path='/BookedSeatManage' element={<BookedSeatManage/>}/>
-              <Route path='/AnnouncementManage' element={<AnnouncementManage/>}/>
-              <Route path='/ManagerEnroll' element={<ManagerEnroll/>}/>
-              <Route path='/Quill' element={<Quill/>}/>
-              <Route path="/member/:memberNo" element={<MemberDetail />} /> 
-              <Route path="/announcement/:announceNo" element={<AnnouncementDetail />} /> 
-              <Route path="/manager/:concertManagerNo" element={<ManagerEnrollDetail />} />
-              <Route path="/seatManage/detail/:mt20id" element={<BookedSeatDetail />} />
-              <Route path="/seatManage/bookingSeat" element={<SeatSelection />} />
-            </Routes>
-          </div>
+    <div className="dash-board-container">
+      <h1>관리자 페이지</h1>
+  
+      <div className="main-show-container">
+        {/* 라우터 탭 */}
+        <div className="router-tab-box">
+          <NavLink to="/UserManage">유저관리</NavLink>
+          <NavLink to="/PerformanceManage">공연관리</NavLink>
+          <NavLink to="/BookedSeatManage">예매 좌석 관리</NavLink>
+          <NavLink to="/AnnouncementManage">공지사항 관리</NavLink>
+          <NavLink to="/ManagerEnroll">업체계정 신청</NavLink>
+          <NavLink to="/PerformanceNew">카카오맵 연습</NavLink>
+        </div>
+  
+        {/* 라우터 콘텐츠 */}
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={<h1>DashBoard 메인</h1>} />
+            <Route path="/UserManage" element={<UserManage />} />
+            <Route path="/PerformanceManage" element={<PerformanceManage />} />
+            <Route path="/BookedSeatManage" element={<BookedSeatManage />} />
+            <Route path="/AnnouncementManage" element={<AnnouncementManage />} />
+            <Route path="/ManagerEnroll" element={<ManagerEnroll />} />
+            <Route path="/member/:memberNo" element={<UserManageDetail />} />
+            <Route path="/announcement/:announceNo" element={<AnnouncementDetail />} />
+            <Route path="/manager/:concertManagerNo" element={<ManagerEnrollDetail />} />
+            <Route path="/performance/:mt10ID" element={<PerformanceDetail />} />
+            <Route path="/PerformanceNew" element={<PerformanceNew />} />
+            <Route path="/seatManage/detail/:mt20id" element={<BookedSeatDetail />} />
+            <Route path="/seatManage/bookingSeat" element={<SeatSelection />} />
+          </Routes>
+        </div>
+      </div>
     </div>
-  )
+  );
 }

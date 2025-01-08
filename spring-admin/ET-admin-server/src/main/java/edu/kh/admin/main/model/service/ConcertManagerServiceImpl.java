@@ -50,9 +50,15 @@ public class ConcertManagerServiceImpl implements ConcertManagerService{
 		return mapper.concertManagerDetail(concertManagerNo);
 		}
 		
+		@Override
+		public int agree(int concertManagerNo) {
+		return mapper.agree(concertManagerNo);
+		}
 		
-		
-		
+		@Override
+		public int delete(int concertManagerNo) {
+		return mapper.delete(concertManagerNo);
+		}
 		
 		
 		
