@@ -333,9 +333,9 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성
 	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("mypageInfo")
 	public String mypageInfo() {
@@ -343,9 +343,10 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성 마이페이지 -> 예매 내역
+	 * 1/6  마이페이지 -> 예매 내역
 	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("ticketInfo")
 	public String ticketInfo() {
@@ -358,6 +359,7 @@ public class MyPageController {
 	 * @param bookingId
 	 * @param loginMember
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("/ticketInfo/data")
 	public ResponseEntity<List<ticketInfoDTO>> getBookingHistory(@SessionAttribute("loginMember") Member loginMember) {
@@ -366,17 +368,24 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성 마이페이지 -> 예매 내역 -> 예매 상세 정보
+	 * 1/6  마이페이지 -> 예매 내역 -> 예매 상세 정보
 	 * 
 	 * @return
-	 */
+	 * @author 나찬웅
+	 * 
 	/** 예매 상세 정보 페이지로 이동 */
 	@GetMapping("ticketDetail/{bookingId}")
 	public String ticketDetail(@PathVariable("bookingId") String bookingId) {
 		return "mypage/ticketDetail"; // 예매 내역 상세 페이지 HTML
 	}
 
-	// 예매 상세 정보에서 데이터 조회
+
+	/** 1/6 예매 상세 정보에서 데이터 조회
+	 * @param bookingId
+	 * @param loginMember
+	 * @return
+	 * @author 나찬웅
+	 */
 	@ResponseBody
 	@GetMapping("ticketDetail/data/{bookingId}")
 	public ResponseEntity<ticketInfoDTO> getTicketDetail(@PathVariable("bookingId") String bookingId,
@@ -387,9 +396,10 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성 마이페이지 -> 찜목록
+	 * 마이페이지 -> 찜목록
 	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("favList")
 	public String favList() {
