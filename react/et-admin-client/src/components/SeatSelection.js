@@ -250,14 +250,10 @@ const SeatManagement = () => {
                   } ${isSelected ? "selected-seat" : ""}`}
                   onClick={() => handleSeatStatusChange(seatId, seat.status)} // BLOCKED 상태도 처리
                   style={{
-                    cursor: "pointer", // BLOCKED 상태도 선택 가능하도록
-                    opacity: seat.status === "BLOCKED" ? 0.6 : 1, // 비활성화 좌석은 시각적으로 구분
+                    cursor: "pointer" // BLOCKED 상태도 선택 가능하도록
                   }}
                 >
                   {col}
-                  <div className="seat-status">
-                    {isBooked ? "R" : seat.status === "BLOCKED" ? "B" : "A"}
-                  </div>
                   <div className="seat-tooltip">
                     {`${row}행 ${col}열 ${
                       isBooked
