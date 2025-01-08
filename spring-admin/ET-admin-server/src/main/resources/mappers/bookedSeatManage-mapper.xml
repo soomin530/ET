@@ -3,6 +3,7 @@
 <mapper namespace="edu.kh.admin.main.model.mapper.BookedSeatManageMapper">
 
 
+	<!-- 공연 목록 조회 -->
 	<select id="performanceList">
 	    SELECT 
 	    	MT20ID, 
@@ -13,6 +14,32 @@
 	    	POSTER, 
 	    	PRFREVIEW_RANK
 	    FROM TB_PERFORMANCES_DETAIL
+	</select>
+	
+	<!-- 공연 목록 검색 -->
+	<select id="searchPerformanceList">
+	    SELECT
+	        MT20ID,
+	        PRFNM,
+	        PRFPDFROM,
+	        PRFPDTO,
+	        FCLTYNM,
+	        POSTER,
+	        PRFREVIEW_RANK
+	    FROM TB_PERFORMANCES_DETAIL
+	    WHERE 1=1
+        <if test="inputValue != null and inputValue != ''">
+            <choose>
+                <!-- 공연명 검색 (id: 1) -->
+                <when test="selectedValue == '공연명'">
+                    AND PRFNM LIKE '%' || #{inputValue} || '%'
+                </when>
+                <!-- 공연장 검색 (id: 2) -->
+                <when test="selectedValue == '공연장'">
+                    AND FCLTYNM LIKE '%' || #{inputValue} || '%'
+                </when>
+            </choose>
+        </if>
 	</select>
 	
 	<!-- 공연 상세페이지 조회 -->
@@ -88,7 +115,8 @@
 		    S.GRADE_ID AS gradeId,
 		    S.GRADE_NAME AS gradeName,
 		    S.PRICE AS gradePrice,
-		    S.SEAT_COUNT - COUNT(CASE WHEN TTS.SEAT_STATUS = 'BOOKED' THEN 1 END) AS availableSeatCount
+		    S.SEAT_COUNT - COUNT(CASE WHEN TTS.SEAT_STATUS IN('BOOKED', 'BLOCKED') THEN 1 END) AS availableSeatCount,
+		    COUNT(CASE WHEN TTS.SEAT_STATUS IN('BLOCKED') THEN 1 END) AS blockedSeatCount
 		FROM (
 		    SELECT
 		        TPF.MT20ID,

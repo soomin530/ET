@@ -83,22 +83,20 @@
 
 /* 좌석 그리드 */
 .seat-grid {
-  display: grid;
-  grid-template-columns: repeat(20, minmax(35px, 1fr)); /* 20개씩, 최소 35px */
-  gap: 10px; /* 간격 증가 */
-  margin-bottom: 30px;
-  padding: 20px; /* 전체 패딩 추가 */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
 }
 
 /* 개별 좌석 스타일 */
 .seat {
   width: 30px;
   height: 30px;
-  margin: 5px;
-  text-align: center;
-  line-height: 30px;
-  border-radius: 5px;
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px;
 }
 
 /* 좌석 등급별 색상 */

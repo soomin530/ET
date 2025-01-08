@@ -36,6 +36,8 @@ const SeatManagement = () => {
         const allSeats = parseData(response.data.seats || []);
         const bookedAndBlockedSeats = response.data.bookedSeats || [];
 
+        console.log(allSeats);
+
         setSeatData(allSeats);
 
         // BOOKED와 BLOCKED 상태를 나누어 저장
@@ -157,6 +159,11 @@ const SeatManagement = () => {
     // 일반 좌석 상태 변경 (예: 비활성화)
     const newStatus = getNextStatus(currentStatus);
     try {
+      const confirmBlock = window.confirm(
+        "해당 좌석을 비활성화 하시겠습니까?"
+      );
+      if (!confirmBlock) return;
+
       // 좌석 등급 ID 찾기
       const seatGrade = seatId.split("-")[1];
       const gradeId = seatData.find(
@@ -203,78 +210,94 @@ const SeatManagement = () => {
   };
 
   const renderSeats = () => {
-    return seatData.map((gradeSection) => (
-      <div key={gradeSection.GRADEID} className="seat-section">
-        <div className="grade-title">
-          {gradeSection.GRADENAME === "전석"
-            ? "전석"
-            : `${gradeSection.GRADENAME}석`}
-        </div>
-        <div className="seat-grid">
-          {Array.from({ length: gradeSection.TOTALSEATCOUNT }).map(
-            (_, index) => {
-              const row = Math.floor(index / 20) + 1;
-              const col = (index % 20) + 1;
-              const seatId = `${mt20id}-${gradeSection.GRADENAME}-${row}-${col}`;
+    return seatData.map((gradeSection) => {
+      let seatNumber = 1;
+      // 한 줄당 좌석 수 설정 (20~30석 추천)
+      const maxSeatsPerRow =
+        gradeSection.TOTALSEATCOUNT <= 50
+          ? 10
+          : gradeSection.TOTALSEATCOUNT > 200
+          ? 25
+          : 20;
+      const rows = Math.ceil(gradeSection.TOTALSEATCOUNT / maxSeatsPerRow);
 
-              const isBooked = bookedSeats.some(
-                (bookedSeat) => bookedSeat.seatId === seatId
-              );
-
-              const isBlocked = blockedSeats.some(
-                (blockedSeats) => blockedSeats.seatId === seatId
-              );
-
-              const seat = gradeSection.seats?.find(
-                (s) => s.seatId === seatId
-              ) || {
-                seatId,
-                status: isBooked
-                  ? "BOOKED"
-                  : isBlocked
-                  ? "BLOCKED"
-                  : "AVAILABLE",
-              };
-
-              const isSelected = selectedBookedSeat?.seatId === seatId;
+      return (
+        <div key={gradeSection.GRADEID} className="seat-section">
+          <div className="grade-title">
+            {gradeSection.GRADENAME === "전석"
+              ? "전석"
+              : `${gradeSection.GRADENAME}석`}
+          </div>
+          <div className="seat-grid">
+            {Array.from({ length: rows }).map((_, rowIndex) => {
+              const row = rowIndex + 1;
 
               return (
-                <div
-                  key={seatId}
-                  className={`seat ${
-                    isBooked
-                      ? "seat-reserved"
-                      : isBlocked
-                      ? "seat-blocked"
-                      : "seat-available" // 상태에 따른 올바른 클래스 적용
-                  } ${isSelected ? "selected-seat" : ""}`}
-                  onClick={() =>
-                    handleSeatStatusChange(
-                      seatId,
-                      isBooked ? "BOOKED" : isBlocked ? "BLOCKED" : "AVAILABLE"
-                    )
-                  } // 올바른 상태 전달
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
-                  {col}
-                  <div className="seat-tooltip">
-                    {`${row}행 ${col}열 ${
-                      isBooked
-                        ? "(예약됨)"
-                        : seat.status === "BLOCKED"
-                        ? "(비활성화)"
-                        : ""
-                    }`}
-                  </div>
+                <div key={`row-${row}`} className="row-container">
+                  {Array.from({ length: maxSeatsPerRow }).map((_, colIndex) => {
+                    const col = colIndex + 1;
+
+                    // 총 좌석 수를 초과하면 렌더링하지 않음
+                    if (seatNumber > gradeSection.TOTALSEATCOUNT) {
+                      return null;
+                    }
+
+                    const seatId = `${mt20id}-${gradeSection.GRADENAME}-${row}-${col}`;
+
+                    const isBooked = bookedSeats.some(
+                      (bookedSeat) => bookedSeat.seatId === seatId
+                    );
+
+                    const isBlocked = blockedSeats.some(
+                      (blockedSeats) => blockedSeats.seatId === seatId
+                    );
+
+                    const isSelected = selectedBookedSeat?.seatId === seatId;
+
+                    seatNumber++; // 좌석 번호 증가
+
+                    return (
+                      <div
+                        key={seatId}
+                        className={`seat ${
+                          isBooked
+                            ? "seat-reserved"
+                            : isBlocked
+                            ? "seat-blocked"
+                            : "seat-available"
+                        } ${isSelected ? "selected-seat" : ""}`}
+                        onClick={() =>
+                          handleSeatStatusChange(
+                            seatId,
+                            isBooked
+                              ? "BOOKED"
+                              : isBlocked
+                              ? "BLOCKED"
+                              : "AVAILABLE"
+                          )
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        {col}
+                        <div className="seat-tooltip">
+                          {`${row}행 ${col}열 ${
+                            isBooked
+                              ? "(예약됨)"
+                              : isBlocked
+                              ? "(비활성화)"
+                              : ""
+                          }`}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               );
-            }
-          )}
+            })}
+          </div>
         </div>
-      </div>
-    ));
+      );
+    });
   };
 
   return (
@@ -351,8 +374,14 @@ const SeatManagement = () => {
             <span>{section.GRADENAME}</span>
             <span>
               예약:{" "}
-              {section.seats?.filter((s) => s.status === "BOOKED").length || 0}{" "}
-              / 전체: {section.TOTALSEATCOUNT}
+              {section.TOTALSEATCOUNT - section.AVAILABLESEATCOUNT}{" "}
+              / 
+              비활성화{" "}
+              {section.BLOCKEDSEATCOUNT}{" "}
+              /
+              전체:{" "}
+              {section.TOTALSEATCOUNT}
+
             </span>
           </div>
         ))}

@@ -1,234 +1,345 @@
 /* BookedSeatDetail.css */
-.performance-container {
-  max-width: 1200px;
+/* Performance detail container */
+.performance-detail-container {
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
 }
 
-.performance-content {
-  display: flex;
-  gap: 30px;
-  margin-bottom: 30px;
-}
-
-.performance-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.performance-image {
-  width: 100%;
-  max-width: 400px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.info-table {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.info-table tr {
-  border-bottom: 1px solid #eee;
-}
-
-.info-table th {
-  width: 100px;
-  padding: 15px;
-  text-align: left;
-  color: #666;
-  vertical-align: top;
-}
-
-.info-table td {
-  padding: 15px;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-/* 예매 영역 스타일 */
-.performance-booking {
-  flex: 0 0 400px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-/* 캘린더 스타일 */
-.datepicker {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-/* 시간 선택 영역 */
-.schedule-box {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  margin-top: 20px;
-}
-
-.time-slots {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.time-slot {
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
+/* Header Section */
+.booked-detail-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1rem;
+}
+
+.booked-detail-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Header Section */
+.booked-detail-header .booked-back-button {
+  width: auto !important; /* app.css 재정의 */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: #2563eb !important; /* 파란색 배경 */
+  border: none;
+  color: white !important; /* 흰색 텍스트 */
+  font-size: 0.875rem;
+  font-weight: 500;
   transition: all 0.2s ease;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.time-slot:hover {
-  background-color: #f0f0f0;
-  border-color: #666;
+.booked-detail-header .booked-back-button:hover {
+  background-color: #1d4ed8 !important; /* 호버 시 더 진한 파란색 */
+  color: #374151 !important;
 }
 
-.time-slot.selected {
-  background-color: #004CFF;
-  border-color: #004CFF;
+.booked-detail-header .booked-back-button i {
+  font-size: 0.875rem;
+  color: white; /* 아이콘도 흰색으로 */
+}
+
+.booked-detail-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.booked-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+}
+
+.booked-back-button:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.booked-back-button i {
+  font-size: 0.875rem;
+}
+
+/* Main content layout */
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+}
+
+/* Info Section */
+.info-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.poster-container {
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.poster-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: cover;
+}
+
+.info-table-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.info-value {
+  color: #0f172a;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.info-value.period {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.info-value.price {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.info-value.address {
+  color: #475569;
+}
+
+/* Booking Section */
+.booking-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+}
+
+/* Calendar Styles */
+.calendar-container {
+  margin-bottom: 1.5rem;
+}
+
+.fc {
+  background: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.fc .fc-button-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.fc .fc-daygrid-day.available-date {
+  background-color: #dbeafe;
+  cursor: pointer;
+}
+
+.fc .fc-daygrid-day.selected-date {
+  background-color: #2563eb;
+}
+
+.fc .fc-daygrid-day.selected-date .fc-daygrid-day-number {
   color: white;
 }
 
-/* 좌석 선택 컴포넌트 스타일 */
-.seat-selection-container {
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
+.fc .fc-daygrid-day.fc-day-disabled {
+  background-color: #f1f5f9;
+  color: #cbd5e1;
 }
 
-.seat-info {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: white;
-  border-radius: 8px;
+/* Time Selection Buttons */
+.time-selection {
+  margin-top: 1.5rem;
 }
 
-.seat-info p {
-  margin: 8px 0;
-  font-size: 16px;
-  color: #333;
+.time-selection h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e293b;
 }
 
-.seat-map {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  min-height: 300px;
+.time-button {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  text-align: left;
+  transition: all 0.2s ease;
 }
 
-/* 로딩 스피너 */
+.time-button:hover {
+  background-color: #dbeafe;
+  border-color: #2563eb;
+}
+
+.time-button .time {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.time-button .status {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-left: 0.5rem;
+}
+
+/* Loading Spinner */
 .loading-spinner {
-  display: none;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
-}
-
-.loading-spinner.show {
-  display: flex;
 }
 
 .loading-spinner::before {
   content: "";
-  width: 60px;
-  height: 60px;
-  border: 6px solid rgba(0, 0, 0, 0.1);
-  border-top: 6px solid #004CFF;
+  width: 50px;
+  height: 50px;
+  border: 3px solid #dbeafe;
+  border-top-color: #2563eb;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
-/* 공연 가능한 날짜 스타일 */
-.available-date {
-  cursor: pointer;  /* 클릭할 수 있음을 나타냄 */
-  background-color: #e0f7fa; /* 연한 청록색 배경으로 가시성 증가 */
-  border-radius: 8px; /* 모서리를 둥글게 처리 */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* 배경색과 크기 변화에 부드러운 효과 추가 */
-}
-
-/* 공연 가능한 날짜 hover 상태 */
-.available-date:hover {
-  background-color: #00bcd4; /* hover 시 청록색 배경 */
-  transform: scale(1.05); /* hover 시 크기 약간 커짐 */
-}
-
-/* 선택된 날짜 스타일 */
-.selected-date {
-  background-color: #2563eb !important; /* 선택된 날짜 배경 색상 */
-  color: white !important; /* 글씨 색상 흰색 */
-  font-weight: bold; /* 굵은 글씨 */
-  border-radius: 8px; /* 둥근 모서리 */
-}
-
-/* 선택된 날짜 hover 시 강조 */
-.selected-date:hover {
-  background-color: #1e4a8e !important; /* 더 짙은 파란색 배경 */
-}
-
-/* 공연 가능한 날짜 스타일 */
-.available-date {
-  cursor: pointer;
-  background-color: #e0f7fa; /* 선택 가능한 날짜 배경 색상 */
-}
-
-/* 공연 가능한 날짜 hover 시 강조 */
-.available-date:hover {
-  background-color: #b2ebf2;
-}
-
-/* 비활성화된 날짜 스타일 */
-.fc-day-disabled {
-  background-color: #f9f9f9; /* 비활성화된 날짜 배경 */
-  color: #ccc; /* 글씨 색상 회색 */
-  pointer-events: none; /* 클릭 불가능 */
-}
-
-
-
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* 반응형 디자인 */
-@media (max-width: 1024px) {
-  .performance-content {
-    flex-direction: column;
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .detail-content {
+    grid-template-columns: 1fr;
   }
 
-  .performance-booking {
-    flex: none;
-    width: 100%;
+  .booking-section {
+    margin-top: 2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .performance-container {
-    padding: 10px;
+  .performance-detail-container {
+    padding: 1rem;
   }
 
-  .time-slots {
+  .info-row {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 
-  .info-table th,
-  .info-table td {
-    padding: 10px;
+  .info-label {
+    font-size: 0.9rem;
   }
+
+  .info-value {
+    font-size: 0.9rem;
+  }
+}
+
+/* BookingSection Component Styles */
+.time-slots {
+  margin-top: 1rem;
+}
+
+.time-slot-button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.time-slot-button:hover {
+  background-color: #f8fafc;
+  border-color: #2563eb;
+}
+
+.time-slot-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.time-slot-time {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.time-slot-status {
+  font-size: 0.875rem;
+  color: #64748b;
 }
