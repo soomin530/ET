@@ -14,8 +14,9 @@
 				<!-- 로그인 Form -->
 				<input type="text" id="memberLoginId" name="memberId" placeholder="아이디" required>
 
-				<input type="password" id="memberLoginPw" name="password" placeholder="비밀번호"
+				<input type="password" id="memberLoginPw" name="password" onkeyup="checkCapsLock(event)" placeholder="비밀번호"
 					autocomplete="current-password" required>
+					<div id="checkPwMessage"></div>
 
 				<button type="submit" id="login-Btn">로그인</button>
 				

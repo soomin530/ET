@@ -1,7 +1,7 @@
 // 예매 내역 조회 함수
 async function fetchTicketInfo() {
   try {
-    const response = await fetch("/mypage/ticketInfo/data"); // API 호출
+    const response = await fetch(`/mypage/ticketInfo/data`); // API 호출
     const data = await response.json(); // JSON 데이터 파싱
 
     if (!Array.isArray(data)) {
@@ -24,7 +24,10 @@ async function fetchTicketInfo() {
       const row = document.createElement("tr");
       const statusClass = booking.bookingStatus === "예매" ? "status-booked" : "status-canceled";
       const bookingDate = booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : "정보 없음";
-      const paidAt = booking.paidAt ? new Date(booking.paidAt).toLocaleString() : "-";
+
+      const paidAt = booking.paidAt ? new Date(booking.paidAt.replace(' ', 'T')).toLocaleString() : "-";
+      const cancelableUntil = booking.cancelableUntil ? new Date(booking.cancelableUntil.replace(' ', 'T')).toLocaleDateString() : "정보 없음";
+      
       const showDateTime = booking.showDateTime || "미정";
 
       row.innerHTML = `
@@ -34,7 +37,7 @@ async function fetchTicketInfo() {
         <td>${booking.performanceName || "공연명 없음"}</td>
         <td class="highlight-performance">${showDateTime}</td>
         <td class="highlight-ticket-count">${booking.ticketCount || "0"}매</td>
-        <td>${booking.cancelableUntil ? new Date(booking.cancelableUntil).toLocaleDateString() : "정보 없음"}</td>
+        <td>${cancelableUntil}</td>
         <td class="${statusClass}">${booking.bookingStatus || "상태 없음"}</td>
         <td>
           <a href="/mypage/ticketDetail/${booking.bookingId}">

@@ -1,10 +1,10 @@
 package edu.kh.project.myPage.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @Slf4j
 public class MyPageServiceImpl implements MyPageService {
-
+	
 	private final MyPageMapper mapper;
 
 	private final BCryptPasswordEncoder bcrypt;
@@ -108,12 +108,118 @@ public class MyPageServiceImpl implements MyPageService {
 
 		return mapper.updateMember(member);
 	}
+	
+	
+	
+	// 배송지 목록 조회(로드)
+	@Override
+	public List<AddressDTO> getAddressList(int memberNo) {
+			
+	 return myPageMapper.selectAddressList(memberNo);
+	 
+    }
+		
+		
+		
+	// 배송지 추가
+	@Autowired
+    private MyPageMapper myPageMapper;
 
 	@Override
-	public int addAddress(AddressDTO addressDTO) {
-		// TODO Auto-generated method stub
-		return 0;
+    public int addAddress(AddressDTO addressDTO) {
+		
+         return myPageMapper.insertAddress(addressDTO);
+         
 	}
+	
+	
+	// 중복 주소 체크
+	@Override
+	public boolean isAddressDuplicated(AddressDTO addressDTO, int memberNo) {
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		paramMap.put("address", addressDTO.getAddress());
+		paramMap.put("memberNo", memberNo);
+		paramMap.put("detailAddress", addressDTO.getDetailAddress());
+		
+		int count = myPageMapper.countDuplicateAddress(paramMap);
+        return count > 0;
+	}
+
+	// 주소 개수 체크
+	public int getAddressCount(int memberNo) {
+		
+	     return myPageMapper.getAddressCount(memberNo);
+	}
+	
+
+	// 기본 배송지 등록하기
+	@Override
+	@Transactional
+	public int basicAddress(int addressNo, int memberNo) {
+		
+		try {
+	        // 디버깅을 위한 로그 추가
+	        System.out.println("addressNo: " + addressNo);
+	        System.out.println("memberNo: " + memberNo);
+	        
+	        // 매개변수 유효성 검사
+	        if (addressNo <= 0 || memberNo <= 0) {
+	            throw new IllegalArgumentException("유효하지 않은 매개변수입니다. (addressNo: " + addressNo + ", memberNo: " + memberNo + ")");
+	        }
+
+	        Map<String, Object> paramMap = new HashMap<>();
+	        paramMap.put("addressNo", addressNo);
+	        paramMap.put("memberNo", memberNo);
+
+	        // 기존 기본 배송지 해제
+	        myPageMapper.resetBasicAddress(memberNo);
+	        
+	        // 새로운 기본 배송지 설정
+	        int setResult = myPageMapper.basicAddress(paramMap);
+	        
+	        if (setResult <= 0) {
+	            throw new RuntimeException("기본 배송지 설정에 실패했습니다. (적용된 행이 없습니다)");
+	        }
+	        
+	        return setResult;
+	        
+	    } catch (Exception e) {
+	        throw new RuntimeException("기본 배송지 처리 중 오류 발생: " + e.getMessage());
+	    }
+	}
+	
+	
+	// 배송지 수정
+	@Override
+	public int updateAddress(AddressDTO addressDTO) {
+		
+		return myPageMapper.updateAddress(addressDTO);
+	}
+
+	
+	// 배송지 데이터 가져오기 (수정 모달에 사용)
+	@Override
+	public AddressDTO getAddress(int addressNo) {
+		
+		return myPageMapper.selectAddress(addressNo);
+	}
+
+	// 배송지 삭제
+		@Override
+		@Transactional
+		public int deleteAddress(int addressNo, int memberNo) {
+		    Map<String, Object> paramMap = new HashMap<>();
+		    paramMap.put("addressNo", addressNo);
+		    paramMap.put("memberNo", memberNo);
+		    
+		    return myPageMapper.deleteAddress(paramMap);
+		}
+	
+	
+
+	
 	
 	
 	// 찜한 목록 조회
@@ -158,8 +264,8 @@ public class MyPageServiceImpl implements MyPageService {
 	 * 예매 내역 조회
 	 */
 	@Override
-	public List<Map<String, Object>> getBookingHistory(String bookingId, int memberNo) {
-		 return mapper.selectBookingHistory(bookingId);
+	public List<ticketInfoDTO> getBookingHistory(int memberNo) {
+		 return mapper.selectBookingHistory(memberNo);
 	}
 	
 
@@ -170,6 +276,8 @@ public class MyPageServiceImpl implements MyPageService {
 	public ticketInfoDTO getBookingDetail(String bookingId, int memberNo) {
 		return mapper.selectBookingDetail(bookingId, memberNo);
 	}
+
+	
 
 	
 

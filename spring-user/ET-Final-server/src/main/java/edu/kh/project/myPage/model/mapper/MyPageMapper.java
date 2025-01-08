@@ -13,6 +13,7 @@ import edu.kh.project.performance.model.dto.Performance;
 
 @Mapper
 public interface MyPageMapper {
+	
     
     /** 암호화된 비밀번호 조회
      * @param memberNo
@@ -88,20 +89,91 @@ public interface MyPageMapper {
 	 * @param memberNo
 	 * @return
 	 */
-	List<Map<String, Object>> selectBookingHistory(String bookingId);
+	List<ticketInfoDTO> selectBookingHistory(int memberNo);
 
 	/** 예약 상세 내용 조회
 	 * @param bookingId
 	 * @param memberNo
 	 * @return
 	 */
-	ticketInfoDTO selectBookingDetail(String bookingId, int memberNo);
+	ticketInfoDTO selectBookingDetail(@Param("bookingId") String bookingId, @Param("memberNo") int memberNo);
+
+	
 
 
 
 
 
 
+
+	
+	
+	
+
+	/** 배송지 목록 조회(로드)
+	 * @param memberNo
+	 * @return
+	 */
+	List<AddressDTO> selectAddressList(int memberNo);
+
+	
+	/** 배송지 추가
+	 * @param addressDTO
+	 * @return
+	 */
+	int insertAddress(AddressDTO addressDTO);
+
+	
+	/** 중복 주소 체크
+	 * @param addressDTO
+	 * @param memberNo
+	 * @return
+	 */
+	int countDuplicateAddress(Map<String, Object> paramMap);
+	
+	/** 주소 개수 체크
+	 * @param memberNo
+	 * @return
+	 */
+	int getAddressCount(int memberNo);
+
+	
+	/**  기본 배송지 등록하기
+	 * @param memberNo
+	 */
+	int resetBasicAddress(int memberNo);
+
+	int basicAddress(Map<String, Object> paramMap);  // Map 형태로 매개변수 변경
+
+	
+
+	/** 배송지 수정
+	 * @param addressDTO
+	 * @return
+	 */
+	int updateAddress(AddressDTO addressDTO);
+
+	/** 배송지 데이터 가져오기 (수정 모달에 사용)
+	 * @param addressNo
+	 * @return
+	 */
+	AddressDTO selectAddress(int addressNo);
+
+	
+	/** 배송지 삭제
+	 * @param paramMap
+	 * @return
+	 */
+	int deleteAddress(Map<String, Object> paramMap);
+
+	
+
+
+
+	
+	
+	
+	
 
 	
 }

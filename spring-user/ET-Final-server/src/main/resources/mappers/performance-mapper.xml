@@ -176,12 +176,13 @@
 				PRFNM
 			FROM
 				(
-					SELECT MT20ID, POSTER, PRFNM
+					SELECT MT20ID, POSTER, PRFNM, PRFSTATE
 					FROM TB_PERFORMANCES_DETAIL
 					ORDER BY
 					DBMS_RANDOM.VALUE )
 			WHERE
 				ROWNUM <= 3
+			AND PRFSTATE = '공연중'
 			ORDER BY PRFNM
 		]]>
     </select>
@@ -194,6 +195,7 @@
 			FROM (
 			    SELECT 
 			        MT20ID,
+			        PRFSTATE,
 			        PRFNM,
 			        POSTER,
 			        PRFREVIEW_RANK,
@@ -205,6 +207,7 @@
 			        PRFREVIEW_RANK DESC, AVG_RATING DESC
 			) 
 			WHERE ROWNUM <= 10
+			AND PRFSTATE = '공연중'
 		]]>
 	</select>
     
