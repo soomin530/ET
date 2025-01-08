@@ -18,5 +18,7 @@ public interface AnnouncementMapper {
 
 	int update(@Param("title") String title, @Param("content") String content, @Param("announceNo") String announceNo);
 
+	int delete(int announceNo);
+
 
 }

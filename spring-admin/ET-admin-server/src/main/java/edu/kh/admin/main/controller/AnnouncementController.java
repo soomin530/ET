@@ -69,6 +69,16 @@ public class AnnouncementController {
 	    }
 	}
 	
+	@PostMapping("delete/{announceNo:[0-9]+}")
+	public ResponseEntity<Object> delete(@PathVariable("announceNo") int announceNo) {
+	    int result = service.delete(announceNo);
+	    if (result > 0) {
+	        return ResponseEntity.ok(result);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
+	
 	
 	
 	 /** Quill의 내용 저장 메서드

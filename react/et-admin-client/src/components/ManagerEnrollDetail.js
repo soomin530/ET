@@ -106,6 +106,7 @@ const ManagerEnrollDetail = () => {
               value={formData.nickname || ''}
               onChange={handleChange}
               className="form-input"
+              readOnly
             />
           </div>
           <div className="form-group">
@@ -116,6 +117,7 @@ const ManagerEnrollDetail = () => {
               value={formData.tel || ''}
               onChange={handleChange}
               className="form-input"
+              readOnly
             />
           </div>
           <div className="form-group">
@@ -126,16 +128,16 @@ const ManagerEnrollDetail = () => {
               value={formData.company || ''}
               onChange={handleChange}
               className="form-input"
+              readOnly
             />
           </div>
           <div className="form-group">
             <label className="form-label">코멘트:</label>
-            <input
-              type="text"
+            <textarea
               name="comment"
               value={formData.comment || ''}
               onChange={handleChange}
-              className="form-input"
+              className="form-input comment-input"
               readOnly
             />
           </div>
@@ -147,6 +149,7 @@ const ManagerEnrollDetail = () => {
               value={formData.email || ''}
               onChange={handleChange}
               className="form-input"
+              readOnly
             />
           </div>
           <div className="button-group">

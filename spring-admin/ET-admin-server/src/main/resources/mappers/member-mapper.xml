@@ -51,6 +51,16 @@
 	WHERE MEMBER_NO = ${memberNo}
 	</update>
 	
+
+	<update id="update">
+	UPDATE TB_MEMBER 
+    SET 
+        MEMBER_NICKNAME = #{memberNickname},
+        MEMBER_TEL = #{memberTel}
+    WHERE MEMBER_NO = #{memberNo}
+	</update>
+	
+
 	<!-- 이메일로 관리자인지 확인 조회 -->
 	<select id="findByEmail">
 		SELECT
@@ -62,5 +72,6 @@
 		WHERE MEMBER_EMAIL = #{memberEmail}
 		AND MEMBER_NO = #{memberNo}
 	</select>
+
 
 </mapper>

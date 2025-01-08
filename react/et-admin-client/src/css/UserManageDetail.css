@@ -113,3 +113,82 @@
     width: 100%;
   }
 }
+
+.button-group {
+  display: flex;
+  justify-content: space-between; /* 버튼들을 균등하게 배치 */
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.back-button,
+.submit-button,
+.delete-button {
+  flex: 1; /* 모든 버튼이 동일한 너비를 가지도록 설정 */
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.back-button {
+  background-color: #4B5563; /* 회색 계열 */
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #374151;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.submit-button {
+  background-color: #10B981; /* 초록색 계열 */
+  color: white;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+}
+
+.submit-button:disabled {
+  background-color: #D1D5DB;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.delete-button {
+  background-color: #EF4444; /* 빨간색 계열 */
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #DC2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 640px) {
+  .button-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .back-button,
+  .submit-button,
+  .delete-button {
+    width: 100%;
+    padding: 0.875rem;
+  }
+}
+
