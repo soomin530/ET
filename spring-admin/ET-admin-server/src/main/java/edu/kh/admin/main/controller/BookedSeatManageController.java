@@ -222,7 +222,7 @@ public class BookedSeatManageController {
 	    String status = (String) requestData.get("status");
 
 	    log.info("좌석 상태 변경 요청: seatId={}, status={}", seatId, status);
-
+	    log.info(requestData.toString());
 	    try {
 	        if ("BLOCKED".equals(status)) {
 	            // 좌석을 비활성화하는 경우 - TB_TICKET_SEAT에 새로운 레코드 추가

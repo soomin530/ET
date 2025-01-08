@@ -48,6 +48,11 @@ public class AnnouncementServiceImpl implements AnnouncementService{
 		public int update(String title, String content,String announceNo) {
 			return mapper.update(title,content,announceNo);
 		}
+		
+		@Override
+		public int delete(int announceNo) {
+		return mapper.delete(announceNo);
+		}
 
 	
 }

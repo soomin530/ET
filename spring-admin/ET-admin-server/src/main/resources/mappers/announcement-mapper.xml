@@ -3,7 +3,8 @@
 <mapper namespace="edu.kh.admin.main.model.mapper.AnnouncementMapper">
 
 	<select id="showAnnouncementList">
-	SELECT * FROM ANNOUNCEMENT WHERE ANNOUNCEMENT.ANNOUNCE_DEL_FL ='N'
+	SELECT * FROM ANNOUNCEMENT WHERE ANNOUNCEMENT.ANNOUNCE_DEL_FL ='N' 
+	ORDER BY ANNOUNCE_NO ASC
 	</select>
 	
 	
@@ -28,6 +29,12 @@
 	UPDATE ANNOUNCEMENT
 	SET ANNOUNCE_TITLE = #{title} , ANNOUNCE_CONTENT = #{content}
 	WHERE ANNOUNCE_NO = #{announceNo}
+	</update>
+	
+	<update id="delete">
+	UPDATE ANNOUNCEMENT
+	SET ANNOUNCE_DEL_FL ='Y'
+	WHERE ANNOUNCE_NO = #{announceNo}	
 	</update>
 
 </mapper>

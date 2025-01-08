@@ -58,19 +58,21 @@
 	<!-- 회원 가입 -->
 	<insert id="signup">
 		INSERT INTO "TB_MEMBER"
-		VALUES(SEQ_MEMBER_NO.NEXTVAL,
-		#{memberId},
-		#{memberPw},
-		#{memberNickname},
-		#{memberTel},
-		#{memberAddress},
-		#{memberGender},
-		NULL,
-		DEFAULT,
-		DEFAULT,
-		DEFAULT,
-		DEFAULT,
-		#{memberEmail}
+		VALUES(
+			SEQ_MEMBER_NO.NEXTVAL,
+			#{memberId},
+			#{memberPw},
+			#{memberNickname},
+			#{memberTel},
+			#{memberAddress},
+			#{memberGender},
+			NULL,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			#{memberEmail},
+			DEFAULT
 		)
 	</insert>
 

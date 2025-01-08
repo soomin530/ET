@@ -38,5 +38,12 @@ public interface AnnouncementService {
 	 */
 	int update(String title, String content, String announceNo);
 
+
+	/** 공지사항 삭제
+	 * @param announceNo
+	 * @return
+	 */
+	int delete(int announceNo);
+
 	
 }
