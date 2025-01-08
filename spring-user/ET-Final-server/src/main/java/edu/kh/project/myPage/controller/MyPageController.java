@@ -1,12 +1,13 @@
 package edu.kh.project.myPage.controller;
 
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,164 @@ public class MyPageController {
 	private final BCryptPasswordEncoder bcrypt;
 
 	private final JwtTokenUtil jwtTokenUtil;
+
+	@GetMapping("addressManagement")
+	public String addressManagement() {
+		return "mypage/addressManagement"; // View 이름 반환
+	}
+
+	/**
+	 * 배송지 목록 조회(로드)
+	 * 
+	 * @param loginMember
+	 * @return
+	 */
+	@GetMapping("addressList")
+	@ResponseBody
+	public ResponseEntity<List<AddressDTO>> getAddressList(@SessionAttribute("loginMember") Member loginMember) {
+		List<AddressDTO> addressList = myPageService.getAddressList(loginMember.getMemberNo());
+		return ResponseEntity.ok(addressList);
+	}
+
+	@Autowired
+	private MyPageService myPageService;
+
+	/**
+	 * 배송지 등록 하기
+	 * 
+	 * @param addressDTO
+	 * @param loginMember
+	 * @return
+	 */
+	@PostMapping("addAddress")
+	@ResponseBody
+	public ResponseEntity<String> addAddress(@RequestBody AddressDTO addressDTO,
+			@SessionAttribute("loginMember") Member loginMember) {
+		addressDTO.setMemberNo(loginMember.getMemberNo()); // getMemberNo()로 회원 번호 설정
+
+		// 주소 개수 체크
+		int addressCount = myPageService.getAddressCount(loginMember.getMemberNo());
+		if (addressCount >= 10) {
+			return ResponseEntity.status(400).body("배송지는 최대 10개까지만 등록할 수 있습니다.");
+		}
+
+		// 중복 주소 체크
+		boolean isDuplicated = myPageService.isAddressDuplicated(addressDTO, loginMember.getMemberNo());
+		if (isDuplicated) {
+			return ResponseEntity.status(400).body("이미 등록된 주소입니다.");
+		}
+
+		int result = myPageService.addAddress(addressDTO);
+		if (result > 0) {
+			return ResponseEntity.ok("배송지가 등록되었습니다.");
+		} else {
+			return ResponseEntity.status(500).body("배송지 등록에 실패했습니다.");
+		}
+	}
+
+	/**
+	 * 기본 배송지 등록하기
+	 * 
+	 * @param addressNo
+	 * @param loginMember
+	 * @return
+	 */
+	@PostMapping("basicAddress")
+	@ResponseBody
+	public ResponseEntity<String> basicAddress(@RequestParam("addressNo") int addressNo,
+			@SessionAttribute(value = "loginMember", required = true) Member loginMember) {
+
+		try {
+			// 디버깅을 위한 로그 추가
+			System.out.println("Controller - addressNo: " + addressNo);
+			System.out.println("Controller - memberNo: " + loginMember.getMemberNo());
+
+			int result = myPageService.basicAddress(addressNo, loginMember.getMemberNo());
+
+			if (result > 0) {
+				return ResponseEntity.ok("기본 배송지가 변경되었습니다.");
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("기본 배송지 변경에 실패했습니다.");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("처리 중 오류가 발생했습니다: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * 배송지 수정
+	 * 
+	 * @param addressDTO
+	 * @return
+	 */
+
+	@PostMapping("/editAddress")
+	@ResponseBody
+	public ResponseEntity<String> updateAddress(@RequestBody AddressDTO addressDTO) {
+		if (!isAddressDTOValid(addressDTO)) {
+			return ResponseEntity.badRequest().body("필수 필드를 모두 입력해주세요.");
+		}
+
+		int result = myPageService.updateAddress(addressDTO);
+
+		if (result > 0) {
+			return ResponseEntity.ok("주소가 성공적으로 수정되었습니다.");
+		} else {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주소 수정에 실패했습니다.");
+		}
+	}
+
+	// AddressDTO 유효성 검사
+	private boolean isAddressDTOValid(AddressDTO addressDTO) {
+		return addressDTO.getReceiverName() != null && !addressDTO.getReceiverName().isEmpty()
+				&& addressDTO.getPostcode() != null && !addressDTO.getPostcode().isEmpty()
+				&& addressDTO.getAddress() != null && !addressDTO.getAddress().isEmpty()
+				&& addressDTO.getDetailAddress() != null && !addressDTO.getDetailAddress().isEmpty()
+				&& addressDTO.getPhone() != null && !addressDTO.getPhone().isEmpty();
+	}
+
+	/**
+	 * 배송지 데이터 가져오기 (수정 모달에 사용)
+	 * 
+	 * @param addressNo
+	 * @return
+	 */
+	@GetMapping("/getAddress/{addressNo}")
+	@ResponseBody
+	public ResponseEntity<AddressDTO> getAddress(@PathVariable int addressNo) {
+		AddressDTO address = myPageService.getAddress(addressNo);
+
+		if (address != null) {
+			return ResponseEntity.ok(address);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+	}
+
+	/**
+	 * 배송지 삭제
+	 * 
+	 * @param addressNo
+	 * @param loginMember
+	 * @return
+	 */
+	@DeleteMapping("/deleteAddress/{addressNo}")
+	@ResponseBody
+	public ResponseEntity<String> deleteAddress(@PathVariable("addressNo") int addressNo, // addressNo 명시적 지정
+			@SessionAttribute("loginMember") Member loginMember) {
+		try {
+			int result = myPageService.deleteAddress(addressNo, loginMember.getMemberNo());
+
+			if (result > 0) {
+				return ResponseEntity.ok("배송지가 성공적으로 삭제되었습니다.");
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("배송지 삭제에 실패했습니다.");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("배송지 삭제 중 오류가 발생했습니다: " + e.getMessage());
+		}
+	}
 
 	// 닉네임 클릭 시 회원정보 페이지로 이동
 	@GetMapping("memberInfo")
@@ -94,13 +253,6 @@ public class MyPageController {
 
 		return "mypage/changePw";
 	}
-
-//	// 배송지 관리 페이지로 이동
-//	@GetMapping("addressManagement")
-//	public String addressManagement() {
-//
-//		return "mypage/addressManagement";
-//	}
 
 	// 회원탈퇴 페이지로 이동
 	@GetMapping("membershipOut")
@@ -157,7 +309,6 @@ public class MyPageController {
 		return service.updateNickname(userNickname);
 	}
 
-	// 회원 정보 수정
 	@PostMapping("/updateInfo")
 	@ResponseBody
 	public int updateMember(@RequestBody Member member, @SessionAttribute("loginMember") Member loginMember) {
@@ -182,31 +333,6 @@ public class MyPageController {
 	}
 
 	/**
-	 * 배송지 관리
-	 * 
-	 * @return
-	 */
-	@GetMapping("addressManagement")
-	public String addressManagement() {
-		return "mypage/addressManagement"; // 배송지 관리 페이지 HTML 파일
-	}
-
-	/**
-	 * 배송지 등록
-	 * 
-	 * @param addressDTO
-	 * @return
-	 */
-	@PostMapping("/addAddress")
-	@ResponseBody
-	public ResponseEntity<String> addAddress(@RequestBody AddressDTO addressDTO) {
-		// 서비스 계층에서 배송지 저장 처리
-		// int result = service.addAddress(addressDTO);
-
-		return ResponseEntity.ok("배송지가 등록되었습니다.");
-	}
-
-	/**
 	 * 1/6 나찬웅 작성
 	 * 
 	 * @return
@@ -226,21 +352,18 @@ public class MyPageController {
 		return "mypage/ticketInfo"; // 예매내역 페이지 HTML 파일
 	}
 
-	/** 예매 내역 조회
+	/**
+	 * 예매 내역 조회
+	 * 
 	 * @param bookingId
 	 * @param loginMember
 	 * @return
 	 */
-	@GetMapping("/ticketInfo/data/{bookingId}")
-	public ResponseEntity<List<Map<String, Object>>> getBookingHistory(
-			    @PathVariable("bookingId") String bookingId,  // String으로 타입 통일
-			    @SessionAttribute("loginMember") Member loginMember
-			) {
-		
-	    List<Map<String, Object>> history = service.getBookingHistory(bookingId, loginMember.getMemberNo());
-	    return ResponseEntity.ok(history);
+	@GetMapping("/ticketInfo/data")
+	public ResponseEntity<List<ticketInfoDTO>> getBookingHistory(@SessionAttribute("loginMember") Member loginMember) {
+		List<ticketInfoDTO> bookingHistory = service.getBookingHistory(loginMember.getMemberNo());
+		return ResponseEntity.ok(bookingHistory);
 	}
-
 
 	/**
 	 * 1/6 나찬웅 작성 마이페이지 -> 예매 내역 -> 예매 상세 정보
@@ -272,5 +395,4 @@ public class MyPageController {
 	public String favList() {
 		return "mypage/favList"; // 찜목록 페이지 HTML 파일
 	}
-
 }
