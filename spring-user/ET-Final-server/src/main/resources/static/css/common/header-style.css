@@ -750,3 +750,22 @@
 		font-size: 1.1em;
 	}
 }
+
+/* Caps Lock 메세지 */
+#checkPwMessage, #adminCheckPwMessage {
+	color: #FF0000;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: left;
+	margin-top: -15px;
+	padding-left: 45px;
+	width: 100%;  /* modal-body의 너비와 동일하게 */
+	align-self: stretch;  /* flex 아이템을 컨테이너 전체 너비로 늘림 */
+}
+
+/* 비밀번호 입력창과 메시지 사이의 간격만 조정 */
+#memberLoginPw {
+	width: 100%;  /* 또는 특정 픽셀값 */
+	margin-bottom: 0;  /* 비밀번호 입력창 아래 마진 제거 */
+}
+

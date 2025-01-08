@@ -178,3 +178,13 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('unload', () => {
     sessionStorage.removeItem('targetPage');
 });
+
+function checkCapsLock(event)  {
+    if (event.getModifierState("CapsLock")) {
+        document.getElementById("memberPwCheck").innerText 
+            = "Caps Lock이 켜져있습니다."
+    } else {
+        document.getElementById("memberPwCheck").innerText 
+            = ""
+    }
+}

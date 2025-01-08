@@ -132,3 +132,13 @@ async function verifyPassword() {
 window.addEventListener('unload', () => {
     sessionStorage.removeItem('targetPage');
 });
+
+function checkCapsLock(event)  {
+    if (event.getModifierState("CapsLock")) {
+        document.getElementById("mypagePwCheck").innerText 
+            = "Caps Lock이 켜져있습니다."
+    } else {
+        document.getElementById("mypagePwCheck").innerText 
+            = ""
+    }
+}
