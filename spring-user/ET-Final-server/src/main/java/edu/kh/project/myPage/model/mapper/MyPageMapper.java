@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import io.lettuce.core.dynamic.annotation.Param;
 
 @Mapper
 public interface MyPageMapper {
@@ -89,7 +90,7 @@ public interface MyPageMapper {
 	 * @param memberNo
 	 * @return
 	 */
-	int countDuplicateAddress(AddressDTO addressDTO, int memberNo);
+	int countDuplicateAddress(Map<String, Object> paramMap);
 	
 	/** 주소 개수 체크
 	 * @param memberNo
@@ -107,6 +108,24 @@ public interface MyPageMapper {
 
 	
 
+	/** 배송지 수정
+	 * @param addressDTO
+	 * @return
+	 */
+	int updateAddress(AddressDTO addressDTO);
+
+	/** 배송지 데이터 가져오기 (수정 모달에 사용)
+	 * @param addressNo
+	 * @return
+	 */
+	AddressDTO selectAddress(int addressNo);
+
+	
+	/** 배송지 삭제
+	 * @param paramMap
+	 * @return
+	 */
+	int deleteAddress(Map<String, Object> paramMap);
 
 	
 

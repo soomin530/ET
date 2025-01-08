@@ -8,10 +8,6 @@ import edu.kh.project.myPage.model.dto.AddressDTO;
 public interface MyPageService {
 	
 	
-	
-	
-	
-	
 	/** 비밀번호 검증
      * @param memberPw : 입력한 비밀번호
      * @param memberNo : 회원 번호
@@ -118,6 +114,27 @@ public interface MyPageService {
 
 
 
+
+	/** 배송지 수정
+	 * @param addressDTO
+	 * @return
+	 */
+	int updateAddress(AddressDTO addressDTO);
+
+
+	/** 배송지 데이터 가져오기 (수정 모달에 사용)
+	 * @param addressNo
+	 * @return
+	 */
+	AddressDTO getAddress(int addressNo);
+
+
+	/** 배송지 삭제
+	 * @param addressNo
+	 * @param memberNo
+	 * @return
+	 */
+	int deleteAddress(int addressNo, int memberNo);
 	
 
 

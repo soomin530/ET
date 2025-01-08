@@ -20,6 +20,7 @@ public class AddressDTO {
     private String detailAddress;
     private String phone;
     private String extraPhone;
+    private int addressNo;
     private String basicAddress; // "Y" 또는 "N"
 
 }

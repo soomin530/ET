@@ -3,10 +3,13 @@ package edu.kh.project.myPage.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,20 +97,111 @@ public class MyPageController {
     @PostMapping("basicAddress")
     @ResponseBody
     public ResponseEntity<String> basicAddress(
-    	    @RequestParam int addressNo,
-    	    @SessionAttribute("loginMember") Member loginMember
-    	) {
-    	    int result = myPageService.basicAddress(addressNo, loginMember.getMemberNo());
-    	    
-    	    if (result > 0) {
-    	        return ResponseEntity.ok("기본 배송지가 변경되었습니다.");
-    	        
-    	    } else {
-    	        return ResponseEntity.status(500).body("기본 배송지 변경에 실패했습니다.");
-    	    }
-    	    
-    	    
-    	} 
+        @RequestParam("addressNo") int addressNo,
+        @SessionAttribute(value = "loginMember", required = true) Member loginMember
+    ) {
+    	
+    	
+        try {
+            // 디버깅을 위한 로그 추가
+            System.out.println("Controller - addressNo: " + addressNo);
+            System.out.println("Controller - memberNo: " + loginMember.getMemberNo());
+            
+            int result = myPageService.basicAddress(addressNo, loginMember.getMemberNo());
+            
+            if (result > 0) {
+                return ResponseEntity.ok("기본 배송지가 변경되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                   .body("기본 배송지 변경에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                               .body("처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    
+    
+    
+ 
+    /** 배송지 수정
+     * @param addressDTO
+     * @return
+     */
+    
+    @PostMapping("/editAddress")
+    @ResponseBody
+    public ResponseEntity<String> updateAddress(@RequestBody AddressDTO addressDTO) {
+        if (!isAddressDTOValid(addressDTO)) {
+            return ResponseEntity.badRequest().body("필수 필드를 모두 입력해주세요.");
+        }
+
+        int result = myPageService.updateAddress(addressDTO);
+
+        if (result > 0) {
+            return ResponseEntity.ok("주소가 성공적으로 수정되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("주소 수정에 실패했습니다.");
+        }
+    }
+
+    // AddressDTO 유효성 검사
+    private boolean isAddressDTOValid(AddressDTO addressDTO) {
+        return addressDTO.getReceiverName() != null && !addressDTO.getReceiverName().isEmpty()
+                && addressDTO.getPostcode() != null && !addressDTO.getPostcode().isEmpty()
+                && addressDTO.getAddress() != null && !addressDTO.getAddress().isEmpty()
+                && addressDTO.getDetailAddress() != null && !addressDTO.getDetailAddress().isEmpty()
+                && addressDTO.getPhone() != null && !addressDTO.getPhone().isEmpty();
+    }
+
+    
+    /** 배송지 데이터 가져오기 (수정 모달에 사용)
+     * @param addressNo
+     * @return
+     */
+    @GetMapping("/getAddress/{addressNo}")
+    @ResponseBody
+    public ResponseEntity<AddressDTO> getAddress(@PathVariable int addressNo) {
+        AddressDTO address = myPageService.getAddress(addressNo);
+
+        if (address != null) {
+            return ResponseEntity.ok(address);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(null);
+        }
+    }
+    
+    
+    
+    /** 배송지 삭제
+     * @param addressNo
+     * @param loginMember
+     * @return
+     */
+    @DeleteMapping("/deleteAddress/{addressNo}")
+    @ResponseBody
+    public ResponseEntity<String> deleteAddress(
+        @PathVariable("addressNo") int addressNo,  // addressNo 명시적 지정
+        @SessionAttribute("loginMember") Member loginMember
+    ) {
+        try {
+            int result = myPageService.deleteAddress(addressNo, loginMember.getMemberNo());
+
+            if (result > 0) {
+                return ResponseEntity.ok("배송지가 성공적으로 삭제되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("배송지 삭제에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("배송지 삭제 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    
+    
 	
 	
 

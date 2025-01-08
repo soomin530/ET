@@ -147,7 +147,14 @@ public class MyPageServiceImpl implements MyPageService {
 	// 중복 주소 체크
 	@Override
 	public boolean isAddressDuplicated(AddressDTO addressDTO, int memberNo) {
-		int count = myPageMapper.countDuplicateAddress(addressDTO, memberNo);
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		paramMap.put("address", addressDTO.getAddress());
+		paramMap.put("memberNo", memberNo);
+		paramMap.put("detailAddress", addressDTO.getDetailAddress());
+		
+		int count = myPageMapper.countDuplicateAddress(paramMap);
         return count > 0;
 	}
 
@@ -163,18 +170,63 @@ public class MyPageServiceImpl implements MyPageService {
 	@Transactional
 	public int basicAddress(int addressNo, int memberNo) {
 		
-		// 매개변수를 Map으로 생성
-	    Map<String, Object> paramMap = new HashMap<>();
-	    paramMap.put("addressNo", addressNo);
-	    paramMap.put("memberNo", memberNo);
+		try {
+	        // 디버깅을 위한 로그 추가
+	        System.out.println("addressNo: " + addressNo);
+	        System.out.println("memberNo: " + memberNo);
+	        
+	        // 매개변수 유효성 검사
+	        if (addressNo <= 0 || memberNo <= 0) {
+	            throw new IllegalArgumentException("유효하지 않은 매개변수입니다. (addressNo: " + addressNo + ", memberNo: " + memberNo + ")");
+	        }
 
-	    // 기존 기본 배송지 해제
-	    myPageMapper.resetBasicAddress(memberNo);
-	    // 새로운 기본 배송지 설정
-	    return myPageMapper.basicAddress(paramMap);
+	        Map<String, Object> paramMap = new HashMap<>();
+	        paramMap.put("addressNo", addressNo);
+	        paramMap.put("memberNo", memberNo);
+
+	        // 기존 기본 배송지 해제
+	        myPageMapper.resetBasicAddress(memberNo);
+	        
+	        // 새로운 기본 배송지 설정
+	        int setResult = myPageMapper.basicAddress(paramMap);
+	        
+	        if (setResult <= 0) {
+	            throw new RuntimeException("기본 배송지 설정에 실패했습니다. (적용된 행이 없습니다)");
+	        }
+	        
+	        return setResult;
+	        
+	    } catch (Exception e) {
+	        throw new RuntimeException("기본 배송지 처리 중 오류 발생: " + e.getMessage());
+	    }
+	}
+	
+	
+	// 배송지 수정
+	@Override
+	public int updateAddress(AddressDTO addressDTO) {
+		
+		return myPageMapper.updateAddress(addressDTO);
 	}
 
 	
+	// 배송지 데이터 가져오기 (수정 모달에 사용)
+	@Override
+	public AddressDTO getAddress(int addressNo) {
+		
+		return myPageMapper.selectAddress(addressNo);
+	}
+
+	// 배송지 삭제
+		@Override
+		@Transactional
+		public int deleteAddress(int addressNo, int memberNo) {
+		    Map<String, Object> paramMap = new HashMap<>();
+		    paramMap.put("addressNo", addressNo);
+		    paramMap.put("memberNo", memberNo);
+		    
+		    return myPageMapper.deleteAddress(paramMap);
+		}
 	
 	
 

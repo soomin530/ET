@@ -15,7 +15,7 @@
 
     <style>
 		
-		.adsModal {
+	.adsModal {
     display: none; /* 기본적으로 숨김 */
     position: fixed;
     top: 0;
@@ -42,6 +42,20 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
     animation: modalFadeIn 0.3s ease-in-out; /* 모달 등장 애니메이션 */
 }
+
+/* 모달 팝업 등장 애니메이션 */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
 
 .adsModal-header {
     margin-bottom: 20px;
@@ -144,29 +158,17 @@
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 }
 
-/* 모달 팝업 등장 애니메이션 */
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+
 
         .sidebar {
 			width: 200px;
-			background-color: #f8f9fa;
-			padding: 20px;
-			border-right: 1px solid #ddd;
-			position: fixed;
-			height: 70vh;
-			/* 70vh로 높이 설정 */
-			z-index: 1;
-			top: 90px;
-			/* 상단에 붙이기 */
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    position: fixed;
+    height: calc(100vh - 90px); /* 90px 제외하여 전체 화면 높이 조정 */
+    top: 90px; /* 상단에 고정 */
+    z-index: 1;
 		}
 
         .main-content {
@@ -222,19 +224,13 @@
             border-top: 2px solid #333;
         }
         
-        .address-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #ddd;
-        }
         
-        .address-checkbox {
-            margin-right: 15px;
-        }
+        
+        
         
         .address-content {
             flex-grow: 1;
+            padding-left: 40px; /* 체크박스와의 간격 */
         }
         
         .address-name {
@@ -302,6 +298,7 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    padding-left: 220px; /* 사이드바와의 여백 추가 */
 }
 
 .header {
@@ -359,15 +356,17 @@
 }
 
 
-		.address-list {
-    margin-top: 20px;
-}
+
 
 .address-item {
-    padding: 10px;
+    position: relative;
+    padding: 20px;
     border: 1px solid #ddd;
-    border-radius: 5px;
     margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
 }
 
 
@@ -376,13 +375,6 @@
     margin-top: 20px;
 }
 
-.address-item {
-    padding: 15px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    background-color: #fff;
-}
 
 .address-item:hover {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -426,6 +418,9 @@
 }
 
 .set-default-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     padding: 5px 10px;
     border: 1px solid #007bff;
     background-color: white;
@@ -445,6 +440,122 @@
     cursor: not-allowed;
 }
 
+
+/* 0107 추가*/
+.address-checkbox {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+}
+
+.address-info {
+    margin-left: 1rem;
+}
+
+.address-actions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.address-actions.show {
+    display: flex;
+    gap: 10px;
+}
+
+/*수정 모달창*/
+.editModal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+.editModal.show {
+    display: flex; /* 모달이 보이도록 설정 */
+}
+
+.editModal .adsModal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    animation: modalFadeIn 0.3s ease-in-out; /* 모달 등장 애니메이션 */
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.edit-btn, .delete-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center; /* 수평 가운데 정렬 */
+	align-items: center;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.delete-modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+}
+
+/* footer-content를 화면 아래에 고정 */
+.footer-content {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #ddd;
+}
 </style>
 
 </head>
@@ -524,12 +635,14 @@
 
 			                <div class="adsForm-group">
 			                    <label class="required" for="adsPhone">휴대폰 번호</label>
-			                    <input type="tel" id="adsPhone" required placeholder="ex) 010-1234-5678">
+			                    <input type="tel" id="adsPhone" required placeholder="ex) 01012345678">
+                                <span class="adsPhone-message" id="adsPhoneMessage"></span>
 			                </div>
 
 			                <div class="adsForm-group">
 			                    <label for="adsExtraPhone">추가 연락처</label>
-			                    <input type="tel" id="adsExtraPhone" placeholder="ex) 010-1234-5678">
+			                    <input type="tel" id="adsExtraPhone" placeholder="ex) 01012345678">
+                                <span class="adsExtraPhone-message" id="adsExtraPhoneMessage"></span>
 			                </div>
 
 			                <div class="button-group">
@@ -539,6 +652,77 @@
 			            </form>
 			        </div>
 			    </div>
+
+                 <!-- 배송지 수정 모달 -->
+                <div id="editModal" class="editModal">
+                    <div class="adsModal-content">
+                        <div class="adsModal-header">
+                            <h2>배송지 수정</h2>
+                        </div>
+                        <form id="editForm">
+                            <div class="adsForm-group">
+                                <label class="required" for="editReceiverName">받는 사람</label>
+                                <input type="text" id="editReceiverName" required>
+                            </div>
+
+
+                             <div class="adsForm-group">
+			                    <label class="required" for="editPostcode">우편번호</label>
+			                    <div class="address-search-group">
+			                        <input type="text" id="editPostcode" readonly required>
+			                        
+								<button type="button" id="editSearchAddress" 
+								class="address-search-btn">주소 검색</button>
+
+			                    </div>
+			                </div>
+
+
+                            <div class="adsForm-group">
+                                <label class="required" for="editAddress">주소</label>
+                                <input type="text" id="editAddress" readonly required>
+                            </div>
+                            <div class="adsForm-group">
+                                <label class="required" for="editDetailAddress">상세주소</label>
+                                <input type="text" id="editDetailAddress" required>
+                            </div>
+                            <div class="adsForm-group">
+                                <label class="required" for="editPhone">휴대폰 번호</label>
+                                <input type="tel" id="editPhone" required>
+                                <span class="editPhone-message" id="editPhoneMessage"></span>
+
+                            </div>
+                            <div class="adsForm-group">
+                                <label for="editExtraPhone">추가 연락처</label>
+                                <input type="tel" id="editExtraPhone">
+                                <span class="editExtraPhone-message" id="editExtraPhoneMessage"></span>
+                            </div>
+                            <div class="button-group">
+                                <button type="button" class="adsCancel-btn" id="editCancelBtn">취소</button>
+                                <button type="submit" class="adsSubmit-btn" id="editSubmitBtn">수정 완료</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+
+
+                 <!-- 삭제 확인 모달 -->
+                <div id="deleteModal" class="delete-modal">
+                    <div class="delete-modal-content">
+                        <h3>배송지 삭제</h3>
+                        <p>선택한 배송지를 삭제하시겠습니까?</p>
+                        <div class="button-group">
+                            <button id="deleteCancel" class="cancel-btn">취소</button>
+                             <button id="deleteConfirm" class="confirm-btn">삭제</button>
+                        </div>
+                    </div>
+                </div>
+
+
+        </div>
+
+               
     
 
 	
