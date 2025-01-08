@@ -37,4 +37,10 @@ public interface MemberMapper {
 	 */
 	int delete(int memberNo);
 
+	/** 이메일로 관리자 확인
+	 * @param memberEmail
+	 * @return
+	 */
+	Member findByEmail(Map<String, Object> paramMap);
+
 }

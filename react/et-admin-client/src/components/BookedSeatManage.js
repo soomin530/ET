@@ -2,14 +2,30 @@ import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
 import "../css/BookedSeatManage.css";
 import defaultPoster from "../images/default-poster.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 
 // 메인 컴포넌트
 const PerformanceList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [performances, setPerformances] = useState([]);
-  const [selectedValue, setSelectedValue] = useState("이름");
-  const [inputValue, setInputValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState(
+    searchParams.get("selectedValue") || "공연명"
+  );
+  const [inputValue, setInputValue] = useState(
+    searchParams.get("inputValue") || ""
+  );
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const selectedParam = searchParams.get("selectedValue");
+    const inputParam = searchParams.get("inputValue");
+
+    if (selectedParam && inputParam) {
+      performSearch(selectedParam, inputParam);
+    } else {
+      loadPerformances();
+    }
+  }, []);
 
   const handleChange = (e) => {
     setSelectedValue(e.target.value);
@@ -28,22 +44,35 @@ const PerformanceList = () => {
   const options = [
     { id: 1, label: "공연명" },
     { id: 2, label: "공연장" },
-    { id: 3, label: "날짜" },
   ];
-
-  useEffect(() => {
-    loadPerformances();
-  }, []);
 
   const loadPerformances = async () => {
     try {
       const response = await axiosApi.get(`/seatManage/performanceList`);
-
       if (response.status === 200) {
         setPerformances(response.data);
       }
     } catch (error) {
       console.error("공연 데이터 로드 중 오류:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const performSearch = async (selected, input) => {
+    try {
+      const response = await axiosApi.get("/seatManage/searchPerformanceList", {
+        params: {
+          selectedValue: selected,
+          inputValue: input
+        }
+      });
+      
+      if (response.status === 200) {
+        setPerformances(response.data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
@@ -57,23 +86,14 @@ const PerformanceList = () => {
       return;
     }
 
-    const formData = {
+    setLoading(true);
+    // URL 파라미터 업데이트
+    setSearchParams({
       selectedValue: selectedValue,
-      inputValue: inputValue,
-    };
-
-    try {
-      const response = await axiosApi.post(
-        "/seatManage/searchPerformanceList",
-        formData
-      );
-
-      if (response.status === 200) {
-        setPerformances(response.data);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+      inputValue: inputValue
+    });
+    
+    await performSearch(selectedValue, inputValue);
   };
 
   if (loading) {
@@ -83,7 +103,7 @@ const PerformanceList = () => {
   return (
     <div className="menu-box">
       <div className="main-title-container">
-        <h4>업체계정신청</h4>
+        <h4>예매 좌석 관리</h4>
       </div>
       <div>
         <form>
@@ -98,11 +118,12 @@ const PerformanceList = () => {
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
+            placeholder="검색어를 입력하세요"
           />
           <i
             className="fas fa-search search-icon"
             onClick={handleSubmit}
-            style={{ cursor: "pointer" }} // 클릭 시 커서 모양 변경
+            style={{ cursor: "pointer" }}
           ></i>
         </form>
       </div>
@@ -111,10 +132,14 @@ const PerformanceList = () => {
   );
 };
 
-// 공연 목록 표시 컴포넌트
 const ShowPerformanceList = ({ performances }) => {
   const navigate = useNavigate();
-  // 별점 표시 컴포넌트
+  const [searchParams] = useSearchParams();
+
+  const handlePerformanceClick = (mt20id) => {
+    navigate(`/seatManage/detail/${mt20id}`);
+  };
+
   const StarRating = ({ rating }) => {
     const fullStars = "★".repeat(Math.floor(rating));
     const emptyStars = "☆".repeat(5 - Math.floor(rating));
@@ -136,7 +161,7 @@ const ShowPerformanceList = ({ performances }) => {
             <div
               key={`${performance.performanceNo}-${index}`}
               className="performance-item"
-              onClick={() => navigate(`/seatManage/detail/${performance.mt20id}`)}
+              onClick={() => handlePerformanceClick(performance.mt20id)}
             >
               <div className="image-container">
                 <img

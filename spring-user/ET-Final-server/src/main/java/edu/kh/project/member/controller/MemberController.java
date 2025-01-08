@@ -282,7 +282,7 @@ public class MemberController {
 	private String extractRefreshToken(Cookie[] cookies) {
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if ("Refresh-token".equals(cookie.getName())) {
+				if ("Refresh-Token".equals(cookie.getName())) {
 					return cookie.getValue();
 				}
 			}

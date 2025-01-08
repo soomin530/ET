@@ -30,6 +30,12 @@ public interface MemberService {
 	 */
 	int delete(int memberNo);
 
+	/** 이메일, 회원 번호로 관리자 확인
+	 * @param memberEmail
+	 * @return
+	 */
+	Member findByEmail(String memberEmail, String memberNo);
+
 	
 	
 }

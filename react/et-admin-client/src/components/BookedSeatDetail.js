@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { axiosApi } from "../api/axoisAPI";
 import "../css/BookedSeatDetail.css";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useNavigate } from "react-router-dom"; // <-- 추가
+import defaultPoster from "../images/default-poster.png";
 
 const PerformanceDetail = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { mt20id } = useParams();
-  const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태 추가
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTimes, setSelectedTimes] = useState([]);
   const [performance, setPerformance] = useState(
     location.state?.performance || null
   );
@@ -36,96 +38,15 @@ const PerformanceDetail = () => {
     fetchData();
   }, [mt20id, performance]);
 
-  if (loading) {
-    return <div className="loading-spinner show"></div>;
-  }
-
-  if (!performance) {
-    return <div>공연 정보를 찾을 수 없습니다.</div>;
-  }
-
-  return (
-    <div className="max-w-7xl mx-auto p-5">
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Left side: Performance Info */}
-        <div className="w-full lg:w-2/3">
-          <img
-            src={performance.poster || "/api/placeholder/400/600"}
-            alt={performance.prfnm}
-            className="w-full max-w-md rounded-lg mb-5"
-            onError={(e) => {
-              if (e.target.src !== "/api/placeholder/400/600") {
-                e.target.src = "/api/placeholder/400/600";
-              }
-            }}
-            style={{
-              width: "45%", // 부모 컨테이너의 33%로 설정
-            }}
-          />
-          <table className="w-full mb-5 border-collapse">
-            <tbody>
-              <tr className="border-b">
-                <th className="p-4 text-left">공연명</th>
-                <td className="p-4">{performance.prfnm}</td>
-              </tr>
-              <tr className="border-b">
-                <th className="p-4 text-left">장소</th>
-                <td className="p-4">{performance.fcltynm}</td>
-              </tr>
-              <tr className="border-b">
-                <th className="p-4 text-left">공연기간</th>
-                <td className="p-4">
-                  {performance.prfpdfrom} ~ {performance.prfpdto}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <th className="p-4 text-left">공연시간</th>
-                <td className="p-4">{performance.prfruntime}</td>
-              </tr>
-              <tr className="border-b">
-                <th className="p-4 text-left">출연진</th>
-                <td className="p-4">{performance.prfcast}</td>
-              </tr>
-              <tr className="border-b">
-                <th className="p-4 text-left">가격</th>
-                <td className="p-4">{performance.pcseguidance}</td>
-              </tr>
-              <tr className="border-b">
-                <th className="p-4 text-left">주소</th>
-                <td className="p-4">{performance.adres}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* Right side: Booking Section */}
-        <div className="w-full lg:w-1/3">
-          <BookingSection
-            mt20id={mt20id}
-            performance={performance}
-            selectedDate={selectedDate} // selectedDate 상태 전달
-            setSelectedDate={setSelectedDate} // 선택된 날짜를 업데이트하는 함수 전달
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const BookingSection = ({
-  mt20id,
-  performance,
-  selectedDate,
-  setSelectedDate,
-}) => {
-  const [selectedTimes, setSelectedTimes] = useState([]);
-  const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`; // 형식을 YYYY-MM-DD로 변경
+    return `${year}-${month}-${day}`;
   };
 
   const getDayName = (date) => {
@@ -142,34 +63,34 @@ const BookingSection = ({
   };
 
   const handleDateSelect = (arg) => {
-    const date = arg.date; // 선택된 날짜
-    const formattedDate = formatDate(date); // yyyy.mm.dd 형식으로 변환
-    setSelectedDate(formattedDate); // 선택된 날짜 상태 업데이트
-    const dayName = getDayName(date); // 요일 이름
-    setSelectedTimes(performance.schedule[dayName] || []); // 해당 요일의 공연 시간 업데이트
+    const date = arg.date;
+    const formattedDate = formatDate(date);
+    setSelectedDate(formattedDate);
+    const dayName = getDayName(date);
+    setSelectedTimes(performance.schedule[dayName] || []);
   };
 
-  const handleTimeSelection = async (time, info) => {
-    const [year, month, day] = selectedDate.split("-");
-    const dateObj = new Date(year, month - 1, day); // month는 0부터 시작하므로 -1 해줍니다.
+  const handleTimeSelection = async (time) => {
+    if (!selectedDate) return;
 
-    const dayNumber = dateObj.getDay() === 0 ? 7 : dateObj.getDay(); // 일요일일 경우 7로 변환
+    const [year, month, day] = selectedDate.split("-");
+    const dateObj = new Date(year, month - 1, day);
+    const dayNumber = dateObj.getDay() === 0 ? 7 : dateObj.getDay();
 
     const seatManageData = {
-      mt20id: mt20id, // 공연 아이디
-      selectedDate: String(selectedDate), // 선택한 날짜
-      selectedTime: String(time), // 선택한 시간
-      dayOfWeek: String(dayNumber), // 선택된 날짜의 요일 번호
+      mt20id: mt20id,
+      selectedDate: selectedDate,
+      selectedTime: time,
+      dayOfWeek: String(dayNumber),
     };
 
     try {
       const response = await axiosApi.post(
-        "/seatManage/bookingSeat", // 백엔드 엔드포인트와 일치하도록 수정
+        "/seatManage/bookingSeat",
         seatManageData
       );
 
       if (response.status === 200) {
-        // state와 함께 navigate
         navigate("/seatManage/bookingSeat", {
           state: {
             mt20id: mt20id,
@@ -187,20 +108,21 @@ const BookingSection = ({
     }
   };
 
-  // dayCellClassNames 함수 수정
   const dayCellClassNames = (arg) => {
     const date = arg.date;
     const formattedDate = formatDate(date);
     const dayName = getDayName(date);
 
-    // 날짜 비교를 위해 Date 객체로 변환
     const currentDate = new Date(formattedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 시간을 제거하여 날짜만 비교
     const startDate = new Date(performance.prfpdfrom);
     const endDate = new Date(performance.prfpdto);
 
-    if (currentDate < startDate || currentDate > endDate) {
-      return "fc-day-disabled";
-    }
+    // 오늘 이전 날짜이거나 공연 기간을 벗어난 경우
+  if (currentDate < today || currentDate < startDate || currentDate > endDate) {
+    return "fc-day-disabled";
+  }
 
     let classNames = formattedDate === selectedDate ? "selected-date" : "";
 
@@ -211,55 +133,118 @@ const BookingSection = ({
     return classNames;
   };
 
+  if (loading) {
+    return <div className="loading-spinner show"></div>;
+  }
+
+  if (!performance) {
+    return <div>공연 정보를 찾을 수 없습니다.</div>;
+  }
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="calendar-container mb-6">
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          locale="ko"
-          headerToolbar={{
-            left: "prev",
-            center: "title",
-            right: "next",
-          }}
-          dateClick={handleDateSelect}
-          validRange={{
-            start: new Date(performance.prfpdfrom),
-            end: new Date(performance.prfpdto),
-          }}
-          dayCellClassNames={dayCellClassNames}
-          height="auto"
-        />
+    <div className="performance-detail-container">
+      {/* Header를 detail-content 밖으로 이동 */}
+      <div className="booked-detail-header">
+        <h1 className="booked-detail-title">{performance.prfnm}</h1>
+        <button onClick={handleBack} className="booked-back-button">
+          <i className="fas fa-arrow-left"></i>
+          <span>목록으로 돌아가기</span>
+        </button>
       </div>
-      {/* 선택된 날짜와 공연 시간 */}
-      {selectedDate && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-3">
-            선택된 날짜: {selectedDate}
-          </h3>
-          <div className="space-y-2">
-            {selectedTimes.length > 0 ? (
-              selectedTimes.map((timeInfo, index) => (
-                <button
-                  key={`${timeInfo.time}-${index}`} // 고유한 key 추가
-                  onClick={() =>
-                    handleTimeSelection(timeInfo.time, selectedDate)
-                  }
-                  className="w-full p-3 text-left border rounded-lg transition-colors hover:bg-blue-100"
-                >
-                  <span className="font-medium">{timeInfo.time}</span>
-                  <span className="text-sm text-gray-500 ml-2">
-                    ({timeInfo.seatStatus})
-                  </span>
-                </button>
-              ))
-            ) : (
-              <p className="text-gray-500">해당 날짜에 공연이 없습니다.</p>
-            )}
+
+      <div className="detail-content">
+        {/* Left side: Performance Info */}
+        <div className="info-section">
+          <div className="poster-container">
+            <img
+              src={performance.poster || defaultPoster}
+              alt={performance.prfnm}
+              className="poster-image"
+              onError={(e) => {
+                if (e.target.src !== defaultPoster) {
+                  e.target.src = defaultPoster;
+                }
+              }}
+            />
+          </div>
+          <div className="info-table-container">
+            <div className="info-row">
+              <div className="info-label">공연 기간</div>
+              <div className="info-value period">
+                {performance.prfpdfrom} ~ {performance.prfpdto}
+              </div>
+            </div>
+            <div className="info-row">
+              <div className="info-label">공연 장소</div>
+              <div className="info-value">{performance.fcltynm}</div>
+            </div>
+            <div className="info-row">
+              <div className="info-label">공연 시간</div>
+              <div className="info-value">{performance.prfruntime}</div>
+            </div>
+            <div className="info-row">
+              <div className="info-label">출연진</div>
+              <div className="info-value">{performance.prfcast}</div>
+            </div>
+            <div className="info-row">
+              <div className="info-label">가격</div>
+              <div className="info-value price">{performance.pcseguidance}</div>
+            </div>
+            <div className="info-row">
+              <div className="info-label">주소</div>
+              <div className="info-value address">{performance.adres}</div>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Right side: Calendar and Time Selection */}
+        <div className="booking-section">
+          <div className="calendar-container">
+            <FullCalendar
+              plugins={[dayGridPlugin, interactionPlugin]}
+              initialView="dayGridMonth"
+              locale="ko"
+              headerToolbar={{
+                left: "prev",
+                center: "title",
+                right: "next",
+              }}
+              dateClick={handleDateSelect}
+              validRange={{
+                start: new Date(), // 오늘부터
+                end: new Date(performance.prfpdto),
+              }}
+              dayCellClassNames={dayCellClassNames}
+              height="auto"
+            />
+          </div>
+
+          {selectedDate && (
+            <div className="time-slots">
+              <h3 className="time-slots-title">선택된 날짜: {selectedDate}</h3>
+              <div className="time-slots-container">
+                {selectedTimes.length > 0 ? (
+                  selectedTimes.map((timeInfo, index) => (
+                    <button
+                      key={`${timeInfo.time}-${index}`}
+                      onClick={() => handleTimeSelection(timeInfo.time)}
+                      className="time-slot-button"
+                    >
+                      <div className="time-slot-info">
+                        <span className="time-slot-time">{timeInfo.time}</span>
+                      </div>
+                    </button>
+                  ))
+                ) : (
+                  <p className="no-times-message">
+                    해당 날짜에 공연이 없습니다.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -30,5 +30,6 @@ public class Seat {
 	
 	private int totalSeatCount;  // 총 좌석 수 (추가)
 	private int availableSeatCount;  // 총 좌석 수 (추가)
+	private int blockedSeatCount;	// 비활성화 된 좌석 수 (추가)
 	
 }

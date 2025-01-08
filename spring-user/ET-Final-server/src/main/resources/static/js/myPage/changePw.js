@@ -1,5 +1,5 @@
 // 공통 함수: 쿠키 가져오기
-const getCookie = (name) => {
+const getChangeCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
@@ -74,7 +74,7 @@ submitBtn.addEventListener("click", () => {
 	const newPassword = newPasswordInput.value; // 비밀번호 입력값
 	const confirmPassword = confirmPasswordInput.value; // 비밀번호 확인 입력값
 	
-	const naverFl = getCookie('naverFl');
+	const naverFl = getChangeCookie('naverFl');
 	    
     if (naverFl === 'Y') {
         alert('네이버 로그인 사용자는 네이버에서 비밀번호를 변경해주세요.');

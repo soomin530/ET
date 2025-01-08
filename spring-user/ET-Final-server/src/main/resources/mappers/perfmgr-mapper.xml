@@ -74,6 +74,7 @@
 			#{concertManagerCompanyComment}, 
 			#{concertManagerEmail}, 
 			DEFAULT,
+			DEFAULT,
 			DEFAULT
 		)
 	</insert>

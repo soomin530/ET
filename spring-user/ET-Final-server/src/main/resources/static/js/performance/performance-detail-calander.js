@@ -171,7 +171,7 @@ class Calendar {
 		this.endDate = new Date(performanceData.endDate); // 공연 종료일
 
 		// 시작 날짜의 월을 초기 날짜로 설정
-		this.date = new Date(this.startDate);
+		this.date = new Date();
 		this.selectedDate = null; // 선택된 날짜를 저장할 변수
 		this.initElements(); // DOM 요소 초기화
 		this.renderCalendar(); // 캘린더 렌더링
