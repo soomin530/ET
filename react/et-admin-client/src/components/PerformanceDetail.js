@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import '../css/PerformanceDetail.css';
 
 const PerformanceForm = () => {
   const container = useRef(null);
@@ -10,74 +11,103 @@ const PerformanceForm = () => {
   const [isShowSuggestions, setIsShowSuggestions] = useState(false);
   const [searchType, setSearchType] = useState('keyword');
 
-  const { mt10ID } = useParams(); // URL에서 memberNo 가져오기
+  const { mt10ID } = useParams();
 
   const [formData, setFormData] = useState({
-    MT10ID: '',       // 공연장 ID (새로 추가)
-    FCLTYNM: '',      // facilityName -> FCLTYNM 
-    MT13CNT: '',      // facilityCount -> MT13CNT
-    FCLTYCHARTR: '공공(문예회관)',  // facilityType -> FCLTYCHARTR
-    OPENDE: '',       // openYear -> OPENDE
-    SEATSCALE: '',    // seatCount -> SEATSCALE
-    TELNO: '',        // phoneNumber -> TELNO
-    RELATEURL: '',    // website -> RELATEURL
-    ADRES: '',        // address -> ADRES
-    FCLTLA: '',       // latitude -> FCLTLA
-    FCLTLO: ''        // longitude -> FCLTLO
- });
+    MT10ID: '',      
+    FCLTYNM: '',      
+    MT13CNT: '',      
+    FCLTYCHARTR: '공공(문예회관)',  
+    OPENDE: '',       
+    SEATSCALE: '',    
+    TELNO: '',        
+    RELATEURL: '',    
+    ADRES: '',        
+    FCLTLA: '',       
+    FCLTLO: ''        
+  });
 
- useEffect(() => {
-  if (mt10ID) {  // mt10ID가 있을 때만 API 호출
-    axios
-      .get(`http://localhost:8081/performance/${mt10ID}`)
-      .then((response) => {
-        console.log("API 응답 데이터:", response.data);
-        const performanceData = response.data[0];
-        console.log(performanceData);
-        // 데이터가 있는지 확인하고 대문자로 변환하여 설정
-        setFormData({
-          MT10ID: performanceData?.mt10ID || '',
-          FCLTYNM: performanceData?.fcltynm || '',
-          MT13CNT: performanceData?.mt13CNT || '',
-          FCLTYCHARTR: performanceData?.fcltychartr || '공공(문예회관)',
-          OPENDE: performanceData?.opende || '',
-          SEATSCALE: performanceData?.seatscale || '',
-          TELNO: performanceData?.telno || '',
-          RELATEURL: performanceData?.relateurl || '',
-          ADRES: performanceData?.adres || '',
-          FCLTLA: performanceData?.fcltla || '',
-          FCLTLO: performanceData?.fcltlo || ''
+  const [validationErrors, setValidationErrors] = useState({
+    FCLTYNM: false,
+    TELNO: false
+  });
+
+  const isValidPhoneNumber = (phoneNumber) => {
+    if (!phoneNumber) return true;
+    const telRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
+    const mobileRegex = /^010-\d{4}-\d{4}$/;
+    return telRegex.test(phoneNumber) || mobileRegex.test(phoneNumber);
+  };
+
+  useEffect(() => {
+    if (mt10ID) {
+      axios
+        .get(`http://localhost:8081/performance/${mt10ID}`)
+        .then((response) => {
+          const performanceData = response.data[0];
+          setFormData({
+            MT10ID: performanceData?.mt10ID || '',
+            FCLTYNM: performanceData?.fcltynm || '',
+            MT13CNT: performanceData?.mt13CNT || '',
+            FCLTYCHARTR: performanceData?.fcltychartr || '공공(문예회관)',
+            OPENDE: performanceData?.opende || '',
+            SEATSCALE: performanceData?.seatscale || '',
+            TELNO: performanceData?.telno || '',
+            RELATEURL: performanceData?.relateurl || '',
+            ADRES: performanceData?.adres || '',
+            FCLTLA: performanceData?.fcltla || '',
+            FCLTLO: performanceData?.fcltlo || ''
+          });
+        })
+        .catch((error) => {
+          console.error("API 호출 에러:", error);
         });
-
-        // 값이 제대로 설정되었는지 확인
-        console.log("설정된 formData:", performanceData);
-      })
-      .catch((error) => {
-        console.error("API 호출 에러:", error);
-      });
-  }
-}, [mt10ID]);
-
-// formData가 변경될 때마다 로그 출력
-useEffect(() => {
-  console.log("현재 formData 상태:", formData);
-}, [formData]);
+    }
+  }, [mt10ID]);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    if (name === 'FCLTYNM') {
+      setValidationErrors(prev => ({
+        ...prev,
+        FCLTYNM: !value.trim()
+      }));
+    }
+    
+    if (name === 'TELNO') {
+      setValidationErrors(prev => ({
+        ...prev,
+        TELNO: value ? !isValidPhoneNumber(value) : false
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    if (!formData.FCLTYNM.trim()) {
+      alert('공연장명은 필수 입력사항입니다.');
+      return;
+    }
+
+    if (formData.TELNO && !isValidPhoneNumber(formData.TELNO)) {
+      alert('올바른 전화번호 형식을 입력해주세요.');
+      return;
+    }
+    
     axios
       .post('http://localhost:8081/performance/update', formData)
       .then((response) => {
-        if(response.data > 0) {alert('시설 정보가 변경되었습니다.');}
-        else alert("변경 실패하였습니다");
+        if(response.data > 0) {
+          alert('시설 정보가 변경되었습니다.');
+        } else {
+          alert("변경 실패하였습니다");
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -126,22 +156,17 @@ useEffect(() => {
   useEffect(() => {
     if (formData.FCLTLA && formData.FCLTLO && mapInstanceRef.current) {
       const coords = new window.kakao.maps.LatLng(formData.FCLTLA, formData.FCLTLO);
-      
-      // 지도 중심 이동
       mapInstanceRef.current.setCenter(coords);
       
-      // 기존 마커가 있다면 제거
       if (mapInstanceRef.current.marker) {
         mapInstanceRef.current.marker.setMap(null);
       }
       
-      // 새 마커 생성
       const marker = new window.kakao.maps.Marker({
         map: mapInstanceRef.current,
         position: coords
       });
       
-      // 마커 참조 저장
       mapInstanceRef.current.marker = marker;
     }
   }, [formData.FCLTLA, formData.FCLTLO]);
@@ -158,25 +183,24 @@ useEffect(() => {
       });
     }
 
-    // Form 데이터 업데이트
     setFormData({
       ...formData,
       ADRES: place.address_name,
       FCLTLA: place.y,
       FCLTLO: place.x
     });
-    console.log(formData);
     
     setIsShowSuggestions(false);
   };
 
   return (
-    <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
-      <div style={{ flex: 1 }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div>
+    <div className="form-container" style={{ display: 'flex', gap: '20px', padding: '20px' }}>
+      <div className="form-wrapper" style={{ flex: 1 }}>
+        <form onSubmit={handleSubmit} className="performance-form">
+          <div className="form-group">
             <label>공연장 ID:</label>
             <input
+              className="form-input readonly"
               type="text"
               name="MT10ID"
               value={formData.MT10ID}
@@ -185,19 +209,24 @@ useEffect(() => {
               readOnly
             />
           </div>
-          <div>
+          <div className="form-group">
             <label>공연장명:</label>
             <input
+              className={`form-input ${validationErrors.FCLTYNM ? 'error' : ''}`}
               type="text" 
               name="FCLTYNM"
               value={formData.FCLTYNM}
               onChange={handleChange}
               required
             />
+            {validationErrors.FCLTYNM && (
+              <span className="error-message">공연장명은 필수 입력사항입니다.</span>
+            )}
           </div>
-          <div>
+          <div className="form-group">
             <label>공연장 시설 수:</label>
             <input
+              className="form-input"
               type="number"
               name="MT13CNT"
               value={formData.MT13CNT}
@@ -205,9 +234,10 @@ useEffect(() => {
               required
             />
           </div>
-          <div>
+          <div className="form-group">
             <label>시설특성:</label>
             <input
+              className="form-input"
               type="text"
               name="FCLTYCHARTR"
               value={formData.FCLTYCHARTR}
@@ -215,9 +245,10 @@ useEffect(() => {
               placeholder="공공(문예회관)"
             />
           </div>
-          <div>
+          <div className="form-group">
             <label>개관일:</label>
             <input
+              className="form-input"
               type="text"
               name="OPENDE"
               value={formData.OPENDE}
@@ -225,9 +256,10 @@ useEffect(() => {
               required
             />
           </div>
-          <div>
+          <div className="form-group">
             <label>객석수:</label>
             <input
+              className="form-input"
               type="number"
               name="SEATSCALE"
               value={formData.SEATSCALE}
@@ -235,57 +267,62 @@ useEffect(() => {
               required
             />
           </div>
-          <div>
+          <div className="form-group">
             <label>전화번호:</label>
             <input
+              className={`form-input ${validationErrors.TELNO ? 'error' : ''}`}
               type="tel"
               name="TELNO"
               value={formData.TELNO}
               onChange={handleChange}
               required
             />
+            {validationErrors.TELNO && (
+              <span className="error-message">
+                전화번호는 하이픈(-)을 포함한 형식으로 입력해주세요. (예: 02-123-4567 또는 010-1234-5678)
+              </span>
+            )}
           </div>
-          <div>
+          <div className="form-group">
             <label>홈페이지:</label>
             <input
+              className="form-input"
               type="string"
               name="RELATEURL"
               value={formData.RELATEURL}
               onChange={handleChange}
             />
           </div>
-          <button type="submit" style={{ marginTop: '20px', padding: '10px' }}>제출</button>
+          <button 
+            className="submit-button"
+            type="submit" 
+            disabled={validationErrors.FCLTYNM || validationErrors.TELNO}
+          >
+            제출
+          </button>
         </form>
       </div>
  
-      <div style={{ flex: 1 }}>
-        <div className="search-container" style={{ marginBottom: '10px' }}>
+      <div className="map-section" style={{ flex: 1 }}>
+        <div className="search-container">
           <input
+            className="search-input"
             type="text"
             value={searchKeyword}
             onChange={handleInputChange}
             placeholder="주소를 검색하세요"
-            style={{ width: '300px', padding: '8px' }}
           />
  
           {isShowSuggestions && suggestions.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              width: '300px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              backgroundColor: 'white',
-              border: '1px solid #ddd',
-              zIndex: 1000
-            }}>
+            <div className="suggestions-container">
               {suggestions.map((place, index) => (
                 <div
                   key={index}
                   onClick={() => handlePlaceClick(place)}
-                  style={{ padding: '8px', cursor: 'pointer', hover: { backgroundColor: '#f5f5f5' } }}
+                  className="suggestion-item"
                 >
-                  <div>{place.place_name}</div>
-                  <div style={{ fontSize: '0.8em', color: '#666' }}>{place.address_name}</div>
+                  <div className="suggestion-name">{place.place_name}</div>
+                  <div className="suggestion-address">{place.address_name}</div>
                 </div>
               ))}
             </div>
@@ -294,14 +331,14 @@ useEffect(() => {
  
         <div ref={container} style={{ width: "500px", height: "400px" }}></div>
  
-        <div style={{ marginTop: '10px' }}>
-          <p>주소: {formData.ADRES}</p>
-          <p>위도: {formData.FCLTLA}</p>
-          <p>경도: {formData.FCLTLO}</p>
+        <div className="location-info">
+          <p className="location-text">주소: {formData.ADRES}</p>
+          <p className="location-text">위도: {formData.FCLTLA}</p>
+          <p className="location-text">경도: {formData.FCLTLO}</p>
         </div>
       </div>
     </div>
   );
- };
+};
 
 export default PerformanceForm;

@@ -93,3 +93,37 @@
     width: 100%;
   }
 }
+
+/* 버튼 색상 통일 */
+.back-button {
+  background-color: #4B5563;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #374151;
+}
+
+.submit-button {
+  background-color: #2563eb;  /* 파랑색으로 통일 */
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #e65d00;
+}
+
+/* 반응형 디자인 강화 */
+@media (max-width: 768px) {
+  .write-form-wrapper {
+    padding: 1rem;
+  }
+
+  .quill-editor {
+    height: 400px;  /* 모바일에서는 높이 줄임 */
+  }
+
+  .button-group {
+    margin-top: 1rem;
+  }
+}

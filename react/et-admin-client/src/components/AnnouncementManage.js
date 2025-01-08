@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
 import { useNavigate} from "react-router-dom";
+import "./Quill.jsx"
+import axios from "axios";
 
 
 export default function AnnouncementManage() {
@@ -150,6 +152,26 @@ export default function AnnouncementManage() {
 
 const AnnouncementList = ({ announcementList }) => {
   const navigate = useNavigate();
+
+  const handleDelete = async (e, announceNo) => {
+    e.stopPropagation(); // 행 클릭 이벤트 전파 방지
+    
+    if (window.confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+      try {
+        const response = await axios.post(`http://localhost:8081/announcement/delete/${announceNo}`);
+        if (response.data > 0) {
+          alert('공지사항이 삭제되었습니다.');
+          window.location.reload(); // 페이지 새로고침
+        } else {
+          alert('삭제에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('삭제 중 에러 발생:', error);
+        alert('삭제 중 오류가 발생했습니다.');
+      }
+    }
+  };
+
   return (
     <section>
       {announcementList.length === 0 ? (
@@ -161,18 +183,27 @@ const AnnouncementList = ({ announcementList }) => {
               <th>등록번호</th>
               <th>제목</th>
               <th>등록날짜</th>
+              <th>관리</th>
             </tr>
           </thead>
           <tbody>
             {announcementList.map((announcement, index) => (
-               <tr
-               key={index}
-               onClick={() => navigate(`/announcement/${announcement.announceNo}`)}
-               style={{ cursor: 'pointer' }}
-             >
+              <tr
+                key={index}
+                onClick={() => navigate(`/announcement/${announcement.announceNo}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <td>{announcement.announceNo}</td>
                 <td>{announcement.announceTitle}</td>
                 <td>{announcement.announceWriteDate}</td>
+                <td>
+                  <button
+                    className="delete-button"
+                    onClick={(e) => handleDelete(e, announcement.announceNo)}
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -181,4 +212,3 @@ const AnnouncementList = ({ announcementList }) => {
     </section>
   );
 };
-

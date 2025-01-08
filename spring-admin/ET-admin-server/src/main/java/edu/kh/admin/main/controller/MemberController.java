@@ -20,6 +20,7 @@ import edu.kh.admin.main.model.dto.Member;
 import edu.kh.admin.main.model.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import oracle.jdbc.proxy.annotation.Post;
 
 @RestController 
 @CrossOrigin( origins = "http://localhost:3000",
@@ -78,6 +79,16 @@ public class MemberController {
 	@PostMapping("delete/{memberNo:[0-9]+}")
 	public ResponseEntity<Object> delete(@PathVariable("memberNo") int memberNo) {
 	    int result = service.delete(memberNo);
+	    if (result > 0) {
+	        return ResponseEntity.ok(result);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
+	
+	@PostMapping("update/{memberNo:[0-9]+}")
+	public ResponseEntity<Object> update(@RequestBody Map<String, Object> formdata,@PathVariable("memberNo") int memberNo) {
+		int result = service.update(formdata,memberNo);
 	    if (result > 0) {
 	        return ResponseEntity.ok(result);
 	    } else {

@@ -30,11 +30,20 @@ public interface MemberService {
 	 */
 	int delete(int memberNo);
 
+
+	/** 유저 정보 업데이트
+	 * @param formdata
+	 * @param memberNo
+	 * @return
+	 */
+	int update(Map<String, Object> formdata, int memberNo);
+
 	/** 이메일, 회원 번호로 관리자 확인
 	 * @param memberEmail
 	 * @return
 	 */
 	Member findByEmail(String memberEmail, String memberNo);
+
 
 	
 	
