@@ -3,6 +3,7 @@ package edu.kh.project.payment.service;
 import java.util.List;
 import java.util.Map;
 
+import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
 import edu.kh.project.payment.model.dto.Seat;
@@ -39,13 +40,9 @@ public interface paymentService {
 	// 이미 예약된 좌석 조회
 	List<Seat> getBookedSeats(String mt20id, String selectedDate, String selectedTime);
 
+	// 예매 내역 데이터 삽입 TB_BOOKING_HISTORY
+ 	boolean saveBookingHistory(Payment paymentData, Member loginMember);
 
 
-
-
-	
-
-	
-	
 
 }

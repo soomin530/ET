@@ -1,19 +1,5 @@
 // 페이지 로드 시 실행되는 코드
 document.addEventListener('DOMContentLoaded', function() {
-    // 임시 토큰 쿠키 확인 (네이버 로그인 처리용)
-    const cookies = document.cookie.split(';');
-    const tempTokenCookie = cookies.find(cookie => cookie.trim().startsWith('Temp-Access-Token='));
-    
-    if (tempTokenCookie) {
-        // 쿠키에서 토큰 값 추출
-        const accessToken = tempTokenCookie.split('=')[1];
-        
-        // localStorage에 저장
-        localStorage.setItem('accessToken', accessToken);
-        
-        // 임시 토큰 쿠키 삭제
-        document.cookie = 'Temp-Access-Token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    }
 });
 
 // 쿠키에서 매개변수로 전달받은 key가 일치하는 value 얻어오기 함수

@@ -42,3 +42,23 @@ window.onclick = function(event) {
 	}
 	
 }
+
+function checkCapsLock(event) {
+	// 이벤트가 발생한 입력창의 ID를 확인
+	const inputId = event.target.id;
+	let messageId;
+	
+	// 입력창 ID에 따라 메시지 div ID 결정
+	if (inputId === 'memberLoginPw') {
+			messageId = 'checkPwMessage';
+	} else if (inputId === 'concertManagerLoginPw') {
+			messageId = 'adminCheckPwMessage';
+	}
+	
+	// 해당하는 메시지 div에 메시지 표시
+	if (event.getModifierState("CapsLock")) {
+			document.getElementById(messageId).innerText = "Caps Lock이 켜져있습니다.";
+	} else {
+			document.getElementById(messageId).innerText = "";
+	}
+}

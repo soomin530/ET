@@ -179,31 +179,59 @@ class PerformanceChart {
 
 	initializeChart() {
 		const ctx = document.getElementById('concertChart').getContext('2d');
+
+		// "합계" 카테고리를 제외한 데이터 필터링
+		const filteredData = statisticsData.filter(stat => stat.statCategory !== "합계");
+
+		const chartData = {
+			labels: filteredData.map(stat => stat.statCategory),
+			datasets: [{
+				label: '예매 수',
+				data: filteredData.map(stat => stat.statNtssnmrssm),
+				backgroundColor: 'rgba(75, 192, 192, 0.2)',
+				borderColor: 'rgba(75, 192, 192, 1)',
+				borderWidth: 1
+			}, {
+				label: '취소 예매 수',
+				data: filteredData.map(stat => stat.statCancelnmrssm),
+				backgroundColor: 'rgba(255, 99, 132, 0.2)',
+				borderColor: 'rgba(255, 99, 132, 1)',
+				borderWidth: 1
+			}]
+		};
+
 		new Chart(ctx, {
 			type: 'bar',
-			data: {
-				labels: ['연극', '서양음악(클래식)', '뮤지컬', '합계'],
-				datasets: [{
-					label: '예매 수',
-					data: [192932, 201572, 766050, 672742],
-					backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					borderColor: 'rgba(75, 192, 192, 1)',
-					borderWidth: 1
-				}, {
-					label: '취소 예매 수',
-					data: [69216, 60655, 357941, 487812],
-					backgroundColor: 'rgba(255, 99, 132, 0.2)',
-					borderColor: 'rgba(255, 99, 132, 1)',
-					borderWidth: 1
-				}]
-			},
+			data: chartData,
 			options: {
 				scales: {
-					y: { beginAtZero: true }
+					y: {
+						beginAtZero: true,
+						ticks: {
+							callback: function(value) {
+								return new Intl.NumberFormat('ko-KR').format(value);
+							}
+						}
+					}
 				},
 				responsive: true,
+				maintainAspectRatio: false,
 				plugins: {
-					legend: { position: 'top' }
+					legend: {
+						position: 'top'
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								let label = context.dataset.label || '';
+								if (label) {
+									label += ': ';
+								}
+								label += new Intl.NumberFormat('ko-KR').format(context.raw);
+								return label;
+							}
+						}
+					}
 				}
 			}
 		});

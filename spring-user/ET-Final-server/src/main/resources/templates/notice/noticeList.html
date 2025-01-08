@@ -21,6 +21,23 @@
 			<h1 class="notice-title">공지사항</h1>
 		</div>
 
+		<!-- 01-08 우수민 추가 -->
+		<!-- 검색 영역을 별도의 클래스명으로 변경 -->
+		<div class="notice-search-container">
+			<div class="notice-search-box">
+				<input type="text" class="notice-search-input" id="noticeSearchInput" placeholder="공지사항 제목이나 내용을 입력해주세요.">
+				<select class="notice-search-type" id="noticeSearchType">
+					<option value="all">전체</option>
+					<option value="title">제목</option>
+					<option value="venue">내용</option>
+				</select>
+				<button class="notice-search-button" id="noticeSearchButton">
+					<i class="fas fa-search"></i>
+					검색
+				</button>
+			</div>
+		</div>
+
 		<div class="notice-list">
 			<th:block th:each="notice : ${noticeList}">
 				<div class="notice-item">
@@ -30,8 +47,7 @@
 							<span class="notice-subject" th:text="${notice.announceTitle}">제목</span>
 						</div>
 						<div class="notice-meta">
-							<span class="notice-date"
-								th:text="${notice.announceWriteDate}">
+							<span class="notice-date" th:text="${notice.announceWriteDate}">
 								날짜
 							</span>
 							<div class="notice-arrow">
@@ -41,7 +57,7 @@
 					</div>
 					<div th:id="'notice-content-' + ${notice.announceNo}" class="notice-content">
 						<div class="notice-content-inner">
-							<p th:text="${notice.announceContent}">내용</p>
+							<p th:utext="${notice.announceContent}">내용</p>
 						</div>
 					</div>
 				</div>

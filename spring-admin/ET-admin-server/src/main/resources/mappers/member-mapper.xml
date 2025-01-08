@@ -1,8 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="edu.kh.admin.main.model.mapper.AdminMapper">
-	
+<mapper namespace="edu.kh.admin.main.model.mapper.MemberMapper">
+
+	<!-- 모든 회원 조회 -->
+	<select id="showMemberList" >
+		SELECT MEMBER_NO, MEMBER_NICKNAME ,MEMBER_ADDRESS ,MEMBER_TEL 
+		FROM "TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_AUTH = '1'
+		ORDER BY MEMBER_NO ASC
+	</select>
+
+	<!-- 검색된 모든 회원 조회 -->
+	<select id="searchShowMemberList">
+	    SELECT 
+	        MEMBER_NO, 
+	        MEMBER_NICKNAME, 
+	        MEMBER_ADDRESS, 
+	        MEMBER_TEL 
+	    FROM 
+	        "TB_MEMBER"
+	    WHERE 
+	        MEMBER_DEL_FL = 'N'
+	        AND MEMBER_AUTH = '1'
+	        <choose>
+	            <when test="selectedValue == '회원이름'">
+	                AND MEMBER_NICKNAME LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <when test="selectedValue == '주소'">
+	                AND MEMBER_ADDRESS LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <otherwise>
+	                AND MEMBER_TEL LIKE '%' || #{inputValue} || '%' 
+	            </otherwise>
+	        </choose>
+	    ORDER BY 
+	        MEMBER_NO ASC
+	</select>
 
 	
+	<select id="memberDetail">
+	SELECT MEMBER_NICKNAME, MEMBER_TEL, MEMBER_ADDRESS,MEMBER_GENDER,MEMBER_EMAIL
+	FROM "TB_MEMBER"
+	WHERE MEMBER_NO = ${memberNo}
+	</select>
+	
+	<update id="delete">
+	UPDATE TB_MEMBER
+	SET MEMBER_DEL_FL = 'Y'
+	WHERE MEMBER_NO = ${memberNo}
+	</update>
 
 </mapper>

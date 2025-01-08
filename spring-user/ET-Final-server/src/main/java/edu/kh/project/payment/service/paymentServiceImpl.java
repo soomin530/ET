@@ -1,15 +1,21 @@
 
 package edu.kh.project.payment.service;
 
+import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.payment.model.dto.Booking;
 import edu.kh.project.payment.model.dto.Payment;
 import edu.kh.project.payment.model.dto.Seat;
@@ -87,6 +93,53 @@ public class paymentServiceImpl implements paymentService {
 	    return mapper.selectBookedSeats(params);
 	}
 
+	// 예매 내역 데이터 삽입 (TB_BOOKING_HISTORY)
+	@Override
+	public boolean saveBookingHistory(Payment paymentData, Member loginMember) {
+		Performance performanceDetail = mapper.getPerformanceDetail(paymentData.getMt20id());
+
+	    if (performanceDetail == null) {
+	        log.error("공연 정보를 가져오지 못했습니다. 공연 ID: {}", paymentData.getMt20id());
+	        return false;
+	    }
+	    
+	 // SimpleDateFormat 선언 및 초기화
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  // 추가된 부분
+
+	    try {
+	        // 날짜 문자열을 `Date`로 변환 후 하루 전 날짜 계산
+	        String showDateStr = paymentData.getShowDate();
+	        Date showDate = dateFormat.parse(showDateStr);  // 변환
+	        Calendar cal = Calendar.getInstance();
+	        cal.setTime(showDate);
+	        cal.add(Calendar.DATE, -1);  // 하루 전 계산
+
+	        // `Date`를 다시 문자열로 변환
+	        String cancelableUntilStr = dateFormat.format(cal.getTime());
+	        Timestamp cancelableUntil = new Timestamp(cal.getTime().getTime());
+
+	        String performanceName = performanceDetail.getPrfnm();
+
+	        Map<String, Object> params = new HashMap<>();
+	        params.put("bookingDate", new Timestamp(System.currentTimeMillis()));
+	        params.put("paidAt", paymentData.getPaidAt());
+	        params.put("bookingId", paymentData.getMerchantUid());
+	        params.put("performanceName", performanceName);
+	        params.put("showDateTime", paymentData.getShowDate() + " " + paymentData.getShowTime());
+	        params.put("ticketCount", paymentData.getSeatIds().size());
+	        params.put("cancelableUntil", cancelableUntil);
+	        params.put("bookingStatus", "예매");
+	        params.put("memberNo", loginMember.getMemberNo());  // 추가
+	        params.put("mt20id", paymentData.getMt20id());      // 추가
+
+	        int result = mapper.insertBookingHistory(params);
+	        return result > 0;
+	    } catch (Exception e) {
+	        log.error("날짜 변환 중 오류 발생: ", e);
+	        return false;
+	    }
+
+	}
 	
 
 	

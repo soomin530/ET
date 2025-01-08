@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -214,9 +215,9 @@ public class PerfmgrController {
 	 * @return
 	 * @author 우수민
 	 */
-	@GetMapping("performance-management")
+	@GetMapping("/perfmgr-management")
 	public String performanceManagement() {
-		return "perfmgr/performance-management";
+		return "perfmgr/perfmgr-management";
 	}
 
 	/**
@@ -226,7 +227,7 @@ public class PerfmgrController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/performance-list")
+	@GetMapping("/perfmgr-list")
 	public String manager(@SessionAttribute("loginMember") PerfMgr loginMember, Model model) {
 
 		// 로그인된 관리자 정보 가져오기
@@ -238,7 +239,7 @@ public class PerfmgrController {
 		// 모델에 공연 목록 추가
 		model.addAttribute("performances", performances);
 
-		return "perfmgr/performance-list";
+		return "perfmgr/perfmgr-list";
 	}
 
 	/**
@@ -247,9 +248,9 @@ public class PerfmgrController {
 	 * @return
 	 * @author 우수민
 	 */
-	@GetMapping("performance-registration")
+	@GetMapping("/perfmgr-registration")
 	public String updatePerformance() {
-		return "perfmgr/performance-registration";
+		return "perfmgr/perfmgr-registration";
 	}
 
 	/**
@@ -260,8 +261,9 @@ public class PerfmgrController {
 	 * @return
 	 * @author 우수민
 	 */
-	@GetMapping("/performance-manager-detail/{mt20id}")
+	@GetMapping("/perfmgr-manager-detail/{mt20id}")
 	public String managerDetail(@PathVariable("mt20id") String mt20id, Model model) {
+		
 		log.info("Fetching performance details for ID: {}", mt20id);
 
 		Performance performance = service.getPerformanceById(mt20id);
@@ -273,7 +275,7 @@ public class PerfmgrController {
 		}
 
 		model.addAttribute("performance", performance);
-		return "perfmgr/performance-manager-detail";
+		return "perfmgr/perfmgr-manager-detail";
 	}
 	
 
@@ -283,20 +285,70 @@ public class PerfmgrController {
      * @return
      * @author 우수민
      */
-	@GetMapping("/modifyPerformance")
+	@GetMapping("/perfmgr-modifyPerformance")
 	public String modifyPerformance(@RequestParam("mt20id") String mt20id, Model model) {
 	    try {
+	    	
 	        // 공연 정보 조회
 	        Performance performance = service.getPerformanceDetail(mt20id);
 	        
 	        // 모델에 공연 정보 추가
 	        model.addAttribute("performance", performance);
 	        
-	        return "perfmgr/modifyPerformance";
+	        return "perfmgr/perfmgr-modifyPerformance";
 	        
 	    } catch (Exception e) {
 	        log.error("공연 수정 페이지 로딩 중 에러 발생: ", e);
 	        return "error/error";  // 에러 페이지로 리다이렉트
 	    }
 	}
+	
+
+	/** 수정된 내용으로 상세페이지, DB 업데이트
+	 * @param mt20id
+	 * @param performances
+	 * @return
+	 */
+	@PostMapping("/perfmgr-modifyPerformance/{mt20id}")
+	public ResponseEntity<?> modifyPerformanceUpdate(
+	    @PathVariable("mt20id") String mt20id,
+	    @RequestBody Performance performance) {
+
+	    Performance updateData = new Performance();
+	    updateData.setMt20id(mt20id);
+	    updateData.setPrfnm(performance.getPrfnm());
+	    updateData.setPrfruntime(performance.getPrfruntime());
+	    updateData.setPrfcast(performance.getPrfcast());
+
+	    boolean isUpdated = service.modifyPerformanceUpdate(updateData);
+
+	    if (isUpdated) {
+	    	
+	        // JSON 형식으로 응답
+	        return ResponseEntity.ok().body(Map.of("message", "수정 성공"));
+	    }
+	    
+	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                        .body(Map.of("message", "수정 실패"));
+	}
+	
+    /** 관리자 상세 정보 페이지에서 삭제 버튼 누를 시
+     *  PERFORMANCE_DEL_FL 값을 'Y'로 업데이트
+     * @param mt20id
+     * @param request
+     * @return
+     * @author 우수민
+     */
+    @PostMapping("/delete/{mt20id}")
+    public ResponseEntity<String> deletePerformance(@PathVariable("mt20id") String mt20id) {
+
+        boolean updated = service.updatePerformanceDeleteFlag(mt20id);
+
+        if (updated) {
+            return ResponseEntity.ok("공연이 성공적으로 삭제되었습니다.");
+            
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("공연 삭제 중 오류가 발생했습니다.");
+        }
+    }
 }
