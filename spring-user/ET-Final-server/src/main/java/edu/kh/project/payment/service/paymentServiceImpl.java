@@ -129,6 +129,8 @@ public class paymentServiceImpl implements paymentService {
 	        params.put("ticketCount", paymentData.getSeatIds().size());
 	        params.put("cancelableUntil", cancelableUntil);
 	        params.put("bookingStatus", "예매");
+	        params.put("memberNo", loginMember.getMemberNo());  // 추가
+	        params.put("mt20id", paymentData.getMt20id());      // 추가
 
 	        int result = mapper.insertBookingHistory(params);
 	        return result > 0;

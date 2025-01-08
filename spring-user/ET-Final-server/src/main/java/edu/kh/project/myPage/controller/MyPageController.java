@@ -231,14 +231,12 @@ public class MyPageController {
 	 * @param loginMember
 	 * @return
 	 */
-	@GetMapping("/ticketInfo/data/{bookingId}")
-	public ResponseEntity<List<Map<String, Object>>> getBookingHistory(
-			    @PathVariable("bookingId") String bookingId,  // String으로 타입 통일
+	@GetMapping("/ticketInfo/data")
+	public ResponseEntity<List<ticketInfoDTO>> getBookingHistory(
 			    @SessionAttribute("loginMember") Member loginMember
 			) {
-		
-	    List<Map<String, Object>> history = service.getBookingHistory(bookingId, loginMember.getMemberNo());
-	    return ResponseEntity.ok(history);
+		List<ticketInfoDTO> bookingHistory = service.getBookingHistory(loginMember.getMemberNo());
+	    return ResponseEntity.ok(bookingHistory);
 	}
 
 
