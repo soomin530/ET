@@ -36,7 +36,7 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
     // 처리할 카테고리 코드 리스트
     private final List<String> CATEGORY_CODES = Arrays.asList("AAAA", "CCCA", "GGGA");
 
-    @Scheduled(cron = "0 0 0 1 * *") // 
+    @Scheduled(cron = "0 0 2 1 * *") // 
     public void performStatisticsBatch() {
         try {
         	// 지난달의 시작일과 마지막일 구하기
@@ -63,6 +63,13 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
         }
     }
 
+    /** Api로 통계 데이터 가져오기(뮤지컬, 연극, 클래식만)
+     * @param startDate
+     * @param endDate
+     * @param categoryCode
+     * @return
+     * @throws Exception
+     */
     private List<Statistics> fetchAndParseStatistics(String startDate, String endDate, String categoryCode) throws Exception {
     	List<Statistics> statisticsList = new ArrayList<>();
     	
@@ -117,6 +124,11 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
         return statisticsList;
     }
 
+    /** element안에 태그 내용 반환
+     * @param element
+     * @param tagName
+     * @return
+     */
     private String getElementText(Element element, String tagName) {
         NodeList nodeList = element.getElementsByTagName(tagName);
         if (nodeList.getLength() > 0) {
@@ -125,6 +137,10 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
         return null;
     }
     
+    /** int 타입 반환
+     * @param value
+     * @return
+     */
     private int parseInt(String value) {
         try {
             return Integer.parseInt(value);
@@ -133,6 +149,10 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
         }
     }
     
+    /** Long 타입 반환
+     * @param value
+     * @return
+     */
     private long parseLong(String value) {
         try {
             return Long.parseLong(value);
@@ -146,6 +166,36 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
 	@Override
 	public List<Statistics> getStatList() {
 		return mapper.getStatList();
+	}
+	
+	// 공연 종료 업데이트 배치 실행
+	@Scheduled(cron = "0 0 1 * * *")
+	public void updatePerformanceStatus() {
+	    try {
+	    	// 종료된 공연 상태 업데이트
+	        int updatedCount = mapper.updateExpiredPerformances();
+	        log.info("Updated {} expired performances to '공연종료' status", updatedCount);
+	        
+	        // 시작된 공연 상태 업데이트
+	        int startedCount = mapper.updateStartedPerformances();
+	        log.info("Updated {} started performances to '공연중' status", startedCount);
+	        
+	    } catch (Exception e) {
+	        log.error("Error updating performance status: ", e);
+	    }
+	}
+	
+	// StatisticsBatchServiceImpl.java에 추가할 메서드
+	@Scheduled(cron = "0 0 3 * * *")
+	public void updatePerformanceReviewRanks() {
+	    try {
+	        // 공연 리뷰 평점 평균 업데이트
+	        int updatedCount = mapper.updatePerformanceReviewRanks();
+	        log.info("Updated {} performances review ranks", updatedCount);
+	        
+	    } catch (Exception e) {
+	        log.error("Error updating performance review ranks: ", e);
+	    }
 	}
     
 }
