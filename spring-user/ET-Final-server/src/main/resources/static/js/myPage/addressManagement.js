@@ -390,6 +390,13 @@ function openEditModal(address) {
 	document.getElementById('editDetailAddress').value = address.detailAddress;
 	document.getElementById('editPhone').value = address.phone;
 	document.getElementById('editExtraPhone').value = address.extraPhone || '';
+
+	// 전화번호 유효성 검사 메시지 초기화
+	document.getElementById('editPhoneMessage').innerText = '';
+	document.getElementById('editExtraPhoneMessage').innerText = '';
+	document.getElementById('editPhoneMessage').classList.remove('error', 'confirm');
+	document.getElementById('editExtraPhoneMessage').classList.remove('error', 'confirm');
+
 	
 	editModal.style.display = 'block';
 }
