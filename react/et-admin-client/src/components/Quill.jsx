@@ -1,6 +1,7 @@
 import ReactQuill from "react-quill";
 import { useRef,useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
+import "../css/AnnouncementDetail.css"
 
 function Write() {
   const modules = {
@@ -14,7 +15,6 @@ function Write() {
   };
 
   const [content, setContent] = useState("");
-  console.log(content);
   const [title, setTitle] = useState("");
   const [file, setFile] = useState(null);
 
@@ -47,29 +47,57 @@ function Write() {
           'Content-Type': 'multipart/form-data', // 자동으로 multipart/form-data로 설정됩니다
         },
         withCredentials: true, // 쿠키 포함 여부
-      }).then((res) => console.log(res));
+      }).then((response) => {
+        if(response.data > 0){
+          alert("공지사항이 등록되었습니다")
+          window.history.back();
+        }
+        else{
+          alert("정보 수정이 실패하였습니다")
+        }
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <>
-      <div>
-        <label htmlFor="title">제목</label>
-        <input id="title" type="text" onChange={handleTitleChange} />
-      
-        <ReactQuill
-          style={{ width: "800px", height: "600px" }}
-          modules={modules}
-          onChange={setContent}
-        />
+    <div className="write-container">
+      <div className="write-form-wrapper">
+        <div className="input-group">
+          <label className="form-label" htmlFor="title">제목</label>
+          <input 
+            id="title" 
+            type="text" 
+            onChange={handleTitleChange} 
+            className="form-input"
+          />
+        </div>
+        
+        <div className="editor-wrapper">
+          <ReactQuill
+            className="quill-editor"
+            modules={modules}
+            onChange={setContent}
+          />
+        </div>
+
+        <div className="button-group">
+          <button 
+            className="back-button"
+            onClick={() => window.history.back()}
+          >
+            취소
+          </button>
+          <button 
+            className="submit-button"
+            onClick={handleSubmit}
+          >
+            등록
+          </button>
+        </div>
       </div>
-      
-      <button style={{ marginTop: "50px" }} onClick={handleSubmit}>
-        제출
-      </button>
-    </>
+    </div>
   );
 }
 
