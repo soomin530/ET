@@ -72,9 +72,25 @@ public class ConcertManagerController {
 	    }
 	}
 	
+	@PostMapping("agree/{concertManagerNo:[0-9]+}")
+	public ResponseEntity<Object> agree(@PathVariable("concertManagerNo") int concertManagerNo) {
+	    int result = service.agree(concertManagerNo);
+	    if (result > 0) {
+	        return ResponseEntity.ok(result);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
 	
-	
-	
+	@PostMapping("delete/{concertManagerNo:[0-9]+}")
+	public ResponseEntity<Object> delete(@PathVariable("concertManagerNo") int concertManagerNo) {
+	    int result = service.delete(concertManagerNo);
+	    if (result > 0) {
+	        return ResponseEntity.ok(result);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
 	
 	
 	

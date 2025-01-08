@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
+import { useNavigate} from "react-router-dom";
 
 
 export default function PerformanceManage() {
-  const [pfList,setPfList] = useState([])
-  const [selectedValue, setSelectedValue] = useState('연극명');
+  const [performanceList,setPerformanceList] = useState([])
+  const [selectedValue, setSelectedValue] = useState('이름');
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true); // 로딩 상태
+  
+  const navigate = useNavigate();
   
   const handleChange = (e) => {
     setSelectedValue(e.target.value);
@@ -25,25 +28,38 @@ export default function PerformanceManage() {
   // 필요한 것들
   // 옵션 목록 (id, 이름)
   const options = [
-    { id: 1, label: '연극명' },
-    { id: 2, label: '장르' },
-    { id: 3, label: '극장' },
+    { id: 1, label: '제목' },
+    { id: 2, label: '내용' },
+    { id: 3, label: '등록날짜' },
   ];
 
   //----------------------------------------
 
   // Restore 컴포넌트가 처음 렌더링 될 때 실행될 함수들
   useEffect(() => {
-    //getShowMemberList();
+    getAnnouncementList();
   }, []);
 
+    // 공지사항 리스트를 위한 정보
+  const getAnnouncementList = async() => {
+      try {
+        const resp = await axiosApi.get("/performance/showPerformanceList");
+  
+        if(resp.status === 200){
+          setPerformanceList(resp.data);
+          console.log(resp.data);
+        }
+      } catch (error) {
+        console.log("회원 : " + error);
+      }
+  }
 
   // 상태가 바뀔때마다 변경
   useEffect(()=> {
-    if(pfList != null){
+    if(performanceList != null){
       setLoading(false);
     }
-  }, [pfList]); // 요청을받아 상태가 업데이트 됐을 때
+  }, [performanceList]); // 요청을받아 상태가 업데이트 됐을 때
 
 
   const handleSubmit = async(e) => {
@@ -60,24 +76,12 @@ export default function PerformanceManage() {
     };
     
     try {
-      // const resp = await fetch('http://localhost:8081/admin/searchShowMemberList', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json', 
-      //   },
-      //   body: JSON.stringify(formData), 
-      //   credentials: 'include', 
-      // });
-      // == axiosAPI가 이걸 줄여주는 거임
-      const resp = await axiosApi.post("/performance/searchPerformanceList",formData);
+      const resp = await axiosApi.post("/announcement/searchAnnouncementList",formData);
   
       // 요청 성공 처리
       if (resp.status === 200) {
         const getData = resp.data;
-        console.log('서버 응답:', resp);
-
-        //console.log('memberList:', memberList);
-        setPfList(getData);
+        setPerformanceList(getData);
       } else {
         throw new Error('서버 요청 실패');
       }
@@ -86,15 +90,15 @@ export default function PerformanceManage() {
     }
   };
 
+  // --------------------- 출력 단 ----------------------------
+  
   if(loading){  
     return <h1>Loading...</h1>
   } else {
     return (
       <div className="menu-box">
-        {/* <RestoreMember withdrawMembers={withdrawMembers} restoreMember={restoreMember}/> */}
-        {/* <RestoreBoard deleteBoards={deleteBoards} restoreBoard={restoreBoard}/> */}
         <div className="main-title-container">
-          <h1>공연관리</h1>
+          <h4>공지사항</h4>
         </div>
         <div>
           <form>
@@ -118,8 +122,18 @@ export default function PerformanceManage() {
           </form>
         </div>
         <div className="main-table-container">
-          <ShowPerformanceList pfList={pfList} />
+          <PerformanceList performanceList={performanceList} />
         </div>
+
+        <div className="write-button-container">
+        <button 
+          className="write-button"
+          onClick={() => navigate('/quill')}
+        >
+          글쓰기
+        </button>
+        </div>
+
       </div>
     );
   }
@@ -134,31 +148,33 @@ export default function PerformanceManage() {
 
 
 
-const ShowPerformanceList = ({ pfList }) => {
+const PerformanceList = ({ performanceList }) => {
+  const navigate = useNavigate();
   return (
     <section>
-      {pfList.length === 0 ? (
+      {performanceList.length === 0 ? (
         <p>회원이 없습니다.</p>
       ) : (
         <table className="table-border">
           <thead>
             <tr>
-              <th>연극ID</th>
-              <th>연극명</th>
-              <th>장르</th>
-              <th>극장</th>
+              <th>등록번호</th>
+              <th>공연 시설명</th>
+              <th>주소</th>
+              <th>전화번호</th>
             </tr>
           </thead>
           <tbody>
-            {pfList.map((performance, index) => (
-              <tr
-              key={index}
-              onClick={() => window.location.href = `http://localhost:8081/performance/${performance.performanceNo}`} 
-              style={{ cursor: 'pointer' }}>
-                <td>{performance.performanceNo}</td>
-                <td>{performance.performanceName}</td>
-                <td>{performance.genre}</td>
-                <td>{performance.hall}</td>
+            {performanceList.map((performanceList, index) => (
+               <tr
+               key={index}
+               onClick={() => navigate(`/performance/${performanceList.mt10ID}`)}
+               style={{ cursor: 'pointer' }}
+             >
+                <td>{performanceList.mt10ID}</td>
+                <td>{performanceList.fcltynm}</td>
+                <td>{performanceList.adres}</td>
+                <td>{performanceList.telno}</td>
               </tr>
             ))}
           </tbody>
@@ -168,16 +184,3 @@ const ShowPerformanceList = ({ pfList }) => {
   );
 };
 
-  // 유저 리스트를 위한 정보
-  // const getShowMemberList = async() => {
-  //   try {
-  //     const resp = await axiosApi.get("/admin/showMemberList");
-
-  //     if(resp.status === 200){
-  //       console.log('서버 응답:', resp);
-  //       setMemberList(resp.data);
-  //     }
-  //   } catch (error) {
-  //     console.log("회원 : " + error);
-  //   }
-  // }

@@ -50,7 +50,7 @@ function Write() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [file, setFile] = useState(null);
-  console.log(content);
+  //console.log(content);
   
   const handleTitleChange = (e) => {
     setTitle(e.currentTarget.value);
@@ -85,9 +85,10 @@ function Write() {
     if (response.data === 1) {
       // 새로고침
       window.location.reload();
+      alert("수정이 완료되었습니다")
     } else {
       // 실패 alert
-      alert('업데이트 실패');
+      alert('수정 실패');
     }
     } catch (error) {
       console.error('Error:', error);

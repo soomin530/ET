@@ -45,5 +45,10 @@
 	WHERE MEMBER_NO = ${memberNo}
 	</select>
 	
+	<update id="delete">
+	UPDATE TB_MEMBER
+	SET MEMBER_DEL_FL = 'Y'
+	WHERE MEMBER_NO = ${memberNo}
+	</update>
 
 </mapper>

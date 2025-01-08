@@ -38,6 +38,19 @@ const MemberUpdate = () => {
     });
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await axios.post(`http://localhost:8081/member/delete/${memberNo}`);
+      if (response.status === 200) {
+        alert('회원이 삭제되었습니다.');
+        window.history.back();
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('회원 삭제 중 오류가 발생했습니다.');
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const serverFormData = {
@@ -97,13 +110,16 @@ const MemberUpdate = () => {
             />
           </div>
           <div className="button-group">
-            <button type="button" onClick={() => window.history.back()} className="back-button">
-              뒤로가기
-            </button>
-            <button type="submit" className="submit-button">
-              수정하기
-            </button>
-          </div>
+              <button type="button" onClick={() => window.history.back()} className="back-button">
+                뒤로가기
+              </button>
+              <button type="submit" className="submit-button">
+                수정하기
+              </button>
+              <button type="button" onClick={handleDelete} className="delete-button">
+                회원삭제
+              </button>
+            </div>
         </form>
       </div>
     </div>
