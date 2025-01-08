@@ -232,8 +232,8 @@ const SeatManagement = () => {
                 status: isBooked
                   ? "BOOKED"
                   : isBlocked
-                  ? "AVAILABLE"
-                  : "BLOCKED",
+                  ? "BLOCKED"
+                  : "AVAILABLE",
               };
 
               const isSelected = selectedBookedSeat?.seatId === seatId;
@@ -244,13 +244,18 @@ const SeatManagement = () => {
                   className={`seat ${
                     isBooked
                       ? "seat-reserved"
-                      : seat.status === "BLOCKED"
+                      : isBlocked
                       ? "seat-blocked"
-                      : `seat-${seat.status.toLowerCase()}`
+                      : "seat-available" // 상태에 따른 올바른 클래스 적용
                   } ${isSelected ? "selected-seat" : ""}`}
-                  onClick={() => handleSeatStatusChange(seatId, seat.status)} // BLOCKED 상태도 처리
+                  onClick={() =>
+                    handleSeatStatusChange(
+                      seatId,
+                      isBooked ? "BOOKED" : isBlocked ? "BLOCKED" : "AVAILABLE"
+                    )
+                  } // 올바른 상태 전달
                   style={{
-                    cursor: "pointer" // BLOCKED 상태도 선택 가능하도록
+                    cursor: "pointer",
                   }}
                 >
                   {col}
