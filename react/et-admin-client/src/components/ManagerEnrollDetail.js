@@ -41,6 +41,34 @@ const ManagerEnrollDetail = () => {
     });
   };
 
+  const handleAgree = () => {
+    axios
+      .post(`http://localhost:8081/manager/agree/${concertManagerNo}`)
+      .then((response) => {
+        alert('승인이 완료되었습니다.');
+        window.history.back();
+      })
+      .catch((error) => {
+        console.error(error);
+        alert('승인 처리에 실패했습니다.');
+      });
+  };
+  
+  const handleDelete = () => {
+    if (window.confirm('정말로 삭제하시겠습니까?')) {
+      axios
+        .post(`http://localhost:8081/manager/delete/${concertManagerNo}`)
+        .then((response) => {
+          alert('삭제가 완료되었습니다.');
+          window.history.back();
+        })
+        .catch((error) => {
+          console.error(error);
+          alert('삭제 처리에 실패했습니다.');
+        });
+    }
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     // 서버 형식에 맞게 데이터 변환
@@ -125,8 +153,11 @@ const ManagerEnrollDetail = () => {
             <button type="button" onClick={() => window.history.back()} className="back-button">
               뒤로가기
             </button>
-            <button type="submit" className="submit-button">
-              수정하기
+            <button type="button" onClick={handleAgree} className="submit-button">
+              허가
+            </button>
+            <button type="button" onClick={handleDelete} className="delete-button" style={{ backgroundColor: '#dc3545' }}>
+              삭제
             </button>
           </div>
         </form>

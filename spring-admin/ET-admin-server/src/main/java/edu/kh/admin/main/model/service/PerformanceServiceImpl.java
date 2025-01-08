@@ -22,10 +22,28 @@ public class PerformanceServiceImpl implements PerformanceService{
 		private final PerformanceMapper mapper;
 		private final BCryptPasswordEncoder bcrypt;
 		
+		@Override
+		public List<Performance> showPerformanceList() {
+		return mapper.showPerformanceList();
+		}
 		
 		@Override
 		public List<Performance> searchPerformanceList(Map<String, Object> formdata) {
 			return  mapper.searchPerformanceList(formdata);
 		}
 		
+		@Override
+		public int insert(Map<String, Object> formdata) {
+		return mapper.insert(formdata);
+		}
+		
+		@Override
+		public List<Performance> performanceDetailList(String mt10id) {
+		return mapper.performanceDetailList(mt10id);
+		}
+		
+		@Override
+		public int update(Map<String, Object> formdata) {
+		return mapper.update(formdata);
+		}
 }
