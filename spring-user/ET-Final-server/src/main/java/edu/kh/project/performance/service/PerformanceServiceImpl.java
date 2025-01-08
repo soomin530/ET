@@ -46,10 +46,10 @@ public class PerformanceServiceImpl implements PerformanceService {
 
 	// 장르별 공연 목록 조회 무한 스크롤
 	@Override
-	public List<Performance> getPerformancesByPage(int page, int pageSize, String genre, String filter) {
+	public List<Performance> getPerformancesByPage(int page, int pageSize, String genre, String filter, String searchKeyword, String searchType) {
 		// 시작 위치 계산
 		int offset = (page - 1) * pageSize;
-		return mapper.genreWithPaging(genre, pageSize, offset, filter);
+	    return mapper.genreWithPaging(genre, filter, offset, pageSize, searchKeyword, searchType);
 	}
 
 	// 공연 상세페이지 조회
@@ -204,6 +204,11 @@ public class PerformanceServiceImpl implements PerformanceService {
 			if (dto.getPosterBase64() != null && !dto.getPosterBase64().isEmpty()) {
 				poster = saveBase64ToImage(dto.getPosterBase64(), mt20id, dto.getPosterFileName());
 			}
+			
+			// Runtime 처리: 분 단위를 시와 분으로 변환
+			int runtimeMinutes = Integer.parseInt(dto.getRuntime());
+			int hours = runtimeMinutes / 60; // 시 계산
+			int minutes = runtimeMinutes % 60; // 분 계산
 
 			// 2. 기본 공연 정보 저장 (TB_PERFORMANCES_DETAIL)
 			Map<String, Object> performanceMap = new HashMap<>();
@@ -214,7 +219,7 @@ public class PerformanceServiceImpl implements PerformanceService {
 			performanceMap.put("prfpdto", dto.getPrfpdto());
 			performanceMap.put("fcltynm", dto.getFcltynm());
 			performanceMap.put("prfcast", dto.getPrfcast());
-			performanceMap.put("prfruntime", dto.getRuntime());
+			performanceMap.put("prfruntime", String.format("%d시간 %d분", hours, minutes));
 			performanceMap.put("genrenm", dto.getGenrenm());
 			performanceMap.put("prfstate", "공연예정");
 			performanceMap.put("description", dto.getDescription());
@@ -342,6 +347,38 @@ public class PerformanceServiceImpl implements PerformanceService {
 	@Override
 	public List<Map<String, Object>> getVenueList() {
 		return mapper.selectVenueList();
+	}
+
+	// 찜 버튼
+	@Override
+	public boolean wishList(Map<String, Object> paramMap) {
+		
+	    // 현재 찜 상태 확인
+	    int count = mapper.checkWishList(paramMap);
+	    
+	    if(count > 0) {
+	        // 이미 찜한 상태면 삭제 (찜 취소)
+	        mapper.deleteWishList(paramMap);
+	        return false;
+	        
+	    } else {
+	        // 찜하지 않은 상태면 추가
+	        mapper.insertWishList(paramMap);
+	        return true;
+	    }
+	}
+
+	// 찜 상태 확인
+	@Override
+	public boolean selectWishList(int memberNo, String mt20id) {
+		Map<String, Object> params = new HashMap<>();
+
+		params.put("memberNo", memberNo);
+		params.put("mt20id", mt20id);
+
+		int wishCount = mapper.selectWishList(params);
+
+		return wishCount > 0;
 	}
 
 }

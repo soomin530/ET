@@ -71,7 +71,7 @@
 	align-items: center;
 }
 
-.parent h2 {
+.parent h3 {
 	margin-top: 100px;
 	margin-bottom: 15px;
 	font-weight: 600;
@@ -260,6 +260,138 @@
 
 .filter-tag:hover {
 	background: #e9ecef;
+}
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: #004CFF;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-to-top span {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.scroll-to-top:hover {
+    background-color: #0039e5;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.performance-search-container {
+	justify-self: center;
+	width: 60%;
+	border-bottom: 1px solid #e9ecef;
+	padding: 20px 0;
+	margin-bottom: 30px;
+}
+
+.performance-search-box {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+.performance-search-input {
+	flex: 1;
+	height: 42px;
+	padding: 0 16px;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	font-size: 15px;
+	transition: all 0.2s;
+}
+
+.performance-search-input:focus {
+	outline: none;
+	border-color: #4263eb;
+	box-shadow: 0 0 0 3px rgba(66, 99, 235, 0.1);
+}
+
+.performance-search-type {
+	height: 42px;
+	padding: 0 12px;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	background-color: white;
+	font-size: 15px;
+	min-width: 120px;
+	cursor: pointer;
+}
+
+.performance-search-button {
+	height: 42px;
+	padding: 0 24px;
+	background-color: #4263eb;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-weight: 500;
+	font-size: 15px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.performance-search-button:hover {
+	background-color: #364fc7;
+}
+
+@media (max-width: 768px) {
+	.performance-search-box {
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.performance-search-input {
+		width: 100%;
+		flex: none;
+	}
+
+	.performance-search-type {
+		width: calc(50% - 4px);
+		min-width: 0;
+	}
+
+	.performance-search-button {
+		width: calc(50% - 4px);
+	}
+}
+
+@media (max-width: 768px) {
+    .scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+    }
 }
 
 @keyframes bounce {

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공연 예매 사이트</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/main-style.css">
+
+  <link rel="stylesheet" href="/css/myPage/ticketDetail.css">
+
+  <th:block th:replace="~{common/common}"></th:block>
+</head>
+
+<body>
+  <th:block th:replace="~{common/header}"></th:block>
+  <!-- HTML 수정 부분 -->
+
+  <div class="container">
+    <h1>예매 내역 상세 정보</h1>
+    <div class="ticket-detail" id="ticketDetail"></div>
+    <button class="cancel-btn" onclick="cancelBooking()">예매 취소</button>
+    <button class="back-btn" onclick="window.history.back()">돌아가기</button>
+  </div>
+
+
+
+  <!-- 로딩 스피너 -->
+  <div id="loadingSpinner" style="display: none;">
+    <div class="spinner"></div> <!-- Spinner 스타일 정의 필요 -->
+  </div>
+
+  <script src="/js/myPage/ticketDetail.js"></script>
+
+  <th:block th:replace="~{common/footer}"></th:block>
+</body>
+
+</html>

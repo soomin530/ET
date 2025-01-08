@@ -41,9 +41,7 @@ public class PerformanceApiController {
 
 	@Autowired
 	private PerformanceService performanceService;
-	
-	
-	
+
 	/**
 	 * 잔여 좌석 개수 조회
 	 * 
@@ -54,13 +52,13 @@ public class PerformanceApiController {
 	@GetMapping("/remainingSeats/{performanceId}/{selectedDate}")
 	@ResponseBody
 	public ResponseEntity<List<ScheduleInfo>> remainingSeats(@PathVariable("performanceId") String performanceId,
-											@PathVariable("selectedDate") String selectedDate) {
+			@PathVariable("selectedDate") String selectedDate) {
 		try {
 			Map<String, Object> paramMap = new HashMap<>();
-			
+
 			paramMap.put("performanceId", performanceId);
 			paramMap.put("selectedDate", selectedDate);
-			
+
 			// 잔여 좌석 개수 조회
 			List<ScheduleInfo> seatsInfo = performanceService.remainingSeats(paramMap);
 
@@ -70,7 +68,6 @@ public class PerformanceApiController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
-	
 
 	/**
 	 * 무한 스크롤 데이터
@@ -82,9 +79,13 @@ public class PerformanceApiController {
 	@GetMapping("/genre/more")
 	@ResponseBody
 	public List<Performance> getMorePerformances(@RequestParam(value = "page", defaultValue = "1") int page,
-			@RequestParam(value = "genre") String genre, @RequestParam(value = "filter") String filter) {
+			@RequestParam(value = "genre") String genre, 
+			@RequestParam(value = "filter") String filter,
+			@RequestParam(value = "searchKeyword", required = false) String searchKeyword, // 검색어
+			@RequestParam(value = "searchType", required = false) String searchType // 검색 타입
+	) {
 		int pageSize = 20;
-		return performanceService.getPerformancesByPage(page, pageSize, genre, filter);
+		return performanceService.getPerformancesByPage(page, pageSize, genre, filter, searchKeyword, searchType);
 	}
 
 	/**

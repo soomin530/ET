@@ -22,9 +22,11 @@ public interface PerformanceService {
 	 * @param page
 	 * @param pageSize
 	 * @param genre
+	 * @param searchType 
+	 * @param searchKeyword 
 	 * @return
 	 */
-	List<Performance> getPerformancesByPage(int page, int pageSize, String genre, String filter);
+	List<Performance> getPerformancesByPage(int page, int pageSize, String genre, String filter, String searchKeyword, String searchType);
 
 	/** 공연 상세페이지 조회
 	 * @param mt20id
@@ -118,6 +120,21 @@ public interface PerformanceService {
 	 * @author 우수민
 	 */
 	List<Map<String, Object>> getVenueList();
+
+	/** 찜 버튼
+	 * @param paramMap
+	 * @return
+	 * @author 우수민
+	 */
+	boolean wishList(Map<String, Object> paramMap);
+
+	/** 찜 상태 확인
+	 * @param memberNo
+	 * @return
+	 * @author 우수민
+	 * @param mt20id 
+	 */
+	boolean selectWishList(int memberNo, String mt20id);
 
 
 }

@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import edu.kh.project.member.model.dto.Member;
-import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.Review;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
@@ -43,6 +41,7 @@ public class PerformanceController {
 	 */
 	@GetMapping("/genre/{genre}")
 	public String genre(@PathVariable("genre") String genre, Model model) {
+		
 		// 장르명 변환 로직
 		if (genre.equals("musical")) {
 			genre = "뮤지컬";
@@ -187,10 +186,12 @@ public class PerformanceController {
 	        if (isDeleted) {
 	            response.put("success", true);
 	            response.put("message", "리뷰가 삭제되었습니다.");
+	            
 	        } else {
 	            response.put("success", false);
 	            response.put("message", "리뷰 삭제에 실패했습니다.");
 	        }
+	        
 	    } catch (Exception e) {
 	        response.put("success", false);
 	        response.put("message", "서버 오류가 발생했습니다.");
@@ -216,5 +217,73 @@ public class PerformanceController {
 	    } catch (Exception e) { // 예외 처리
 	        return new ArrayList<>(); 
 	    }
+	}
+	
+	/** 찜 버튼
+	 * @param requestBody
+	 * @param loginMember
+	 * @return
+	 * @author 우수민
+	 */
+	@PostMapping("/wish")
+	@ResponseBody
+	public Map<String, Object> wishList(@RequestBody Map<String, String> requestBody,
+						@SessionAttribute(value="loginMember", required=false) Member loginMember) {
+	    
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    // 로그인 체크
+	    if(loginMember == null) {
+	        response.put("success", false);
+	        response.put("message", "로그인을 하신 후 서비스 이용이 가능합니다.");
+	        return response;
+	    }
+	    
+	    try {
+	        Map<String, Object> paramMap = new HashMap<>();
+	        paramMap.put("mt20id", requestBody.get("mt20id"));
+	        paramMap.put("memberNo", loginMember.getMemberNo());
+
+	        boolean isWished = performanceService.wishList(paramMap);
+	        
+	        response.put("success", true);
+	        response.put("isWished", isWished);
+	        response.put("message", isWished ? "찜 목록에 등록되었습니다." : "찜이 취소되었습니다.");
+
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	        response.put("success", false);
+	        response.put("message", "처리 중 오류가 발생했습니다.");
+	    }
+	    
+	    return response;
+	}
+	
+	/** 찜 상태 확인
+	 * @param loginMember
+	 * @param model
+	 * @return
+	 * @author 우수민
+	 */
+	@GetMapping("/wish/check/{mt20id}")
+	@ResponseBody
+	public Map<String, Object> checkWishList(@PathVariable("mt20id") String mt20id,
+								@SessionAttribute("loginMember") Member loginMember) {
+		
+		Map<String, Object> response = new HashMap<>();
+		
+	    try {
+	    	
+	    	boolean isWished = performanceService.selectWishList(loginMember.getMemberNo(), mt20id);
+	    	
+	    	response.put("success", true);
+	        response.put("isWished", isWished); // 클라이언트가 사용할 데이터
+	    	
+	    } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "찜 상태 확인 중 오류가 발생했습니다.");
+        }
+        
+        return response;
 	}
 }

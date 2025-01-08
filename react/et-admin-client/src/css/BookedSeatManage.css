@@ -1,0 +1,150 @@
+/* BookedSeatManage.css */
+.performance-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.performance-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr); /* 5열에서 3열로 변경 */
+	gap: 30px; /* 간격 증가 */
+	margin-bottom: 30px;
+}
+
+.performance-item {
+	border: 1px solid #eee;
+	border-radius: 12px; /* 테두리 둥글기 증가 */
+	overflow: hidden;
+	transition: transform 0.3s ease;
+	cursor: pointer;
+	contain: content;
+	background: white; /* 배경색 추가 */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 기본 그림자 추가 */
+}
+
+.performance-item:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.image-container {
+	position: relative;
+	padding-top: 140%;
+	background: #f5f5f5;
+	overflow: hidden;
+}
+
+.image-container img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 1;
+	transition: opacity 0.2s ease;
+}
+
+.image-container img.loaded {
+	opacity: 1;
+}
+
+.performance-info {
+	padding: 20px; /* 패딩 증가 */
+}
+
+.performance-title {
+	font-size: 18px; /* 글자 크기 증가 */
+	font-weight: bold;
+	margin-bottom: 12px;
+	line-height: 1.4;
+	height: 2.8em; /* 2줄까지 표시 */
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	text-overflow: ellipsis;
+	word-break: keep-all;
+}
+
+.performance-date {
+	font-size: 16px; /* 글자 크기 증가 */
+	color: #555;
+	line-height: 1.4;
+	margin-bottom: 8px;
+}
+
+.performance-venue {
+	font-size: 15px; /* 글자 크기 증가 */
+	color: #666;
+	margin-top: 8px;
+	margin-bottom: 12px;
+}
+
+.review-stars {
+	margin-top: 10px;
+}
+
+.static-stars {
+	color: #ffca28;
+	font-size: 1.4em; /* 별 크기 증가 */
+	letter-spacing: 2px;
+}
+
+.numeric-rating {
+	color: #666;
+	font-size: 1.1em; /* 글자 크기 증가 */
+	margin-left: 8px;
+}
+
+/* 로딩 스피너 */
+.loading-spinner {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 9999;
+}
+
+.loading-spinner.show {
+	display: flex;
+}
+
+.loading-spinner::before {
+	content: "";
+	width: 60px; /* 크기 증가 */
+	height: 60px; /* 크기 증가 */
+	border: 6px solid rgba(0, 0, 0, 0.1);
+	border-top: 6px solid #3498db;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+	.performance-grid {
+			grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 768px) {
+	.performance-grid {
+			grid-template-columns: repeat(1, 1fr);
+			gap: 20px;
+	}
+	
+	.performance-info {
+			padding: 15px;
+	}
+	
+	.performance-title {
+			font-size: 16px;
+	}
+}

@@ -1,7 +1,12 @@
 package edu.kh.project.myPage.service;
 
+import java.util.List;
+import java.util.Map;
+
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import edu.kh.project.myPage.model.dto.ticketInfoDTO;
+import edu.kh.project.performance.model.dto.Performance;
 
 public interface MyPageService {
 	
@@ -77,11 +82,42 @@ public interface MyPageService {
 	int addAddress(AddressDTO addressDTO);
 	
 	
+	/** 찜한 목록 조회
+	 * @param page
+	 * @return
+	 */
+	List<Performance> userWishList(int page, int memberNo);
 	
 	
-	
-	
-	
+	/** 찜한 내역 삭제
+	 * @param performanceIds
+	 * @param memberNo
+	 * @return
+	 */
+	boolean deleteWishlistItems(List<String> performanceIds, int memberNo);
+
+
+	/** 예매 내역 조회
+	 * @param memberNo
+	 * @return
+	 */
+	List<Map<String, Object>> getBookingHistory(String bookingId, int memberNo);
+
+	/** 예매 내역 상세 조회
+	 * @param bookingId
+	 * @param memberNo
+	 * @return
+	 */
+	ticketInfoDTO getBookingDetail(String bookingId, int memberNo);
+
+
 	
 
+
+	
+
+
+	
+	
+	
 }
