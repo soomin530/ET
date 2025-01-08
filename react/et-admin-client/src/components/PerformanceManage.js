@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
 import { useNavigate} from "react-router-dom";
+import "./PerformanceNew.js"
 
 
 export default function PerformanceManage() {
@@ -98,7 +99,7 @@ export default function PerformanceManage() {
     return (
       <div className="menu-box">
         <div className="main-title-container">
-          <h4>공지사항</h4>
+          <h4>공연장관리</h4>
         </div>
         <div>
           <form>
@@ -128,9 +129,9 @@ export default function PerformanceManage() {
         <div className="write-button-container">
         <button 
           className="write-button"
-          onClick={() => navigate('/quill')}
+          onClick={() => navigate('/PerformanceNew')}
         >
-          글쓰기
+          신규등록
         </button>
         </div>
 

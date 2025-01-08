@@ -50,5 +50,14 @@
 	SET MEMBER_DEL_FL = 'Y'
 	WHERE MEMBER_NO = ${memberNo}
 	</update>
+	
+	<update id="update">
+	UPDATE TB_MEMBER 
+    SET 
+        MEMBER_NICKNAME = #{memberNickname},
+        MEMBER_TEL = #{memberTel}
+    WHERE MEMBER_NO = #{memberNo}
+	</update>
+	
 
 </mapper>

@@ -109,7 +109,7 @@ export default function UserManage() {
         {/* <RestoreMember withdrawMembers={withdrawMembers} restoreMember={restoreMember}/> */}
         {/* <RestoreBoard deleteBoards={deleteBoards} restoreBoard={restoreBoard}/> */}
         <div className="main-title-container">
-          <h1>유저관리</h1>
+          <h4>유저관리</h4>
         </div>
         <div>
           <form>

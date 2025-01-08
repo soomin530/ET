@@ -30,6 +30,13 @@ public interface MemberService {
 	 */
 	int delete(int memberNo);
 
+	/** 유저 정보 업데이트
+	 * @param formdata
+	 * @param memberNo
+	 * @return
+	 */
+	int update(Map<String, Object> formdata, int memberNo);
+
 	
 	
 }
