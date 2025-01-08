@@ -7,17 +7,24 @@
 
 .admin-info {
     display: flex;
+    justify-content: right;
 }
 
 .admin-info button {
-    width: 100px;
+    width: 80px;
     margin-left: 30px;
-    background-color: red;
+    margin-bottom: 10px;
+    background-color: orange;
 }
 
 .menu-box {
-    display: flex;
+    width: 100%;
 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    
 }
 
 .section-border{
@@ -112,23 +119,130 @@
 .router-tab-box {
     list-style: none;
     display: flex;
+    flex-direction: column;
+    width: 10%;
+
     
     padding: 0;
 }
 .router-tab-box a {
+    width: 130px;
+    height: 100px;
     text-decoration: none;
     color: black;
-    flex-basis: calc(100%/3);
     border: 1px solid #ddd;
     padding: 30px;
     text-align: center;
     border-radius: 0 0 10px 10px;
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     transition: all 0.3s;
 }
+
 /* Link 태그는 html상 a태그 */
 .router-tab-box a.active {
     color : #fff;
     background-color: #007bff;
 }
+
+.main-show-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.main-title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    height: 10%;
+
+    border: 1px solid black;
+}
+
+.main-table-container {
+    width: 90%;
+    height: 80%;
+    border: 1px solid black;
+
+    margin: auto;
+}
+
+.table-border {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+.table-border th,td{
+    padding: 10px; /* 셀 안쪽 여백 */
+    border: 1px solid #ccc; /* 셀 경계선 */
+    text-align: center; /* 글씨 중앙 정렬 */
+}
+
+.table-border tr {
+    transition: all 0.3s ease; 
+  }
+
+.table-border tbody tr:hover {
+    background-color: rgba(255, 0, 0, 0.1); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+    transform: translateY(-5px); 
+}
+
+.dash-board-container {
+    display: flex; /* 좌우 배치를 위해 flex 사용 */
+    flex-direction: column; /* 수직 정렬 */
+    width: 100%; /* 가로 공간 전체 사용 */
+    height: 100vh; /* 화면 높이를 가득 채움 */
+    overflow: hidden; /* 컨테이너를 벗어난 내용 숨김 */
+    box-sizing: border-box; /* 패딩 포함 박스 크기 계산 */
+    padding: 20px; /* 내부 여백 */
+  }
+  
+  /* 메인 콘텐츠 컨테이너 */
+  .main-show-container {
+    display: flex;
+    flex-direction: row; /* 좌우로 콘텐츠 배치 */
+    width: 100%;
+    height: 100%; /* 부모 높이를 채움 */
+    overflow: hidden; /* 콘텐츠 넘침 방지 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 테두리 그림자 */
+  }
+  
+  /* 라우터 탭 박스 스타일 */
+  .router-tab-box {
+    display: flex;
+    flex-direction: column; /* 탭을 수직 배치 */
+    width: 200px; /* 탭 영역의 고정 너비 */
+    height: 100%; /* 부모 높이와 동일 */
+    overflow-y: auto; /* 수직 스크롤 활성화 */
+    border-right: 1px solid #ddd; /* 오른쪽 경계선 */
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  /* 각 탭 스타일 */
+  .router-tab-box a {
+    text-decoration: none; /* 링크 밑줄 제거 */
+    padding: 10px;
+    margin: 5px 0;
+    color: #333;
+    border: 1px solid transparent; /* 기본 테두리 제거 */
+    border-radius: 5px; /* 둥근 모서리 */
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .router-tab-box a:hover {
+    background-color: #f4f4f4; /* 마우스 오버 시 배경색 변경 */
+    color: #007bff; /* 글자색 변경 */
+  }
+  
+  /* Routes가 들어가는 메인 콘텐츠 영역 */
+  .main-content {
+    flex-grow: 1; /* 나머지 영역을 차지 */
+    height: 100%; /* 부모 높이와 동일 */
+    overflow-y: auto; /* 스크롤 활성화 */
+    padding: 20px;
+    box-sizing: border-box;
+  }

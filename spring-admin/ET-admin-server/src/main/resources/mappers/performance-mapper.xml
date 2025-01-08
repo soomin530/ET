@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.admin.main.model.mapper.PerformanceMapper">
+
+	<!-- 모든 공연장 정보 조회 -->
+	<select id="showPerformanceList">
+	SELECT * FROM TB_VENUE
+	</select>
+	
+	<!-- 검색된 모든 공연 조회 -->
+	<select id="searchPerformanceList"> 
+	    SELECT 
+		    MT20ID AS PERFORMANCE_NO, 
+		    "PRFNM" AS PERFORMANCE_NAME,
+		    "FCLTYNM" AS HALL,
+		    "GENRENM" AS GENRE 
+		FROM 
+			"TB_PERFORMANCES_DETAIL"
+		WHERE 
+        <choose>
+            <when test="selectedValue == '연극명'">
+                "PRFNM" LIKE '%' || #{inputValue} || '%' 
+            </when>
+            <when test="selectedValue == '장르'">
+                "GENRENM" LIKE '%' || #{inputValue} || '%' 
+            </when>
+            <otherwise>
+                "FCLTYNM" LIKE '%' || #{inputValue} || '%' 
+            </otherwise>
+        </choose>
+		ORDER BY 
+			PERFORMANCE_NO ASC     
+	</select>
+
+	<insert id="insert">
+	INSERT INTO TB_VENUE (
+       MT10ID,
+       FCLTYNM,
+       MT13CNT,
+       FCLTYCHARTR,
+       OPENDE,
+       SEATSCALE,
+       TELNO,
+       RELATEURL,
+       ADRES,
+       FCLTLA,
+       FCLTLO
+   ) VALUES (
+       #{MT10ID},
+       #{FCLTYNM},
+       #{MT13CNT},
+       #{FCLTYCHARTR},
+       #{OPENDE},
+       #{SEATSCALE},
+       #{TELNO},
+       #{RELATEURL},
+       #{ADRES},
+       #{FCLTLA},
+       #{FCLTLO}
+   )
+	</insert> 
+	
+	<select id="performanceDetailList">
+	SELECT * 
+	FROM TB_VENUE
+	WHERE MT10ID = #{mt10ID}
+	</select>
+	
+	<update id="update">
+		UPDATE TB_VENUE
+	SET 
+	    FCLTYNM = #{FCLTYNM},
+	    MT13CNT = #{MT13CNT},
+	    FCLTYCHARTR = #{FCLTYCHARTR},
+	    OPENDE = #{OPENDE},
+	    SEATSCALE = #{SEATSCALE},
+	    TELNO = #{TELNO},
+	    RELATEURL = #{RELATEURL},
+	    ADRES = #{ADRES},
+	    FCLTLA = #{FCLTLA},
+	    FCLTLO = #{FCLTLO}
+	WHERE 
+	    MT10ID = #{MT10ID}
+	</update>
+
+</mapper>

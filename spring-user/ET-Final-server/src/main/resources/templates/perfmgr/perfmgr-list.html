@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>공연 관리</title>
+	<link rel="stylesheet" href="/css/perfmgr/perfmgr-list.css">
+	<th:block th:replace="~{common/common}"></th:block>
+</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+
+	<h1 class="page-title">등록된 공연 목록</h1>
+
+	<!-- 검색 영역을 별도의 클래스명으로 변경 -->
+	<div class="performance-search-container">
+		<div class="performance-search-box">
+			<input type="text" class="performance-search-input" id="performanceSearchInput"
+				placeholder="공연명 또는 공연장을 입력하세요">
+			<select class="performance-search-type" id="performanceSearchType">
+				<option value="all">전체</option>
+				<option value="title">공연명</option>
+				<option value="venue">공연장</option>
+			</select>
+			<button class="performance-search-button" id="performanceSearchButton">
+				<i class="fas fa-search"></i>
+				검색
+			</button>
+		</div>
+	</div>
+
+
+	<div class="performance-container">
+		<div class="filter-buttons">
+			<button class="filter-btn active" data-filter="all">전체 공연</button>
+			<button class="filter-btn" data-filter="ongoing">진행중인 공연</button>
+			<button class="filter-btn" data-filter="upcoming">예정된 공연</button>
+			<button class="filter-btn" data-filter="rating">인기 공연</button>
+		</div>
+		<div class="performance-grid" id="performanceGrid">
+			<!-- 초기 데이터가 여기에 렌더링됩니다 -->
+		</div>
+		<div class="loading-spinner"></div>
+	</div>
+
+	<button id="scrollToTop" class="scroll-to-top" aria-label="페이지 최상단으로 이동">
+		<span>↑</span>
+	</button>
+
+	<th:block th:replace="~{common/footer}"></th:block>
+
+	<!-- 스크립트는 별도의 파일로 분리됩니다 -->
+	<script src="/js/perfmgr/perfmgr-list.js"></script>
+</body>
+
+</html>

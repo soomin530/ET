@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const response = await axios.post(
-        'http://localhost:8080/admin/login',
+        'http://localhost:8081/admin/login',
         {
           memberEmail : email,
           memberPw : password
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
         const response = await axios.get(
-        'http://localhost:8080/admin/logout'
+        'http://localhost:8081/admin/logout'
       );
 
       if(response.status === 200){

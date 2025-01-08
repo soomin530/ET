@@ -15,13 +15,16 @@ import lombok.ToString;
 @Builder
 public class Member {
 	private int memberNo;
-	private String memberEmail;
+	private String memberId;
 	private String memberPw;
 	private String memberNickname;
 	private String memberTel;
 	private String memberAddress;
+	private String memberGender;
 	private String profileImg;
 	private String enrollDate;
 	private String memberDelFl;
-	private int authority;
+	private int memberAuth;
+	private String memberEmailAlarm;
+	private String memberEmail;
 }

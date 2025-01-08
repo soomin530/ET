@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.admin.main.model.mapper.AnnouncementMapper">
+
+	<select id="showAnnouncementList">
+	SELECT * FROM ANNOUNCEMENT WHERE ANNOUNCEMENT.ANNOUNCE_DEL_FL ='N'
+	</select>
+	
+	
+	<select id="announceDetail">
+	SELECT ANNOUNCE_TITLE,ANNOUNCE_CONTENT 
+	FROM ANNOUNCEMENT
+	WHERE ANNOUNCE_NO = #{announceNo}
+	</select>
+	
+	
+	<insert id="upload">
+	INSERT INTO ANNOUNCEMENT VALUES (
+	announce_no_seq.NEXTVAL,
+	#{title},
+	#{content},
+	SYSDATE,
+	DEFAULT
+	)
+	</insert>
+	
+	<update id="update">
+	UPDATE ANNOUNCEMENT
+	SET ANNOUNCE_TITLE = #{title} , ANNOUNCE_CONTENT = #{content}
+	WHERE ANNOUNCE_NO = #{announceNo}
+	</update>
+
+</mapper>

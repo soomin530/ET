@@ -41,6 +41,7 @@ public class PerformanceController {
 	 */
 	@GetMapping("/genre/{genre}")
 	public String genre(@PathVariable("genre") String genre, Model model) {
+		
 		// 장르명 변환 로직
 		if (genre.equals("musical")) {
 			genre = "뮤지컬";
