@@ -158,8 +158,8 @@ public class MyPageServiceImpl implements MyPageService {
 	 * 예매 내역 조회
 	 */
 	@Override
-	public List<Map<String, Object>> getBookingHistory(String bookingId, int memberNo) {
-		 return mapper.selectBookingHistory(bookingId);
+	public List<ticketInfoDTO> getBookingHistory(int memberNo) {
+		 return mapper.selectBookingHistory(memberNo);
 	}
 	
 
@@ -170,6 +170,8 @@ public class MyPageServiceImpl implements MyPageService {
 	public ticketInfoDTO getBookingDetail(String bookingId, int memberNo) {
 		return mapper.selectBookingDetail(bookingId, memberNo);
 	}
+
+	
 
 	
 

@@ -5,14 +5,18 @@ async function fetchTicketDetail(bookingId) {
     const data = await response.json();
 
     if (data) {
-      document.getElementById("ticketDetail").innerHTML = `
-        <h2>공연명: ${data.performanceName}</h2>
-        <p>예매일: ${new Date(data.bookingDate).toLocaleDateString()}</p>
-        <p>공연일시: ${data.showDateTime}</p>
-        <p>좌석 정보: ${data.seatInfo}</p>
-        <p>결제 금액: ${data.totalPaid.toLocaleString()}원</p>
-        <p>상태: ${data.bookingStatus}</p>
-      `;
+      document.getElementById("bookingNumber").innerText = `예매번호: ${data.bookingId}`;
+      document.getElementById("eventName").innerText = data.performanceName;
+      document.getElementById("eventDateTime").innerText = data.showDateTime;
+      document.getElementById("venue").innerText = data.fcltyName;
+      document.getElementById("seatInfo").innerText = data.seatInfo;
+      document.getElementById("ticketPrice").innerText = `${data.totalPaid.toLocaleString()}원`;
+      document.getElementById("statusBanner").innerText = data.bookingStatus === "예매" ? "예매 완료" : "취소됨";
+
+      // 포스터 이미지 삽입
+      const posterImage = document.getElementById("posterImage");
+      posterImage.src = data.poster || "/img/default-poster.png";  // 이미지가 없을 경우 기본 이미지 경로
+      posterImage.alt = `${data.performanceName} 포스터`;
 
       console.log(data); // 공연 정보 출력
     } else {

@@ -280,6 +280,7 @@ public class paymentController {
 			        .memberNo(loginMember.getMemberNo())
 			        .showDate(paymentData.getShowDate())
 			        .showTime(paymentData.getShowTime())
+			        .merchantUid(paymentData.getMerchantUid())
 			        .build();
 
 			    boolean seatInsert = service.insertTicketSeat(seatData);

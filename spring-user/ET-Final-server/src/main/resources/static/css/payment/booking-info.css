@@ -1,0 +1,220 @@
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(10px);
+  }
+
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f8f9fa;
+  animation: fadeIn 0.5s ease-out;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 진행 단계 헤더 */
+.progress-header {
+  background: linear-gradient(to right, #fff, #fff9f8);
+  border-bottom: 1px solid rgba(255, 69, 0, 0.1);
+  width: 100%;
+  padding: 20px 0;
+  margin-bottom: 30px;
+}
+
+.progress-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.progress-step:not(.active) .step-number:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+}
+
+.step-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.progress-step.active .step-number {
+  background-color: #ff4500;
+  color: white;
+}
+
+.progress-step.active .step-text {
+  color: #ff4500;
+  font-weight: bold;
+}
+
+.progress-line {
+  position: absolute;
+  top: 20px;
+  left: 70px;
+  right: 70px;
+  height: 2px;
+  background-color: #e8e8e8;
+  z-index: 0;
+}
+
+.progress-line-active {
+  position: absolute;
+  top: 20px;
+  left: 70px;
+  width: 50%;
+  height: 2px;
+  background-color: #ff4500;
+  transition: width 0.3s ease;
+}
+
+/* 예약자 정보 컨테이너 */
+.booking-container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+  transition: all 0.3s ease;
+}
+
+.booking-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-section h2 {
+  color: #ff4500;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.info-section h3 {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  border-color: #ff4500;
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1);
+  outline: none;
+}
+
+input:invalid {
+  border-color: #ff6b6b;
+}
+
+input:valid {
+  border-color: #51cf66;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+button {
+  flex: 1;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.prev-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.prev-btn:hover {
+  background-color: #5a6268;
+}
+
+.next-btn {
+  background-color: #ff4500;
+  color: white;
+}
+
+.next-btn:hover {
+  background-color: #e03e00;
+}
+
+@media (max-width: 768px) {
+  .booking-container {
+      width: 95%;
+      padding: 20px;
+  }
+
+  .progress-container {
+      padding: 0 15px;
+  }
+}
