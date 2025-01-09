@@ -25,6 +25,15 @@ async function fetchTicketInfo() {
       const statusClass = booking.bookingStatus === "예매" ? "status-booked" : "status-canceled";
       const bookingDate = booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : "정보 없음";
 
+      let statusText = booking.bookingStatus;
+
+      // 상태 값 변환
+      if (statusText === "CANCELED") {
+        statusText = "취소";
+      } else if (statusText === "BOOKED") {
+        statusText = "예매";
+      }
+
       const paidAt = booking.paidAt ? new Date(booking.paidAt.replace(' ', 'T')).toLocaleString() : "-";
       const cancelableUntil = booking.cancelableUntil ? new Date(booking.cancelableUntil.replace(' ', 'T')).toLocaleDateString() : "정보 없음";
       
@@ -38,7 +47,7 @@ async function fetchTicketInfo() {
         <td class="highlight-performance">${showDateTime}</td>
         <td class="highlight-ticket-count">${booking.ticketCount || "0"}매</td>
         <td>${cancelableUntil}</td>
-        <td class="${statusClass}">${booking.bookingStatus || "상태 없음"}</td>
+        <td class="${statusClass}">${statusText  || "상태 없음"}</td>
         <td>
           <a href="/mypage/ticketDetail/${booking.bookingId}">
             <button class="btn-detail">상세</button>

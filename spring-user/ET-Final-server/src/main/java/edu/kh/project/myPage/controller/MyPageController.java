@@ -416,9 +416,9 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성
 	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("mypageInfo")
 	public String mypageInfo() {
@@ -426,9 +426,10 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성 마이페이지 -> 예매 내역
+	 * 1/6  마이페이지 -> 예매 내역
 	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("ticketInfo")
 	public String ticketInfo() {
@@ -441,6 +442,7 @@ public class MyPageController {
 	 * @param bookingId
 	 * @param loginMember
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("/ticketInfo/data")
 	public ResponseEntity<List<ticketInfoDTO>> getBookingHistory(@SessionAttribute("loginMember") Member loginMember) {
@@ -449,17 +451,24 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성 마이페이지 -> 예매 내역 -> 예매 상세 정보
+	 * 1/6  마이페이지 -> 예매 내역 -> 예매 상세 정보
 	 * 
 	 * @return
-	 */
+	 * @author 나찬웅
+	 * 
 	/** 예매 상세 정보 페이지로 이동 */
 	@GetMapping("ticketDetail/{bookingId}")
 	public String ticketDetail(@PathVariable("bookingId") String bookingId) {
 		return "mypage/ticketDetail"; // 예매 내역 상세 페이지 HTML
 	}
 
-	// 예매 상세 정보에서 데이터 조회
+
+	/** 1/6 예매 상세 정보에서 데이터 조회
+	 * @param bookingId
+	 * @param loginMember
+	 * @return
+	 * @author 나찬웅
+	 */
 	@ResponseBody
 	@GetMapping("ticketDetail/data/{bookingId}")
 	public ResponseEntity<ticketInfoDTO> getTicketDetail(@PathVariable("bookingId") String bookingId,
@@ -470,12 +479,41 @@ public class MyPageController {
 	}
 
 	/**
-	 * 1/6 나찬웅 작성 마이페이지 -> 찜목록
+	 * 마이페이지 -> 찜목록
 	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("favList")
 	public String favList() {
 		return "mypage/favList"; // 찜목록 페이지 HTML 파일
 	}
+	
+	/** 예매 취소(결제, 예약정보, 예매 내역, 좌석)테이블 수정 및 삭제
+	 * @param bookingId
+	 * @param loginMember
+	 * @return
+	 * @author 나찬웅
+	 */
+	@ResponseBody
+	@PostMapping("cancelBooking")
+	public ResponseEntity<String> cancelBooking(@RequestParam("bookingId") String bookingId,
+												@SessionAttribute("loginMember") Member loginMember) {
+		try {
+			log.info("취소 요청된 예매 번호: {}", bookingId); // 로그 출력
+			boolean result = service.cancelBooking(bookingId, loginMember.getMemberNo());
+			
+
+			
+			if(result) {
+				return ResponseEntity.ok("예매가 취소되었습니다.");
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예매 취소에 실패했습니다.");
+			}
+		} catch (Exception e) {
+			log.error("예매 취소 중 오류 발생: ", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+		}
+	}
+	
 }

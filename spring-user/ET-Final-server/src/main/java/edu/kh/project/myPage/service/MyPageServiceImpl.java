@@ -260,8 +260,9 @@ public class MyPageServiceImpl implements MyPageService {
 	    }
 	}
 
-	/** 나찬웅 1/6
+	/**
 	 * 예매 내역 조회
+	 * @author 나찬웅 
 	 */
 	@Override
 	public List<ticketInfoDTO> getBookingHistory(int memberNo) {
@@ -269,12 +270,40 @@ public class MyPageServiceImpl implements MyPageService {
 	}
 	
 
-	/** 나찬웅 1/6
+	/** 
 	 * 예매 상세 내용 조회
+	 * @author 나찬웅 
 	 */
 	@Override
 	public ticketInfoDTO getBookingDetail(String bookingId, int memberNo) {
 		return mapper.selectBookingDetail(bookingId, memberNo);
+	}
+
+	/**  
+	 * 	예매 취소(결제, 예약정보, 예매 내역, 좌석)테이블 수정 및 삭제
+	 *	@author 나찬웅 
+	 */
+	@Override
+	public boolean cancelBooking(String bookingId, int memberNo) {
+		try {
+			// 1. TB_TICKET_SEAT에서 예약된 좌석 삭제
+			int seatDeleteResult = mapper.deleteTicketSeat(bookingId);
+			
+			// 2. TB_PAYMENT의 결제 상태 업데이트
+			int paymentUpdateResult = mapper.updatePaymentStatus(bookingId);
+			
+			// 3. TB_TICKET_BOOKING의 예약 상태 업데이트
+			int bookingUpdateResult = mapper.updateBookingStatus(bookingId, memberNo);
+			
+			// 4. TB_BOOKING_HISTORY의 예매 내역 상태 업데이트
+			int historyUpdateResult = mapper.updateHistoryStatus(bookingId);
+			
+			return seatDeleteResult > 0 && paymentUpdateResult > 0 &&
+					bookingUpdateResult > 0 && historyUpdateResult > 0;
+		} catch (Exception e) {
+			log.error("예매 취소 처리 중 오류 발생 : ", e);
+			throw new RuntimeException("예매 취소 실패");
+		}
 	}
 
 	

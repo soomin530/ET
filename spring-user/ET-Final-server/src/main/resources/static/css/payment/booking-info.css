@@ -200,12 +200,12 @@ button:hover {
 }
 
 .next-btn {
-  background-color: #ff4500;
+  background-color: #f43142;
   color: white;
 }
 
 .next-btn:hover {
-  background-color: #e03e00;
+  background-color: #e12132;
 }
 
 @media (max-width: 768px) {

@@ -363,6 +363,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 좌석 선택 완료 버튼 이벤트
   document.getElementById("confirm-btn").addEventListener("click", () => {
 
+    const accessToken = localStorage.getItem('accessToken');
+
+    if(!accessToken) {
+      alert("예약 정보를 확인 하려면 로그인이 필요합니다.");
+      window.close();  // 창 닫기
+    }
+
     if (selectedSeats.size === 0) {
       alert("좌석을 선택해주세요.");
       return;

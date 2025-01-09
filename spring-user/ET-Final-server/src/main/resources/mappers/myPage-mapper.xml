@@ -291,4 +291,35 @@
 	</select>
 	
 	
+	
+	
+	<!-- TB_TICKET_SEAT: 예약된 좌석 삭제 -->
+	<delete id="deleteTicketSeat" parameterType="string">
+	    DELETE FROM TB_TICKET_SEAT
+	    WHERE MERCHANT_UID = #{bookingId}
+	</delete>
+	
+	<!-- TB_PAYMENT: 결제 상태 업데이트 -->
+	<update id="updatePaymentStatus" parameterType="string">
+	    UPDATE TB_PAYMENT
+	    SET STATUS = 'CANCELED'
+	    WHERE MERCHANT_UID = #{bookingId}
+	</update>
+	
+	<!-- TB_TICKET_BOOKING: 예약 상태 업데이트 -->
+	<update id="updateBookingStatus" parameterType="map">
+	    UPDATE TB_TICKET_BOOKING
+	    SET BOOKING_STATUS = 'CANCELED'
+	    WHERE MERCHANT_UID = #{bookingId}
+	    AND MEMBER_NO = #{memberNo}
+	</update>
+	
+	<!-- TB_BOOKING_HISTORY: 예매 내역 상태 업데이트 -->
+	<update id="updateHistoryStatus" parameterType="string">
+	    UPDATE TB_BOOKING_HISTORY
+	    SET BOOKING_STATUS = 'CANCELED'
+	    WHERE BOOKING_ID = #{bookingId}
+	</update>
+	
+	
 </mapper>
