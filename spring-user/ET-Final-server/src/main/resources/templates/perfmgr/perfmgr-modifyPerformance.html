@@ -19,7 +19,13 @@
         <div class="performance-content">
           <!-- 왼쪽: 공연 정보 -->
           <div class="performance-info">
-            <img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image">
+            <img th:src="${performance.poster}"
+                    th:alt="${performance.prfnm}"
+                    class="performance-image"
+                    th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'"
+                    loading="lazy"
+                    decoding="async"
+                    onload="this.classList.add('loaded')">
             <table class="info-table">
               <tr>
                 <th>공연명</th>

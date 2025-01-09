@@ -116,7 +116,7 @@ public class MyPageController {
 			System.out.println("Controller - memberNo: " + loginMember.getMemberNo());
 
 			int result = myPageService.basicAddress(addressNo, loginMember.getMemberNo());
-
+			
 			if (result > 0) {
 				return ResponseEntity.ok("기본 배송지가 변경되었습니다.");
 			} else {
