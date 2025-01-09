@@ -12,9 +12,14 @@ async function fetchTicketDetail(bookingId) {
       document.getElementById("seatInfo").innerText = data.seatInfo;
       document.getElementById("ticketPrice").innerText = `${data.totalPaid.toLocaleString()}원`;
 
-      const statusText = data.bookingStatus === "예매" ? "예매 완료" : "취소된 공연";
+      const statusText = data.bookingStatus === "COMPLETE" ? "예매 완료" : "취소된 공연";
       document.getElementById("statusBanner").innerText = statusText;
 
+      // "취소된 공연"일 경우 예매 취소 버튼을 숨김
+      const cancelBtn = document.querySelector(".cancel-btn");
+      if (data.bookingStatus === "CANCELED") {
+        cancelBtn.style.display = "none";
+      }
 
       // 포스터 이미지 삽입
       const posterImage = document.getElementById("posterImage");
@@ -54,4 +59,8 @@ async function cancelBooking() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadTicketDetail);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const bookingId = window.location.pathname.split("/").pop(); // URL에서 bookingId 추출
+  fetchTicketDetail(bookingId);  // 올바른 함수 호출
+});

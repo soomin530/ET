@@ -6,11 +6,13 @@
 	<!-- 결제 내역 저장 -->
 	<insert id="insertPayment">
 		 INSERT INTO TB_PAYMENT (
-	        PAY_NO, IMP_UID, MERCHANT_UID, PAY_METHOD, PG_PROVIDER, PG_TYPE, PG_TID, NAME,
+	        PAY_NO, IMP_UID, MERCHANT_UID, APPLY_NUM,  CARD_NAME, CARD_NUMBER, CARD_QUOTA,
+	        PAY_METHOD, PG_PROVIDER, PG_TYPE, PG_TID, NAME,
 	        PAID_AMOUNT, CURRENCY, BUYER_NAME, BUYER_TEL, BUYER_ADDR,
 	        BUYER_POSTCODE, BUYER_EMAIL, STATUS, PAID_AT, RECEIPT_URL
 	    ) VALUES (
-	        PAY_NO_SEQ.NEXTVAL, #{impUid}, #{merchantUid}, #{payMethod}, #{pgProvider}, #{pgType}, #{pgTid},
+	        PAY_NO_SEQ.NEXTVAL, #{impUid}, #{merchantUid}, #{applyNum}, #{cardName}, #{cardNumber}, #{cardQuota},
+	        #{payMethod}, #{pgProvider}, #{pgType}, #{pgTid},
 	        #{name}, #{paidAmount}, #{currency}, #{buyerName}, #{buyerTel},
 	        #{buyerAddr}, #{buyerPostcode}, #{buyerEmail},
 	        #{status}, #{paidAt}, #{receiptUrl}
