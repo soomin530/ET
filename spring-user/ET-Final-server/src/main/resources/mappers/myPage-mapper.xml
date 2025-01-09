@@ -237,6 +237,85 @@
 	    </foreach>
 	</delete>
 	
+	<!-- 1:1 문의 작성 -->
+	<insert id="inquiryWrite" parameterType="map">
+		INSERT INTO "TB_INQUIRY"(
+			INQUIRY_NO,
+			INQUIRY_TITLE,
+			INQUIRY_CONTENT,
+			INQUIRY_DATE,
+			INQUIRY_DEL_FL,
+			MEMBER_NO
+		) VALUES (
+			SEQ_INQUIRY_NO.NEXTVAL,
+			#{inquiryTitle},
+			#{inquiryContent},
+			DEFAULT,
+			DEFAULT,
+			#{memberNo}
+		)
+	</insert>
+	
+	<!-- 오라클용 페이징 처리를 위한 매퍼 수정 -->
+	<select id="getInquiries" resultType="Inquiry">
+	    SELECT * FROM (
+	        SELECT ROWNUM rnum, A.* FROM (
+	            SELECT 
+	                INQUIRY_NO, INQUIRY_TITLE, INQUIRY_CONTENT,
+	                INQUIRY_DATE, INQUIRY_DEL_FL, MEMBER_NO,
+	                REPLY_IS, REPLY_CONTENT
+	            FROM TB_INQUIRY
+	            WHERE MEMBER_NO = #{memberNo}
+	            AND INQUIRY_DEL_FL = 'N'
+	            <if test='searchType == "title" and keyword != null and keyword != ""'>
+	                AND INQUIRY_TITLE LIKE '%' || #{keyword} || '%'
+	            </if>
+	            <if test='searchType == "content" and keyword != null and keyword != ""'>
+	                AND INQUIRY_CONTENT LIKE '%' || #{keyword} || '%'
+	            </if>
+	            ORDER BY INQUIRY_NO DESC
+	        ) A WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{limit}
+	    ) WHERE rnum > #{offset}
+	</select>
+	
+	<!-- 문의 총 개수 조회 -->
+    <select id="getInquiryCount" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_INQUIRY
+        WHERE MEMBER_NO = #{memberNo}
+        AND INQUIRY_DEL_FL = 'N'
+        <if test='searchType == "title" and keyword != null and keyword != ""'>
+            AND INQUIRY_TITLE LIKE '%' || #{keyword} || '%'
+        </if>
+        <if test='searchType == "content" and keyword != null and keyword != ""'>
+            AND INQUIRY_CONTENT LIKE '%' || #{keyword} || '%'
+        </if>
+    </select>
+
+    <!-- 문의 상세 조회 -->
+    <select id="getInquiryDetail" resultType="Inquiry">
+        SELECT 
+        	INQUIRY_NO,
+			INQUIRY_TITLE,
+			INQUIRY_CONTENT,
+			TO_CHAR(INQUIRY_DATE, 'YYYY-MM-DD') AS INQUIRY_DATE,
+			INQUIRY_DEL_FL,
+			MEMBER_NO,
+			REPLY_IS,
+			REPLY_CONTENT
+        FROM TB_INQUIRY
+        WHERE INQUIRY_NO = #{inquiryNo}
+        AND INQUIRY_DEL_FL = 'N'
+    </select>
+    
+    <!-- 문의 사항 삭제  -->
+	<update id="deleteInquiry">
+	    UPDATE TB_INQUIRY
+	    SET INQUIRY_DEL_FL = 'Y'
+	    WHERE INQUIRY_NO = #{inquiryNo}
+	   	AND MEMBER_NO = #{memberNo}
+	</update>
+	
 	
     
     <!-- 예매 상세 정보 조회 -->

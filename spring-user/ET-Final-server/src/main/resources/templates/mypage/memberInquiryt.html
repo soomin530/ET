@@ -4,10 +4,10 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>비밀번호 변경</title>
+	<title>1:1 문의 작성</title>
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<link rel="stylesheet" href="/css/myPage/changePw.css">
+	<link rel="stylesheet" href="/css/myPage/memberInquiryt.css">
 	<th:block th:replace="~{common/common}"></th:block>
 
 </head>
@@ -15,7 +15,7 @@
 <body>
 	<th:block th:replace="~{common/header}"></th:block>
 
-	<div class="mypage-container">
+	<div class="inquiry-container">
 		<!-- 사이드바 -->
 		<div class="sidebar">
 			<nav class="sidebar-nav">
@@ -31,11 +31,10 @@
 						<a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
 					</li>
 					<li class="menu-item">
-						<a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link">1:1 문의</a>
+						<a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link active">1:1 문의</a>
 					</li>
 					<li class="menu-item">
-						<a href="#" data-page="memberInquirytList"
-							class="mypage-side-menu-link nav-link active">문의내역</a>
+						<a href="#" data-page="memberInquirytList" class="mypage-side-menu-link nav-link">문의내역</a>
 					</li>
 					<li class="menu-item">
 						<a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
@@ -44,39 +43,37 @@
 			</nav>
 		</div>
 
+		<!-- 메인 컨텐츠 -->
 		<div class="main-content">
-			<h2 class="page-title">비밀번호 변경</h2>
+			<h2 class="page-title">1:1 문의 작성</h2>
 
-			<div class="password-container">
-				<p class="password-description">
-					주기적인 <span>비밀번호 변경</span>을 통해<br>
-					개인정보를 안전하게 보호하세요.
-				</p>
-
+			<form class="inquiry-form" id="inquiryForm" method="POST" th:action="@{/mypageApi/inquiryWrite}">
 				<div class="form-group">
-					<input type="password" id="newPassword" placeholder="새 비밀번호" required>
-				</div>
-				<div class="form-group">
-					<input type="password" id="confirmPassword" placeholder="새 비밀번호 확인" required>
+					<label for="inquiryTitle">제목</label>
+					<input type="text" id="inquiryTitle" name="inquiryTitle" maxlength="100" required>
+					<div class="error-message" id="titleError">제목을 입력해주세요.</div>
 				</div>
 
-				<p class="password-note">
-					※ 비밀번호는 6~12자 이내로 영문(대소문자), 숫자, 특수문자 3가지 조합 중 2가지 이상을 포함해서 만드셔야 합니다.
-				</p>
+				<div class="form-group">
+					<label for="inquiryContent">문의내용</label>
+					<textarea id="inquiryContent" name="inquiryContent" maxlength="2000" required></textarea>
+					<div class="error-message" id="contentError">문의내용을 입력해주세요.</div>
+				</div>
 
 				<div class="form-actions">
-					<button type="button" class="cancel-btn">취소</button>
-					<button type="button" class="save-btn" id="submitBtn">변경</button>
+					<button type="button" class="cancel-btn" onclick="location.href='/inquiry/list'">취소</button>
+					<button type="submit" class="submit-btn">등록</button>
 				</div>
-
-			</div>
+			</form>
 		</div>
 	</div>
 
 	<th:block th:replace="~{common/footer}"></th:block>
 
-	<script src="/js/myPage/changePw.js"></script>
-
+	<script>
+	</script>
+	
+	<script src="/js/myPage/memberInquiryt.js"></script>
 </body>
 
 </html>
