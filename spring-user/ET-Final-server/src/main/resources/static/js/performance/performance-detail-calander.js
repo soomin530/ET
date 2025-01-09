@@ -222,13 +222,18 @@ class Calendar {
 	isDateAvailable(date) {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
+		
+		// 내일 날짜 계산
+	    const tomorrow = new Date(today);
+	    tomorrow.setDate(tomorrow.getDate() + 1);
 
 		const compareDate = new Date(date);
 		compareDate.setHours(0, 0, 0, 0);
 
-		if (compareDate < today) {
-			return false;
-		}
+		// 내일 이전의 날짜는 선택 불가
+	    if (compareDate < tomorrow) {
+	        return false;
+	    }
 
 		const startDateCompare = new Date(this.startDate);
 		startDateCompare.setHours(0, 0, 0, 0);
