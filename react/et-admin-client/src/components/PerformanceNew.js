@@ -1,5 +1,217 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import styled, { keyframes } from 'styled-components';
+
+// Styled Components
+const Container = styled.div`
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background-color: #fff;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const FormSection = styled.div`
+  flex: 1;
+`;
+
+const FormWrapper = styled.div`
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+const Label = styled.label`
+  font-weight: 500;
+  color: #333;
+`;
+
+const Input = styled.input`
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #ff7f27;
+    box-shadow: 0 0 0 2px rgba(255, 127, 39, 0.1);
+  }
+`;
+
+const SubmitButton = styled.button`
+  padding: 10px 20px;
+  background-color: #10B981;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  margin-top: 10px;
+
+  &:hover {
+    background-color: #059669;
+  }
+`;
+
+const MapSection = styled.div`
+  flex: 1;
+  padding: 20px;
+`;
+
+const SearchContainer = styled.div`
+  position: relative;
+  margin-bottom: 20px;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+`;
+
+const SuggestionsContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+`;
+
+const SuggestionItem = styled.div`
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
+const SuggestionName = styled.div`
+  font-weight: 500;
+  margin-bottom: 4px;
+`;
+
+const SuggestionAddress = styled.div`
+  font-size: 12px;
+  color: #666;
+`;
+
+const MapContainer = styled.div`
+  width: 500px;
+  height: 400px;
+`;
+
+const LocationInfo = styled.div`
+  margin-top: 20px;
+`;
+
+const LocationText = styled.p`
+  margin: 8px 0;
+  color: #555;
+  font-size: 14px;
+`;
+
+const slideDown = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+`;
+
+const GradeCheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  font-size: 0.9em;
+  color: #666;
+`;
+
+const AnimatedContainer = styled.div`
+  overflow: hidden;
+  animation: ${slideDown} 0.3s ease-out forwards;
+`;
+
+const GradesContainer = styled.div`
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const GradeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const GradeCheckbox = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: ${props => props.checked ? '#e2e8f0' : 'transparent'};
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #e2e8f0;
+  }
+`;
+
+const GradeInput = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: ${slideDown} 0.3s ease-out forwards;
+`;
+
+const SeatInput = styled(Input)`
+  width: 100px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+`;
+
+const GRADE_ORDER = ['VIP', 'R', 'S', 'A', 'B', '전석'];
 
 const PerformanceForm = () => {
   const container = useRef(null);
@@ -8,6 +220,11 @@ const PerformanceForm = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [isShowSuggestions, setIsShowSuggestions] = useState(false);
   const [searchType, setSearchType] = useState('keyword');
+  const [showGrades, setShowGrades] = useState(false);
+  const [selectedGrades, setSelectedGrades] = useState([]);
+  const [gradeSeats, setGradeSeats] = useState({});
+  const [seatError, setSeatError] = useState('');
+  
 
   const [formData, setFormData] = useState({
     MT10ID: '',       // 공연장 ID (새로 추가)
@@ -21,30 +238,60 @@ const PerformanceForm = () => {
     ADRES: '',        // address -> ADRES
     FCLTLA: '',       // latitude -> FCLTLA
     FCLTLO: ''        // longitude -> FCLTLO
- });
+  });
+
+  const validateSeats = () => {
+    if (!showGrades) return true;
+    
+    const totalGradeSeats = Object.values(gradeSeats).reduce((sum, val) => sum + (parseInt(val) || 0), 0);
+    const totalSeats = parseInt(formData.SEATSCALE) || 0;
+    
+    if (totalGradeSeats !== totalSeats) {
+      setSeatError(`총 객석수(${totalSeats})와 등급별 좌석 합계(${totalGradeSeats})가 일치하지 않습니다.`);
+      return false;
+    }
+    
+    setSeatError('');
+    return true;
+  };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    if (name === 'SEATSCALE') {
+      validateSeats();
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    axios
-      .post('http://localhost:8081/performance/insert', formData)
+    if (!validateSeats()) {
+      return;
+    }
+    
+    // Your existing submit logic...
+    const submitData = {
+      ...formData,
+      gradeSeats: showGrades ? gradeSeats : null
+    };
+    
+    axios.post('http://localhost:8081/performance/insert', submitData)
       .then((response) => {
         if(response.data > 0) {
           alert('시설 정보가 성공적으로 등록되었습니다.');
           window.history.back();
+        } else {
+          alert("등록 실패하였습니다");
         }
-        else alert("등록 실패하였습니다");
       })
       .catch((error) => {
         console.error(error);
-        alert('뻑난거같은데요');
+        alert('오류가 발생했습니다');
       });
   };
 
@@ -67,6 +314,29 @@ const PerformanceForm = () => {
         }
       });
     }
+  };
+
+  const handleGradeChange = (grade) => {
+    setSelectedGrades(prev => {
+      if (prev.includes(grade)) {
+        const newGrades = prev.filter(g => g !== grade);
+        setGradeSeats(seats => {
+          const newSeats = {...seats};
+          delete newSeats[grade];
+          return newSeats;
+        });
+        return newGrades;
+      }
+      return [...prev, grade].sort((a, b) => GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b));
+    });
+  };
+
+  const handleGradeSeatChange = (grade, value) => {
+    setGradeSeats(prev => ({
+      ...prev,
+      [grade]: value
+    }));
+    validateSeats();
   };
 
   useEffect(() => {
@@ -98,7 +368,6 @@ const PerformanceForm = () => {
       });
     }
 
-    // Form 데이터 업데이트
     setFormData({
       ...formData,
       ADRES: place.address_name,
@@ -111,136 +380,180 @@ const PerformanceForm = () => {
   };
 
   return (
-    <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
-      <div style={{ flex: 1 }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div>
-            <label>공연장 ID:</label>
-            <input
-              type="text"
-              name="MT10ID"
-              value={formData.MT10ID}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label>공연장명:</label>
-            <input
-              type="text" 
-              name="FCLTYNM"
-              value={formData.FCLTYNM}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label>공연장 시설 수:</label>
-            <input
-              type="number"
-              name="MT13CNT"
-              value={formData.MT13CNT}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label>시설특성:</label>
-            <input
-              type="text"
-              name="FCLTYCHARTR"
-              value={formData.FCLTYCHARTR}
-              onChange={handleChange}
-              placeholder="공공(문예회관)"
-            />
-          </div>
-          <div>
-            <label>개관일:</label>
-            <input
-              type="text"
-              name="OPENDE"
-              value={formData.OPENDE}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label>객석수:</label>
-            <input
-              type="number"
-              name="SEATSCALE"
-              value={formData.SEATSCALE}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label>전화번호:</label>
-            <input
-              type="tel"
-              name="TELNO"
-              value={formData.TELNO}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label>홈페이지:</label>
-            <input
-              type="string"
-              name="RELATEURL"
-              value={formData.RELATEURL}
-              onChange={handleChange}
-            />
-          </div>
-          <button type="submit" style={{ marginTop: '20px', padding: '10px' }}>제출</button>
-        </form>
-      </div>
- 
-      <div style={{ flex: 1 }}>
-        <div className="search-container" style={{ marginBottom: '10px' }}>
-          <input
+    <Container>
+      <FormSection>
+        <FormWrapper>
+          <Form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label>공연장 ID:</Label>
+              <Input
+                type="text"
+                name="MT10ID"
+                value={formData.MT10ID}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>공연장명:</Label>
+              <Input
+                type="text"
+                name="FCLTYNM"
+                value={formData.FCLTYNM}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>공연장 시설 수:</Label>
+              <Input
+                type="number"
+                name="MT13CNT"
+                value={formData.MT13CNT}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>시설특성:</Label>
+              <Input
+                type="text"
+                name="FCLTYCHARTR"
+                value={formData.FCLTYCHARTR}
+                onChange={handleChange}
+                placeholder="공공(문예회관)"
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>개관일:</Label>
+              <Input
+                type="text"
+                name="OPENDE"
+                value={formData.OPENDE}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <Label>객석수:</Label>
+                  <Input
+                    type="number"
+                    name="SEATSCALE"
+                    value={formData.SEATSCALE}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <GradeCheckboxContainer>
+                  <input
+                    type="checkbox"
+                    id="showGrades"
+                    checked={showGrades}
+                    onChange={(e) => setShowGrades(e.target.checked)}
+                  />
+                  <label htmlFor="showGrades">등급지정</label>
+                </GradeCheckboxContainer>
+              </div>
+              
+              {showGrades && (
+                <AnimatedContainer>
+                  <GradesContainer>
+                    <GradeRow>
+                      {GRADE_ORDER.map(grade => (
+                        <GradeCheckbox key={grade} checked={selectedGrades.includes(grade)}>
+                          <input
+                            type="checkbox"
+                            checked={selectedGrades.includes(grade)}
+                            onChange={() => handleGradeChange(grade)}
+                          />
+                          {grade}
+                        </GradeCheckbox>
+                      ))}
+                    </GradeRow>
+                    
+                    {selectedGrades.map(grade => (
+                      <GradeInput key={grade}>
+                        <Label>{grade} 좌석:</Label>
+                        <SeatInput
+                          type="number"
+                          value={gradeSeats[grade] || ''}
+                          onChange={(e) => handleGradeSeatChange(grade, e.target.value)}
+                          min="0"
+                        />
+                      </GradeInput>
+                    ))}
+                    
+                    {seatError && <ErrorText>{seatError}</ErrorText>}
+                  </GradesContainer>
+                </AnimatedContainer>
+              )}
+            </FormGroup>
+            
+            <FormGroup>
+              <Label>전화번호:</Label>
+              <Input
+                type="tel"
+                name="TELNO"
+                value={formData.TELNO}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>홈페이지:</Label>
+              <Input
+                type="string"
+                name="RELATEURL"
+                value={formData.RELATEURL}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <SubmitButton 
+              type="submit" 
+              disabled={seatError !== ''}
+            >
+              제출
+            </SubmitButton>
+          </Form>
+        </FormWrapper>
+      </FormSection>
+
+      <MapSection>
+        <SearchContainer>
+          <SearchInput
             type="text"
             value={searchKeyword}
             onChange={handleInputChange}
             placeholder="주소를 검색하세요"
-            style={{ width: '300px', padding: '8px' }}
           />
- 
+
           {isShowSuggestions && suggestions.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              width: '300px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              backgroundColor: 'white',
-              border: '1px solid #ddd',
-              zIndex: 1000
-            }}>
+            <SuggestionsContainer>
               {suggestions.map((place, index) => (
-                <div
+                <SuggestionItem
                   key={index}
                   onClick={() => handlePlaceClick(place)}
-                  style={{ padding: '8px', cursor: 'pointer', hover: { backgroundColor: '#f5f5f5' } }}
                 >
-                  <div>{place.place_name}</div>
-                  <div style={{ fontSize: '0.8em', color: '#666' }}>{place.address_name}</div>
-                </div>
+                  <SuggestionName>{place.place_name}</SuggestionName>
+                  <SuggestionAddress>{place.address_name}</SuggestionAddress>
+                </SuggestionItem>
               ))}
-            </div>
+            </SuggestionsContainer>
           )}
-        </div>
- 
-        <div ref={container} style={{ width: "500px", height: "400px" }}></div>
- 
-        <div style={{ marginTop: '10px' }}>
-          <p>주소: {formData.ADRES}</p>
-          <p>위도: {formData.FCLTLA}</p>
-          <p>경도: {formData.FCLTLO}</p>
-        </div>
-      </div>
-    </div>
+        </SearchContainer>
+
+        <MapContainer ref={container} />
+
+        <LocationInfo>
+          <LocationText>주소: {formData.ADRES}</LocationText>
+          <LocationText>위도: {formData.FCLTLA}</LocationText>
+          <LocationText>경도: {formData.FCLTLO}</LocationText>
+        </LocationInfo>
+      </MapSection>
+    </Container>
   );
- };
+};
 
 export default PerformanceForm;
