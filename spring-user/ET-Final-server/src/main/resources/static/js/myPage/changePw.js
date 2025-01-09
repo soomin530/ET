@@ -1,8 +1,8 @@
 // 공통 함수: 쿠키 가져오기
 const getChangeCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
 };
 
 // 필요한 DOM 요소들 선택
@@ -42,8 +42,40 @@ function validatePasswordMatch() {
 	}
 }
 
+// 이전 비밀번호와 동일한지 확인하는 함수 추가
+async function checkPreviousPassword(newPassword) {
+	try {
+		const response = await fetch('/mypageApi/checkPreviousPassword', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ newPassword: newPassword })
+		});
+		const result = await response.json();
+		return result.isDuplicate; // 서버에서 중복 여부를 boolean으로 반환한다고 가정
+	} catch (error) {
+		console.error('Error checking previous password:', error);
+		return false;
+	}
+}
+
+// debounce 함수 추가 (서버 요청 최적화)
+function debounce(func, wait) {
+	let timeout;
+	return function executedFunction(...args) {
+		const later = () => {
+			clearTimeout(timeout);
+			func(...args);
+		};
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+	};
+}
+
 // 비밀번호 실시간 검사
-newPasswordInput.addEventListener("input", (e) => {
+// 비밀번호 실시간 검사 (수정된 버전)
+newPasswordInput.addEventListener("input", debounce(async (e) => {
 	const password = e.target.value;
 
 	if (password.trim().length === 0) {
@@ -53,13 +85,21 @@ newPasswordInput.addEventListener("input", (e) => {
 		passwordMessage.innerText = "특수문자(!, @, #, $, %, *)를 포함하여 6~12자여야 합니다.";
 		passwordMessage.style.color = "red";
 	} else {
-		passwordMessage.innerText = "유효한 비밀번호입니다.";
-		passwordMessage.style.color = "green";
+		// 기본 유효성 검사를 통과한 경우에만 서버 검증 수행
+		const isDuplicate = await checkPreviousPassword(password);
+		console.log(isDuplicate);
+		if (isDuplicate) {
+			passwordMessage.innerText = "이전에 사용한 비밀번호입니다. 다른 비밀번호를 입력해주세요.";
+			passwordMessage.style.color = "red";
+		} else {
+			passwordMessage.innerText = "유효한 비밀번호입니다.";
+			passwordMessage.style.color = "green";
+		}
 	}
 
 	// 비밀번호 확인 유효성 검사
 	validatePasswordMatch();
-});
+}, 100)); // 100ms 딜레이로 디바운스 적용
 
 // 비밀번호 확인 실시간 검사
 confirmPasswordInput.addEventListener("input", validatePasswordMatch);
@@ -70,21 +110,28 @@ cancelBtn.addEventListener("click", () => {
 });
 
 // 폼 제출 버튼 클릭 시
-submitBtn.addEventListener("click", () => {
+submitBtn.addEventListener("click", async () => {
 	const newPassword = newPasswordInput.value; // 비밀번호 입력값
 	const confirmPassword = confirmPasswordInput.value; // 비밀번호 확인 입력값
-	
+
 	const naverFl = getChangeCookie('naverFl');
-	    
-    if (naverFl === 'Y') {
-        alert('네이버 로그인 사용자는 네이버에서 비밀번호를 변경해주세요.');
-        window.location.href = '/mypage/memberInfo';
-        return;
-    }
+
+	if (naverFl === 'Y') {
+		alert('네이버 로그인 사용자는 네이버에서 비밀번호를 변경해주세요.');
+		window.location.href = '/mypage/memberInfo';
+		return;
+	}
 
 	// 비밀번호 확인
 	if (newPassword !== confirmPassword) {
 		alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+		return;
+	}
+
+	// 이전 비밀번호와 동일한지 한번 더 확인
+	const isDuplicate = await checkPreviousPassword(newPassword);
+	if (isDuplicate) {
+		alert("이전에 사용한 비밀번호입니다. 다른 비밀번호를 입력해주세요.");
 		return;
 	}
 
@@ -130,10 +177,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			link.addEventListener('click', (e) => {
 				e.preventDefault();
 				const targetPage = e.target.dataset.page;
-				
+
 				// 클릭된 페이지를 세션 스토리지에 저장
-	           sessionStorage.setItem('targetPage', targetPage);
-			   
+				sessionStorage.setItem('targetPage', targetPage);
+
 				if (pagesNeedingVerification.includes(targetPage)) {
 					// 비밀번호 검증 페이지로 이동
 					window.location.href = `/mypage/checkPw`;

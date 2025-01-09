@@ -61,7 +61,8 @@ let checkObj = {
 	"memberPwConfirm": false,
 	"memberNickname": false,
 	"memberTel": false,
-	"authKey": false
+	"authKey": false,
+	"gender": false
 };
 
 
@@ -700,6 +701,23 @@ memberTel.addEventListener("input", e => {
 
 });
 
+// 성별 라디오 버튼 유효성 검사
+const maleRadio = document.getElementById('maleRadio');
+const femaleRadio = document.getElementById('femaleRadio');
+
+// 성별 선택 시 이벤트 처리
+function handleGenderSelection(e) {
+    if(maleRadio.checked || femaleRadio.checked) {
+        checkObj.gender = true;
+    } else {
+        checkObj.gender = false;
+    }
+}
+
+// 성별 라디오 버튼에 이벤트 리스너 추가
+maleRadio.addEventListener('change', handleGenderSelection);
+femaleRadio.addEventListener('change', handleGenderSelection);
+
 // -----------------------------------
 
 // (최종)
@@ -709,39 +727,37 @@ const signUpForm = document.querySelector("#signUpForm");
 
 // 회원 가입 폼 제출 시
 signUpForm.addEventListener("submit", e => {
-	// for ~ in (객체 전용 향상된 for 문)
-	for (let key in checkObj) { // checkObj 요소의 key 값을 순서대로 꺼내옴
+    // 기본적으로 제출을 막아둡니다
+    e.preventDefault(); 
 
-		if (!checkObj[key]) { // 현재 접근중인 checkObj[key]의 value 값이 false 인 경우 (유효하지 않음)
-
-			let str; // 출력할 메시지를 저장할 변수
-
-			switch (key) {
-				case "authKey":
-					str = "이메일이 인증되지 않았습니다"; break;
-
-				case "memberPw":
-					str = "비밀번호가 유효하지 않습니다"; break;
-
-				case "memberPwConfirm":
-					str = "비밀번호가 일치하지 않습니다"; break;
-
-				case "memberNickname":
-					str = "닉네임이 유효하지 않습니다"; break;
-
-				case "memberTel":
-					str = "전화번호가 유효하지 않습니다"; break;
-
-				case "memberEmail":
-					str = "이메일이 유효하지 않습니다"; break;
-			}
-
-			alert(str);
-
-			document.getElementById(key).focus(); // 초점 이동
-
-			e.preventDefault(); // form 태그 기본 이벤트(제출) 막기
-			return;
-		}
-	}
+    // for ~ in (객체 전용 향상된 for 문)
+    for (let key in checkObj) {
+        if (!checkObj[key]) {
+            let str;
+            switch (key) {
+                case "authKey":
+                    str = "이메일이 인증되지 않았습니다"; break;
+                case "memberId":
+                    str = "아이디가 유효하지 않습니다"; break;
+                case "memberPw":
+                    str = "비밀번호가 유효하지 않습니다"; break;
+                case "memberPwConfirm":
+                    str = "비밀번호가 일치하지 않습니다"; break;
+                case "memberNickname":
+                    str = "닉네임이 유효하지 않습니다"; break;
+                case "memberTel":
+                    str = "전화번호가 유효하지 않습니다"; break;
+                case "memberEmail":
+                    str = "이메일이 유효하지 않습니다"; break;
+                case "gender":
+                    str = "성별을 선택해주세요"; break;
+            }
+            alert(str);
+            document.getElementById(key).focus();
+            return;
+        }
+    }
+    
+    // 모든 검증을 통과했을 때만 폼을 제출합니다
+    signUpForm.submit();
 });

@@ -41,9 +41,7 @@
 		<div id="notices" class="tab-content" style="cursor: unset;">
 			<div th:if="${not #lists.isEmpty(results.notices)}" class="notice-list">
 				<div th:each="notice : ${results.notices}" class="notice-item">
-					<h4>
-						<a th:href="@{'/notice/' + ${notice.announceNo}}" th:text="${notice.announceTitle}"></a>
-					</h4>
+					<h4 th:text="${notice.announceTitle}"></h4>
 					<p class="notice-preview" th:utext="${notice.announceContent}"></p>
 					<p class="notice-info">
 						<span th:text="${notice.announceWriteDate}"></span>

@@ -17,17 +17,15 @@
 	<!-- hero 섹션 바로 다음에 추가 -->
 	<div class="ticker-wrap">
 		<div class="ticker">
-			<!-- 타임리프로 performanceRanking을 반복 -->
-			<div th:each="ranking, iterStat : ${performanceRanking}">
+			<th:block th:each="ranking, iterStat : ${performanceRanking}">
 				<div class="ticker-item">
-					<!-- 클릭 시 해당 MT20ID로 상세 페이지로 이동 -->
 					<a th:href="@{/performance/detail/{mt20id}(mt20id=${ranking.mt20id})}" class="ticker-link">
 						🎟️ <span th:text="${iterStat.index + 1}">1</span>위:
 						<span th:text="${ranking.prfnm}">공연 제목</span>
 						(평점: <span th:text="${ranking.avgRating}">평점</span>⭐)
 					</a>
 				</div>
-			</div>
+			</th:block>
 		</div>
 	</div>
 
@@ -103,7 +101,9 @@
 							<td th:text="${stat.statNtssnmrssm}">0</td>
 							<td th:text="${stat.statCancelnmrssm}">0</td>
 							<td th:text="${stat.statNtssnmrssm - stat.statCancelnmrssm}">0</td>
-							<td th:text="${#numbers.formatDecimal(stat.statNtssamountsm, 0, 'COMMA', 0, 'POINT') + '원'}">0
+							<td
+								th:text="${#numbers.formatDecimal(stat.statNtssamountsm, 0, 'COMMA', 0, 'POINT') + '원'}">
+								0
 							</td>
 						</tr>
 					</tbody>
@@ -168,10 +168,10 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
 
 	<script src="/js/main.js"></script>
-	
+
 	<script th:inline="javascript">
 		// 통계 데이터를 JavaScript 변수로 변환
-		const statisticsData = /*[[${statList}]]*/ [];
+		const statisticsData = /*[[${statList}]]*/[];
 	</script>
 
 </body>

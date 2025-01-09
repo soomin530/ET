@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import edu.kh.project.myPage.model.dto.Inquiry;
 import edu.kh.project.myPage.model.dto.ticketInfoDTO;
 import edu.kh.project.performance.model.dto.Performance;
 
@@ -84,6 +85,36 @@ public interface MyPageMapper {
 	 * @return
 	 */
 	int deleteWishlistItems(Map<String, Object> paramMap);
+	
+	/** 1:1 문의 작성
+	 * @param paramMap
+	 * @return
+	 */
+	int inquiryWrite(Map<String, Object> paramMap);
+	
+	/** 문의 내역 목록 조회
+	 * @param paramMap
+	 * @return
+	 */
+	List<Inquiry> getInquiries(Map<String, Object> paramMap);
+
+	/** 문의 내역 목록 개수 조회
+	 * @param paramMap
+	 * @return
+	 */
+	int getInquiryCount(Map<String, Object> paramMap);
+
+	/** 문의 내역 상세 조회
+	 * @param inquiryNo
+	 * @return
+	 */
+	Inquiry getInquiryDetail(int inquiryNo);
+	
+	/** 해당 문의 사항 삭제
+	 * @param paramMap
+	 * @return
+	 */
+	int deleteInquiry(Map<String, Object> paramMap);
 
 	/** 예약 내역 조회
 	 * @param memberNo
@@ -165,6 +196,8 @@ public interface MyPageMapper {
 	 * @return
 	 */
 	int deleteAddress(Map<String, Object> paramMap);
+
+
 
 	
 	/** TB_TICKET_SEAT에서 예약된 좌석 삭제
