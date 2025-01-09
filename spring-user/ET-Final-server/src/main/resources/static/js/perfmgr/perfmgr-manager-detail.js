@@ -84,7 +84,7 @@ function deletePerformance() {
 			.then(response => {
 					if (response.ok) {
 							alert('공연이 성공적으로 삭제되었습니다.');
-							window.location.href = '/perfmgr/performance-list'; // 목록 페이지로 이동
+							window.location.href = '/perfmgr/perfmgr-list'; // 목록 페이지로 이동
 					} else {
 							alert('공연 삭제 중 오류가 발생했습니다.');
 					}

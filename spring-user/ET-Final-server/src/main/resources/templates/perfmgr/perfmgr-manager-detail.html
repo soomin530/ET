@@ -16,9 +16,12 @@
 
         <!-- 버튼 추가 -->
         <div class="action-buttons">
-            <button type="button" class="btn btn-primary"
-                onclick="location.href='/perfmgr/perfmgr-modifyPerformance?mt20id=' + document.getElementById('mt20id').value">수정</button>
-            <button type="button" class="btn btn-danger" onclick="deletePerformance()">삭제</button>
+            <th:block th:if="${performance != null}">
+                <th:block th:if="${performance.performance_del_fl != 'Y'}">
+                <button type="button" class="btn btn-primary"
+                    onclick="location.href='/perfmgr/perfmgr-modifyPerformance?mt20id=' + document.getElementById('mt20id').value">수정</button>
+                <button type="button" class="btn btn-danger" onclick="deletePerformance()">삭제</button>
+            </th:block>
         </div>
 
         <!-- null 체크 추가 -->
