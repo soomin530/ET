@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의 상세</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <th:block th:replace="~{common/common}"></th:block>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            min-height: 100vh;
+            display: block;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            position: fixed;
+            height: 70vh;
+            z-index: 1;
+            top: 90px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            margin-left: 200px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .inquiry-container {
+            display: flex;
+            min-height: calc(100vh - 200px);
+            position: relative;
+        }
+
+        .menu-list {
+            list-style: none;
+        }
+
+        .menu-item {
+            margin-bottom: 15px;
+        }
+
+        .menu-item a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item a:hover {
+            background-color: #eee;
+        }
+
+        .page-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+        }
+
+        .inquiry-detail {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .inquiry-header {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .inquiry-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .inquiry-info {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .inquiry-content {
+            min-height: 200px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .reply-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .reply-header {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .reply-content {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .no-reply {
+            color: #666;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .list-btn, .modify-btn, .delete-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .list-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .modify-btn {
+            background-color: #ff4d4f;
+            border: none;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #666;
+            border: none;
+            color: white;
+        }
+
+        .list-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .modify-btn:hover {
+            background-color: #d9363e;
+        }
+
+        .delete-btn:hover {
+            background-color: #555;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            padding: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-link.active {
+            background-color: #ff4d4f;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .nav-link:hover:not(.active) {
+            background-color: #eee;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <th:block th:replace="~{common/header}"></th:block>
+
+    <div class="inquiry-container">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+            <nav class="sidebar-nav">
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+                    </li>
+                    <li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+                        <a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link">1:1 문의</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-page="memberInquirytList" class="mypage-side-menu-link nav-link active">문의내역</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="main-content">
+            <h2 class="page-title">문의 상세</h2>
+
+            <div class="inquiry-detail">
+                <div class="inquiry-header">
+                    <h3 class="inquiry-title" th:text="${inquiry.inquiryTitle}">문의 제목</h3>
+                    <div class="inquiry-info">
+                        <span th:text="'작성일: ' + ${inquiry.inquiryDate}">작성일: 2024-01-09</span>
+                        <span th:text="'답변상태: ' + (${inquiry.replyIs == 'Y'} ? '답변완료' : '답변대기')">답변상태: 답변대기</span>
+                    </div>
+                </div>
+
+                <div class="inquiry-content" th:text="${inquiry.inquiryContent}">
+                    문의 내용이 여기에 표시됩니다.
+                </div>
+
+                <!-- 답변이 있을 경우에만 표시 -->
+                <div class="reply-section" th:if="${inquiry.replyIs == 'Y'}">
+                    <div class="reply-header">답변내용</div>
+                    <div class="reply-content" th:text="${inquiry.replyContent}">
+                        답변 내용이 여기에 표시됩니다.
+                    </div>
+                </div>
+
+                <!-- 답변이 없을 경우 -->
+                <div class="reply-section" th:if="${inquiry.replyIs != 'Y'}">
+                    <div class="no-reply">아직 답변이 등록되지 않았습니다.</div>
+                </div>
+
+                <div class="button-group">
+                    <button class="list-btn" onclick="location.href='/mypage/memberInquirytList'">목록으로</button>
+                    <button class="delete-btn" th:if="${inquiry.replyIs != 'Y'}" 
+                            th:onclick="deleteInquiry([[${inquiry.inquiryNo}]])">
+                        삭제
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{common/footer}"></th:block>
+
+    <script>
+        // 문의 삭제
+        function deleteInquiry(inquiryNo) {
+            if(confirm('문의를 삭제하시겠습니까?')) {
+                fetch(`/mypageApi/inquiryDelete/${inquiryNo}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert('해당 문의가 삭제되었습니다.');
+                        location.href = '/mypage/memberInquirytList';
+                    } else {
+                        alert('해당 문의 삭제에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('해당 문의 삭제 중 오류가 발생했습니다.');
+                });
+            }
+        }
+
+        // 사이드 메뉴 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
+
+            const pagesNeedingVerification = ['changePw', 'membershipOut'];
+
+            const setActiveMenu = () => {
+                const currentPath = window.location.pathname;
+                document.querySelectorAll('.mypage-side-menu-link').forEach(link => {
+                    link.classList.toggle('active', currentPath.includes(link.dataset.page));
+                });
+            };
+
+            const initializeEventHandlers = () => {
+                document.querySelectorAll('.mypage-side-menu-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetPage = e.target.dataset.page;
+
+                        sessionStorage.setItem('targetPage', targetPage);
+
+                        if (pagesNeedingVerification.includes(targetPage)) {
+                            window.location.href = `/mypage/checkPw`;
+                        } else {
+                            window.location.href = `/mypage/${targetPage}`;
+                        }
+                    });
+                });
+            };
+
+            setActiveMenu();
+            initializeEventHandlers();
+        });
+    </script>
+</body>
+
+</html>

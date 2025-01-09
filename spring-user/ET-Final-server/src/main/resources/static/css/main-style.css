@@ -425,44 +425,33 @@ body {
 }
 
 .ticker-wrap {
-	position: relative;
-	width: 100%;
-	overflow: hidden;
-	background: rgba(0, 0, 0, 0.8);
-	padding: 10px 0;
-	margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 0;
+    margin-bottom: 20px;
 }
 
+/* 티커 애니메이션 컨테이너 */
 .ticker {
-	display: flex;
-	animation: ticker 30s linear infinite;
-	white-space: nowrap;
+    display: inline-flex;
+    animation: ticker 20s linear infinite;
+    white-space: nowrap;
 }
 
 .ticker-link {
-	display: inline-block;
-	/* 링크를 인라인 블록으로 만들어서 공간을 조정할 수 있도록 */
-	padding: 5px 10px;
-	/* 패딩을 추가하여 클릭 영역을 넓힘 */
-	color: #fff;
-	/* 기본 텍스트 색상 */
-	font-size: 16px;
-	/* 텍스트 크기 */
-	font-weight: bold;
-	/* 텍스트를 두껍게 */
-	border-radius: 5px;
-	/* 둥근 모서리 */
-	text-decoration: none;
-	/* 밑줄 제거 */
-	transition: all 0.3s ease;
-	/* 부드러운 애니메이션 효과 */
+    display: inline-block;
+    padding: 5px 10px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
 }
 
-.ticker-link:hover {
-	background-color: #2980b9;
-	/* 마우스 오버 시 배경 색상 */
-	transform: scale(1.05);
-	/* 살짝 확대 효과 */
+.ticker:hover {
+    animation-play-state: paused;
 }
 
 .ticker-link:focus {
@@ -481,13 +470,12 @@ body {
 	animation-play-state: paused;
 }
 
+/* 티커 아이템 스타일 수정 */
 .ticker-item {
-	display: inline-block;
-	padding: 0 20px;
-	color: white;
-	font-size: 1.2rem;
-	font-weight: bold;
-	text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 40px;
+    flex-shrink: 0;
 }
 
 /* 공지사항 섹션 스타일 */
@@ -751,13 +739,12 @@ body {
 }
 
 @keyframes ticker {
-	0% {
-		transform: translateX(100%);
-	}
-
-	100% {
-		transform: translateX(-100%);
-	}
+    0% {
+        transform: translate3d(30%, 0, 0);
+    }
+    100% {
+        transform: translate3d(-110%, 0, 0);
+    }
 }
 
 @media (max-width: 768px) {

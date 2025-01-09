@@ -549,9 +549,9 @@ managerSignUpForm.addEventListener("submit", e => {
 	for (let key in managerCheckObj) {
 		if (!managerCheckObj[key]) {
 			let str;
-
+			
 			switch (key) {
-				case "authKey":
+				case "managerAuthKey":
 					str = "이메일이 인증되지 않았습니다"; break;
 				case "concertManagerEmail":
 					str = "이메일이 유효하지 않습니다"; break;
