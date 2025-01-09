@@ -458,7 +458,7 @@ function submitPerformance(formData) {
 					// HTTP 상태 코드로 성공 여부 확인
 					if (xhr.status === 200) {
 						alert('공연이 성공적으로 등록되었습니다.');
-						window.location.href = '/perfmgr/performance-management';
+						window.location.href = '/perfmgr-list';
 					} else {
 						alert('공연 등록 중 오류가 발생했습니다.');
 					}
