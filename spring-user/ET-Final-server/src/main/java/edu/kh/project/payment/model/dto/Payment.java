@@ -47,6 +47,11 @@ public class Payment {
 	private String showDate;       // 공연 날짜
 	private String showTime;       // 공연 시간
 	private String gradeId;        // 좌석 등급 ID
+	
+	private String applyNum;
+	private String cardName;
+	private String cardNumber;
+	private String cardQuota;
 
 	
 

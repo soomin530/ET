@@ -238,9 +238,15 @@ public class paymentController {
 			@SessionAttribute("loginMember") Member loginMember) {
 
 		try {
-			System.out.println("전송받은 결제 데이터: " + paymentData);
-			System.out.println("공연 ID (mt20id): " + paymentData.getMt20id());
-			System.out.println("공연 시설 ID (mt10id): " + paymentData.getMt10id());
+			log.info("수신한 결제 정보: {}", paymentData);
+
+	        // `buyerAddr`와 `buyerPostcode`가 비어있는 경우 기본 메시지 추가
+	        if (paymentData.getBuyerAddr() == null) {
+	            paymentData.setBuyerAddr("주소 정보 없음");
+	        }
+	        if (paymentData.getBuyerPostcode() == null) {
+	            paymentData.setBuyerPostcode("00000");
+	        }
 
 			// 1. TB_PAYMENT에 데이터 삽입
 			boolean success = service.savePayment(paymentData);

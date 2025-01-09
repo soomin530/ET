@@ -31,8 +31,18 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("공연 시설 ID:", facilityId);
   }
 
-  document.getElementById("booking-nickname").textContent =
-    bookingInfo.nickname; // 닉네임
+   // 로컬스토리지에서 defaultAddress 가져오기
+   const defaultAddress = JSON.parse(localStorage.getItem("defaultAddress"));
+   if (!defaultAddress) {
+    alert("배송지 정보가 없습니다. 배송지를 추가해 주세요.");
+    return;
+  }
+  // buyerAddr 생성: address + detailAddress
+  const buyerAddr = `${defaultAddress.address} ${defaultAddress.detailAddress}`;
+  const buyerPostcode = defaultAddress.postcode;
+
+  // booking-info
+  document.getElementById("booking-nickname").textContent = bookingInfo.nickname; // 닉네임
   document.getElementById("booking-email").textContent = bookingInfo.email; // 이메일
   document.getElementById("booking-phone").textContent = bookingInfo.phone; // 연락처
 
@@ -89,6 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
             impUid: rsp.imp_uid || null,
             merchantUid: rsp.merchant_uid || null,
             payMethod: rsp.pay_method || "unknown",
+            applyNum: rsp.apply_num,
+            cardName: rsp.card_name,
+            cardNumber: rsp.card_number,
+            cardQuota: rsp.card_quota,
             pgProvider: rsp.pg_provider || null,
             pgType: rsp.pg_type || null,
             pgTid: rsp.pg_tid || null,
@@ -97,8 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
             currency: rsp.currency || "KRW",
             buyerName: rsp.buyer_name || bookingInfo.nickname,
             buyerTel: rsp.buyer_tel || bookingInfo.phone,
-            buyerAddr: rsp.buyer_addr || "N/A",
-            buyerPostcode: rsp.buyer_postcode || "00000",
+            buyerAddr: buyerAddr, // 배송지 주소 추가
+            buyerPostcode: buyerPostcode, // 우편번호 추가
             buyerEmail: rsp.buyer_email || bookingInfo.email,
             status: rsp.status,
             paidAt: rsp.paid_at
