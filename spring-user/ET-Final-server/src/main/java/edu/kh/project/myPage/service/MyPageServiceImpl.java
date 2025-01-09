@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import edu.kh.project.myPage.model.dto.Inquiry;
 import edu.kh.project.myPage.model.dto.ticketInfoDTO;
 import edu.kh.project.myPage.model.mapper.MyPageMapper;
 import edu.kh.project.performance.model.dto.Performance;
@@ -259,6 +260,73 @@ public class MyPageServiceImpl implements MyPageService {
 	        return false;
 	    }
 	}
+	
+	// 이전 패스워드 비교
+	@Override
+	public boolean checkPreviousPassword(String newPassword, int memberNo) {
+		
+		String checkPw = mapper.memberPwCheck(memberNo);
+		
+		if (bcrypt.matches(newPassword, checkPw)) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
+	// 1:1 문의 작성
+	@Override
+	public boolean inquiryWrite(Map<String, Object> paramMap, int memberNo) {
+		paramMap.put("memberNo", memberNo);
+		
+		int count = mapper.inquiryWrite(paramMap);
+		return count > 0;
+	}
+	
+	// 문의 내역 목록 조회
+	@Override
+	public List<Inquiry> getInquiries(int memberNo, String searchType, String keyword, int offset, int limit) {
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		paramMap.put("memberNo", memberNo);
+		paramMap.put("searchType", searchType);
+		paramMap.put("keyword", keyword);
+		paramMap.put("offset", offset);
+		paramMap.put("limit", limit);
+		
+		return mapper.getInquiries(paramMap);
+	}
+
+	// 문의 내역 목록 개수 조회
+	@Override
+	public int getInquiryCount(int memberNo, String searchType, String keyword) {
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		paramMap.put("memberNo", memberNo);
+		paramMap.put("searchType", searchType);
+		paramMap.put("keyword", keyword);
+		
+		return mapper.getInquiryCount(paramMap);
+	}
+
+	// 문의 내역 상세 조회
+	@Override
+	public Inquiry getInquiryDetail(int inquiryNo) {
+		return mapper.getInquiryDetail(inquiryNo);
+	}
+	
+	// 해당 문의 사항 삭제
+	@Override
+	public int deleteInquiry(int inquiryNo, int memberNo) {
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		paramMap.put("inquiryNo", inquiryNo);
+		paramMap.put("memberNo", memberNo);
+		
+		return mapper.deleteInquiry(paramMap);
+	}
 
 	/** 나찬웅 1/6
 	 * 예매 내역 조회
@@ -276,6 +344,8 @@ public class MyPageServiceImpl implements MyPageService {
 	public ticketInfoDTO getBookingDetail(String bookingId, int memberNo) {
 		return mapper.selectBookingDetail(bookingId, memberNo);
 	}
+
+
 
 	
 

@@ -263,6 +263,20 @@ public class MyPageController {
 		return "mypage/membershipOut";
 	}
 	
+	// 1:1 문의 페이지로 이동
+	@GetMapping("memberInquiryt")
+	public String memberInquiryt() {
+		
+		return "mypage/memberInquiryt";
+	}
+	
+	// 문의내역 페이지로 이동
+	@GetMapping("memberInquirytList")
+	public String memberInquirytList() {
+		
+		return "mypage/memberInquirytList";
+	}
+	
 	/** 회원 탈퇴 진행
 	 * @param requestMap
 	 * @param loginMember

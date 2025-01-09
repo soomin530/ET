@@ -1,9 +1,11 @@
 package edu.kh.project.myPage.service;
 
 import java.util.List;
+import java.util.Map;
 
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.AddressDTO;
+import edu.kh.project.myPage.model.dto.Inquiry;
 import edu.kh.project.myPage.model.dto.ticketInfoDTO;
 import edu.kh.project.performance.model.dto.Performance;
 
@@ -152,7 +154,50 @@ public interface MyPageService {
 	 * @return
 	 */
 	boolean deleteWishlistItems(List<String> performanceIds, int memberNo);
+	
+	/** 이전 패스워드 비교
+	 * @param newPassword
+	 * @return
+	 */
+	boolean checkPreviousPassword(String newPassword, int memberNo);
+	
+	/** 1:1 문의 작성
+	 * @param paramMap
+	 * @param memberNo
+	 * @return
+	 */
+	boolean inquiryWrite(Map<String, Object> paramMap, int memberNo);
+	
+	/** 문의 내역 목록 조회
+	 * @param memberNo
+	 * @param searchType
+	 * @param keyword
+	 * @param offset
+	 * @param itemsPerPage
+	 * @return
+	 */
+	List<Inquiry> getInquiries(int memberNo, String searchType, String keyword, int offset, int itemsPerPage);
 
+	/** 문의 내역 목록 개수 조회
+	 * @param memberNo
+	 * @param searchType
+	 * @param keyword
+	 * @return
+	 */
+	int getInquiryCount(int memberNo, String searchType, String keyword);
+
+	/** 문의 내역 상세 조회
+	 * @param inquiryNo
+	 * @return
+	 */
+	Inquiry getInquiryDetail(int inquiryNo);
+	
+	/** 해당 문의 사항 삭제
+	 * @param inquiryNo
+	 * @param memberNo
+	 * @return
+	 */
+	int deleteInquiry(int inquiryNo, int memberNo);
 
 	/** 예매 내역 조회
 	 * @param memberNo
@@ -168,7 +213,9 @@ public interface MyPageService {
 	ticketInfoDTO getBookingDetail(String bookingId, int memberNo);
 
 
-	
-	
+
+
+
+
 	
 }
