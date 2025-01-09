@@ -71,6 +71,7 @@ public class paymentController {
 
 	/**
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("seatPage")
 	public String seatPage() {
@@ -79,8 +80,8 @@ public class paymentController {
 
 	/**
 	 * 좌석 선택
-	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("seat-selection")
 	public String seatSelection(
@@ -108,8 +109,8 @@ public class paymentController {
 
 	/**
 	 * 주문자 확인
-	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("booking-info")
 	public String bookingInfo(@SessionAttribute("loginMember") Member loginMember, Model model) {
@@ -130,8 +131,8 @@ public class paymentController {
 
 	/**
 	 * 결제 창
-	 * 
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("payment")
 	public String payment(@SessionAttribute("loginMember") Member loginMember) {
@@ -182,6 +183,7 @@ public class paymentController {
 	 * 
 	 * @param performanceId
 	 * @return
+	 * @author 나찬웅
 	 */
 	@GetMapping("performance-detail")
 	public ResponseEntity<Performance> getPerformanceDetail(@RequestParam("performanceId") String performanceId) {
@@ -210,6 +212,7 @@ public class paymentController {
 	 * 
 	 * @param request
 	 * @return
+	 * @author 나찬웅
 	 */
 	@PostMapping("book-seat")
 	public ResponseEntity<String> reserveSeat(@RequestBody Map<String, String> request) {
@@ -228,6 +231,7 @@ public class paymentController {
 	 * 
 	 * @param paymentData
 	 * @return
+	 * @author 나찬웅
 	 */
 	@PostMapping("save-payment")
 	public ResponseEntity<String> savePayment(@RequestBody Payment paymentData,
@@ -304,5 +308,7 @@ public class paymentController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 처리 중 오류가 발생했습니다.");
 		}
 	}
+	
+	
 
 }

@@ -23,8 +23,6 @@ h1 {
   flex-wrap: wrap;
   /* 화면이 좁아질 경우 줄바꿈 */
   width: 90%;
-  margin: 20px auto;
-  /* 위아래 여백 추가 */
   gap: 20px;
   /* seat-container와 info-container 간격 */
 }
@@ -308,22 +306,28 @@ h1 {
   padding: 15px 25px;
   border: none;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-group button:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 
 
 .confirm-btn {
-  background-color: #ff5722;
+  background-color: #f43142;
   color: white;
   border: none;
 }
+
+.confirm-btn :hover{
+  background-color: #e12132;
+}
+
 
 .reset-btn {
   background-color: #757575;

@@ -11,7 +11,10 @@ async function fetchTicketDetail(bookingId) {
       document.getElementById("venue").innerText = data.fcltyName;
       document.getElementById("seatInfo").innerText = data.seatInfo;
       document.getElementById("ticketPrice").innerText = `${data.totalPaid.toLocaleString()}원`;
-      document.getElementById("statusBanner").innerText = data.bookingStatus === "예매" ? "예매 완료" : "취소됨";
+
+      const statusText = data.bookingStatus === "예매" ? "예매 완료" : "취소된 공연";
+      document.getElementById("statusBanner").innerText = statusText;
+
 
       // 포스터 이미지 삽입
       const posterImage = document.getElementById("posterImage");
@@ -36,7 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cancelBooking() {
   const bookingId = window.location.pathname.split("/").pop();
-  const response = await fetch(`/mypage/cancelBooking?bookingId=${bookingId}`, { method: "POST" });
+
+  console.log(`Received bookingId: ${bookingId}`); // 로그 출력
+
+  const response = await fetch(`/mypage/cancelBooking?bookingId=${bookingId}`, {
+    method: "POST",
+  });
 
   if (response.ok) {
       alert("예매가 취소되었습니다.");

@@ -213,9 +213,14 @@ public interface MyPageService {
 	ticketInfoDTO getBookingDetail(String bookingId, int memberNo);
 
 
+	/**  예매 취소(결제, 예약정보, 예매 내역, 좌석)테이블 수정 및 삭제
+	 * @param bookingId
+	 * @param memberNo
+	 * @return
+	 */
+	boolean cancelBooking(String bookingId, int memberNo);
 
-
-
-
+	
+	
 	
 }

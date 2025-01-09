@@ -40,6 +40,15 @@ document.addEventListener('DOMContentLoaded', function () {
 	 // 새 배송지 추가 버튼 클릭 시 모달 열기
 	 addButton.addEventListener('click', function () {
 		adsModal.classList.add('show');
+
+		// 전화번호 유효성 검사 메시지 초기화
+		document.getElementById('adsPhoneMessage').innerText = '';
+    document.getElementById('adsExtraPhoneMessage').innerText = '';
+    document.getElementById('adsPhoneMessage').classList.remove('error', 'confirm');
+    document.getElementById('adsExtraPhoneMessage').classList.remove('error', 'confirm');
+
+		 // 폼 리셋
+		 addressForm.reset();
 });
 
 // 취소 버튼 클릭 시 모달 닫기
@@ -51,11 +60,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-/* 전화번호(휴대폰번호) 유효성 검사 (문제 시 삭제) */ 
+/* 전화번호(휴대폰번호) 유효성 검사 */ 
 
 const phoneCheckObj = {
 
-	adsPhone: true,          // 전화번호 유효성 (초기값 true로 변경)
+	adsPhone: true,          
 	adsExtraPhone: true,
 
 	editPhone: true,
@@ -74,7 +83,7 @@ adsPhone.addEventListener("input", e => {
 	if (inputPhone.trim().length > 0) {
 		phoneCheckObj.adsPhone = false; // 검증 필요함을 표시
 
-	const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
+	 const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
 
 	if (!regExp.test(inputPhone)) {
 		adsPhoneMessage.innerText = "유효하지 않은 전화번호 형식입니다.";
@@ -84,15 +93,15 @@ adsPhone.addEventListener("input", e => {
 		return;
 	}
 
-	adsPhoneMessage.innerText = "유효한 전화번호 형식입니다.";
-	adsPhoneMessage.classList.add("confirm");
-	adsPhoneMessage.classList.remove("error");
-	phoneCheckObj.adsPhone = true;
+	 adsPhoneMessage.innerText = "유효한 전화번호 형식입니다.";
+	 adsPhoneMessage.classList.add("confirm");
+	 adsPhoneMessage.classList.remove("error");
+	 phoneCheckObj.adsPhone = true;
   } else {
 
-		// 전화번호 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
-		adsPhoneMessage.innerText = "";
-		phoneCheckObj.adsPhone = true;
+	// 전화번호 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
+	 adsPhoneMessage.innerText = "";
+	 phoneCheckObj.adsPhone = true;
 
 	}
 
@@ -125,7 +134,7 @@ adsExtraPhone.addEventListener("input", e => {
 	phoneCheckObj.adsExtraPhone = true;
   } else {
 
-		// 전화번호 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
+	// 전화번호 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
 		adsExtraPhoneMessage.innerText = "";
 		phoneCheckObj.adsExtraPhone = true;
 
@@ -391,11 +400,18 @@ function openEditModal(address) {
 	document.getElementById('editPhone').value = address.phone;
 	document.getElementById('editExtraPhone').value = address.extraPhone || '';
 	
+	// 전화번호 유효성 검사 메시지 초기화
+	document.getElementById('editPhoneMessage').innerText = '';
+	document.getElementById('editExtraPhoneMessage').innerText = '';
+	document.getElementById('editPhoneMessage').classList.remove('error', 'confirm');
+	document.getElementById('editExtraPhoneMessage').classList.remove('error', 'confirm');
+
 	editModal.style.display = 'block';
+
 }
 
 
-/* 전화번호(휴대폰번호) 유효성 검사 (문제 시 삭제) */ 
+/* 전화번호(휴대폰번호) 유효성 검사 */ 
 
 const phoneCheckObj = {
 
@@ -412,6 +428,8 @@ const editPhone = document.querySelector("#editPhone");
 const editPhoneMessage = document.querySelector("#editPhoneMessage");
 
 editPhone.addEventListener("input", e => {
+
+	console.log("작동중");
 
 	const inputEditPhone = e.target.value;
 
@@ -483,7 +501,7 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
 	e.preventDefault();
 
 
-	// 0108 문제 시 삭제
+	
 		// 변경된 값이 있는지 확인
 		const phoneData = {};
 		let addressIsModified = false;
@@ -637,7 +655,45 @@ async function deleteAddress(addressNo) {
 }
 
 
+document.addEventListener('DOMContentLoaded', function() {
+	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 
+	// 비밀번호 검증이 필요한 페이지들
+	const pagesNeedingVerification = ['updateInfo','changePw', 'membershipOut'];
+
+	// 현재 활성화된 메뉴 설정
+	const setActiveMenu = () => {
+		const currentPath = window.location.pathname;
+		document.querySelectorAll('.mypage-side-menu-link').forEach(link => {
+			link.classList.toggle('active', currentPath.includes(link.dataset.page));
+		});
+	};
+
+
+	// 이벤트 핸들러 설정
+	const initializeEventHandlers = () => {
+		document.querySelectorAll('.mypage-side-menu-link').forEach(link => {
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				const targetPage = e.target.dataset.page;
+				
+				// 클릭된 페이지를 세션 스토리지에 저장
+	           sessionStorage.setItem('targetPage', targetPage);
+			   
+				if (pagesNeedingVerification.includes(targetPage)) {
+					// 비밀번호 검증 페이지로 이동
+					window.location.href = `/mypage/checkPw`;
+				} else {
+					window.location.href = `/mypage/${targetPage}`;
+				}
+			});
+		});
+	};
+
+	// 초기화
+	setActiveMenu();
+	initializeEventHandlers();
+});
 
 
 

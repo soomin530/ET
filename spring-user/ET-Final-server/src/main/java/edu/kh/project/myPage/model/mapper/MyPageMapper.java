@@ -200,6 +200,32 @@ public interface MyPageMapper {
 
 
 	
+	/** TB_TICKET_SEAT에서 예약된 좌석 삭제
+	 * @param bookingId
+	 * @return
+	 */
+	int deleteTicketSeat(String bookingId);
+
+	/** TB_PAYMENT의 결제 상태 업데이트
+	 * @param bookingId
+	 * @return
+	 */
+	int updatePaymentStatus(String bookingId);
+
+	/** TB_TICKET_BOOKING의 예약 상태 업데이트
+	 * @param bookingId
+	 * @param memberNo
+	 * @return
+	 */
+	int updateBookingStatus(@Param("bookingId") String bookingId, @Param("memberNo") int memberNo);
+
+	/** TB_BOOKING_HISTORY의 예매 내역 상태 업데이트
+	 * @param bookingId
+	 * @return
+	 */
+	int updateHistoryStatus(String bookingId);
+
+	
 
 
 
