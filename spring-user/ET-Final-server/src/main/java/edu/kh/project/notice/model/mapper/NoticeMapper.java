@@ -1,6 +1,7 @@
 package edu.kh.project.notice.model.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -23,6 +24,6 @@ public interface NoticeMapper {
 	/** 공지사항 전체 조회
 	 * @return
 	 */
-	List<Notice> getNoticeList();
+	List<Notice> selectNoticeList(Map<String, Object> paramMap);
 
 }

@@ -295,11 +295,5 @@ document.addEventListener('DOMContentLoaded', () => {
 	new SectionObserver();
 });
 
-// 유틸리티 함수
-function scrollToSection(sectionId) {
-	const section = document.getElementById(sectionId);
-	section.scrollIntoView({ behavior: 'smooth' });
-}
-
 // 전역 함수 설정
 window.openNoticeDetail = (element) => NoticeManager.openNoticeDetail(element);

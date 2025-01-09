@@ -436,7 +436,7 @@ body {
 /* 티커 애니메이션 컨테이너 */
 .ticker {
     display: inline-flex;
-    animation: ticker 20s linear infinite;
+    animation: ticker 30s linear infinite;
     white-space: nowrap;
 }
 
@@ -450,10 +450,6 @@ body {
     transition: all 0.3s ease;
 }
 
-.ticker:hover {
-    animation-play-state: paused;
-}
-
 .ticker-link:focus {
 	outline: none;
 	/* 포커스 시 outline 제거 */
@@ -464,6 +460,13 @@ body {
 .ticker-link span {
 	margin-left: 5px;
 	/* 제목과 평점 사이 간격 추가 */
+}
+
+.ticker-link:hover {
+	background-color: #2980b9;
+	/* 마우스 오버 시 배경 색상 */
+	transform: scale(1.05);
+	animation-play-state: paused;
 }
 
 .ticker:hover {

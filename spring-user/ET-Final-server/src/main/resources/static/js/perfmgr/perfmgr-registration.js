@@ -415,6 +415,23 @@ function collectFormData() {
 
 // 포스터 미리보기 기능
 function setupPosterPreview() {
+	// 닫기 버튼 추가
+    if (!$('#poster-preview .close-preview').length) {
+        $('#poster-preview').append('<span class="close-preview">✕</span>');
+    }
+
+    // 이미지 미리보기 닫기 이벤트
+    $(document).on('click', '.close-preview', function() {
+        // 파일 입력 초기화
+        $('#poster').val('');
+        // 파일 라벨 초기화
+        $('.custom-file-label').text('포스터 이미지 선택');
+        // 미리보기 이미지 초기화
+        $('#poster-preview img').attr('src', '');
+        // 미리보기 숨기기
+        $('#poster-preview').hide();
+    });
+	
 	$('#poster').change(function(e) {
 		const file = e.target.files[0];
 		if (file) {

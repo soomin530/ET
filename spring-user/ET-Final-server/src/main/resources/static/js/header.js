@@ -1,5 +1,16 @@
 // 페이지 로드 시 실행되는 코드
 document.addEventListener('DOMContentLoaded', function() {
+	// 쿠키에서 임시 액세스 토큰 확인
+	const tempAccessToken = getCookie('Temp-Access-Token');
+
+	if (tempAccessToken) {
+		// 로컬 스토리지에 액세스 토큰 저장
+		localStorage.setItem('accessToken', tempAccessToken);
+
+		// 임시 쿠키 삭제
+		document.cookie = 'Temp-Access-Token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	}
+
 });
 
 // 쿠키에서 매개변수로 전달받은 key가 일치하는 value 얻어오기 함수
@@ -174,7 +185,7 @@ function logoutSession() {
 		})
 		.catch(error => {
 			console.error("로그아웃 중 오류 발생:", error);
-			
+
 			// 에러 발생시에도 토큰 제거
 			localStorage.removeItem('accessToken');
 
@@ -185,36 +196,36 @@ function logoutSession() {
 
 // JWT 토큰을 사용한 네이버 로그아웃 수정
 function naverLogoutSession() {
-    fetch("/naver/logout", {
-        method: "POST",
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-    })
-    .then(response => {
-        // localStorage에서 토큰과 관련 정보 제거
-        localStorage.removeItem('accessToken');
-        
-        // 쿠키에서 네이버 관련 정보 제거
-        document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        document.cookie = 'Refresh-Token=; path=/api/auth/refresh; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        
-        // 메인 페이지로 이동
-        window.location.href = "/";
-    })
-    .catch(error => {
-        console.error("네이버 로그아웃 중 오류 발생:", error);
-        
-        // 에러 발생시에도 토큰과 정보 제거
-        localStorage.removeItem('accessToken');
-        
-        // 쿠키도 삭제
-        document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        document.cookie = 'Refresh-Token=; path=/api/auth/refresh; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        
-        alert("로그아웃 중 문제가 발생했습니다.");
-        window.location.href = "/";
-    });
+	fetch("/naver/logout", {
+		method: "POST",
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+		}
+	})
+		.then(response => {
+			// localStorage에서 토큰과 관련 정보 제거
+			localStorage.removeItem('accessToken');
+
+			// 쿠키에서 네이버 관련 정보 제거
+			document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+			document.cookie = 'Refresh-Token=; path=/api/auth/refresh; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+			// 메인 페이지로 이동
+			window.location.href = "/";
+		})
+		.catch(error => {
+			console.error("네이버 로그아웃 중 오류 발생:", error);
+
+			// 에러 발생시에도 토큰과 정보 제거
+			localStorage.removeItem('accessToken');
+
+			// 쿠키도 삭제
+			document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+			document.cookie = 'Refresh-Token=; path=/api/auth/refresh; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+			alert("로그아웃 중 문제가 발생했습니다.");
+			window.location.href = "/";
+		});
 }
 
 
@@ -707,11 +718,11 @@ const femaleRadio = document.getElementById('femaleRadio');
 
 // 성별 선택 시 이벤트 처리
 function handleGenderSelection(e) {
-    if(maleRadio.checked || femaleRadio.checked) {
-        checkObj.gender = true;
-    } else {
-        checkObj.gender = false;
-    }
+	if (maleRadio.checked || femaleRadio.checked) {
+		checkObj.gender = true;
+	} else {
+		checkObj.gender = false;
+	}
 }
 
 // 성별 라디오 버튼에 이벤트 리스너 추가
@@ -727,37 +738,37 @@ const signUpForm = document.querySelector("#signUpForm");
 
 // 회원 가입 폼 제출 시
 signUpForm.addEventListener("submit", e => {
-    // 기본적으로 제출을 막아둡니다
-    e.preventDefault(); 
+	// 기본적으로 제출을 막아둡니다
+	e.preventDefault();
 
-    // for ~ in (객체 전용 향상된 for 문)
-    for (let key in checkObj) {
-        if (!checkObj[key]) {
-            let str;
-            switch (key) {
-                case "authKey":
-                    str = "이메일이 인증되지 않았습니다"; break;
-                case "memberId":
-                    str = "아이디가 유효하지 않습니다"; break;
-                case "memberPw":
-                    str = "비밀번호가 유효하지 않습니다"; break;
-                case "memberPwConfirm":
-                    str = "비밀번호가 일치하지 않습니다"; break;
-                case "memberNickname":
-                    str = "닉네임이 유효하지 않습니다"; break;
-                case "memberTel":
-                    str = "전화번호가 유효하지 않습니다"; break;
-                case "memberEmail":
-                    str = "이메일이 유효하지 않습니다"; break;
-                case "gender":
-                    str = "성별을 선택해주세요"; break;
-            }
-            alert(str);
-            document.getElementById(key).focus();
-            return;
-        }
-    }
-    
-    // 모든 검증을 통과했을 때만 폼을 제출합니다
-    signUpForm.submit();
+	// for ~ in (객체 전용 향상된 for 문)
+	for (let key in checkObj) {
+		if (!checkObj[key]) {
+			let str;
+			switch (key) {
+				case "authKey":
+					str = "이메일이 인증되지 않았습니다"; break;
+				case "memberId":
+					str = "아이디가 유효하지 않습니다"; break;
+				case "memberPw":
+					str = "비밀번호가 유효하지 않습니다"; break;
+				case "memberPwConfirm":
+					str = "비밀번호가 일치하지 않습니다"; break;
+				case "memberNickname":
+					str = "닉네임이 유효하지 않습니다"; break;
+				case "memberTel":
+					str = "전화번호가 유효하지 않습니다"; break;
+				case "memberEmail":
+					str = "이메일이 유효하지 않습니다"; break;
+				case "gender":
+					str = "성별을 선택해주세요"; break;
+			}
+			alert(str);
+			document.getElementById(key).focus();
+			return;
+		}
+	}
+
+	// 모든 검증을 통과했을 때만 폼을 제출합니다
+	signUpForm.submit();
 });
