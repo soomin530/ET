@@ -36,7 +36,7 @@ public class Performance {
 	private String fcltlo;				// 경도
 	private int concertManagerNo;		// 공연 등록 관리자 번호
 	private int prfreviewRank;			// 공연 리뷰 점수
-	private Boolean performance_del_fl;	// 공연 삭제 여부(N/Y)
+	private Boolean performanceDelFl;	// 공연 삭제 여부(N/Y)
 	
 	private String adres;				// 공연장 위치
 	private int memberNo;				// 회원 번호
