@@ -488,4 +488,32 @@ public class MyPageController {
 	public String favList() {
 		return "mypage/favList"; // 찜목록 페이지 HTML 파일
 	}
+	
+	/** 예매 취소(결제, 예약정보, 예매 내역, 좌석)테이블 수정 및 삭제
+	 * @param bookingId
+	 * @param loginMember
+	 * @return
+	 * @author 나찬웅
+	 */
+	@ResponseBody
+	@PostMapping("cancelBooking")
+	public ResponseEntity<String> cancelBooking(@RequestParam("bookingId") String bookingId,
+												@SessionAttribute("loginMember") Member loginMember) {
+		try {
+			log.info("취소 요청된 예매 번호: {}", bookingId); // 로그 출력
+			boolean result = service.cancelBooking(bookingId, loginMember.getMemberNo());
+			
+
+			
+			if(result) {
+				return ResponseEntity.ok("예매가 취소되었습니다.");
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예매 취소에 실패했습니다.");
+			}
+		} catch (Exception e) {
+			log.error("예매 취소 중 오류 발생: ", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+		}
+	}
+	
 }
