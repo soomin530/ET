@@ -198,7 +198,7 @@ const AnnouncementList = ({ announcementList }) => {
                 <td>{announcement.announceWriteDate}</td>
                 <td>
                   <button
-                    className="delete-button"
+                    className="delete--button"
                     onClick={(e) => handleDelete(e, announcement.announceNo)}
                   >
                     <i className="fas fa-times"></i>

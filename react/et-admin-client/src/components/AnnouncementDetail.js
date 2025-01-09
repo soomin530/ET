@@ -3,8 +3,106 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { axiosApi } from '../api/axoisAPI';
 import ReactQuill from 'react-quill';
-import '../css/AnnouncementDetail.css'
+import styled from 'styled-components';
 
+// Styled Components
+const Container = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 2rem 1rem;
+`;
+
+const FormWrapper = styled.div`
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+const InputGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 1rem;
+`;
+
+const EditorWrapper = styled.div`
+  margin-bottom: 2rem;
+
+  .quill-editor {
+    height: 600px;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .quill-editor {
+      height: 400px;
+    }
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin-top: 1rem;
+  }
+`;
+
+const Button = styled.button`
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: white;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const BackButton = styled(Button)`
+  background-color: #4B5563;
+
+  &:hover {
+    background-color: #374151;
+  }
+`;
+
+const SubmitButton = styled(Button)`
+ background-color: #10B981; // 초록색으로 변경
+ color: white;
+
+ &:hover {
+   background-color: #059669; // hover시 더 진한 초록색
+ }
+`;
 
 function Write() {
   const { announceNo } = useParams(); // URL에서 memberNo 가져오기
@@ -96,43 +194,38 @@ function Write() {
   };
 
   return (
-    <div className="write-container">
-      <div className="write-form-wrapper">
-        <div className="input-group">
-          <label htmlFor="title" className="form-label">제목</label>
-          <input
+    <Container>
+      <FormWrapper>
+        <InputGroup>
+          <Label htmlFor="title">제목</Label>
+          <Input
             id="title"
             type="text"
             value={title}
             onChange={handleTitleChange}
-            className="form-input"
           />
-        </div>
+        </InputGroup>
         
-        <div className="editor-wrapper">
+        <EditorWrapper>
           <ReactQuill
             className="quill-editor"
             modules={modules}
             value={content} 
             onChange={setContent}
           />
-        </div>
+        </EditorWrapper>
         
-        <div className="button-group">
-          <button 
-            className="back-button"
-            onClick={() => window.history.back()}>
+        <ButtonGroup>
+          <BackButton onClick={() => window.history.back()}>
             뒤로가기
-          </button>
-          <button 
-            className="submit-button"
-            onClick={handleSubmit}>
+          </BackButton>
+          <SubmitButton onClick={handleSubmit}>
             제출
-          </button>
-        </div>
-      </div>
-    </div>
+          </SubmitButton>
+        </ButtonGroup>
+      </FormWrapper>
+    </Container>
   );
- }
+}
 
 export default Write;

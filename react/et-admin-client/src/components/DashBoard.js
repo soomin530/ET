@@ -13,6 +13,9 @@ import AnnouncementDetail from "./AnnouncementDetail.js";
 import PerformanceNew from "./PerformanceNew.js";
 import PerformanceDetail from "./PerformanceDetail.js";
 import Quill from "./Quill.jsx";
+import InquiryManage from "./InquiryManage.js";
+import InquiryDetail from "./InquiryDetail.js";
+
 import { axiosApi } from "../api/axoisAPI";
 import { NavLink, Route, Routes } from "react-router";
 import ManagerEnrollDetail from "./ManagerEnrollDetail.js";
@@ -85,6 +88,7 @@ export default function DashBoard() {
           <NavLink to="/PerformanceManage">공연장 관리</NavLink>
           <NavLink to="/BookedSeatManage">예매 좌석 관리</NavLink>
           <NavLink to="/AnnouncementManage">공지사항 관리</NavLink>
+          <NavLink to="/InquiryManage">문의 내역 관리</NavLink>
           <NavLink to="/ManagerEnroll">업체계정 신청</NavLink>
         </div>
 
@@ -113,6 +117,10 @@ export default function DashBoard() {
               path="/performance/:mt10ID"
               element={<PerformanceDetail />}
             />
+            <Route
+              path="/inquiry/:inquiryNo"
+              element={<InquiryDetail />}
+            />
             <Route path="/PerformanceNew" element={<PerformanceNew />} />
             <Route
               path="/seatManage/detail/:mt20id"
@@ -120,6 +128,8 @@ export default function DashBoard() {
             />
             <Route path="/seatManage/bookingSeat" element={<SeatSelection />} />
             <Route path="/quill" element={<Quill />} />
+            <Route path="/InquiryManage" element={<InquiryManage />} />
+
           </Routes>
         </div>
       </div>
