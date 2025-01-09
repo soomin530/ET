@@ -148,10 +148,10 @@ verificationBtn.addEventListener("click", () => {
 		minit = verificationMin;
 		second = verificationSec;
 
-        // 이전 동작중인 인터벌 클리어(없애기)
+    // 이전 동작중인 인터벌 클리어(없애기)
 		clearInterval(verificationTimer);
 
-        // 비동기로 서버에서 메일보내기 
+    // 비동기로 서버에서 메일보내기 
 		fetch("/mypage/sendEmail", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -256,7 +256,7 @@ verificationConfirmBtn.addEventListener("click", () => {
 				return;
 			}
 
-            // 일치할 때
+      // 일치할 때
 			clearInterval(verificationTimer); // 타이머 멈춤
 
 			$("#verificationEmail").attr("readonly", true);        // readonly 처리
@@ -376,6 +376,12 @@ userTel.addEventListener("input", e => {
 
 updateForm.addEventListener("submit", e => {
 	e.preventDefault();
+
+	// 이메일 인증이 완료되지 않은 경우 경고 메시지 출력 후 종료
+	if (!mypageCheckObj.authKey) {
+		alert("이메일 인증이 완료되지 않았습니다. 이메일 인증 후 다시 시도해주세요.");
+		return;
+}
 
 	// 변경된 값이 있는지 확인
 	const formData = {};
