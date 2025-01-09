@@ -294,9 +294,8 @@ function displayAddressList(addresses) {
             </div>
         `;
 
-				
-			
-			// 기본 배송지 설정 버튼 이벤트 리스너
+		
+				// 기본 배송지 설정 버튼 이벤트 리스너
 			const setDefaultBtn = addressItem.querySelector('.set-default-btn');
 			if (setDefaultBtn && address.basicAddress !== 'Y') {
 					setDefaultBtn.addEventListener('click', async () => {
@@ -324,8 +323,28 @@ function displayAddressList(addresses) {
 									const responseText = await response.text();
 									
 									if (response.ok) {
-											alert(responseText);
-											loadAddressList();
+										const defaultAddressInfo = {
+											addressNo: addressNo,
+											receiverName: address.receiverName,
+											address: address.address,
+											detailAddress: address.detailAddress,
+											postcode: address.postcode,
+											phone: address.phone,
+											extraPhone: address.extraPhone,
+											basicAddress: 'Y',
+											lastUpdated: new Date().toISOString()
+									};
+	
+									try {
+											localStorage.setItem('defaultAddress', JSON.stringify(defaultAddressInfo));
+											console.log('Default address saved to localStorage:', defaultAddressInfo);
+									} catch (storageError) {
+											console.error('LocalStorage save failed:', storageError);
+									}
+	
+									alert(responseText);
+									loadAddressList();
+
 									} else {
 											console.error('Error:', responseText);
 											alert(responseText || '기본 배송지 변경에 실패했습니다.');
@@ -335,7 +354,41 @@ function displayAddressList(addresses) {
 									alert('기본 배송지 변경에 실패했습니다.');
 							}
 					});
-			}
+			}						
+
+		// 로컬스토리지에서 기본 배송지 정보를 가져오는 함수
+		function getDefaultAddress() {
+	try {
+			const defaultAddress = localStorage.getItem('defaultAddress');
+			return defaultAddress ? JSON.parse(defaultAddress) : null;
+	} catch (error) {
+			console.error('Error reading from localStorage:', error);
+			return null;
+	}
+}
+
+		// 로컬스토리지의 기본 배송지 정보를 삭제하는 함수
+function clearDefaultAddress() {
+	try {
+			localStorage.removeItem('defaultAddress');
+			console.log('Default address removed from localStorage');
+	} catch (error) {
+			console.error('Error removing from localStorage:', error);
+	}
+}
+
+// 로컬스토리지의 기본 배송지 정보를 업데이트하는 함수
+function updateDefaultAddress(addressInfo) {
+	try {
+			localStorage.setItem('defaultAddress', JSON.stringify({
+					...addressInfo,
+					lastUpdated: new Date().toISOString()
+			}));
+			console.log('Default address updated in localStorage');
+	} catch (error) {
+			console.error('Error updating localStorage:', error);
+	}
+}
 
 			// 체크박스 이벤트 리스너 수정
 			const checkbox = addressItem.querySelector('.address-checkbox');
@@ -379,7 +432,6 @@ function displayAddressList(addresses) {
 }
 
 
-
 // ******************************************************************************************************* 
 
 
@@ -399,6 +451,8 @@ function openEditModal(address) {
 	document.getElementById('editDetailAddress').value = address.detailAddress;
 	document.getElementById('editPhone').value = address.phone;
 	document.getElementById('editExtraPhone').value = address.extraPhone || '';
+
+
 	
 	// 전화번호 유효성 검사 메시지 초기화
 	document.getElementById('editPhoneMessage').innerText = '';
@@ -409,7 +463,6 @@ function openEditModal(address) {
 	editModal.style.display = 'block';
 
 }
-
 
 /* 전화번호(휴대폰번호) 유효성 검사 */ 
 
@@ -500,8 +553,6 @@ editExtraPhone.addEventListener("input", e => {
 document.getElementById('editForm').addEventListener('submit', async function(e) {
 	e.preventDefault();
 
-
-	
 		// 변경된 값이 있는지 확인
 		const phoneData = {};
 		let addressIsModified = false;
@@ -612,7 +663,6 @@ if(editSearchAddress) {
 // ****************************************************************************************************
 
 
-
 // 배송지 삭제 모달 열기
 function openDeleteModal(addressNo) {
 	const deleteModal = document.getElementById('deleteModal');
@@ -654,7 +704,10 @@ async function deleteAddress(addressNo) {
 	}
 }
 
+// *****************************************************************************
 
+
+// 사이드바
 document.addEventListener('DOMContentLoaded', function() {
 	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 

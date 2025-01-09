@@ -133,8 +133,8 @@
 		.edit-btn,
     .verify-btn {
     padding: 8px 15px;
-    background-color: rgb(0, 0, 255);
-    color: white;
+    background: linear-gradient(135deg, #004CFF, #0039e5);
+    color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -213,6 +213,18 @@
 			background-color: #eee;
 			border-radius: 5px;
 		}
+
+		.update-message {
+			display: block;
+    	margin-top: 5px;
+    	font-size: 12px;
+    	color: #d9534f; /* 에러 메시지 색상 */
+		}
+
+		.update-message.confirm {
+      color: #5cb85c; /* 확인 메시지 색상 */
+		}
+
 	</style>
 </head>
 
