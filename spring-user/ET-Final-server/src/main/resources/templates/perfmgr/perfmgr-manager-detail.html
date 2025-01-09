@@ -17,7 +17,7 @@
         <!-- 버튼 추가 -->
         <div class="action-buttons">
             <th:block th:if="${performance != null}">
-                <th:block th:if="${performance.performance_del_fl != 'Y'}">
+                <th:block th:if="${!performance.performanceDelFl}">
                 <button type="button" class="btn btn-primary"
                     onclick="location.href='/perfmgr/perfmgr-modifyPerformance?mt20id=' + document.getElementById('mt20id').value">수정</button>
                 <button type="button" class="btn btn-danger" onclick="deletePerformance()">삭제</button>
@@ -29,7 +29,13 @@
             <div class="performance-content">
                 <!-- 왼쪽: 공연 정보 -->
                 <div class="performance-info">
-                    <img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image">
+                    <img th:src="${performance.poster}"
+                    th:alt="${performance.prfnm}"
+                    class="performance-image"
+                    th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'"
+                    loading="lazy"
+                    decoding="async"
+                    onload="this.classList.add('loaded')">
                     <table class="info-table">
                         <tr>
                             <th>공연명</th>
