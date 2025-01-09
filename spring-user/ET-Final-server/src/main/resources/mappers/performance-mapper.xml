@@ -4,18 +4,18 @@
 
 	<!-- 장르별 공연 목록 조회 -->
 	<select id="genre" resultType="Performance">
-	    SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER, PRFREVIEW_RANK
+	    SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER, PRFREVIEW_RANK, PERFORMANCE_DEL_FL
 	    FROM TB_PERFORMANCES_DETAIL
 	    WHERE GENRENM = #{genre}
+	    AND PERFORMANCE_DEL_FL = 'N'
 	</select>
 	
-	<!-- 공연 목록 페이징 조회 (장르 선택적) -->
 	<!-- 공연 목록 페이징 조회 (검색 기능 추가) -->
 	<select id="genreWithPaging" resultType="Performance">
 		SELECT *
 			FROM (
 			    SELECT
-			        p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, p.PRFREVIEW_RANK,
+			        p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, p.PRFREVIEW_RANK, p.PERFORMANCE_DEL_FL,
 			        <if test="filter == 'rating'">
 			        COALESCE(p.PRFREVIEW_RANK, 0) as RATING,
 			        </if>
@@ -72,6 +72,7 @@
 			)
 		<![CDATA[
 			WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
+			AND PERFORMANCE_DEL_FL = 'N'
 		]]>
 	</select>
 	
@@ -89,10 +90,12 @@
 			TPD.PCSEGUIDANCE, 
 			TPD.PRFREVIEW_RANK, 
 			TPD.DESCRIPTION,
+			TPD.PERFORMANCE_DEL_FL,
 			TV.ADRES
 		FROM TB_PERFORMANCES_DETAIL TPD
 		JOIN TB_VENUE TV USING(MT10ID)
 		WHERE MT20ID = #{mt20id}
+		AND PERFORMANCE_DEL_FL = 'N'
 	</select>
 	
 	<!-- 공연 위도, 경도 조회 -->

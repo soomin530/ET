@@ -1,6 +1,8 @@
 package edu.kh.project.notice.model.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +35,15 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 
-	// 공지 사항 전체 조회
 	@Override
-	public List<Notice> getNoticeList() {
-		return mapper.getNoticeList();
-	}
+    public List<Notice> getNoticeList(int offset, int limit, String searchQuery, String searchType) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("offset", offset);
+        params.put("limit", limit);
+        params.put("searchQuery", searchQuery);
+        params.put("searchType", searchType);
+        
+        return mapper.selectNoticeList(params);
+    }
 
 }

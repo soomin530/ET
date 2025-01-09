@@ -149,3 +149,39 @@ select[multiple] {
     background-color: #f8f9fa;
     border-color: #ddd;
 }
+
+#poster-preview {
+    position: relative;
+    display: none;
+    margin-top: 10px;
+    max-width: 200px;  /* 이미지 컨테이너의 최대 너비 설정 */
+}
+
+#poster-preview img {
+    width: 100%;
+    height: auto;
+    display: block;  /* 이미지 아래 여백 제거 */
+}
+
+.close-preview {
+    position: absolute;
+    top: 5px;           /* 상단에서 약간 여백 */
+    right: 5px;         /* 우측에서 약간 여백 */
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 68, 68, 0.9);  /* 배경색 약간 투명하게 */
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 2;         /* 이미지보다 위에 표시되도록 z-index 추가 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);  /* 그림자 효과 */
+}
+
+.close-preview:hover {
+    background-color: rgba(204, 0, 0, 0.95);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}

@@ -115,14 +115,13 @@
 }
 
 .notice-content {
-	max-height: 0;
-	overflow: hidden;
-	transition: max-height 0.3s ease-in-out;
-	background-color: #f8f9fa;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
 }
 
-.notice-item.active .notice-content {
-	max-height: 1000px;
+.notice-item.active .notice-arrow i {
+    transform: rotate(180deg);
 }
 
 .notice-content-inner {
@@ -238,6 +237,16 @@
 
 .notice-search-button:hover {
 	background-color: #364fc7;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 20px;
+    display: none;
+}
+
+.loading-indicator.show {
+    display: block;
 }
 
 @media (max-width: 768px) {
