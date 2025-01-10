@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import edu.kh.admin.main.model.dto.Performance;
+import edu.kh.admin.main.model.dto.SeatInfo;
 
 @Mapper
 public interface PerformanceMapper {
@@ -40,6 +41,18 @@ public interface PerformanceMapper {
 	 * @return
 	 */
 	int update(Map<String, Object> formdata);
+
+	/** 공연장 scale 입력
+	 * @param grade
+	 * @return 
+	 */
+	int insertGrade(Map<String, Object> grade);
+
+	/** 공연장 좌석 정보 확인
+	 * @param mt10id
+	 * @return
+	 */
+	List<SeatInfo> seatInfoDetailList(String mt10id);
 
 
 }

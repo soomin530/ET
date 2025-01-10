@@ -45,5 +45,6 @@ public interface AnnouncementService {
 	 */
 	int delete(int announceNo);
 
+
 	
 }

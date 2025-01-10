@@ -25,6 +25,8 @@
 				font-family: 'Noto Sans KR', sans-serif;
 				min-height: 100vh;
 				display: block;
+
+				
 			}
 
 			.main-content {
@@ -366,43 +368,7 @@
 			}
 
 
-			/* 모달 스타일 */
-			.adsModal {
-				display: none;
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background-color: rgba(0, 0, 0, 0.5);
-				justify-content: center;
-				align-items: center;
-				z-index: 1000;
-			}
-
-			.adsModal.show {
-				display: flex;
-			}
-
-			.adsModal-content {
-				background: white;
-				padding: 20px;
-				border-radius: 10px;
-				width: 90%;
-				max-width: 400px;
-				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-			}
-
-			.adsForm-group {
-				margin-bottom: 15px;
-			}
-
-			.adsForm-group input {
-				width: 100%;
-				padding: 10px;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-			}
+			
 
 
 			/*js에서 주소목록*/
@@ -520,6 +486,9 @@
 			}
 
 
+			
+
+
 			/*수정 모달창*/
 			.editModal {
 				display: none;
@@ -537,6 +506,7 @@
 				/* 수직 가운데 정렬 */
 				z-index: 1000;
 				/* 다른 요소 위에 표시 */
+				
 			}
 
 			.editModal.show {
@@ -544,20 +514,54 @@
 				/* 모달이 보이도록 설정 */
 			}
 
-			.editModal .adsModal-content {
-				background-color: white;
-				padding: 30px;
-				border-radius: 10px;
-				width: 90%;
-				max-width: 500px;
-				position: relative;
-				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-				/* 그림자 효과 */
-				margin: auto;
-				/* 상하좌우 가운데 정렬 */
-				animation: modalFadeIn 0.3s ease-in-out;
-				max-height: 90vh;
-				/* 최대 높이 설정 */
+			.editModal-content {
+				height: 60%;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%; /* 모바일 화면을 고려한 넓이 */
+    max-width: 500px; /* 최대 넓이 제한 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    animation: modalFadeIn 0.3s ease-in-out; /* 모달 등장 애니메이션 */
+}
+
+			.editModal-header {
+				margin-bottom: 20px;
+				padding-bottom: 10px;
+				border-bottom: 1px solid #ddd;
+				/* 구분선 추가 */
+			}
+
+			.editModal-header h2 {
+				margin: 0;
+				font-size: 1.5rem;
+				color: #333;
+			}
+
+			.editModal-group {
+				margin-bottom: 15px;
+			}
+
+			.editModal-group label {
+				display: block;
+				margin-bottom: 5px;
+				font-weight: bold;
+				color: #555;
+			}
+
+			.editModal-group input {
+				width: 100%;
+				padding: 10px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				font-size: 14px;
+				box-sizing: border-box;
+			}
+
+			.editModal-group input:focus {
+				outline: none;
+				border-color: #333;
+				box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 			}
 
 			@keyframes modalFadeIn {
@@ -572,6 +576,8 @@
 				}
 			}
 
+
+			
 
 			.edit-btn,
 			.delete-btn {
@@ -607,7 +613,7 @@
 
 			.delete-modal-content {
 				background-color: white;
-				margin: 15% auto;
+				
 				padding: 20px;
 				border-radius: 5px;
 				width: 300px;
@@ -631,6 +637,10 @@
 			.confirm-btn {
 				background-color: #f44336;
 				color: white;
+			}
+
+			.address-item {
+    		cursor: pointer;
 			}
 		</style>
 
@@ -734,18 +744,18 @@
 
 			<!-- 배송지 수정 모달 -->
 			<div id="editModal" class="editModal">
-				<div class="adsModal-content">
-					<div class="adsModal-header">
+				<div class="editModal-content">
+					<div class="editModal-header">
 						<h2>배송지 수정</h2>
 					</div>
 					<form id="editForm">
-						<div class="adsForm-group">
+						<div class="editModal-group">
 							<label class="required" for="editReceiverName">받는 사람</label>
 							<input type="text" id="editReceiverName" required>
 						</div>
 
 
-						<div class="adsForm-group">
+						<div class="editModal-group">
 							<label class="required" for="editPostcode">우편번호</label>
 							<div class="address-search-group">
 								<input type="text" id="editPostcode" readonly required>
@@ -756,21 +766,21 @@
 						</div>
 
 
-						<div class="adsForm-group">
+						<div class="editModal-group">
 							<label class="required" for="editAddress">주소</label>
 							<input type="text" id="editAddress" readonly required>
 						</div>
-						<div class="adsForm-group">
+						<div class="editModal-group">
 							<label class="required" for="editDetailAddress">상세주소</label>
 							<input type="text" id="editDetailAddress" required>
 						</div>
-						<div class="adsForm-group">
+						<div class="editModal-group">
 							<label class="required" for="editPhone">휴대폰 번호</label>
 							<input type="tel" id="editPhone" required>
 							<span class="editPhone-message" id="editPhoneMessage"></span>
 
 						</div>
-						<div class="adsForm-group">
+						<div class="editModal-group">
 							<label for="editExtraPhone">추가 연락처</label>
 							<input type="tel" id="editExtraPhone">
 							<span class="editExtraPhone-message" id="editExtraPhoneMessage"></span>
