@@ -13,9 +13,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.performance.model.dto.Performance;
@@ -41,6 +44,9 @@ public class PerformanceApiController {
 
 	@Autowired
 	private PerformanceService performanceService;
+	
+	@Value("${my.performance.location}")
+    private String uploadPath;
 
 	/**
 	 * 잔여 좌석 개수 조회
@@ -185,6 +191,83 @@ public class PerformanceApiController {
 
 		return filename;
 	}
+	
+    /** 공연 설명 이미지 업로드
+     * @param file
+     * @return
+     */
+    @PostMapping("/description/upload")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            // 원본 파일명에서 확장자 추출
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            
+            // 새로운 파일명 생성 (UUID + 확장자)
+            String newFileName = UUID.randomUUID().toString() + extension;
+            
+            // 저장할 전체 경로 생성
+            File directory = new File(uploadPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            
+            // 파일 저장
+            File savedFile = new File(uploadPath + newFileName);
+            file.transferTo(savedFile);
+            
+            // 이미지 URL 생성 (리소스 핸들러 패턴에 맞춤)
+            String imageUrl = "/images/performance/" + newFileName;
+            
+            // 응답 생성
+            Map<String, String> response = new HashMap<>();
+            response.put("url", imageUrl);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "이미지 업로드에 실패했습니다."));
+        }
+    }
+
+    /** 공연 설명 이미지 삭제
+     * @param imageUrl
+     * @return
+     */
+    @DeleteMapping("/description/delete")
+    public ResponseEntity<Map<String, String>> deleteImage(@RequestParam(value="imageUrl") String imageUrl) {
+        try {
+            // URL에서 파일명 추출 (/images/performance/filename.jpg 형식에서)
+            String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+            
+            // 파일 경로 생성
+            File file = new File(uploadPath + fileName);
+            
+            // 파일 존재 여부 확인
+            if (!file.exists()) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "파일을 찾을 수 없습니다."));
+            }
+            
+            // 파일 삭제
+            if (file.delete()) {
+                return ResponseEntity.ok(Map.of("message", "이미지가 성공적으로 삭제되었습니다."));
+            } else {
+                throw new IOException("파일 삭제 실패");
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "이미지 삭제에 실패했습니다."));
+        }
+    }
+	
 
 	/**
 	 * 관리자 공연 등록 -> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기

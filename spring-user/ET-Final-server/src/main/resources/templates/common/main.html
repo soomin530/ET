@@ -50,7 +50,9 @@
 						<div class="carousel-slide" th:classappend="${status.first ? 'active' : ''}"
 							th:data-title="${mainPerform.prfnm}">
 							<div class="carousel-image">
-								<img th:src="${mainPerform.poster}" th:alt="${mainPerform.prfnm}" loading="lazy">
+								<img th:src="${mainPerform.poster}" th:alt="${mainPerform.prfnm}"
+									th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'"
+									loading="lazy" decoding="async" onload="this.classList.add('loaded')">
 							</div>
 						</div>
 					</a>

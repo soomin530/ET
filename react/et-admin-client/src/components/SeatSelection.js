@@ -374,7 +374,7 @@ const SeatManagement = () => {
             <span>{section.GRADENAME}</span>
             <span>
               예약:{" "}
-              {section.TOTALSEATCOUNT - section.AVAILABLESEATCOUNT}{" "}
+              {section.TOTALSEATCOUNT - section.AVAILABLESEATCOUNT - section.BLOCKEDSEATCOUNT}{" "}
               / 
               비활성화{" "}
               {section.BLOCKEDSEATCOUNT}{" "}

@@ -319,6 +319,7 @@ public class PerfmgrController {
 	    updateData.setPrfnm(performance.getPrfnm());
 	    updateData.setPrfruntime(performance.getPrfruntime());
 	    updateData.setPrfcast(performance.getPrfcast());
+	    updateData.setDescription(performance.getDescription());
 
 	    boolean isUpdated = service.modifyPerformanceUpdate(updateData);
 
