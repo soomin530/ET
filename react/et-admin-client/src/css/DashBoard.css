@@ -163,7 +163,6 @@
 .main-table-container {
     width: 90%;
     height: 80%;
-    border: 1px solid black;
 
     margin: auto;
 }
@@ -171,12 +170,10 @@
 .table-border {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid black;
 }
 
 .table-border th,td{
     padding: 10px; /* 셀 안쪽 여백 */
-    border: 1px solid #ccc; /* 셀 경계선 */
     text-align: center; /* 글씨 중앙 정렬 */
 }
 
@@ -343,7 +340,7 @@
 }
 
 /* 헤더 폰트 강화 */
-.dash-board-container h1 {
+.dash-board-title {
   background: linear-gradient(135deg, #e65d00 0%, #ff7f27 100%);
   color: white;
   padding: 25px 40px;
@@ -414,11 +411,11 @@
 
 /* 로딩 스타일 */
 .menu-box h1 {
-    text-align: center;
-    color: #ff7f27;
-    font-size: 24px;
-    margin: 20px 0;
-   }
+  text-align: center;
+  color: #ff7f27;
+  font-size: 24px;
+  margin: 20px 0;
+ }
    
    .menu-box {
     width: 100%;
@@ -556,11 +553,10 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin: 20px 0;
+    margin: 0;
     background: white;
-    border-radius: 10px;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
   
   .menu-box thead th {
@@ -599,8 +595,7 @@
     padding: 15px;
     color: #333;
     font-size: 15px;
-    border: none;
-    border-bottom: 1px solid #eee;
+
   }
   
   /* 회원번호 열 스타일 */
@@ -863,4 +858,17 @@ input:checked + .toggle-slider:before {
 
 .delete--button:hover {
   background-color: darkred; /* 호버 시 더 진한 빨간색 */
+}
+
+.menu-box {
+  width: 100%;
+  max-width: 1200px;  /* 또는 원하는 최대 너비 */
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.main-table-container {
+  width: 100%;
+  overflow-x: auto;  /* 필요시 가로 스크롤 */
 }

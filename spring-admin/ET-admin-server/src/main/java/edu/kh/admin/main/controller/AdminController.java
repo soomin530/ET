@@ -1,5 +1,6 @@
 package edu.kh.admin.main.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.kh.admin.common.jwt.JwtTokenUtil;
+import edu.kh.admin.main.model.dto.DashboardData;
 import edu.kh.admin.main.model.dto.Member;
+import edu.kh.admin.main.model.dto.Performance;
+import edu.kh.admin.main.model.service.AdminService;
 import edu.kh.admin.main.model.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +38,8 @@ public class AdminController {
 	private final JwtTokenUtil jwtTokenUtil;
 	
 	private final MemberService memberService;
+	
+	private final AdminService adminService;
 	
 	/** 리프레시 토큰 가져와서 엑세스 토큰 생성
 	 * @param request
@@ -87,5 +93,19 @@ public class AdminController {
 		}
 		return null;
 	}
+	
+	@GetMapping("data")
+	private ResponseEntity<?> getData(){
+		List<DashboardData> data = adminService.getData();
+		
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(data);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+		}
+	}
+	
+	
 	
 }

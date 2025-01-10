@@ -30,6 +30,10 @@ const Title = styled.h1`
   color: #1f2937;
   text-align: center;
   margin-bottom: 1.5rem;
+  position: relative; // 추가: 화살표의 절대 위치 기준점
+  display: flex; // 추가: 화살표와 텍스트 정렬
+  align-items: center;
+  justify-content: center;
 `;
 
 const Form = styled.form`
@@ -152,6 +156,19 @@ const LoadingSpinner = styled.div`
   color: #3b82f6;
 `;
 
+const BackArrow = styled.i`
+  position: absolute;
+  left: 0;
+  color: #ff7f27;
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateX(-5px);
+  }
+`;
+
 const MemberUpdate = () => {
   const { memberNo } = useParams();
   const [formData, setFormData] = useState({
@@ -183,19 +200,22 @@ const MemberUpdate = () => {
   }, [memberNo]);
 
   const validatePhoneNumber = (number) => {
-    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    if (!number) return true;
+    const phoneRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
     return phoneRegex.test(number);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
 
+    // 실시간 전화번호 유효성 검사
     if (name === "tel") {
-      setIsValidPhone(validatePhoneNumber(value));
+      const isValid = validatePhoneNumber(value);
+      setIsValidPhone(isValid);
     }
   };
 
@@ -255,7 +275,13 @@ const MemberUpdate = () => {
   return (
     <Container>
       <FormWrapper>
-        <Title>회원 정보 수정</Title>
+        <Title>
+          <BackArrow
+            className="fas fa-arrow-left"
+            onClick={() => window.history.back()}
+          />
+          회원 정보 수정
+        </Title>
         <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label>닉네임:</Label>
@@ -285,7 +311,7 @@ const MemberUpdate = () => {
               onChange={handleChange}
             />
             {!isValidPhone && formData.tel && (
-              <ErrorMessage>010-XXXX-XXXX 형식으로 입력해주세요.</ErrorMessage>
+              <ErrorMessage>XXX-XXXX-XXXX 형식으로 입력해주세요.</ErrorMessage>
             )}
           </FormGroup>
           <ButtonGroup>

@@ -81,6 +81,12 @@ const ReplyContainer = styled.div`
   background-color: #f0f7ff;
   border-radius: 8px;
   border-left: 4px solid #007bff;
+  animation: ${(props) => {
+      if (props.isEditing) return slideUpAndFade;
+      if (props.isReturning) return slideDownAndFade;
+      return "none";
+    }}
+    0.3s ease-out forwards;
 `;
 
 const ReplyTitle = styled.h3`
@@ -222,6 +228,35 @@ const EditButton = styled(Button)`
   }
 `;
 
+const slideUpAndFade = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+`;
+
+const slideDownAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+// 수정하기 버튼 위치 조정을 위한 새로운 스타일
+const EditButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
 export default function InquiryDetail() {
   const [inquiry, setInquiry] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -230,6 +265,9 @@ export default function InquiryDetail() {
   const { inquiryNo } = useParams();
   const [isExiting, setIsExiting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isReplyExiting, setIsReplyExiting] = useState(false);
+  const [isReplyReturning, setIsReplyReturning] = useState(false);
+  const [showReplyContainer, setShowReplyContainer] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -255,18 +293,32 @@ export default function InquiryDetail() {
   };
 
   const handleEdit = () => {
+    setIsReplyExiting(true);   // 퇴장 애니메이션 시작
+  
+  setTimeout(() => {
+    setShowReplyContainer(false);  // 애니메이션 완료 후 컨테이너 숨김
     setReplyContent(inquiry.replyContent);
     setShowReplyForm(true);
     setIsEditing(true);
+  }, 300);  // 애니메이션 시간과 동일하게 설정
   };
 
   const handleCancel = () => {
-    setIsExiting(true); // 종료 애니메이션 시작
+    setIsReplyExiting(false);  // 우선 퇴장 애니메이션 초기화
+  setIsExiting(true);        // 폼 퇴장 애니메이션 시작
+  
+  setTimeout(() => {
+    setShowReplyForm(false);
+    setReplyContent("");
+    setIsEditing(false);
+    setIsExiting(false);
+    setShowReplyContainer(true);  // 답글 컨테이너 표시
+    setIsReplyReturning(true);    // 등장 애니메이션 시작
+    
     setTimeout(() => {
-      setShowReplyForm(false); // 컴포넌트 제거
-      setReplyContent(""); // 내용 초기화
-      setIsExiting(false); // 종료 상태 초기화
+      setIsReplyReturning(false); // 등장 애니메이션 완료
     }, 300);
+  }, 300);
   };
 
   const handleReplySubmit = async () => {
@@ -320,12 +372,19 @@ export default function InquiryDetail() {
 
       <Content>{inquiry.inquiryContent}</Content>
 
-      {inquiry.replyContent && (
-        <ReplyContainer>
-          <ReplyTitle>답변</ReplyTitle>
-          <ReplyText>{inquiry.replyContent}</ReplyText>
-          <EditButton onClick={handleEdit}>수정하기</EditButton>
-        </ReplyContainer>
+      {inquiry.replyContent && !showReplyForm && showReplyContainer && (
+        <>
+          <ReplyContainer
+            isEditing={isReplyExiting}
+            isReturning={isReplyReturning}
+          >
+            <ReplyTitle>답변</ReplyTitle>
+            <ReplyText>{inquiry.replyContent}</ReplyText>
+          </ReplyContainer>
+          <EditButtonContainer>
+            <EditButton onClick={handleEdit}>수정하기</EditButton>
+          </EditButtonContainer>
+        </>
       )}
 
       <ButtonContainer>

@@ -104,6 +104,32 @@ const SubmitButton = styled(Button)`
  }
 `;
 
+const Title = styled.h1`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative; // 추가: 화살표의 절대 위치 기준점
+  display: flex; // 추가: 화살표와 텍스트 정렬
+  align-items: center;
+  justify-content: center;
+`;
+
+
+const BackArrow = styled.i`
+  position: absolute;
+  left: 0;
+  color: #ff7f27;
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateX(-5px);
+  }
+`;
+
 function Write() {
   const { announceNo } = useParams(); // URL에서 memberNo 가져오기
   const [formData, setFormData] = useState({
@@ -138,7 +164,7 @@ function Write() {
   const modules = {
     toolbar: {
       container: [
-        ["image"],
+        //["image"],
         [{ header: [1, 2, 3, 4, 5, false] }],
         ["bold", "underline"],
       ],
@@ -196,6 +222,13 @@ function Write() {
   return (
     <Container>
       <FormWrapper>
+      <Title>
+          <BackArrow
+            className="fas fa-arrow-left"
+            onClick={() => window.history.back()}
+          />
+          공지 사항 수정
+        </Title>
         <InputGroup>
           <Label htmlFor="title">제목</Label>
           <Input

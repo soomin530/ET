@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
-import styled, { keyframes } from 'styled-components';
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import styled, { keyframes } from "styled-components";
 
 // Styled Components
 const Container = styled.div`
@@ -56,7 +56,7 @@ const Input = styled.input`
 
 const SubmitButton = styled.button`
   padding: 10px 20px;
-  background-color: #10B981;
+  background-color: #10b981;
   color: white;
   border: none;
   border-radius: 4px;
@@ -184,9 +184,10 @@ const GradeCheckbox = styled.label`
   gap: 6px;
   cursor: pointer;
   user-select: none;
-  padding: 4px 8px;
+  font-size:1rem;
+  padding: 4px 4px;
   border-radius: 4px;
-  background-color: ${props => props.checked ? '#e2e8f0' : 'transparent'};
+  background-color: ${(props) => (props.checked ? "#e2e8f0" : "transparent")};
   transition: background-color 0.2s;
 
   &:hover {
@@ -211,101 +212,252 @@ const ErrorText = styled.span`
   margin-top: 4px;
 `;
 
-const GRADE_ORDER = ['VIP', 'R', 'S', 'A', 'B', '전석'];
+const Title = styled.h1`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative; // 추가: 화살표의 절대 위치 기준점
+  display: flex; // 추가: 화살표와 텍스트 정렬
+  align-items: center;
+  justify-content: center;
+`;
+
+
+const BackArrow = styled.i`
+  position: absolute;
+  left: 0;
+  color: #ff7f27;
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateX(-5px);
+  }
+`;
 
 const PerformanceForm = () => {
   const container = useRef(null);
   const mapInstanceRef = useRef(null);
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isShowSuggestions, setIsShowSuggestions] = useState(false);
-  const [searchType, setSearchType] = useState('keyword');
+  const [searchType, setSearchType] = useState("keyword");
   const [showGrades, setShowGrades] = useState(false);
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [gradeSeats, setGradeSeats] = useState({});
-  const [seatError, setSeatError] = useState('');
-  
+  const [idError, setIdError] = useState("");
+  const [seatError, setSeatError] = useState("");
+  const [selectedGradeError, setSelectedGradeError] = useState("");
+  const [locationError, setLocationError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+
+  const GRADE_ORDER = ["VIP", "R", "S", "A", "B", "전석"];
+
+  const GRADE_MAPPING = {
+    VIP: 1,
+    R: 2,
+    S: 3,
+    A: 4,
+    B: 5,
+    전석: 6,
+  };
 
   const [formData, setFormData] = useState({
-    MT10ID: '',       // 공연장 ID (새로 추가)
-    FCLTYNM: '',      // facilityName -> FCLTYNM 
-    MT13CNT: '',      // facilityCount -> MT13CNT
-    FCLTYCHARTR: '공공(문예회관)',  // facilityType -> FCLTYCHARTR
-    OPENDE: '',       // openYear -> OPENDE
-    SEATSCALE: '',    // seatCount -> SEATSCALE
-    TELNO: '',        // phoneNumber -> TELNO
-    RELATEURL: '',    // website -> RELATEURL
-    ADRES: '',        // address -> ADRES
-    FCLTLA: '',       // latitude -> FCLTLA
-    FCLTLO: ''        // longitude -> FCLTLO
+    MT10ID: "", // 공연장 ID (새로 추가)
+    FCLTYNM: "", // facilityName -> FCLTYNM
+    MT13CNT: "", // facilityCount -> MT13CNT
+    FCLTYCHARTR: "공공(문예회관)", // facilityType -> FCLTYCHARTR
+    OPENDE: "", // openYear -> OPENDE
+    SEATSCALE: "", // seatCount -> SEATSCALE
+    TELNO: "", // phoneNumber -> TELNO
+    RELATEURL: "", // website -> RELATEURL
+    ADRES: "", // address -> ADRES
+    FCLTLA: "", // latitude -> FCLTLA
+    FCLTLO: "", // longitude -> FCLTLO
   });
 
-  const validateSeats = () => {
-    if (!showGrades) return true;
-    
-    const totalGradeSeats = Object.values(gradeSeats).reduce((sum, val) => sum + (parseInt(val) || 0), 0);
-    const totalSeats = parseInt(formData.SEATSCALE) || 0;
-    
-    if (totalGradeSeats !== totalSeats) {
-      setSeatError(`총 객석수(${totalSeats})와 등급별 좌석 합계(${totalGradeSeats})가 일치하지 않습니다.`);
+  useEffect(() => {
+    if (showGrades && selectedGrades.length > 0) {
+      const invalidSeats = selectedGrades.some((grade) => {
+        const seatCount = gradeSeats[GRADE_MAPPING[grade]];
+        return !seatCount || parseInt(seatCount) < 1;
+      });
+
+      if (invalidSeats) {
+        setSelectedGradeError("좌석 수는 1 이상 입력해주세요.");
+      } else {
+        setSelectedGradeError("");
+
+        // 총 좌석 수 검증
+        const totalGradeSeats = Object.values(gradeSeats).reduce(
+          (sum, val) => sum + (parseInt(val) || 0),
+          0
+        );
+        const totalSeats = parseInt(formData.SEATSCALE) || 0;
+
+        if (totalSeats > 0 && totalGradeSeats > totalSeats) {
+          setSeatError(
+            `총 객석수(${totalSeats})보다 등급별 좌석 합계(${totalGradeSeats})가 많습니다.`
+          );
+        } else if (totalSeats > 0 && totalGradeSeats < totalSeats) {
+          setSeatError(
+            `총 객석수(${totalSeats})와 등급별 좌석 합계(${totalGradeSeats})가 일치하지 않습니다.`
+          );
+        } else {
+          setSeatError("");
+        }
+      }
+    } else {
+      setSelectedGradeError("");
+      setSeatError("");
+    }
+  }, [gradeSeats, selectedGrades, formData.SEATSCALE, showGrades]);
+
+  const validateLocation = () => {
+    if (!formData.ADRES || !formData.FCLTLA || !formData.FCLTLO) {
+      setLocationError("지도에서 위치를 선택해주세요.");
       return false;
     }
-    
-    setSeatError('');
+    setLocationError("");
     return true;
+  };
+
+  // 휴대전화 유효성 검사 함수
+  const validatePhone = (phone) => {
+    const pattern = /^\d{2,3}-\d{3,4}-\d{4}$/;
+    if (!pattern.test(phone)) {
+      setPhoneError("전화번호는 xxx-xxxx-xxxx 형식으로 입력해주세요.");
+      return false;
+    }
+    setPhoneError("");
+    return true;
+  };
+
+  // ID 유효성 검사 함수
+  const validateMT10ID = (id) => {
+    const pattern = /^FC\d+$/;
+    if (!pattern.test(id)) {
+      setIdError(
+        "공연장 ID는 FC(대문자)로 시작하고 뒤에는 숫자만 입력 가능합니다."
+      );
+      return false;
+    }
+    setIdError("");
+    return true;
+  };
+
+  // 등급별 좌석 수 유효성 검사
+  const validateGradeSeats = () => {
+    if (!showGrades) return true;
+
+    let hasError = false;
+    selectedGrades.forEach((grade) => {
+      const seatCount = gradeSeats[GRADE_MAPPING[grade]];
+      if (!seatCount || parseInt(seatCount) < 1) {
+        setSelectedGradeError(`${grade} 좌석 수를 1 이상 입력해주세요.`);
+        hasError = true;
+      }
+    });
+
+    if (!hasError) {
+      setSelectedGradeError("");
+    }
+
+    return !hasError;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
-    if (name === 'SEATSCALE') {
-      validateSeats();
+
+    // 실시간 유효성 검사
+    if (name === "MT10ID") {
+      validateMT10ID(value);
+    } else if (name === "TELNO") {
+      validatePhone(value);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateSeats()) {
+
+    // ID 유효성 검사
+    if (!validateMT10ID(formData.MT10ID)) {
       return;
     }
-    
-    // Your existing submit logic...
+
+    // 위치 유효성 검사
+    if (!validateLocation()) {
+      return;
+    }
+
+    // 좌석 수 검증
+    if (!validateGradeSeats()) {
+      return;
+    }
+
+    // 핸드폰 유효성 검사
+    if (!validatePhone(formData.TELNO)) {
+      return;
+    }
+
+    // 기존 좌석 수 일치 검증
+    if (seatError) {
+      alert("좌석 수를 올바르게 입력해주세요.");
+      return;
+    }
+
+    // 제출 데이터 구성
+    const seatData = {};
+    if (showGrades) {
+      Object.entries(gradeSeats).forEach(([gradeId, seatCount]) => {
+        if (seatCount !== "") {
+          seatData[gradeId] = parseInt(seatCount);
+        }
+      });
+    }
+
     const submitData = {
       ...formData,
-      gradeSeats: showGrades ? gradeSeats : null
+      gradeSeats: showGrades ? seatData : null,
     };
-    
-    axios.post('http://localhost:8081/performance/insert', submitData)
-      .then((response) => {
-        if(response.data > 0) {
-          alert('시설 정보가 성공적으로 등록되었습니다.');
-          window.history.back();
-        } else {
-          alert("등록 실패하였습니다");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        alert('오류가 발생했습니다');
-      });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/performance/insert",
+        submitData
+      );
+      console.log(response.data);
+      if (response.data > 0) {
+        alert("시설 정보가 성공적으로 등록되었습니다.");
+        window.history.back();
+      } else {
+        alert("등록 실패하였습니다");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("오류가 발생했습니다");
+    }
   };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchKeyword(value);
-    
+
     if (!value.trim()) {
       setSuggestions([]);
       setIsShowSuggestions(false);
       return;
     }
 
-    if (searchType === 'keyword') {
+    if (searchType === "keyword") {
       const ps = new window.kakao.maps.services.Places();
       ps.keywordSearch(value, (data, status) => {
         if (status === window.kakao.maps.services.Status.OK) {
@@ -317,26 +469,30 @@ const PerformanceForm = () => {
   };
 
   const handleGradeChange = (grade) => {
-    setSelectedGrades(prev => {
+    setSelectedGrades((prev) => {
       if (prev.includes(grade)) {
-        const newGrades = prev.filter(g => g !== grade);
-        setGradeSeats(seats => {
-          const newSeats = {...seats};
-          delete newSeats[grade];
+        const newGrades = prev.filter((g) => g !== grade);
+        setGradeSeats((seats) => {
+          const newSeats = { ...seats };
+          delete newSeats[GRADE_MAPPING[grade]];
           return newSeats;
         });
         return newGrades;
       }
-      return [...prev, grade].sort((a, b) => GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b));
+      return [...prev, grade].sort(
+        (a, b) => GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b)
+      );
     });
   };
 
   const handleGradeSeatChange = (grade, value) => {
-    setGradeSeats(prev => ({
+    const gradeId = GRADE_MAPPING[grade];
+    const newValue = value === "" ? "" : parseInt(value);
+
+    setGradeSeats((prev) => ({
       ...prev,
-      [grade]: value
+      [gradeId]: newValue,
     }));
-    validateSeats();
   };
 
   useEffect(() => {
@@ -347,7 +503,7 @@ const PerformanceForm = () => {
 
       const map = new window.kakao.maps.Map(container.current, {
         center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3
+        level: 3,
       });
 
       mapInstanceRef.current = map;
@@ -359,12 +515,12 @@ const PerformanceForm = () => {
   const handlePlaceClick = (place) => {
     setSearchKeyword(place.place_name);
     const coords = new window.kakao.maps.LatLng(place.y, place.x);
-    
+
     if (mapInstanceRef.current) {
       mapInstanceRef.current.setCenter(coords);
       new window.kakao.maps.Marker({
         map: mapInstanceRef.current,
-        position: coords
+        position: coords,
       });
     }
 
@@ -372,10 +528,11 @@ const PerformanceForm = () => {
       ...formData,
       ADRES: place.address_name,
       FCLTLA: place.y,
-      FCLTLO: place.x
+      FCLTLO: place.x,
     });
-    console.log(formData);
-    
+    // 위치 선택 시 에러 메시지 초기화
+    setLocationError("");
+
     setIsShowSuggestions(false);
   };
 
@@ -383,6 +540,14 @@ const PerformanceForm = () => {
     <Container>
       <FormSection>
         <FormWrapper>
+        <Title>
+          <BackArrow
+            className="fas fa-arrow-left"
+            onClick={() => window.history.back()}
+          />
+          공연장 등록
+        </Title>
+
           <Form onSubmit={handleSubmit}>
             <FormGroup>
               <Label>공연장 ID:</Label>
@@ -393,6 +558,7 @@ const PerformanceForm = () => {
                 onChange={handleChange}
                 required
               />
+              {idError && <ErrorText>{idError}</ErrorText>}
             </FormGroup>
             <FormGroup>
               <Label>공연장명:</Label>
@@ -435,7 +601,7 @@ const PerformanceForm = () => {
               />
             </FormGroup>
             <FormGroup>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <div style={{ flex: 1 }}>
                   <Label>객석수:</Label>
                   <Input
@@ -456,13 +622,16 @@ const PerformanceForm = () => {
                   <label htmlFor="showGrades">등급지정</label>
                 </GradeCheckboxContainer>
               </div>
-              
+
               {showGrades && (
                 <AnimatedContainer>
                   <GradesContainer>
                     <GradeRow>
-                      {GRADE_ORDER.map(grade => (
-                        <GradeCheckbox key={grade} checked={selectedGrades.includes(grade)}>
+                      {GRADE_ORDER.map((grade) => (
+                        <GradeCheckbox
+                          key={grade}
+                          checked={selectedGrades.includes(grade)}
+                        >
                           <input
                             type="checkbox"
                             checked={selectedGrades.includes(grade)}
@@ -472,25 +641,41 @@ const PerformanceForm = () => {
                         </GradeCheckbox>
                       ))}
                     </GradeRow>
-                    
-                    {selectedGrades.map(grade => (
+
+                    {selectedGrades.map((grade) => (
                       <GradeInput key={grade}>
                         <Label>{grade} 좌석:</Label>
                         <SeatInput
                           type="number"
-                          value={gradeSeats[grade] || ''}
-                          onChange={(e) => handleGradeSeatChange(grade, e.target.value)}
-                          min="0"
+                          value={gradeSeats[GRADE_MAPPING[grade]] || ""}
+                          onChange={(e) =>
+                            handleGradeSeatChange(grade, e.target.value)
+                          }
+                          min="1"
+                          onBlur={(e) => {
+                            if (
+                              e.target.value === "" ||
+                              parseInt(e.target.value) < 1
+                            ) {
+                              setSelectedGradeError(
+                                "좌석 수는 1 이상 입력해주세요."
+                              );
+                            }
+                          }}
+                          placeholder="1 이상 입력"
                         />
                       </GradeInput>
                     ))}
-                    
+
+                    {selectedGradeError && (
+                      <ErrorText>{selectedGradeError}</ErrorText>
+                    )}
                     {seatError && <ErrorText>{seatError}</ErrorText>}
                   </GradesContainer>
                 </AnimatedContainer>
               )}
             </FormGroup>
-            
+
             <FormGroup>
               <Label>전화번호:</Label>
               <Input
@@ -498,8 +683,10 @@ const PerformanceForm = () => {
                 name="TELNO"
                 value={formData.TELNO}
                 onChange={handleChange}
+                placeholder="000-0000-0000"
                 required
               />
+              {phoneError && <ErrorText>{phoneError}</ErrorText>}
             </FormGroup>
             <FormGroup>
               <Label>홈페이지:</Label>
@@ -510,9 +697,15 @@ const PerformanceForm = () => {
                 onChange={handleChange}
               />
             </FormGroup>
-            <SubmitButton 
-              type="submit" 
-              disabled={seatError !== ''}
+            <SubmitButton
+              type="submit"
+              disabled={
+                seatError !== "" ||
+                idError !== "" ||
+                selectedGradeError !== "" ||
+                locationError !== "" ||
+                phoneError !== ""
+              }
             >
               제출
             </SubmitButton>
@@ -547,9 +740,12 @@ const PerformanceForm = () => {
         <MapContainer ref={container} />
 
         <LocationInfo>
-          <LocationText>주소: {formData.ADRES}</LocationText>
-          <LocationText>위도: {formData.FCLTLA}</LocationText>
-          <LocationText>경도: {formData.FCLTLO}</LocationText>
+          <LocationText>
+            주소: {formData.ADRES || "위치를 선택해주세요"}
+          </LocationText>
+          <LocationText>위도: {formData.FCLTLA || "-"}</LocationText>
+          <LocationText>경도: {formData.FCLTLO || "-"}</LocationText>
+          {locationError && <ErrorText>{locationError}</ErrorText>}
         </LocationInfo>
       </MapSection>
     </Container>
