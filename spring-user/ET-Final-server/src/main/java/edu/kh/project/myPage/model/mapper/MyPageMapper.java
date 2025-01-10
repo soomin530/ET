@@ -116,11 +116,17 @@ public interface MyPageMapper {
 	 */
 	int deleteInquiry(Map<String, Object> paramMap);
 
-	/** 예약 내역 조회
+	/** 필터링된 예약 내역 조회
 	 * @param memberNo
 	 * @return
 	 */
-	List<ticketInfoDTO> selectBookingHistory(int memberNo);
+	List<ticketInfoDTO> selectBookingHistory(@Param("memberNo") int memberNo, 
+								             @Param("status") String status, 
+								             @Param("bookingId") String bookingId,
+								             @Param("startDate") String startDate,
+								             @Param("endDate") String endDate
+											);
+
 
 	/** 예약 상세 내용 조회
 	 * @param bookingId
