@@ -62,13 +62,13 @@ public class EmailServiceImpl implements EmailService{
 			
 			// 메일 기본 정보 설정
 			helper.setTo(email); // 받는 사람(수신자)
-			helper.setSubject("[b2bProject] 회원 가입 인증번호 입니다."); // 제목
+			helper.setSubject("[ET e.ticket] 회원 가입 인증번호 입니다."); // 제목
 			helper.setText( loadHtml(authKey, htmlName) , true ); // HTML 내용 설정
 			// 인증번호입니다 : ag2dcd 
 			// helper.setText( "인증번호입니다 : " +  authKey );
 			
 			// 메일에 이미지 첨부(로고)
-			helper.addInline("logo", new ClassPathResource("static/images/logo.jpg"));
+			helper.addInline("logo", new ClassPathResource("static/apple-touch-icon.png"));
 			
 			// 실제 메일 발송
 			mailSender.send(mimeMessage);

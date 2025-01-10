@@ -107,7 +107,8 @@
 	    SET
 	        PRFNM = #{prfnm},
 	        PRFRUNTIME = #{prfruntime},
-	        PRFCAST = #{prfcast}
+	        PRFCAST = #{prfcast},
+	        DESCRIPTION = #{description}
 	    WHERE
 	        MT20ID = #{mt20id}
 	</update>

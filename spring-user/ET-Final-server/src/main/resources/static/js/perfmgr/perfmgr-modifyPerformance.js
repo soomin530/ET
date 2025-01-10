@@ -58,6 +58,9 @@ function modifyPerformance() { // 등록 버튼 눌렀을 때
   const runtime = document.querySelector('.performance-runtime input').value.trim();
   const cast = document.querySelector('.performance-actor input').value.trim();
   
+  // description 값 가져오기 (서머노트)
+  const description = $('#descriptionEditor').summernote('code');
+  
 
   // 빈 값 체크
   if (!prfnm) {
@@ -85,7 +88,8 @@ function modifyPerformance() { // 등록 버튼 눌렀을 때
       mt20id: mt20id,
       prfnm: prfnm,
       prfruntime: runtime,
-      prfcast: cast
+      prfcast: cast,
+	  description: description
   };
 
   fetch(`/perfmgr/perfmgr-modifyPerformance/${mt20id}`, {

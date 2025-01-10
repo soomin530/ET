@@ -2,103 +2,183 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>공연 예매 사이트</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/css/perfmgr/perfmgr-modifyPerformance.css">
-  <th:block th:replace="~{common/common}"></th:block>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>공연 예매 사이트</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/css/perfmgr/perfmgr-modifyPerformance.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+	<th:block th:replace="~{common/common}"></th:block>
+
 </head>
 
 <body>
-  <th:block th:replace="~{common/header}"></th:block>
-  <div class="performance-container" style="margin-top: 20px;">
-    <form id="performanceForm">
-      <!-- null 체크 추가 -->
-      <div th:if="${performance != null}">
-        <div class="performance-content">
-          <!-- 왼쪽: 공연 정보 -->
-          <div class="performance-info">
-            <img th:src="${performance.poster}"
-                    th:alt="${performance.prfnm}"
-                    class="performance-image"
-                    th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'"
-                    loading="lazy"
-                    decoding="async"
-                    onload="this.classList.add('loaded')">
-            <table class="info-table">
-              <tr>
-                <th>공연명</th>
-                <td class="performance-title">
-                  <input type="text" th:value="${performance.prfnm}" placeholder="공연명을 입력해주세요" size="50" style="padding-left: 5px;" required>
-                </td>
-              </tr>
-              <tr>
-                <th>장소</th>
-                <td class="performance-venue" th:text="${performance.fcltynm}"></td>
-              </tr>
-              <tr>
-                <th>공연기간</th>
-                <td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}"></td>
-              </tr>
-              <tr>
-                <th>공연시간</th>
-                <td class="performance-runtime">
-                  <input type="text" th:value="${performance.prfruntime}" placeholder="공연시간을 입력해주세요" size="50" style="padding-left: 5px;" required>
-                </td>
-              </tr>
-              <tr>
-                <th>출연진</th>
-                <td class="performance-actor">
-                  <input type="text" th:value="${performance.prfcast}" placeholder="출연진을 입력해주세요" size="70" style="padding-left: 5px;" required>
-                </td>
-              </tr>
-              <tr>
-                <th>가격</th>
-                <td class="performance-price" th:text="${performance.pcseguidance}"></td>
-              </tr>
-            </table>
-          </div>
-        </div>
+	<th:block th:replace="~{common/header}"></th:block>
+	<div class="performance-container" style="margin-top: 20px;">
+		<form id="performanceForm">
+			<!-- null 체크 추가 -->
+			<div th:if="${performance != null}">
+				<div class="performance-content">
+					<!-- 왼쪽: 공연 정보 -->
+					<div class="performance-info">
+						<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image"
+							th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'" loading="lazy"
+							decoding="async" onload="this.classList.add('loaded')">
+						<table class="info-table">
+							<tr>
+								<th>공연명</th>
+								<td class="performance-title">
+									<input type="text" th:value="${performance.prfnm}" placeholder="공연명을 입력해주세요"
+										size="50" style="padding-left: 5px;" required>
+								</td>
+							</tr>
+							<tr>
+								<th>장소</th>
+								<td class="performance-venue" th:text="${performance.fcltynm}"></td>
+							</tr>
+							<tr>
+								<th>공연기간</th>
+								<td colspan="2" th:text="${performance.prfpdfrom + ' ~ ' + performance.prfpdto}"></td>
+							</tr>
+							<tr>
+								<th>공연시간</th>
+								<td class="performance-runtime">
+									<input type="text" th:value="${performance.prfruntime}" placeholder="공연시간을 입력해주세요"
+										size="50" style="padding-left: 5px;" required>
+								</td>
+							</tr>
+							<tr>
+								<th>출연진</th>
+								<td class="performance-actor">
+									<input type="text" th:value="${performance.prfcast}" placeholder="출연진을 입력해주세요"
+										size="70" style="padding-left: 5px;" required>
+								</td>
+							</tr>
+							<tr>
+								<th>가격</th>
+								<td class="performance-price" th:text="${performance.pcseguidance}"></td>
+							</tr>
+							<tr>
+								<th>공연 상세</th>
+								<td>
+									<textarea id="descriptionEditor" class="performance-description"
+										th:text="${performance.description}"></textarea>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
 
-        <!-- 취소, 등록 버튼을 폼 내용 맨 아래로 이동 -->
-        <div class="action-buttons" style="margin-top: 20px; text-align: center;">
-          <button type="button" class="btn btn-modify" onclick="modifyPerformance()">등록</button>
-          <button type="button" class="btn btn-cancel" th:onclick="cancelPerformance([[${performance.mt20id}]])">취소</button>
-        </div>
-      </div>
-      
-      <div th:unless="${performance != null}">
-        <p>공연 정보를 찾을 수 없습니다.</p>
-      </div>
-    </form>
-  </div>
+				<!-- 취소, 등록 버튼을 폼 내용 맨 아래로 이동 -->
+				<div class="action-buttons" style="margin-top: 20px; text-align: center;">
+					<button type="button" class="btn btn-modify" onclick="modifyPerformance()">등록</button>
+					<button type="button" class="btn btn-cancel"
+						th:onclick="cancelPerformance([[${performance.mt20id}]])">취소</button>
+				</div>
+			</div>
 
-  <button id="scrollToTop" class="scroll-to-top" aria-label="페이지 최상단으로 이동">
-    <span>↑</span>
-  </button>
+			<div th:unless="${performance != null}">
+				<p>공연 정보를 찾을 수 없습니다.</p>
+			</div>
+		</form>
+	</div>
 
-  <!-- hidden inputs -->
-  <input type="hidden" id="currentMemberNo"
-    th:value="${session.loginMember != null ? session.loginMember.memberNo : ''}" />
-  <input type="hidden" id="fcltla" th:value="${performance.fcltla}">
-  <input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
-  <input type="hidden" id="mt20id" name="mt20id" th:value="${performance.mt20id}">
+	<button id="scrollToTop" class="scroll-to-top" aria-label="페이지 최상단으로 이동">
+		<span>↑</span>
+	</button>
 
-  <script th:inline="javascript">
-    const performanceData = {
-      id: /*[[${performance.mt20id}]]*/ '',
-      startDate: /*[[${performance.prfpdfrom}]]*/ '',
-      endDate: /*[[${performance.prfpdto}]]*/ '',
-      runtime: /*[[${performance.prfruntime}]]*/ '',
-      cast: /*[[${performance.prfcast}]]*/ '',
-      venue: /*[[${performance.fcltynm}]]*/ '',
-      schedule: /*[[${performance.schedule}]]*/ {}
-    };
-  </script>
+	<!-- hidden inputs -->
+	<input type="hidden" id="currentMemberNo"
+		th:value="${session.loginMember != null ? session.loginMember.memberNo : ''}" />
+	<input type="hidden" id="fcltla" th:value="${performance.fcltla}">
+	<input type="hidden" id="fcltlo" th:value="${performance.fcltlo}">
+	<input type="hidden" id="mt20id" name="mt20id" th:value="${performance.mt20id}">
 
-  <script src="/js/perfmgr/perfmgr-modifyPerformance.js"></script>
-  <th:block th:replace="~{common/footer}"></th:block>
+	<script th:inline="javascript">
+		const performanceData = {
+			id: /*[[${performance.mt20id}]]*/ '',
+			startDate: /*[[${performance.prfpdfrom}]]*/ '',
+			endDate: /*[[${performance.prfpdto}]]*/ '',
+			runtime: /*[[${performance.prfruntime}]]*/ '',
+			cast: /*[[${performance.prfcast}]]*/ '',
+			venue: /*[[${performance.fcltynm}]]*/ '',
+			schedule: /*[[${performance.schedule}]]*/ {}
+		};
+
+		$(document).ready(function () {
+			$('#descriptionEditor').summernote({
+				height: 500,
+				lang: 'ko-KR',
+				toolbar: [
+					['fontname', ['fontname']],
+					['fontsize', ['fontsize']],
+					['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+					['color', ['forecolor', 'color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['insert', ['picture']]
+				],
+				fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', '맑은 고딕', '궁서', '굴림체', '굴림', '돋음체', '바탕체'],
+				fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72', '96'],
+				callbacks: {
+					onImageUpload: function (files) {
+						for (let i = 0; i < files.length; i++) {
+							uploadImage(files[i], this);
+						}
+					},
+					onMediaDelete: function (target) {
+						deleteImage(target[0].src);
+					}
+				}
+			});
+		});
+
+		function uploadImage(file, editor) {
+			const formData = new FormData();
+			formData.append('file', file);
+
+			$.ajax({
+				url: '/performanceApi/description/upload',
+				method: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					$(editor).summernote('insertImage', response.url);
+				},
+				error: function (xhr, status, error) {
+					console.error('이미지 업로드 실패:', error);
+					alert('이미지 업로드에 실패했습니다.');
+				}
+			});
+		}
+
+		function deleteImage(imageUrl) {
+			$.ajax({
+				url: '/performanceApi/description/delete',
+				method: 'DELETE',
+				data: {imageUrl: imageUrl},
+				success: function (response) {
+					console.log('이미지가 성공적으로 삭제되었습니다.');
+				},
+				error: function (xhr, status, error) {
+					console.error('이미지 삭제 실패:', error);
+				}
+			});
+		}
+	</script>
+
+	<script src="/js/perfmgr/perfmgr-modifyPerformance.js"></script>
+
+	<!-- 기존 스크립트 유지 -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.js"></script>
+
+	<th:block th:replace="~{common/footer}"></th:block>
 </body>
 
 </html>
