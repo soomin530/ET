@@ -203,7 +203,7 @@ public interface MyPageService {
 	 * @param memberNo
 	 * @return
 	 */
-	List<ticketInfoDTO> getBookingHistory(int memberNo);
+	List<ticketInfoDTO> getBookingHistory(int memberNo, String status, String bookingId, String startDate, String endDate);
 
 	/** 예매 내역 상세 조회
 	 * @param bookingId

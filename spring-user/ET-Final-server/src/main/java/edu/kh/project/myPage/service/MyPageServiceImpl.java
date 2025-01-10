@@ -333,9 +333,10 @@ public class MyPageServiceImpl implements MyPageService {
 	 * @author 나찬웅 
 	 */
 	@Override
-	public List<ticketInfoDTO> getBookingHistory(int memberNo) {
-		 return mapper.selectBookingHistory(memberNo);
+	public List<ticketInfoDTO> getBookingHistory(int memberNo, String status, String bookingId, String startDate, String endDate) {
+	    return mapper.selectBookingHistory(memberNo, status, bookingId, startDate, endDate);
 	}
+
 	
 
 	/** 

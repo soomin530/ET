@@ -29,12 +29,26 @@
 
     <main class="content-area">
       <div class="ticket-filter">
-        <select id="statusFilter">
-          <option value="all">전체 상태</option>
-          <option value="BOOKED">예매완료</option>
-          <option value="CANCELED">취소됨</option>
-        </select>
-        <input type="date" id="dateFilter" />
+
+        <div class="date-filter-group">
+            <label>조회 기간:</label>
+            <input type="date" id="startDateFilter" />
+            <span>~</span>
+            <input type="date" id="endDateFilter" />
+          <button id="filterButton" class="btn-filter">조회</button>
+        </div>
+        
+        <div class="filter-group">
+          <label>
+            <input type="radio" name="statusFilter" value="ALL" checked /> 전체
+          </label>
+          <label>
+            <input type="radio" name="statusFilter" value="예매" /> 예매
+          </label>
+          <label>
+            <input type="radio" name="statusFilter" value="CANCELED" /> 취소
+          </label>
+        </div>
       </div>
       
       <div class="ticket-table-container">

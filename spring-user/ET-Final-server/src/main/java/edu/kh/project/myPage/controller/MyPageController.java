@@ -459,8 +459,13 @@ public class MyPageController {
 	 * @author 나찬웅
 	 */
 	@GetMapping("/ticketInfo/data")
-	public ResponseEntity<List<ticketInfoDTO>> getBookingHistory(@SessionAttribute("loginMember") Member loginMember) {
-		List<ticketInfoDTO> bookingHistory = service.getBookingHistory(loginMember.getMemberNo());
+	public ResponseEntity<List<ticketInfoDTO>> getBookingHistory(@SessionAttribute("loginMember") Member loginMember,
+																 @RequestParam(value = "status", required = false, defaultValue = "ALL") String status,
+															     @RequestParam(value = "bookingId", required = false) String bookingId,
+															     @RequestParam(value = "startDate", required = false) String startDate,
+															     @RequestParam(value = "endDate", required = false) String endDate
+															     ) {
+		List<ticketInfoDTO> bookingHistory = service.getBookingHistory(loginMember.getMemberNo(), status, bookingId, startDate, endDate);
 		return ResponseEntity.ok(bookingHistory);
 	}
 
@@ -489,7 +494,12 @@ public class MyPageController {
 			@SessionAttribute("loginMember") Member loginMember) {
 
 		ticketInfoDTO detail = service.getBookingDetail(bookingId, loginMember.getMemberNo());
-		return ResponseEntity.ok(detail);
+		
+		if (detail != null) {
+	        return ResponseEntity.ok(detail);  // 정상적으로 JSON 반환
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // 데이터를 찾지 못했을 때
+	    }
 	}
 
 	/**

@@ -2,6 +2,13 @@
 async function fetchTicketDetail(bookingId) {
   try {
     const response = await fetch(`/mypage/ticketDetail/data/${bookingId}`);
+
+     // 상태 코드 확인
+     if (!response.ok) {
+      console.error(`서버 응답 실패: ${response.status} - ${response.statusText}`);
+      document.getElementById("ticketDetail").innerText = "데이터를 불러오지 못했습니다.";
+      return;
+    }
     const data = await response.json();
 
     if (data) {
