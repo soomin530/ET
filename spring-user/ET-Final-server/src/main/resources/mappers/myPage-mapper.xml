@@ -333,6 +333,18 @@
         	MT20ID AS mt20id
 	    FROM TB_BOOKING_HISTORY
 	    WHERE  MEMBER_NO = #{memberNo}
+	     <if test="status != null and status != '' and status != 'ALL'">
+	         AND BOOKING_STATUS = #{status} 
+	     </if>
+	     <if test="startDate != null and startDate != ''">
+	        AND BOOKING_DATE >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	    </if>
+	    <if test="endDate != null and endDate != ''">
+	    	AND BOOKING_DATE >= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	    </if>
+	     <if test="bookingId != null and bookingId != ''">
+	         AND BOOKING_ID = #{bookingId}
+	     </if>
 	    ORDER BY BOOKING_DATE DESC
 	</select>
 	
@@ -361,11 +373,10 @@
 	    WHERE 
 	        tb.MERCHANT_UID = #{bookingId}
 	        AND tb.MEMBER_NO = #{memberNo}
-	        AND tb.BOOKING_STATUS IN('COMPLETE', 'CANCELED')
+	        AND tb.BOOKING_STATUS IN ('COMPLETE', 'CANCELED')
 	    GROUP BY 
 	        tb.BOOKING_DATE, tp.PAID_AT, tb.MERCHANT_UID, pd.PRFNM, pd.POSTER, pd.FCLTYNM, ts.SHOW_DATE, ts.SHOW_TIME, tb.BOOKING_STATUS, tp.PAID_AMOUNT
 	</select>
-	
 	
 	
 	
