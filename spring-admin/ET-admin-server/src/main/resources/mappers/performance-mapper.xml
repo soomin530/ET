@@ -82,5 +82,21 @@
 	WHERE 
 	    MT10ID = #{MT10ID}
 	</update>
+	
+	<insert id="insertGrade">
+	INSERT INTO TB_VENUE_SEAT_INFO 
+	VALUES (
+	    SEQ_VENUE_SEAT_ID.NEXTVAL, 
+	    #{MT10ID},
+	    #{grade}, 
+	    #{count}
+	)
+	</insert>
+	
+	<select id="seatInfoDetailList">
+	SELECT GRADE_ID , SEAT_COUNT 
+	FROM TB_VENUE_SEAT_INFO
+	WHERE MT10ID = #{MT10ID}
+	</select>
 
 </mapper>

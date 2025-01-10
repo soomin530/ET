@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.kh.admin.main.model.dto.Performance;
+import edu.kh.admin.main.model.dto.SeatInfo;
 
 public interface PerformanceService {
 
@@ -37,6 +38,12 @@ public interface PerformanceService {
 	 * @return
 	 */
 	int update(Map<String, Object> formdata);
+
+	/** 공연장 등급 정보 확인
+	 * @param mt10id
+	 * @return
+	 */
+	List<SeatInfo> seatInfoDetailList(String mt10id);
 
 
 

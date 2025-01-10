@@ -51,4 +51,5 @@ public interface MemberMapper {
 	Member findByEmail(Map<String, Object> paramMap);
 
 
+
 }
