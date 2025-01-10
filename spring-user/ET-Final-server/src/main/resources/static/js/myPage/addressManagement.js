@@ -57,7 +57,13 @@ const addressList = document.querySelector('.address-list');
 	addressForm.reset();
 });
 
-
+// 모달 외부 클릭 시 닫기 (새 배송지 추가 모달)
+    window.addEventListener('click', function (event) {
+        if (event.target === adsModal) {
+            adsModal.classList.remove('show');
+            addressForm.reset();
+        }
+    });
 
 
 /* 전화번호(휴대폰번호) 유효성 검사 */ 
@@ -294,11 +300,78 @@ addresses.forEach(address => {
 					</div>
 			`;
 
-	
-			// 기본 배송지 설정 버튼 이벤트 리스너
+		// 체크박스 이벤트 리스너 수정
+		const checkbox = addressItem.querySelector('.address-checkbox');
+		const actions = addressItem.querySelector('.address-actions');
+
+		   // 주소 아이템 클릭 이벤트
+			 addressItem.addEventListener('click', (e) => {
+				// 버튼 클릭은 제외
+				if (e.target.closest('.set-default-btn, .edit-btn, .delete-btn, .address-checkbox')) {
+						return;
+				}
+
+				
+
+				// 다른 모든 체크박스 해제 및 actions 숨기기
+				const allCheckboxes = document.querySelectorAll('.address-checkbox');
+				const allActions = document.querySelectorAll('.address-actions');
+				
+				allCheckboxes.forEach((cb, index) => {
+						if (cb !== checkbox) {
+								cb.checked = false;
+								allActions[index].classList.remove('show');
+						}
+				});
+
+				// 체크박스 상태 토글
+				checkbox.checked = !checkbox.checked;
+
+				// 현재 actions 토글
+				actions.classList.toggle('show', checkbox.checked);
+		});
+
+		// // 기존 체크박스 이벤트 리스너
+		// checkbox.addEventListener('change', (e) => {
+		// 	e.stopPropagation(); // 상위 이벤트 전파 방지
+		// 	toggleCheckboxState(e.target.checked);
+		// });
+
+
+		// 체크박스 클릭 이벤트
+		checkbox.addEventListener('click', (e) => {
+
+				// 다른 모든 체크박스 해제
+				const allCheckboxes = document.querySelectorAll('.address-checkbox');
+				const allActions = document.querySelectorAll('.address-actions');
+
+				allCheckboxes.forEach((cb, index) => {
+					if (cb !== checkbox) {
+							cb.checked = false;
+							allActions[index].classList.remove('show');
+					}
+			});
+
+				// allCheckboxes.forEach(cb => {
+				// 		if (cb !== e.target) {
+				// 				cb.checked = false;
+				// 				cb.closest('.address-item').querySelector('.address-actions').classList.remove('show');
+				// 		}
+				// });
+				
+				// 현재 체크박스에 대한 actions 토글
+				actions.classList.toggle('show', e.target.checked);
+		});
+
+
+
+		// 기본 배송지 설정 버튼 이벤트 리스너
 		const setDefaultBtn = addressItem.querySelector('.set-default-btn');
 		if (setDefaultBtn && address.basicAddress !== 'Y') {
 				setDefaultBtn.addEventListener('click', async () => {
+
+										
+
 						try {
 								// addressNo 값을 버튼의 data-address-no 속성에서 가져옴
 								const addressNo = setDefaultBtn.getAttribute('data-address-no');
@@ -390,37 +463,24 @@ try {
 }
 }
 
-		// 체크박스 이벤트 리스너 수정
-		const checkbox = addressItem.querySelector('.address-checkbox');
-		const actions = addressItem.querySelector('.address-actions');
-		
-		checkbox.addEventListener('change', (e) => {
 
-				// 다른 모든 체크박스 해제
-				const allCheckboxes = document.querySelectorAll('.address-checkbox');
-				allCheckboxes.forEach(cb => {
-						if (cb !== e.target) {
-								cb.checked = false;
-								cb.closest('.address-item').querySelector('.address-actions').classList.remove('show');
-						}
-				});
-				
-				// 현재 체크박스에 대한 actions 토글
-				actions.classList.toggle('show', e.target.checked);
-		});
 
 
 		// 수정 버튼 이벤트 리스너
 		const editBtn = addressItem.querySelector('.edit-btn');
 		editBtn.addEventListener('click', () => {
-				openEditModal(address);
+
+			
+
+			openEditModal(address);
 		});
 
 
 		// 삭제 버튼 이벤트 리스너
 		const deleteBtn = addressItem.querySelector('.delete-btn');
 		deleteBtn.addEventListener('click', () => {
-				openDeleteModal(address.addressNo);
+
+			openDeleteModal(address.addressNo);
 		});
 
 
@@ -452,17 +512,18 @@ document.getElementById('editDetailAddress').value = address.detailAddress;
 document.getElementById('editPhone').value = address.phone;
 document.getElementById('editExtraPhone').value = address.extraPhone || '';
 
-
-
 // 전화번호 유효성 검사 메시지 초기화
 document.getElementById('editPhoneMessage').innerText = '';
 document.getElementById('editExtraPhoneMessage').innerText = '';
 document.getElementById('editPhoneMessage').classList.remove('error', 'confirm');
 document.getElementById('editExtraPhoneMessage').classList.remove('error', 'confirm');
 
-editModal.style.display = 'block';
+editModal.style.display = 'flex';
+
 
 }
+
+
 
 /* 전화번호(휴대폰번호) 유효성 검사 */ 
 
@@ -614,6 +675,14 @@ try {
 		alert('수정 중 오류가 발생했습니다.');
 }
 
+});
+
+
+// 수정 모달 화면 클릭 시 닫기
+window.addEventListener('click', function (event) {
+	if (event.target === editModal) {
+			closeEditModal();
+	}
 });
 
 
