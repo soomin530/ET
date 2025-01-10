@@ -270,6 +270,7 @@
     	FROM TB_VENUE_SEAT_INFO
     	JOIN TB_SEAT_GRADE USING(GRADE_ID)
     	WHERE MT10ID = #{mt10id}
+    	ORDER BY GRADE_ID ASC
     </select>
     
     <!-- 공연 일정 중복 체크 -->
