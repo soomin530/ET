@@ -1,6 +1,7 @@
 package edu.kh.admin.main.model.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,6 +20,8 @@ public interface AnnouncementMapper {
 	int update(@Param("title") String title, @Param("content") String content, @Param("announceNo") String announceNo);
 
 	int delete(int announceNo);
+
+	List<Announcement> searchAnnouncementList(Map<String, Object> formdata);
 
 
 }

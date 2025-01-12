@@ -7,18 +7,21 @@ import styled from 'styled-components';
 
 // 페이지네이션 스타일
 const PaginationContainer = styled.div`
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   margin-top: 30px;
   padding: 20px 0;
 `;
 
 const PageButton = styled.button`
-  min-width: 36px;
-  height: 36px;
-  padding: 0 8px;
+   width: 32px;          // min-width → width
+  height: 32px;
+  padding: 0;           // 0 6px → 0
+  display: flex;        // 추가
+  align-items: center;  // 추가
+  justify-content: center;  // 추가
   border: 1px solid ${props => props.active ? '#ff7f27' : '#e0e0e0'};
   border-radius: 4px;
   background-color: ${props => props.active ? '#ff7f27' : 'white'};
@@ -42,8 +45,11 @@ const PageButton = styled.button`
 `;
 
 const ArrowButton = styled(PageButton)`
-  font-size: 18px;
+  width: 32px;         // 추가
+  font-size: 12px;     // 14px → 12px
   font-weight: bold;
+  min-width: 28px;
+  padding: 0 4px;
 
   &:disabled {
     background-color: #f5f5f5;
@@ -70,57 +76,125 @@ const StyledTable = styled.table`
     width: 100%;
   border-collapse: collapse;
   background-color: white;
-  table-layout: fixed;  /* 추가 */
+  table-layout: auto;  /* 추가 */
 `;
 
 const TableHeader = styled.th`
-   padding: 15px;
+  padding: 15px;
   background-color: #ff7f27;
   color: white;
   font-weight: 600;
-  text-align: left;
+  text-align: center;
   font-size: 14px;
-  white-space: nowrap;  /* 추가 */
+  white-space: nowrap;
+  vertical-align: middle;  // 세로 중앙 정렬 추가
 `;
 
 const TableRow = styled.tr`
-  &:hover {
+   &:hover {
     background-color: #fff3e0;
   }
   cursor: pointer;
   border-bottom: 1px solid #eeeeee;
+  height: 50px;  // 행의 높이를 고정하여 일관된 정렬 유지
 `;
 
 const TableCell = styled.td`
    padding: 12px 15px;
   color: #333;
-  white-space: nowrap;  /* 추가 */
-  overflow: hidden;     /* 추가 */
-  text-overflow: ellipsis;  /* 추가 */
+  text-align: center;  // 이 부분이 확실히 적용되도록
+  white-space: nowrap;
+  overflow: hidden;    
+  text-overflow: ellipsis;
+  vertical-align: middle;  // 세로 중앙 정렬 추가
+
+  /* 삭제 버튼 컨테이너 중앙 정렬 */
+  &:last-child {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+  }
 `;
 
 const DeleteButton = styled.button`
-  background-color: transparent;
+ width: 32px;
+  height: 32px;
+  background-color: #ef4444;  // 변경
+  color: white;
+  font-size: 14px;
+  padding: 0;
   border: none;
-  color: #ff5722;
-  cursor: pointer;
-  padding: 5px 10px;
   border-radius: 4px;
-  transition: all 0.2s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transition: all 0.2s;  // all로 변경하여 모든 속성에 트랜지션 적용
 
   &:hover {
-    background-color: #ffebee;
+    background-color: #dc2626;  // 변경
+    transform: translateY(-2px);  // 추가
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);  // 추가
   }
 
   i {
-    font-size: 16px;
+    font-size: 14px;
+  }
+`;
+
+const TitleContainer = styled.div`
+   width: fit-content;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff7f27 0%, #ff9f5b 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(255, 127, 39, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  h4 {
+    margin: 0;
+    font-size: 24px;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* 반응형 스타일 */
+  @media screen and (max-width: 768px) {
+    padding: 8px 16px;
+    h4 {
+      font-size: 20px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    width: 90%;
+    margin: 15px auto;
+    h4 {
+      font-size: 18px;
+    }
+  }
+
+  @media screen and (max-width: 320px) {
+    padding: 6px 12px;
+    h4 {
+      font-size: 16px;
+    }
+  }
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
   }
 `;
 
 // 페이지네이션 컴포넌트
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  
+
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
@@ -133,7 +207,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
       >
         {'<<'}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
@@ -155,13 +229,13 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
         })}
       </PageNumbersContainer>
 
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
         {'>'}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
       >
@@ -174,7 +248,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
 // 메인 컴포넌트
 export default function AnnouncementManage() {
   const [announcementList, setAnnouncementList] = useState([]);
-  const [selectedValue, setSelectedValue] = useState('이름');
+  const [selectedValue, setSelectedValue] = useState('제목');
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -186,10 +260,10 @@ export default function AnnouncementManage() {
     getAnnouncementList();
   }, []);
 
-  const getAnnouncementList = async() => {
+  const getAnnouncementList = async () => {
     try {
       const resp = await axiosApi.get("/announcement/showAnnouncementList");
-      if(resp.status === 200){
+      if (resp.status === 200) {
         setAnnouncementList(resp.data);
         setLoading(false);
       }
@@ -203,20 +277,20 @@ export default function AnnouncementManage() {
     setSelectedValue(e.target.value);
   };
 
-  const handleInputChange = (e) => {  
+  const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      handleSubmit(e);  
+      handleSubmit(e);
     }
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!inputValue || inputValue.trim() === ''){
+    if (!inputValue || inputValue.trim() === '') {
       alert("검색어를 입력해주세요");
       return;
     }
@@ -248,9 +322,14 @@ export default function AnnouncementManage() {
 
   return (
     <div className="menu-box">
-      <div className="main-title-container">
+      <TitleContainer onClick={() => {
+        getAnnouncementList();
+        setCurrentPage(1);
+        setInputValue('');
+        setSelectedValue('제목');
+      }}>
         <h4>공지사항</h4>
-      </div>
+      </TitleContainer>
       <div>
         <form>
           <select value={selectedValue} onChange={handleChange}>
@@ -287,49 +366,49 @@ export default function AnnouncementManage() {
               {announcementList
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((announcement, index) => (
-                <TableRow 
-                  key={announcement.announceNo}
-                  onClick={(e) => {
-                    // 삭제 버튼 클릭 시 상세페이지로 이동하지 않도록
-                    if (e.target.closest('.delete-button')) return;
-                    navigate(`/announcement/${announcement.announceNo}`);
-                  }}
-                >
-                  <TableCell>{announcement.announceNo}</TableCell>
-                  <TableCell>{announcement.announceTitle}</TableCell>
-                  <TableCell>{announcement.announceWriteDate}</TableCell>
-                  <TableCell>
-                    <DeleteButton 
-                      className="delete-button"
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        if (window.confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
-                          try {
-                            const response = await axios.post(
-                              `http://localhost:8081/announcement/delete/${announcement.announceNo}`
-                            );
-                            if (response.data > 0) {
-                              alert('공지사항이 삭제되었습니다.');
-                              getAnnouncementList(); // 목록 새로고침
-                            } else {
-                              alert('삭제에 실패했습니다.');
+                  <TableRow
+                    key={announcement.announceNo}
+                    onClick={(e) => {
+                      // 삭제 버튼 클릭 시 상세페이지로 이동하지 않도록
+                      if (e.target.closest('.delete-button')) return;
+                      navigate(`/announcement/${announcement.announceNo}`);
+                    }}
+                  >
+                    <TableCell>{announcement.announceNo}</TableCell>
+                    <TableCell>{announcement.announceTitle}</TableCell>
+                    <TableCell>{announcement.announceWriteDate}</TableCell>
+                    <TableCell>
+                      <DeleteButton
+                        className="delete-button"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+                            try {
+                              const response = await axios.post(
+                                `http://localhost:8081/announcement/delete/${announcement.announceNo}`
+                              );
+                              if (response.data > 0) {
+                                alert('공지사항이 삭제되었습니다.');
+                                getAnnouncementList(); // 목록 새로고침
+                              } else {
+                                alert('삭제에 실패했습니다.');
+                              }
+                            } catch (error) {
+                              console.error('삭제 중 에러 발생:', error);
+                              alert('삭제 중 오류가 발생했습니다.');
                             }
-                          } catch (error) {
-                            console.error('삭제 중 에러 발생:', error);
-                            alert('삭제 중 오류가 발생했습니다.');
                           }
-                        }
-                      }}
-                    >
-                      <i className="fas fa-times" />
-                    </DeleteButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        }}
+                      >
+                        <i className="fas fa-times" />
+                      </DeleteButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </tbody>
           </StyledTable>
         </TableContainer>
-        <Pagination 
+        <Pagination
           totalItems={announcementList.length}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
@@ -337,7 +416,7 @@ export default function AnnouncementManage() {
         />
       </div>
       <div className="write-button-container">
-        <button 
+        <button
           className="write-button"
           onClick={() => navigate('/quill')}
         >

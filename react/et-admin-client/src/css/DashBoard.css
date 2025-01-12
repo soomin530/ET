@@ -871,4 +871,5 @@ input:checked + .toggle-slider:before {
 .main-table-container {
   width: 100%;
   overflow-x: auto;  /* 필요시 가로 스크롤 */
+  text-align: center
 }

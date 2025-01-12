@@ -44,6 +44,13 @@ public interface AnnouncementService {
 	 * @return
 	 */
 	int delete(int announceNo);
+ 
+
+	/** 검색한 글들 찾기
+	 * @param formdata 
+	 * @return
+	 */
+	List<Announcement> searchAnnouncementList(Map<String, Object> formdata);
 
 
 	
