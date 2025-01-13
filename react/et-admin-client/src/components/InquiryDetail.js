@@ -76,17 +76,18 @@ const Content = styled.div`
 `;
 
 const ReplyContainer = styled.div`
-  margin-top: 30px;
+   margin-top: 30px;
   padding: 20px;
   background-color: #f0f7ff;
   border-radius: 8px;
   border-left: 4px solid #007bff;
   animation: ${(props) => {
-      if (props.isEditing) return slideUpAndFade;
-      if (props.isReturning) return slideDownAndFade;
-      return "none";
-    }}
-    0.3s ease-out forwards;
+    if (props.isEditing) return slideUpAndFade;
+    if (props.isReturning) return slideDownAndFade;
+    return "none";
+  }}
+  0.3s ease-out forwards;
+  opacity: 1; // 기본 opacity 추가
 `;
 
 const ReplyTitle = styled.h3`
@@ -294,31 +295,31 @@ export default function InquiryDetail() {
 
   const handleEdit = () => {
     setIsReplyExiting(true);   // 퇴장 애니메이션 시작
-  
-  setTimeout(() => {
-    setShowReplyContainer(false);  // 애니메이션 완료 후 컨테이너 숨김
-    setReplyContent(inquiry.replyContent);
-    setShowReplyForm(true);
-    setIsEditing(true);
-  }, 300);  // 애니메이션 시간과 동일하게 설정
+
+    setTimeout(() => {
+      setShowReplyContainer(false);  // 애니메이션 완료 후 컨테이너 숨김
+      setReplyContent(inquiry.replyContent);
+      setShowReplyForm(true);
+      setIsEditing(true);
+    }, 300);  // 애니메이션 시간과 동일하게 설정
   };
 
   const handleCancel = () => {
     setIsReplyExiting(false);  // 우선 퇴장 애니메이션 초기화
-  setIsExiting(true);        // 폼 퇴장 애니메이션 시작
-  
-  setTimeout(() => {
-    setShowReplyForm(false);
-    setReplyContent("");
-    setIsEditing(false);
-    setIsExiting(false);
-    setShowReplyContainer(true);  // 답글 컨테이너 표시
-    setIsReplyReturning(true);    // 등장 애니메이션 시작
-    
+    setIsExiting(true);        // 폼 퇴장 애니메이션 시작
+
     setTimeout(() => {
-      setIsReplyReturning(false); // 등장 애니메이션 완료
+      setShowReplyForm(false);
+      setReplyContent("");
+      setIsEditing(false);
+      setIsExiting(false);
+      setShowReplyContainer(true);  // 답글 컨테이너 표시
+      setIsReplyReturning(true);    // 등장 애니메이션 시작
+
+      setTimeout(() => {
+        setIsReplyReturning(false); // 등장 애니메이션 완료
+      }, 300);
     }, 300);
-  }, 300);
   };
 
   const handleReplySubmit = async () => {
@@ -326,7 +327,7 @@ export default function InquiryDetail() {
       alert("답글 내용을 입력해주세요.");
       return;
     }
-  
+
     try {
       const response = await axios.post(
         `http://localhost:8081/inquiry/reply/${inquiryNo}`,
@@ -334,29 +335,33 @@ export default function InquiryDetail() {
           replyContent: replyContent,
         }
       );
-  
+
       if (response.data > 0) {
         alert(isEditing ? "답글이 수정되었습니다." : "답글이 등록되었습니다.");
-        
-        // 먼저 새 데이터를 가져옴
-        await fetchInquiry();
-  
-        // 폼 상태 초기화 전에 살짝 지연
-        setTimeout(() => {
+
+        // 폼 퇴장 애니메이션
+        setIsExiting(true);
+
+        setTimeout(async () => {
+          // 데이터 업데이트
+          await fetchInquiry();
+
+          // 폼 관련 상태 초기화
           setShowReplyForm(false);
-          setIsEditing(false);
+          setIsExiting(false);
           setReplyContent("");
-          
-          // 답글 컨테이너 표시
+          setIsEditing(false);
+
+          // 답글 컨테이너 표시 및 애니메이션
           setShowReplyContainer(true);
+          setIsReplyExiting(false); // 이 부분이 중요
           setIsReplyReturning(true);
-          
-          // 애니메이션 완료 후 리턴 상태 해제
+
           setTimeout(() => {
             setIsReplyReturning(false);
           }, 300);
-        }, 100);  // 지연 시간 추가
-        
+        }, 300);
+
       } else {
         alert(isEditing ? "수정에 실패했습니다." : "등록에 실패했습니다.");
       }
@@ -365,7 +370,7 @@ export default function InquiryDetail() {
       alert("처리 중 에러가 발생했습니다.");
     }
   };
-  
+
   if (loading) return <div>Loading...</div>;
   if (!inquiry) return <div>문의사항을 찾을 수 없습니다.</div>;
 
@@ -393,6 +398,7 @@ export default function InquiryDetail() {
           <ReplyContainer
             isEditing={isReplyExiting}
             isReturning={isReplyReturning}
+            style={{ display: showReplyContainer ? 'block' : 'none' }}
           >
             <ReplyTitle>답변</ReplyTitle>
             <ReplyText>{inquiry.replyContent}</ReplyText>
