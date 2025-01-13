@@ -34,12 +34,10 @@ import edu.kh.project.performance.model.dto.PerformanceRegistrationDTO;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
 import edu.kh.project.performance.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("performanceApi")
 @RequiredArgsConstructor
-@Slf4j
 public class PerformanceApiController {
 
 	@Autowired

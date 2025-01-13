@@ -94,6 +94,7 @@ h1 {
   font-size: 10px;
   background-color: #e8e8e8;
   cursor: pointer;
+  margin-bottom : 7px;
 }
 
 /* 좌석 등급별 색상 */

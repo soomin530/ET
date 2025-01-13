@@ -9,9 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.kh.project.common.jwt.JwtTokenUtil;
 import edu.kh.project.common.jwt.JwtTokenUtil.TokenInfo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor

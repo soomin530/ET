@@ -7,30 +7,30 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadUserInfo() {
 
 
- fetch("/mypage/info")
-		 .then(response => response.json())
-		 .then(data => {
-	 
-	 console.log("데이터", data);
-	 
-				 // 폼에 데이터 채우기
-				 document.getElementById("userId").value = data.memberId || "";
-				
-				 document.getElementById("userTel").value = data.memberTel || "";
-				 document.getElementById("userNickname").value = data.memberNickname || "";
-				 document.getElementById("verificationEmail").value = data.memberEmail || "";
-				 
-				 // 성별 설정
-				 if (data.memberGender === "M") {
-						 document.getElementById("male").checked = true;
-				 } else if (data.memberGender === "F") {
-						 document.getElementById("female").checked = true;
-				 }
-		 })
-		 .catch(error => {
-				 console.error("회원 정보 로딩 실패:", error);
-				 alert("회원 정보를 불러오는데 실패했습니다.");
-		 });
+	fetch("/mypage/info")
+		.then(response => response.json())
+		.then(data => {
+
+			console.log("데이터", data);
+
+			// 폼에 데이터 채우기
+			document.getElementById("userId").value = data.memberId || "";
+
+			document.getElementById("userTel").value = data.memberTel || "";
+			document.getElementById("userNickname").value = data.memberNickname || "";
+			document.getElementById("verificationEmail").value = data.memberEmail || "";
+
+			// 성별 설정
+			if (data.memberGender === "M") {
+				document.getElementById("male").checked = true;
+			} else if (data.memberGender === "F") {
+				document.getElementById("female").checked = true;
+			}
+		})
+		.catch(error => {
+			console.error("회원 정보 로딩 실패:", error);
+			alert("회원 정보를 불러오는데 실패했습니다.");
+		});
 }
 
 const mypageCheckObj = {
@@ -53,7 +53,7 @@ const verificationConfirmBtn = document.querySelector("#verificationConfirmBtn")
 // 인증번호 관련 메시지 출력 span
 const verificationMessage = document.querySelector("#verificationMessage");
 
-let verificationTimer; 
+let verificationTimer;
 
 const verificationMin = 4; // 타이머 초기값 (분)
 const verificationSec = 59; // 타이머 초기값 (초)
@@ -71,17 +71,17 @@ const verificationEmailMessage = document.querySelector("#verificationEmailMessa
 
 /* 이메일 중복 검사 로직 (input 에 입력 할때마다 중복검사 비동기 요청 보내기) */
 verificationEmail.addEventListener("input", e => {
-	
+
 	const inputEmail = e.target.value;
-	
-	
+
+
 	// 작성된 이메일 값 얻어오기
 	//const verificationInputEmail = e.target.value;
 
 	// 3) 입력된 이메일이 없을 경우
 	if (inputEmail.trim().length > 0) {
-        mypageCheckObj.verificationEmail = false; // 검증 필요함을 표시
-        mypageCheckObj.authKey = false; // 인증 필요함을 표시
+		mypageCheckObj.verificationEmail = false; // 검증 필요함을 표시
+		mypageCheckObj.authKey = false; // 인증 필요함을 표시
 
 
 		// verificationEmailMessage.innerText = "메일을 받을 수 있는 이메일을 입력해주세요.";
@@ -92,44 +92,44 @@ verificationEmail.addEventListener("input", e => {
 		// // 잘못 입력한 띄어쓰기가 있을 경우 없앰
 		// verificationEmail.value = "";
 
-    // 기존의 이메일 유효성 검사 로직...
-	const vfRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		// 기존의 이메일 유효성 검사 로직...
+		const vfRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    // (알맞은 이메일 형태가 아닌 경우)
-	if (!vfRegExp.test(inputEmail)) {
-		verificationEmailMessage.innerText = "알맞은 이메일 형식으로 작성해주세요.";
-		verificationEmailMessage.classList.add('error'); // 글자를 빨간색으로 변경
-		verificationEmailMessage.classList.remove('confirm'); // 초록색 제거
-		return;
+		// (알맞은 이메일 형태가 아닌 경우)
+		if (!vfRegExp.test(inputEmail)) {
+			verificationEmailMessage.innerText = "알맞은 이메일 형식으로 작성해주세요.";
+			verificationEmailMessage.classList.add('error'); // 글자를 빨간색으로 변경
+			verificationEmailMessage.classList.remove('confirm'); // 초록색 제거
+			return;
+		}
+
+		// 중복 검사 수행
+		// 비동기(ajax)
+		fetch("/mypage/verifyEmail?verificationEmail=" + inputEmail)
+			.then(resp => resp.text())
+			.then(count => {
+
+				if (count == 1) { // 중복 O
+					verificationEmailMessage.innerText = "이미 사용중인 이메일 입니다.";
+					verificationEmailMessage.classList.add("error");
+					verificationEmailMessage.classList.remove("confirm");
+					// mypageCheckObj.verificationEmail = false; // 중복은 유효하지 않은 상태다..
+					return;
+				}
+
+				// 중복 X 경우
+				verificationEmailMessage.innerText = "사용 가능한 이메일입니다.";
+				verificationEmailMessage.classList.add("confirm");
+				verificationEmailMessage.classList.remove("error");
+				mypageCheckObj.verificationEmail = true;
+
+			});
+	} else {
+		// 이메일 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
+		verificationEmailMessage.innerText = "";
+		mypageCheckObj.verificationEmail = true;
+		mypageCheckObj.authKey = true;
 	}
-
-    // 중복 검사 수행
-	// 비동기(ajax)
-	fetch("/mypage/verifyEmail?verificationEmail=" + inputEmail)
-    .then(resp => resp.text())
-    .then(count => {
-
-        if (count == 1) { // 중복 O
-            verificationEmailMessage.innerText = "이미 사용중인 이메일 입니다.";
-            verificationEmailMessage.classList.add("error");
-            verificationEmailMessage.classList.remove("confirm");
-            // mypageCheckObj.verificationEmail = false; // 중복은 유효하지 않은 상태다..
-            return;
-        }
-
-        // 중복 X 경우
-        verificationEmailMessage.innerText = "사용 가능한 이메일입니다.";
-        verificationEmailMessage.classList.add("confirm");
-        verificationEmailMessage.classList.remove("error");
-        mypageCheckObj.verificationEmail = true;
-
-    });
-} else {
-       // 이메일 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
-			 verificationEmailMessage.innerText = "";
-			 mypageCheckObj.verificationEmail = true;
-			 mypageCheckObj.authKey = true;
-    }
 
 
 });
@@ -139,7 +139,7 @@ verificationEmail.addEventListener("input", e => {
 verificationBtn.addEventListener("click", () => {
 
 	if (mypageCheckObj.verificationEmail) {
-        console.log("1 mypageCheckObj : ", mypageCheckObj);
+		console.log("1 mypageCheckObj : ", mypageCheckObj);
 
 		mypageCheckObj.authKey = false;
 		verificationMessage.innerText = "";
@@ -148,10 +148,10 @@ verificationBtn.addEventListener("click", () => {
 		minit = verificationMin;
 		second = verificationSec;
 
-    // 이전 동작중인 인터벌 클리어(없애기)
+		// 이전 동작중인 인터벌 클리어(없애기)
 		clearInterval(verificationTimer);
 
-    // 비동기로 서버에서 메일보내기 
+		// 비동기로 서버에서 메일보내기 
 		fetch("/mypage/sendEmail", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -164,19 +164,19 @@ verificationBtn.addEventListener("click", () => {
 				} else {
 					console.log("인증 번호 발송 실패!!!!");
 				}
-			});   
+			});
 
-    // **********************************************************************        
+		// **********************************************************************        
 
-    // 메일은 비동기로 서버에서 보내라고 하고
+		// 메일은 비동기로 서버에서 보내라고 하고
 		// 화면에서는 타이머 시작하기
 
 		verificationMessage.innerText = verificationTime; // 05:00 세팅
 		verificationMessage.classList.remove("confirm", "error"); // 검정 글씨
 
-		alert("인증번호가 발송되었습니다.");         
+		alert("인증번호가 발송되었습니다.");
 
-        // 인증 시간 출력(1초 마다 동작)
+		// 인증 시간 출력(1초 마다 동작)
 		verificationTimer = setInterval(() => {
 
 			verificationMessage.innerText = `${addZero(minit)}:${addZero(second)}`;
@@ -200,7 +200,7 @@ verificationBtn.addEventListener("click", () => {
 
 		}, 1000); // 1초 지연시간
 	} else {
-        console.log("2 mypageCheckObj : ", mypageCheckObj);
+		console.log("2 mypageCheckObj : ", mypageCheckObj);
 		alert("이메일을 다시 확인해 주세요.");
 		verificationEmail.focus();
 	}
@@ -240,7 +240,7 @@ verificationConfirmBtn.addEventListener("click", () => {
 		"authKey": verificationCode.value
 	};
 
-    // 인증번호 확인용 비동기 요청 보냄
+	// 인증번호 확인용 비동기 요청 보냄
 	fetch("/email/checkAuthKey", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -256,7 +256,7 @@ verificationConfirmBtn.addEventListener("click", () => {
 				return;
 			}
 
-      // 일치할 때
+			// 일치할 때
 			clearInterval(verificationTimer); // 타이머 멈춤
 
 			$("#verificationEmail").attr("readonly", true);        // readonly 처리
@@ -287,45 +287,45 @@ userNickname.addEventListener("input", (e) => {
 
 	// 닉네임을 입력한 경우에만 검증 실행
 	if (inputNickname.trim().length > 0) {
-		
+
 		mypageCheckObj.userNickname = false; // 검증 필요함을 표시
-		
-		
 
-	// 정규식 검사
-	const regExp = /^[가-힣\w\d]{2,10}$/;
 
-	if (!regExp.test(inputNickname)) { // 유효 X
-		updateNickMessage.innerText = "닉네임은 한글,영어,숫자로만 2~10글자로 작성해주세요.";
-		updateNickMessage.classList.add("error");
-		updateNickMessage.classList.remove("confirm");
-		
-		return;
-	}
 
-	// 3) 중복 검사 (유효한 경우)
-	fetch("/mypage/updateNickname?userNickname=" + inputNickname)
-		.then(resp => resp.text())
-		.then(count => {
+		// 정규식 검사
+		const regExp = /^[가-힣\w\d]{2,10}$/;
 
-			if (count == 1) { // 중복 O
-				updateNickMessage.innerText = "이미 사용중인 닉네임 입니다.";
-				updateNickMessage.classList.add("error");
-				updateNickMessage.classList.remove("confirm");
-				return;
-			}
+		if (!regExp.test(inputNickname)) { // 유효 X
+			updateNickMessage.innerText = "닉네임은 한글,영어,숫자로만 2~10글자로 작성해주세요.";
+			updateNickMessage.classList.add("error");
+			updateNickMessage.classList.remove("confirm");
 
-			updateNickMessage.innerText = "사용 가능한 닉네임 입니다.";
-			updateNickMessage.classList.add("confirm");
-			updateNickMessage.classList.remove("error");
-			mypageCheckObj.userNickname = true;
-		});
-  } else {		
+			return;
+		}
+
+		// 3) 중복 검사 (유효한 경우)
+		fetch("/mypage/updateNickname?userNickname=" + inputNickname)
+			.then(resp => resp.text())
+			.then(count => {
+
+				if (count == 1) { // 중복 O
+					updateNickMessage.innerText = "이미 사용중인 닉네임 입니다.";
+					updateNickMessage.classList.add("error");
+					updateNickMessage.classList.remove("confirm");
+					return;
+				}
+
+				updateNickMessage.innerText = "사용 가능한 닉네임 입니다.";
+				updateNickMessage.classList.add("confirm");
+				updateNickMessage.classList.remove("error");
+				mypageCheckObj.userNickname = true;
+			});
+	} else {
 
 		// 닉네임 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
 		updateNickMessage.innerText = "";
 		mypageCheckObj.userNickname = true;
-  }
+	}
 
 });
 
@@ -343,21 +343,21 @@ userTel.addEventListener("input", e => {
 	if (inputTel.trim().length > 0) {
 		mypageCheckObj.userTel = false; // 검증 필요함을 표시
 
-	const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
+		const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
 
-	if (!regExp.test(inputTel)) {
-		updateTelMessage.innerText = "유효하지 않은 전화번호 형식입니다.";
-		updateTelMessage.classList.add("error");
-		updateTelMessage.classList.remove("confirm");
-		mypageCheckObj.userTel = false;
-		return;
-	}
+		if (!regExp.test(inputTel)) {
+			updateTelMessage.innerText = "유효하지 않은 전화번호 형식입니다.";
+			updateTelMessage.classList.add("error");
+			updateTelMessage.classList.remove("confirm");
+			mypageCheckObj.userTel = false;
+			return;
+		}
 
-	updateTelMessage.innerText = "유효한 전화번호 형식입니다.";
-	updateTelMessage.classList.add("confirm");
-	updateTelMessage.classList.remove("error");
-	mypageCheckObj.userTel = true;
-  } else {
+		updateTelMessage.innerText = "유효한 전화번호 형식입니다.";
+		updateTelMessage.classList.add("confirm");
+		updateTelMessage.classList.remove("error");
+		mypageCheckObj.userTel = true;
+	} else {
 
 		// 전화번호 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
 		updateTelMessage.innerText = "";
@@ -381,7 +381,7 @@ updateForm.addEventListener("submit", e => {
 	if (!mypageCheckObj.authKey) {
 		alert("이메일 인증이 완료되지 않았습니다. 이메일 인증 후 다시 시도해주세요.");
 		return;
-}
+	}
 
 	// 변경된 값이 있는지 확인
 	const formData = {};
@@ -390,64 +390,64 @@ updateForm.addEventListener("submit", e => {
 	// 이메일이 입력되었고 유효성 검사를 통과한 경우
 	const emailValue = document.getElementById("verificationEmail").value.trim();
 	if (emailValue && mypageCheckObj.verificationEmail && mypageCheckObj.authKey) {
-			formData.memberEmail = emailValue;
-			isModified = true;
+		formData.memberEmail = emailValue;
+		isModified = true;
 	}
 
 	// 닉네임이 입력되었고 유효성 검사를 통과한 경우
 	const nicknameValue = document.getElementById("userNickname").value.trim();
 	if (nicknameValue && mypageCheckObj.userNickname) {
-			formData.memberNickname = nicknameValue;
-			isModified = true;
+		formData.memberNickname = nicknameValue;
+		isModified = true;
 	}
 
 	// 전화번호가 입력되었고 유효성 검사를 통과한 경우
 	const telValue = document.getElementById("userTel").value.trim();
 	if (telValue && mypageCheckObj.userTel) {
-			formData.memberTel = telValue;
-			isModified = true;
+		formData.memberTel = telValue;
+		isModified = true;
 	}
 
 	// 성별이 선택된 경우
 	const selectedGender = document.querySelector('input[name="gender"]:checked');
 	if (selectedGender) {
-			formData.memberGender = selectedGender.id === 'male' ? 'M' : 'F';
-			isModified = true;
+		formData.memberGender = selectedGender.id === 'male' ? 'M' : 'F';
+		isModified = true;
 	}
 
 	// 변경된 값이 없는 경우
 	if (!isModified) {
-			alert("수정된 회원 정보가 없습니다.");
-			return;
+		alert("수정된 회원 정보가 없습니다.");
+		return;
 	}
 
 	// 서버로 데이터 전송
 	fetch("/mypage/updateInfo", {
-			method: "POST",
-			headers: {
-					"Content-Type": "application/json"
-			},
-			body: JSON.stringify(formData)
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(formData)
 	})
-	.then(response => response.json())
-	.then(result => {
+		.then(response => response.json())
+		.then(result => {
 			if (result > 0) {
-					alert("회원 정보가 성공적으로 수정되었습니다.");
-					location.href = "/mypage/memberInfo";
+				alert("회원 정보가 성공적으로 수정되었습니다.");
+				location.href = "/mypage/memberInfo";
 			} else {
-					alert("회원 정보 수정에 실패했습니다. 다시 시도해주세요.");
+				alert("회원 정보 수정에 실패했습니다. 다시 시도해주세요.");
 			}
-	})
-	.catch(error => {
+		})
+		.catch(error => {
 			console.error("Error:", error);
 			alert("회원 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.");
-	});
+		});
 });
 
 
 // 취소 버튼 클릭 시 이전 페이지로 이동
 document.querySelector(".cancelBtn").addEventListener("click", () => {
-      window.location.href = "/mypage/memberInfo"
+	window.location.href = "/mypage/memberInfo"
 });
 
 
@@ -455,6 +455,13 @@ document.querySelector(".cancelBtn").addEventListener("click", () => {
 
 // **************************************************************
 
+// 쿠키 가져오는 함수
+function getNaverCookie(name) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+	return null;
+}
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -478,16 +485,19 @@ document.addEventListener('DOMContentLoaded', function() {
 			link.addEventListener('click', (e) => {
 				e.preventDefault();
 				const targetPage = e.target.dataset.page;
-				
-				// 클릭된 페이지를 세션 스토리지에 저장
-	           sessionStorage.setItem('targetPage', targetPage);
-			   
-				if (pagesNeedingVerification.includes(targetPage)) {
-					// 비밀번호 검증 페이지로 이동
-					window.location.href = `/mypage/checkPw`;
-				} else {
+
+				// 쿠키에서 네이버 로그인 여부 확인
+				const naverFl = getCookie('naverFl');
+
+				// 네이버 로그인 사용자이거나, 비밀번호 검증이 필요없는 페이지인 경우 바로 이동
+				if (naverFl === 'Y' || !pagesNeedingVerification.includes(targetPage)) {
 					window.location.href = `/mypage/${targetPage}`;
+					return;
 				}
+
+				// 그 외의 경우 비밀번호 검증 페이지로 이동
+				sessionStorage.setItem('targetPage', targetPage);
+				window.location.href = `/mypage/checkPw`;
 			});
 		});
 	};

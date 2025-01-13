@@ -1,14 +1,12 @@
 package edu.kh.project.perfmgr.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.perfmgr.model.mapper.PerfmgrMapper;
 import edu.kh.project.performance.model.dto.Performance;
@@ -29,20 +27,10 @@ public class PerfmgrServiceImpl implements PerfmgrService {
 	// 로그인 진행
 	@Override
 	public PerfMgr login(PerfMgr inputMember) {
-		// 암호화 진행
-
-		String bcryptPassword = bcrypt.encode(inputMember.getConcertManagerPw());
-
-		// 1. 아이디가 일치하면서 탈퇴하지 않은 회원 조회
 		PerfMgr loginMember = mapper.login(inputMember.getConcertManagerId());
 
-		// 2. 만약에 일치하는 아이디가 없어서 조회 결과가 null 인 경우
 		if (loginMember == null)
 			return null;
-
-		// 3. 입력 받은 비밀번호(평문 : inputMember.getMemberPw())와
-		// 암호화된 비밀번호(loginMember.getMemberPw())
-		// 두 비밀번호가 일치하는지 확인
 
 		// 일치하지 않으면
 		if (!bcrypt.matches(inputMember.getConcertManagerPw(), loginMember.getConcertManagerPw())) {

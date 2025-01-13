@@ -97,16 +97,13 @@
 					</thead>
 					<tbody>
 						<tr th:each="stat : ${statList}">
-							<td th:text="${stat.statCategory}">카테고리</td>
-							<td th:text="${stat.statPrfcnt}">0</td>
-							<td th:text="${stat.statPrfdtcnt}">0</td>
-							<td th:text="${stat.statNtssnmrssm}">0</td>
-							<td th:text="${stat.statCancelnmrssm}">0</td>
-							<td th:text="${stat.statNtssnmrssm - stat.statCancelnmrssm}">0</td>
-							<td
-								th:text="${#numbers.formatDecimal(stat.statNtssamountsm, 0, 'COMMA', 0, 'POINT') + '원'}">
-								0
-							</td>
+						    <td th:text="${stat.statCategory}">카테고리</td>
+						    <td th:text="${#numbers.formatDecimal(stat.statPrfcnt, 0, 'COMMA', 0, 'POINT')}">0</td>
+						    <td th:text="${#numbers.formatDecimal(stat.statPrfdtcnt, 0, 'COMMA', 0, 'POINT')}">0</td>
+						    <td th:text="${#numbers.formatDecimal(stat.statNtssnmrssm, 0, 'COMMA', 0, 'POINT')}">0</td>
+						    <td th:text="${#numbers.formatDecimal(stat.statCancelnmrssm, 0, 'COMMA', 0, 'POINT')}">0</td>
+						    <td th:text="${#numbers.formatDecimal(stat.statNtssnmrssm - stat.statCancelnmrssm, 0, 'COMMA', 0, 'POINT')}">0</td>
+						    <td th:text="${#numbers.formatDecimal(stat.statNtssamountsm, 0, 'COMMA', 0, 'POINT') + '원'}">0</td>
 						</tr>
 					</tbody>
 				</table>

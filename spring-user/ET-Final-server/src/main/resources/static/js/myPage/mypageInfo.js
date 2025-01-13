@@ -1,6 +1,8 @@
 // loginMember 정보를 전역 변수로 저장
 let loginMember;
 
+const pagesWithoutPasswordCheck = ['favList']; // 비밀번호 확인이 필요없는 페이지들
+
 // 페이지 로드 시 회원 정보 가져오기
 async function fetchMemberInfo() {
     try {
@@ -31,8 +33,8 @@ const handlePageAccess = async (targetPage) => {
         await fetchMemberInfo();
     }
 
-    // 네이버 로그인 사용자는 바로 페이지 이동
-    if(loginMember && loginMember.naverFl === 'Y') {
+	// 비밀번호 확인이 필요 없는 페이지이거나 네이버 로그인 사용자는 바로 이동
+    if(pagesWithoutPasswordCheck.includes(targetPage) || (loginMember && loginMember.naverFl === 'Y')) {
         window.location.href = `/mypage/${targetPage}`;
         return;
     }
@@ -72,11 +74,11 @@ function clsModal() {
 }
 
 // 비밀번호 확인 함수
-async function verifyPassword() {
+async function verifyPassword(targetPage) {
     if(!loginMember) {
         await fetchMemberInfo();
     }
-
+	
     if(loginMember && loginMember.naverFl === 'Y') {
         const targetPage = sessionStorage.getItem('targetPage') || 'mypageInfo';
         window.location.href = `/mypage/${targetPage}`;

@@ -15,12 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import edu.kh.project.notice.model.dto.Notice;
 import edu.kh.project.notice.model.service.NoticeService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("notice")
 @RequiredArgsConstructor
-@Slf4j
 public class NoticeController {
     
     private final NoticeService service;

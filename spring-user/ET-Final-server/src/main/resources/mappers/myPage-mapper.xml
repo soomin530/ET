@@ -199,7 +199,7 @@
 		    FCLTYNM,
 		    PRFRUNTIME,
 		    POSTER,
-		    PRFREVIEW_RANK,
+		    AVGRATING,
 		    MEMBER_NO
 		FROM (
 		    SELECT 
@@ -214,7 +214,7 @@
 		            FCLTYNM,
 		            PRFRUNTIME,
 		            POSTER,
-		            PRFREVIEW_RANK,
+		            NVL(PRFREVIEW_RANK, 0) as AVGRATING,
 		            MEMBER_NO
 		        FROM TB_PERFORMANCES_DETAIL
 		        JOIN TB_PERFORMANCE_WISH USING(MT20ID)
