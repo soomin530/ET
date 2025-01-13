@@ -24,7 +24,13 @@
 			<div th:if="${not #lists.isEmpty(results.performances)}" class="performance-grid">
 				<div th:each="performance : ${results.performances}" class="performance-card clickable"
 					th:onclick="|location.href='@{/performance/detail/{mt20id}(mt20id=${performance.mt20id})}'|">
-					<img th:src="${performance.poster}" alt="공연 포스터">
+					<img th:src="${performance.poster}"
+					th:alt="${performance.prfnm}"
+					class="performance-image"
+					th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'"
+					loading="lazy"
+					decoding="async"
+					onload="this.classList.add('loaded')">
 					<h4 th:text="${performance.prfnm}"></h4>
 					<div class="performance-info">
 						<span th:text="${performance.fcltynm}"></span>

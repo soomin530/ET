@@ -9,13 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.project.search.model.dto.SearchResultDTO;
-import edu.kh.project.search.model.dto.Suggestion;
 import edu.kh.project.search.model.mapper.SearchMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor

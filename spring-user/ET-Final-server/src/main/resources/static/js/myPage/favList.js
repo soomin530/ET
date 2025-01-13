@@ -158,8 +158,8 @@ function createWishlistItem(performance) {
             <div class="performance-venue">${escapeHtml(performance.fcltynm || '장소 미정')}</div>
             <div class="performance-rank">
                 <div class="review-stars">
-                    <span class="static-stars">${createStarRating(performance.prfreviewRank)}</span>
-                    <span class="numeric-rating">${performance.prfreviewRank ? performance.prfreviewRank.toFixed(1) : '0.0'}/5</span>
+                    <span class="static-stars">${createStarRating(performance.avgRating)}</span>
+                    <span class="numeric-rating">${performance.avgRating ? performance.avgRating.toFixed(1) : '0.0'}/5</span>
                 </div>
             </div>
         </div>

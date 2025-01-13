@@ -38,6 +38,8 @@ public class Performance {
 	private int prfreviewRank;			// 공연 리뷰 점수
 	private Boolean performanceDelFl;	// 공연 삭제 여부(N/Y)
 	
+	private float avgRating;			// 공연 평균 리뷰 점수
+	
 	private String adres;				// 공연장 위치
 	private int memberNo;				// 회원 번호
 	

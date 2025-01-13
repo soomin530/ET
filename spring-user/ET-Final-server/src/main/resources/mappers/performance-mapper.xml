@@ -13,66 +13,64 @@
 	<!-- 공연 목록 페이징 조회 (검색 기능 추가) -->
 	<select id="genreWithPaging" resultType="Performance">
 		SELECT *
-			FROM (
-			    SELECT
-			        p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, p.PRFREVIEW_RANK, p.PERFORMANCE_DEL_FL,
-			        <if test="filter == 'rating'">
-			        COALESCE(p.PRFREVIEW_RANK, 0) as RATING,
-			        </if>
-			        ROW_NUMBER() OVER (
-			            ORDER BY
-			            <choose>
-			                <when test="filter == 'rating'">
-			                    COALESCE(p.PRFREVIEW_RANK, 0) DESC, p.PRFPDFROM DESC
-			                </when>
-			                <when test="filter == 'upcoming'">
-			                    p.PRFPDFROM ASC
-			                </when>
-			                <when test="filter == 'ongoing'">
-			                    p.PRFPDTO ASC
-			                </when>
-			                <otherwise>
-			                    p.PRFPDFROM DESC
-			                </otherwise>
-			            </choose>
-			        ) AS RN
-			    FROM TB_PERFORMANCES_DETAIL p
-			    <where>
-			        <if test="genre != null and genre != ''">
-			            AND p.GENRENM = #{genre}
-			        </if>
-			        <if test="searchKeyword != null and searchKeyword != ''">
-			            <choose>
-			                <when test="searchType == 'title'">
-			                    AND UPPER(p.PRFNM) LIKE UPPER('%' || #{searchKeyword} || '%')
-			                </when>
-			                <when test="searchType == 'venue'">
-			                    AND UPPER(p.FCLTYNM) LIKE UPPER('%' || #{searchKeyword} || '%')
-			                </when>
-			                <otherwise>
-			                    AND (
-			                        UPPER(p.PRFNM) LIKE UPPER('%' || #{searchKeyword} || '%')
-			                        OR UPPER(p.FCLTYNM) LIKE UPPER('%' || #{searchKeyword} || '%')
-			                    )
-			                </otherwise>
-			            </choose>
-			        </if>
-			        <if test="filter == 'upcoming'">
-			            <![CDATA[
-			            	AND p.PRFPDFROM > TRUNC(SYSDATE)
-			            ]]>
-			        </if>
-			        <if test="filter == 'ongoing' or filter == 'rating'">
-			            <![CDATA[
-				            AND p.PRFPDFROM <= TRUNC(SYSDATE)
-				            AND p.PRFPDTO >= TRUNC(SYSDATE)
-			            ]]>
-			        </if>
-			    </where>
-			)
+		FROM (
+		    SELECT
+		        p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, NVL(p.PRFREVIEW_RANK, 0) as AVGRATING, p.PERFORMANCE_DEL_FL,
+		        <if test="filter == 'rating'">
+		            COALESCE(p.PRFREVIEW_RANK, 0) as RATING,
+		        </if>
+		        ROW_NUMBER() OVER (
+		            ORDER BY
+		            <choose>
+		                <when test="filter == 'rating'">
+		                    COALESCE(p.PRFREVIEW_RANK, 0) DESC, p.PRFPDFROM DESC
+		                </when>
+		                <when test="filter == 'upcoming'">
+		                    p.PRFPDFROM ASC
+		                </when>
+		                <when test="filter == 'ongoing'">
+		                    p.PRFPDTO ASC
+		                </when>
+		                <otherwise>
+		                    p.PRFPDFROM DESC
+		                </otherwise>
+		            </choose>
+		        ) AS RN
+		    FROM TB_PERFORMANCES_DETAIL p
+		    <where>
+		        <if test="genre != null and genre != ''">
+		            p.GENRENM = #{genre}
+		        </if>
+		        <if test="searchKeyword != null and searchKeyword != ''">
+		            <choose>
+		                <when test="searchType == 'title'">
+		                    AND UPPER(p.PRFNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                </when>
+		                <when test="searchType == 'venue'">
+		                    AND UPPER(p.FCLTYNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                </when>
+		                <otherwise>
+		                    AND (
+		                        UPPER(p.PRFNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                        OR UPPER(p.FCLTYNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                    )
+		                </otherwise>
+		            </choose>
+		        </if>
+		        <if test="filter == 'upcoming'">
+		            <![CDATA[ AND p.PRFPDFROM > TRUNC(SYSDATE) ]]>
+		        </if>
+		        <if test="filter == 'ongoing'">
+		            <![CDATA[ 
+		                AND p.PRFPDFROM <= TRUNC(SYSDATE)
+		                AND p.PRFPDTO >= TRUNC(SYSDATE)
+		            ]]>
+		        </if>
+		    </where>
+		)
 		<![CDATA[
-			WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
-			AND PERFORMANCE_DEL_FL = 'N'
+		WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
+		    AND PERFORMANCE_DEL_FL = 'N'
 		]]>
 	</select>
 	
@@ -88,7 +86,7 @@
 			TPD.PRFRUNTIME, 
 			TPD.PRFCAST, 
 			TPD.PCSEGUIDANCE, 
-			TPD.PRFREVIEW_RANK, 
+			NVL(TPD.PRFREVIEW_RANK, 0) as AVGRATING, 
 			TPD.DESCRIPTION,
 			TPD.PERFORMANCE_DEL_FL,
 			TV.ADRES

@@ -30,22 +30,6 @@ function closeModal(modalId) {
 	}
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        // 입력 중인 데이터가 있는지 확인
-        const hasInputData = checkForInputData(event.target);
-		
-        if (hasInputData) {
-            if (confirm('모달창을 정말 닫으시겠습니까?')) {
-                closeModal(getModalId(event.target));
-            }
-        } else {
-            closeModal(getModalId(event.target));
-        }
-    }
-}
-
 function checkForInputData(modalElement) {
     // 모달 내의 입력 필드들을 확인
     const inputs = modalElement.querySelectorAll('input, textarea');

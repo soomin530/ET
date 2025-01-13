@@ -108,6 +108,8 @@ function createPerformanceElement(performance) {
 		const emptyStars = '☆'.repeat(5 - Math.floor(rating));
 		return `${fullStars}${emptyStars}`;
 	};
+	
+	console.log(performance);
 
 	div.innerHTML = `
         <div class="image-container"></div>
@@ -120,8 +122,8 @@ function createPerformanceElement(performance) {
             <div class="performance-venue">${escapeHtml(performance.fcltynm)}</div>
 			<div class="performance-rank">
                 <div class="review-stars">
-                    <span class="static-stars">${createStarRating(performance.prfreviewRank)}</span>
-                    <span class="numeric-rating">${performance.prfreviewRank}/5</span>
+                    <span class="static-stars">${createStarRating(performance.avgRating)}</span>
+                    <span class="numeric-rating">${performance.avgRating}/5</span>
                 </div>
             </div>
         </div>

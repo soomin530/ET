@@ -3,6 +3,7 @@ package edu.kh.project.member.controller;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -118,7 +119,7 @@ public class NaverController {
 					+ "&client_id=%s" + "&client_secret=%s" + "&code=%s" + "&state=%s", clientId, clientSecret, code,
 					state);
 
-			URL url = new URL(tokenUrl);
+			URL url = (new URI(tokenUrl.toString()).toURL());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 
@@ -129,7 +130,7 @@ public class NaverController {
 
 			// 사용자 정보 가져오기
 			String apiUrl = "https://openapi.naver.com/v1/nid/me";
-			URL userInfoUrl = new URL(apiUrl);
+			URL userInfoUrl = (new URI(apiUrl.toString()).toURL());
 			HttpURLConnection userInfoConn = (HttpURLConnection) userInfoUrl.openConnection();
 			userInfoConn.setRequestMethod("GET");
 			userInfoConn.setRequestProperty("Authorization", "Bearer " + accessToken);

@@ -24,7 +24,6 @@ import edu.kh.project.common.jwt.JwtTokenUtil;
 import edu.kh.project.perfmgr.model.dto.PerfMgr;
 import edu.kh.project.perfmgr.service.PerfmgrService;
 import edu.kh.project.performance.model.dto.Performance;
-import edu.kh.project.redis.model.service.RedisService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,7 +42,7 @@ public class PerfmgrController {
 
 	private final JwtTokenUtil jwtTokenUtil;
 
-	private final RedisService redisService;
+	// private final RedisService redisService;
 
 	/** 공연 관리자 로그인
 	 * @param inputMember
