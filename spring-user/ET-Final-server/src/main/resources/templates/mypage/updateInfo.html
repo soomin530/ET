@@ -92,14 +92,16 @@
 		}
 
 		.form-group {
-			margin-bottom: 20px;
-			display: flex;
-			align-items: center;
+			position: relative; /* 부모 컨테이너에 위치를 상대적으로 설정 */
+    	margin-bottom: 20px;
+    	display: flex;
+    	/* flex-direction: column;  입력 필드와 메시지가 수직으로 배치되도록 설정  */
 		}
 
 		.form-group label {
 			width: 120px;
 			font-weight: 500;
+			margin-bottom: 5px; /* 라벨과 입력 필드 간의 간격 추가 */
 		}
 
 		.form-group input[type="text"],
@@ -110,6 +112,7 @@
 			border: 1px solid #ddd;
 			border-radius: 4px;
 			font-size: 14px;
+			margin-bottom: 5px; /* 입력 필드와 메시지 간의 간격 추가 */
 		}
 
 		.form-group input:disabled {
@@ -215,15 +218,16 @@
 		}
 
 		.update-message {
-			display: block;
-    	margin-top: 5px;
-    	font-size: 12px;
-    	color: #d9534f; /* 에러 메시지 색상 */
-		}
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #d9534f; /* 에러 메시지 색상 */
+    clear: both; /* 메시지가 입력 필드 아래로 내려가도록 보장 */
+	}
 
-		.update-message.confirm {
-      color: #5cb85c; /* 확인 메시지 색상 */
-		}
+	.update-message.confirm {
+    color: #5cb85c; /* 확인 메시지 색상 */
+	}
 
 	</style>
 </head>
