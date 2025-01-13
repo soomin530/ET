@@ -326,7 +326,7 @@ export default function InquiryDetail() {
       alert("답글 내용을 입력해주세요.");
       return;
     }
-
+  
     try {
       const response = await axios.post(
         `http://localhost:8081/inquiry/reply/${inquiryNo}`,
@@ -334,13 +334,29 @@ export default function InquiryDetail() {
           replyContent: replyContent,
         }
       );
-
+  
       if (response.data > 0) {
         alert(isEditing ? "답글이 수정되었습니다." : "답글이 등록되었습니다.");
-        setShowReplyForm(false);
-        setReplyContent("");
-        setIsEditing(false);
-        fetchInquiry();
+        
+        // 먼저 새 데이터를 가져옴
+        await fetchInquiry();
+  
+        // 폼 상태 초기화 전에 살짝 지연
+        setTimeout(() => {
+          setShowReplyForm(false);
+          setIsEditing(false);
+          setReplyContent("");
+          
+          // 답글 컨테이너 표시
+          setShowReplyContainer(true);
+          setIsReplyReturning(true);
+          
+          // 애니메이션 완료 후 리턴 상태 해제
+          setTimeout(() => {
+            setIsReplyReturning(false);
+          }, 300);
+        }, 100);  // 지연 시간 추가
+        
       } else {
         alert(isEditing ? "수정에 실패했습니다." : "등록에 실패했습니다.");
       }
@@ -349,7 +365,7 @@ export default function InquiryDetail() {
       alert("처리 중 에러가 발생했습니다.");
     }
   };
-
+  
   if (loading) return <div>Loading...</div>;
   if (!inquiry) return <div>문의사항을 찾을 수 없습니다.</div>;
 

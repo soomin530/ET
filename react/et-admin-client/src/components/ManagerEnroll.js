@@ -73,6 +73,52 @@ const TitleContainer = styled.div`
   }
 `;
 
+// 테이블 관련 스타일 컴포넌트들 추가
+const TableContainer = styled.div`
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  overflow-x: auto;
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  table-layout: auto;
+`;
+
+const TableHeader = styled.th`
+  padding: 15px;
+  background-color: #ff7f27;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  font-size: 14px;
+  white-space: nowrap;
+  vertical-align: middle;
+`;
+
+const TableRow = styled.tr`
+  &:hover {
+    background-color: #fff3e0;
+  }
+  cursor: pointer;
+  border-bottom: 1px solid #eeeeee;
+  height: 50px;
+`;
+
+const TableCell = styled.td`
+  padding: 12px 15px;
+  color: #333;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;    
+  text-overflow: ellipsis;
+  vertical-align: middle;
+`;
+
 // 페이지네이션 컴포넌트
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -80,6 +126,8 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
+
+  if (totalItems === 0) return null;
 
   return (
     <PaginationContainer>
@@ -133,42 +181,51 @@ const ManagerEnrollList = ({ enrollList, currentPage, itemsPerPage, onPageChange
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = enrollList.slice(indexOfFirstItem, indexOfLastItem);
 
+  // 전체 목록 기준 번호 표시 방식
+  const getListNumber = (index) => {
+    return indexOfFirstItem + index + 1;
+  };
+
   return (
     <section>
       {enrollList.length === 0 ? (
-        <p>신청 내역이 없습니다.</p>
+        <p style={{ textAlign: 'center', padding: '20px' }}>신청 내역이 없습니다.</p>
       ) : (
         <>
-          <table className="table-border">
-            <thead>
-              <tr>
-                <th>신청번호</th>
-                <th>이름</th>
-                <th>전화번호</th>
-                <th>신청날짜</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems.map((enroll) => (
-                <tr
-                  key={enroll.concertManagerNo}
-                  onClick={() => navigate(`/manager/${enroll.concertManagerNo}`)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td>{enroll.concertManagerNo}</td>
-                  <td>{enroll.concertManagerNickname}</td>
-                  <td>{enroll.concertManagerTel}</td>
-                  <td>{enroll.concertManagerEnrollDate}</td>
+          <TableContainer>
+            <StyledTable>
+              <thead>
+                <tr>
+                  <TableHeader style={{ width: '15%' }}>번호</TableHeader>
+                  <TableHeader style={{ width: '30%' }}>이름</TableHeader>
+                  <TableHeader style={{ width: '25%' }}>전화번호</TableHeader>
+                  <TableHeader style={{ width: '30%' }}>신청날짜</TableHeader>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination
-            totalItems={enrollList.length}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            onPageChange={onPageChange}
-          />
+              </thead>
+              <tbody>
+                {currentItems.map((enroll, index) => (
+                  <TableRow
+                    key={enroll.concertManagerNo}
+                    onClick={() => navigate(`/manager/${enroll.concertManagerNo}`)}
+                  >
+                    <TableCell>{getListNumber(index)}</TableCell>
+                    <TableCell>{enroll.concertManagerNickname}</TableCell>
+                    <TableCell>{enroll.concertManagerTel}</TableCell>
+                    <TableCell>{enroll.concertManagerEnrollDate}</TableCell>
+                  </TableRow>
+                ))}
+              </tbody>
+            </StyledTable>
+          </TableContainer>
+          {/* 페이지네이션은 테이블 외부에 위치 */}
+          <div style={{ marginTop: '20px' }}>
+            <Pagination
+              totalItems={enrollList.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={onPageChange}
+            />
+          </div>
         </>
       )}
     </section>

@@ -74,6 +74,51 @@ const TitleContainer = styled.div`
   }
 `;
 
+const TableContainer = styled.div`
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  overflow-x: auto;
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  table-layout: auto;
+`;
+
+const TableHeader = styled.th`
+  padding: 15px;
+  background-color: #ff7f27;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  font-size: 14px;
+  white-space: nowrap;
+  vertical-align: middle;
+`;
+
+const TableRow = styled.tr`
+  &:hover {
+    background-color: #fff3e0;
+  }
+  cursor: pointer;
+  border-bottom: 1px solid #eeeeee;
+  height: 50px;
+`;
+
+const TableCell = styled.td`
+  padding: 12px 15px;
+  color: #333;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;    
+  text-overflow: ellipsis;
+  vertical-align: middle;
+`;
+
 // 페이지네이션 컴포넌트
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -81,6 +126,8 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
+
+  if (totalItems === 0) return null;
 
   return (
     <PaginationContainer>
@@ -134,36 +181,42 @@ const PerformanceList = ({ performanceList, currentPage, itemsPerPage, onPageCha
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = performanceList.slice(indexOfFirstItem, indexOfLastItem);
 
+  // 전체 목록 기준 번호 생성 함수
+  const getListNumber = (index) => {
+    return indexOfFirstItem + index + 1;
+  };
+
   return (
     <section>
       {performanceList.length === 0 ? (
         <p>등록된 공연장이 없습니다.</p>
       ) : (
         <>
-          <table className="table-border">
-            <thead>
-              <tr>
-                <th>등록번호</th>
-                <th>공연 시설명</th>
-                <th>주소</th>
-                <th>전화번호</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems.map((performance) => (
-                <tr
-                  key={performance.mt10ID}
-                  onClick={() => navigate(`/performance/${performance.mt10ID}`)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td>{performance.mt10ID}</td>
-                  <td>{performance.fcltynm}</td>
-                  <td>{performance.adres}</td>
-                  <td>{performance.telno}</td>
+          <TableContainer>
+            <StyledTable>
+              <thead>
+                <tr>
+                  <TableHeader style={{ width: '10%' }}>번호</TableHeader>
+                  <TableHeader style={{ width: '30%' }}>공연 시설명</TableHeader>
+                  <TableHeader style={{ width: '40%' }}>주소</TableHeader>
+                  <TableHeader style={{ width: '20%' }}>전화번호</TableHeader>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentItems.map((performance, index) => (
+                  <TableRow
+                    key={performance.mt10ID}
+                    onClick={() => navigate(`/performance/${performance.mt10ID}`)}
+                  >
+                    <TableCell>{getListNumber(index)}</TableCell>
+                    <TableCell>{performance.fcltynm}</TableCell>
+                    <TableCell>{performance.adres}</TableCell>
+                    <TableCell>{performance.telno}</TableCell>
+                  </TableRow>
+                ))}
+              </tbody>
+            </StyledTable>
+          </TableContainer>
           <Pagination
             totalItems={performanceList.length}
             itemsPerPage={itemsPerPage}

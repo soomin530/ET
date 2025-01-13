@@ -873,3 +873,52 @@ input:checked + .toggle-slider:before {
   overflow-x: auto;  /* 필요시 가로 스크롤 */
   text-align: center
 }
+
+/* nav 스타일 추가 */
+.router-tab-box {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 100%;
+  padding: 20px 10px;  /* 패딩 추가 */
+  align-items: center;  /* 가운데 정렬 추가 */
+  gap: 15px;  /* 각 항목 사이 간격 */
+}
+
+.router-tab-box a {
+  position: relative;
+  width: 160px;  /* 너비 증가 */
+  min-height: 80px;  /* 최소 높이 설정 */
+  text-decoration: none;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 0 20px;  /* 좌우 패딩만 설정 */
+  text-align: center;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(to right, transparent 50%, #ff7f27 50%);
+  background-size: 200% 100%;
+  background-position: left bottom;
+  margin-bottom: 10px;
+  overflow: hidden;
+  /* Flexbox 추가로 텍스트 중앙 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-icon {
+  padding: 10px;
+  color: #ff7f27;  /* 주황색으로 변경 */
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.search-icon:hover {
+  color: #e65d00;  /* hover 시 더 진한 주황색으로 */
+  transform: scale(1.1);
+}

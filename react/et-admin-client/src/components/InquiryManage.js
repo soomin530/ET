@@ -3,7 +3,7 @@ import { axiosApi } from "../api/axoisAPI.js";
 import { useNavigate } from "react-router-dom";
 import "./Quill.jsx";
 import axios from "axios";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 // 페이지네이션 스타일 컴포넌트
 const PaginationContainer = styled.div`
@@ -22,20 +22,20 @@ const PageButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${props => props.active ? '#ff7f27' : '#e0e0e0'};
+  border: 1px solid ${(props) => (props.active ? "#ff7f27" : "#e0e0e0")};
   border-radius: 4px;
-  background-color: ${props => props.active ? '#ff7f27' : 'white'};
-  color: ${props => props.active ? 'white' : '#333'};
+  background-color: ${(props) => (props.active ? "#ff7f27" : "white")};
+  color: ${(props) => (props.active ? "white" : "#333")};
   font-size: 14px;
-  font-weight: ${props => props.active ? '600' : '400'};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${props => props.disabled ? '0.5' : '1'};
+  font-weight: ${(props) => (props.active ? "600" : "400")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   transition: all 0.2s ease-in-out;
 
   &:hover:not(:disabled) {
-    background-color: ${props => props.active ? '#ff7f27' : '#fff3e0'};
+    background-color: ${(props) => (props.active ? "#ff7f27" : "#fff3e0")};
     border-color: #ff7f27;
-    color: ${props => props.active ? 'white' : '#ff7f27'};
+    color: ${(props) => (props.active ? "white" : "#ff7f27")};
     transform: translateY(-1px);
   }
 
@@ -102,7 +102,7 @@ const DeleteButton = styled.button`
   }
 `;
 
-// 테이블 관련 스타일 컴포넌트들 추가
+// 테이블 관련 스타일 컴포넌트들
 const TableContainer = styled.div`
   margin-top: 20px;
   border-radius: 8px;
@@ -143,11 +143,10 @@ const TableCell = styled.td`
   color: #333;
   text-align: center;
   white-space: nowrap;
-  overflow: hidden;    
+  overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
 
-  /* 삭제 버튼이 있는 셀 정렬 */
   &:last-child {
     display: table-cell;
     vertical-align: middle;
@@ -155,27 +154,44 @@ const TableCell = styled.td`
   }
 `;
 
+// 새로 추가할 styled-component
+const SearchIcon = styled.i`
+  padding: 10px;
+  color: #ff7f27;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: #e65d00;
+    transform: scale(1.1);
+  }
+`;
+
 // 페이지네이션 컴포넌트
-const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
+const Pagination = ({
+  totalItems,
+  itemsPerPage,
+  currentPage,
+  onPageChange,
+}) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  
+
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
 
+  // totalPages > 1 조건 제거
   return (
     <PaginationContainer>
-      <ArrowButton
-        onClick={() => onPageChange(1)}
-        disabled={currentPage === 1}
-      >
-        {'<<'}
+      <ArrowButton onClick={() => onPageChange(1)} disabled={currentPage === 1}>
+        {"<<"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        {'<'}
+        {"<"}
       </ArrowButton>
 
       {[...Array(endPage - startPage + 1)].map((_, index) => {
@@ -191,30 +207,35 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
         );
       })}
 
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        {'>'}
+        {">"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
       >
-        {'>>'}
+        {">>"}
       </ArrowButton>
     </PaginationContainer>
   );
 };
 
-// AnnouncementList 컴포넌트
-const InquiryList = ({ inquiryList, currentPage, itemsPerPage, onPageChange }) => {
+// InquiryList 컴포넌트
+const InquiryList = ({
+  inquiryList,
+  currentPage,
+  itemsPerPage,
+  onPageChange,
+}) => {
   const navigate = useNavigate();
 
   const handleDelete = async (e, inquiryNo) => {
     e.stopPropagation();
 
-    if (window.confirm("정말로 이 공지사항을 삭제하시겠습니까?")) {
+    if (window.confirm("정말로 이 문의사항을 삭제하시겠습니까?")) {
       try {
         const response = await axios.post(
           `http://localhost:8081/inquiry/delete/${inquiryNo}`
@@ -236,38 +257,57 @@ const InquiryList = ({ inquiryList, currentPage, itemsPerPage, onPageChange }) =
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = inquiryList.slice(indexOfFirstItem, indexOfLastItem);
 
+  // 전체 목록 기준 번호 생성 함수
+  const getListNumber = (index) => {
+    return indexOfFirstItem + index + 1;
+  };
+
   return (
-    <TableContainer>
-    <StyledTable>
-      <thead>
-        <tr>
-          <TableHeader>등록번호</TableHeader>
-          <TableHeader>제목</TableHeader>
-          <TableHeader>등록날짜</TableHeader>
-          <TableHeader>관리</TableHeader>
-        </tr>
-      </thead>
-      <tbody>
-        {currentItems.map((inquiry) => (
-          <TableRow
-            key={inquiry.inquiryNo}
-            onClick={() => navigate(`/inquiry/${inquiry.inquiryNo}`)}
-          >
-            <TableCell>{inquiry.inquiryNo}</TableCell>
-            <TableCell>{inquiry.inquiryTitle}</TableCell>
-            <TableCell>{inquiry.inquiryDate}</TableCell>
-            <TableCell>
-              <DeleteButton
-                onClick={(e) => handleDelete(e, inquiry.inquiryNo)}
-              >
-                <i className="fas fa-times"></i>
-              </DeleteButton>
-            </TableCell>
-          </TableRow>
-        ))}
-      </tbody>
-    </StyledTable>
-  </TableContainer>
+    <section>
+      {inquiryList.length === 0 ? (
+        <p>문의사항이 없습니다.</p>
+      ) : (
+        <>
+          <TableContainer>
+            <StyledTable>
+              <thead>
+                <tr>
+                  <TableHeader style={{ width: "10%" }}>번호</TableHeader>
+                  <TableHeader style={{ width: "45%" }}>제목</TableHeader>
+                  <TableHeader style={{ width: "30%" }}>등록날짜</TableHeader>
+                  <TableHeader style={{ width: "15%" }}>관리</TableHeader>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.map((inquiry, index) => (
+                  <TableRow
+                    key={inquiry.inquiryNo}
+                    onClick={() => navigate(`/inquiry/${inquiry.inquiryNo}`)}
+                  >
+                    <TableCell>{getListNumber(index)}</TableCell>
+                    <TableCell>{inquiry.inquiryTitle}</TableCell>
+                    <TableCell>{inquiry.inquiryDate}</TableCell>
+                    <TableCell>
+                      <DeleteButton
+                        onClick={(e) => handleDelete(e, inquiry.inquiryNo)}
+                      >
+                        <i className="fas fa-times"></i>
+                      </DeleteButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </tbody>
+            </StyledTable>
+          </TableContainer>
+          <Pagination
+            totalItems={inquiryList.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={onPageChange} // 부모로부터 받은 onPageChange 함수를 그대로 전달
+          />
+        </>
+      )}
+    </section>
   );
 };
 
@@ -311,21 +351,57 @@ export default function InquiryManage() {
       });
 
       if (resp.status === 200) {
-        console.log(resp.data);
         setInquiryList(resp.data);
       }
     } catch (error) {
-      console.log("회원 : " + error);
+      console.log("문의사항 조회 오류:", error);
     }
   };
 
-  const handleToggle = () => {
-    setIsReplied(!isReplied);
+  const handleToggle = async () => {
+    // 토글 상태를 먼저 업데이트
+    const newReplyStatus = !isReplied;
+    setIsReplied(newReplyStatus);
+
+    // 검색어가 있는 경우 검색을 다시 실행
+    if (inputValue.trim()) {
+      try {
+        const formData = {
+          selectedValue,
+          inputValue,
+          replyIs: newReplyStatus ? "Y" : "N",
+        };
+
+        const resp = await axiosApi.post(
+          "/inquiry/searchInquiryList",
+          formData
+        );
+        if (resp.status === 200) {
+          setInquiryList(resp.data);
+          setCurrentPage(1);
+        }
+      } catch (error) {
+        console.error("검색 오류:", error);
+      }
+    } else {
+      // 검색어가 없는 경우 전체 목록 조회
+      try {
+        const resp = await axiosApi.post("/inquiry/showInquiryList", {
+          replyIs: newReplyStatus ? "Y" : "N",
+        });
+        if (resp.status === 200) {
+          setInquiryList(resp.data);
+          setCurrentPage(1);
+        }
+      } catch (error) {
+        console.log("목록 조회 오류:", error);
+      }
+    }
   };
 
   useEffect(() => {
     getInquiryList();
-  }, [isReplied]);
+  }, []);
 
   useEffect(() => {
     if (inquiryList != null) {
@@ -340,21 +416,19 @@ export default function InquiryManage() {
       alert("검색어를 입력해주세요");
       return;
     }
-    const replyStatus = isReplied ? "Y" : "N";
 
     const formData = {
       selectedValue: selectedValue,
       inputValue: inputValue,
-      replyIs: replyStatus,
+      replyIs: isReplied ? "Y" : "N",
     };
 
     try {
       const resp = await axiosApi.post("/inquiry/searchInquiryList", formData);
 
       if (resp.status === 200) {
-        const getData = resp.data;
-        setInquiryList(getData);
-        setCurrentPage(1); // 검색 후 첫 페이지로 이동
+        setInquiryList(resp.data);
+        setCurrentPage(1);
       } else {
         throw new Error("서버 요청 실패");
       }
@@ -369,13 +443,15 @@ export default function InquiryManage() {
 
   return (
     <div className="menu-box">
-      <TitleContainer onClick={() => {
-        setIsReplied(false);  // isReplied를 false로 초기화
-        getInquiryList();
-        setCurrentPage(1);
-        setInputValue('');
-        setSelectedValue('제목');
-      }}>
+      <TitleContainer
+        onClick={() => {
+          setIsReplied(false);
+          getInquiryList();
+          setCurrentPage(1);
+          setInputValue("");
+          setSelectedValue("제목");
+        }}
+      >
         <h4>문의내역</h4>
       </TitleContainer>
 
@@ -407,17 +483,13 @@ export default function InquiryManage() {
               onChange={handleInputChange}
               onKeyDown={handleKeyPress}
             />
-            <i
-              className="fas fa-search search-icon"
-              onClick={handleSubmit}
-              style={{ cursor: "pointer" }}
-            />
+            <SearchIcon className="fas fa-search" onClick={handleSubmit} />
           </form>
         </div>
       </div>
 
-      <div className="main-table-container" style={{ textAlign: 'center' }}>
-        <InquiryList 
+      <div className="main-table-container" style={{ textAlign: "center" }}>
+        <InquiryList
           inquiryList={inquiryList}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}

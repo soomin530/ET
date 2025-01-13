@@ -73,6 +73,51 @@ const TitleContainer = styled.div`
   }
 `;
 
+const TableContainer = styled.div`
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  overflow-x: auto;
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  table-layout: auto;
+`;
+
+const TableHeader = styled.th`
+  padding: 15px;
+  background-color: #ff7f27;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  font-size: 14px;
+  white-space: nowrap;
+  vertical-align: middle;
+`;
+
+const TableRow = styled.tr`
+  &:hover {
+    background-color: #fff3e0;
+  }
+  cursor: pointer;
+  border-bottom: 1px solid #eeeeee;
+  height: 50px;
+`;
+
+const TableCell = styled.td`
+  padding: 12px 15px;
+  color: #333;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;    
+  text-overflow: ellipsis;
+  vertical-align: middle;
+`;
+
 // 페이지네이션 컴포넌트
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -80,6 +125,8 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
+
+  if (totalItems === 0) return null;
 
   return (
     <PaginationContainer>
@@ -133,36 +180,42 @@ const ShowMember = ({ memberList, currentPage, itemsPerPage, onPageChange }) => 
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = memberList.slice(indexOfFirstItem, indexOfLastItem);
 
+  // 전체 목록 기준 번호 생성 함수
+  const getListNumber = (index) => {
+    return indexOfFirstItem + index + 1;
+  };
+
   return (
     <section>
       {memberList.length === 0 ? (
         <p>회원이 없습니다.</p>
       ) : (
         <>
-          <table className="table-border">
-            <thead>
-              <tr>
-                <th>회원번호</th>
-                <th>회원 이름</th>
-                <th>회원 주소</th>
-                <th>전화번호</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems.map((member) => (
-                <tr
-                  key={member.memberNo}
-                  onClick={() => navigate(`/member/${member.memberNo}`)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td>{member.memberNo}</td>
-                  <td>{member.memberNickname}</td>
-                  <td>{member.memberAddress}</td>
-                  <td>{member.memberTel}</td>
+          <TableContainer>
+            <StyledTable>
+              <thead>
+                <tr>
+                  <TableHeader style={{ width: '10%' }}>번호</TableHeader>
+                  <TableHeader style={{ width: '25%' }}>회원 이름</TableHeader>
+                  <TableHeader style={{ width: '40%' }}>회원 주소</TableHeader>
+                  <TableHeader style={{ width: '25%' }}>전화번호</TableHeader>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentItems.map((member, index) => (
+                  <TableRow
+                    key={member.memberNo}
+                    onClick={() => navigate(`/member/${member.memberNo}`)}
+                  >
+                    <TableCell>{getListNumber(index)}</TableCell>
+                    <TableCell>{member.memberNickname}</TableCell>
+                    <TableCell>{member.memberAddress}</TableCell>
+                    <TableCell>{member.memberTel}</TableCell>
+                  </TableRow>
+                ))}
+              </tbody>
+            </StyledTable>
+          </TableContainer>
           <Pagination
             totalItems={memberList.length}
             itemsPerPage={itemsPerPage}
