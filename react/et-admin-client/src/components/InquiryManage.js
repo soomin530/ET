@@ -497,11 +497,7 @@ export default function InquiryManage() {
         />
       </div>
 
-      <div className="write-button-container">
-        <button className="write-button" onClick={() => navigate("/quill")}>
-          글쓰기
-        </button>
-      </div>
+    
     </div>
   );
 }
