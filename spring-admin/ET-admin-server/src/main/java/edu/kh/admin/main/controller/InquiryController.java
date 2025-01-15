@@ -84,6 +84,16 @@ public class InquiryController {
 	    }
 	}
 	
+	@PostMapping("delete/{inquiryNo:[0-9]+}")
+	public ResponseEntity<Object> delete(@PathVariable("inquiryNo") int inquiryNo) {
+	    int result = service.delete(inquiryNo);
+	    if (result > 0) {
+	        return ResponseEntity.ok(result);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
+	
 //	@PostMapping("delete/{announceNo:[0-9]+}")
 //	public ResponseEntity<Object> delete(@PathVariable("announceNo") int announceNo) {
 //	    int result = service.delete(announceNo);

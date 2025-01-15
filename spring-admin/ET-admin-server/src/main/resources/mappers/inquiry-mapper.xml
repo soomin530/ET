@@ -3,60 +3,66 @@
 <mapper namespace="edu.kh.admin.main.model.mapper.InquiryMapper">
 
 	<select id="showInquiryList">
-	SELECT * FROM TB_INQUIRY
-	 WHERE 
-	 INQUIRY_DEL_FL = 'N'
-	 AND REPLY_IS = #{replyIs} 
-	ORDER BY INQUIRY_NO DESC
+		SELECT * FROM TB_INQUIRY
+		WHERE
+		INQUIRY_DEL_FL = 'N'
+		AND REPLY_IS = #{replyIs}
+		ORDER BY INQUIRY_DATE DESC
 	</select>
-	
-	
+
+
 	<select id="inquiryDetail">
-	SELECT 
-    I.*, 
-	    M.MEMBER_NICKNAME
-	FROM 
-	    TB_INQUIRY I
-	JOIN 
-	    TB_MEMBER M
-	ON 
-	    I.MEMBER_NO = M.MEMBER_NO
-	WHERE 
-	    I.INQUIRY_NO = #{inquiryNo}
+		SELECT
+		I.*,
+		M.MEMBER_NICKNAME
+		FROM
+		TB_INQUIRY I
+		JOIN
+		TB_MEMBER M
+		ON
+		I.MEMBER_NO = M.MEMBER_NO
+		WHERE
+		I.INQUIRY_NO = #{inquiryNo}
 	</select>
-	
+
 	<update id="reply">
-	  UPDATE TB_INQUIRY
-	  SET
-	    REPLY_IS = 'Y',
-	    REPLY_CONTENT = #{replyContent}
-	  WHERE INQUIRY_NO = ${inquiryNo}
+		UPDATE TB_INQUIRY
+		SET
+		REPLY_IS = 'Y',
+		REPLY_CONTENT = #{replyContent}
+		WHERE INQUIRY_NO = ${inquiryNo}
 	</update>
-	
+
 	<!-- 검색된 모든 문의글 조회 -->
 	<select id="searchInquiryList">
-	    SELECT 
-	        *
-	    FROM 
-	        "TB_INQUIRY"
-	    WHERE 
-	        INQUIRY_DEL_FL = 'N'
-	        AND REPLY_IS = #{replyIs}
-	        <choose>
-	            <when test="selectedValue == '제목'">
-	                AND INQUIRY_TITLE LIKE '%' || #{inputValue} || '%' 
-	            </when>
-	            <when test="selectedValue == '내용'">
-	                AND INQUIRY_CONTENT LIKE '%' || #{inputValue} || '%' 
-	            </when>
-	            <otherwise>
-	                AND INQUIRY_DATE LIKE '%' || #{inputValue} || '%' 
-	            </otherwise>
-	        </choose>
-	    ORDER BY 
-	        INQUIRY_NO DESC
+		SELECT
+		*
+		FROM
+		"TB_INQUIRY"
+		WHERE
+		INQUIRY_DEL_FL = 'N'
+		AND REPLY_IS = #{replyIs}
+		<choose>
+			<when test="selectedValue == '제목'">
+				AND INQUIRY_TITLE LIKE '%' || #{inputValue} || '%'
+			</when>
+			<when test="selectedValue == '내용'">
+				AND INQUIRY_CONTENT LIKE '%' || #{inputValue} || '%'
+			</when>
+			<otherwise>
+				AND TO_CHAR(INQUIRY_DATE, 'YYYY-MM-DD HH24:MI:SS') LIKE '%' ||
+				${inputValue} || '%'
+			</otherwise>
+		</choose>
+		ORDER BY
+		INQUIRY_DATE DESC
 	</select>
-	
 
+	<!-- 문의사항 삭제 -->
+	<delete id="delete">
+		UPDATE TB_INQUIRY
+		SET INQUIRY_DEL_FL ='Y'
+		WHERE INQUIRY_NO = #{inquiryNo}
+	</delete>
 
 </mapper>

@@ -3,29 +3,29 @@
 <mapper namespace="edu.kh.admin.main.model.mapper.AdminMapper">
 
 	<select id="memberCount">
-	SELECT COUNT(*) 
-	FROM TB_MEMBER
-	WHERE MEMBER_DEL_FL = 'N' 
+		SELECT COUNT(*)
+		FROM TB_MEMBER
+		WHERE MEMBER_DEL_FL = 'N'
 	</select>
-	
+
 	<select id="performanceNowCount">
-	SELECT COUNT(*) 
-	FROM TB_PERFORMANCES_DETAIL 
-	WHERE PERFORMANCE_DEL_FL = 'N'
+		SELECT COUNT(*)
+		FROM TB_PERFORMANCES_DETAIL
+		WHERE PERFORMANCE_DEL_FL = 'N'
 	</select>
-	
+
 	<select id="newInquiryCount">
-	SELECT COUNT(*) 
-	FROM TB_INQUIRY 
-	WHERE INQUIRY_DEL_FL  = 'N'
-	AND REPLY_IS = 'N'
+		SELECT COUNT(*)
+		FROM TB_INQUIRY
+		WHERE INQUIRY_DEL_FL = 'N'
+		AND REPLY_IS = 'N'
 	</select>
-	
+
 	<select id="newEnrollCount">
-	SELECT COUNT(*)
-	FROM TB_CONCERT_MANAGER
-	WHERE CONCERT_MANAGER_DEL_FL = 'N'
+		SELECT COUNT(*)
+		FROM TB_CONCERT_MANAGER
+		WHERE CONCERT_MANAGER_DEL_FL = 'N'
 	</select>
-	
+
 
 </mapper>
