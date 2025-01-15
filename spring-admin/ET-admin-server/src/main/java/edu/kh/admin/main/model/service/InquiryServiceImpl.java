@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
-@Slf4j
 public class InquiryServiceImpl implements InquiryService{
 
 		private final InquiryMapper mapper;

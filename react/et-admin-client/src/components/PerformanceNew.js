@@ -1,7 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import styled, { keyframes } from "styled-components";
-import { axiosApi } from "../api/axoisAPI";
+import { axiosApi } from './../api/axoisAPI';
+
+// Animation keyframes
+const slideDown = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+`;
 
 // Styled Components
 const Container = styled.div`
@@ -69,8 +83,104 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #059669;
   }
+
+  &:disabled {
+    background-color: #d1d5db;
+    cursor: not-allowed;
+  }
 `;
 
+const Title = styled.h1`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const BackArrow = styled.i`
+  position: absolute;
+  left: 0;
+  color: #ff7f27;
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateX(-5px);
+  }
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+`;
+
+// Grade related components
+const GradeCheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  font-size: 0.9em;
+  color: #666;
+`;
+
+const AnimatedContainer = styled.div`
+  overflow: hidden;
+  animation: ${slideDown} 0.3s ease-out forwards;
+`;
+
+const GradesContainer = styled.div`
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const GradeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const GradeCheckbox = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1rem;
+  padding: 4px 4px;
+  border-radius: 4px;
+  background-color: ${(props) => (props.checked ? "#e2e8f0" : "transparent")};
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #e2e8f0;
+  }
+`;
+
+const GradeInput = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: ${slideDown} 0.3s ease-out forwards;
+`;
+
+const SeatInput = styled(Input)`
+  width: 100px;
+`;
+
+// Map related components
 const MapSection = styled.div`
   flex: 1;
   padding: 20px;
@@ -136,127 +246,44 @@ const LocationText = styled.p`
   font-size: 14px;
 `;
 
-const slideDown = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-    max-height: 0;
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    max-height: 500px;
-  }
-`;
-
-const GradeCheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 16px;
-  font-size: 0.9em;
-  color: #666;
-`;
-
-const AnimatedContainer = styled.div`
-  overflow: hidden;
-  animation: ${slideDown} 0.3s ease-out forwards;
-`;
-
-const GradesContainer = styled.div`
-  margin-top: 10px;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const GradeRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const GradeCheckbox = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  user-select: none;
-  font-size: 1rem;
-  padding: 4px 4px;
-  border-radius: 4px;
-  background-color: ${(props) => (props.checked ? "#e2e8f0" : "transparent")};
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #e2e8f0;
-  }
-`;
-
-const GradeInput = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  animation: ${slideDown} 0.3s ease-out forwards;
-`;
-
-const SeatInput = styled(Input)`
-  width: 100px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 12px;
-  margin-top: 4px;
-`;
-
-const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #1f2937;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  position: relative; // 추가: 화살표의 절대 위치 기준점
-  display: flex; // 추가: 화살표와 텍스트 정렬
-  align-items: center;
-  justify-content: center;
-`;
-
-const BackArrow = styled.i`
-  position: absolute;
-  left: 0;
-  color: #ff7f27;
-  cursor: pointer;
-  font-size: 24px;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateX(-5px);
-  }
-`;
-
 const PerformanceForm = () => {
+  // Refs
   const container = useRef(null);
   const mapInstanceRef = useRef(null);
+
+  // States
+  const [formData, setFormData] = useState({
+    MT10ID: "",
+    FCLTYNM: "",
+    MT13CNT: "",
+    FCLTYCHARTR: "공공(문예회관)",
+    OPENDE: "",
+    SEATSCALE: "",
+    TELNO: "",
+    RELATEURL: "",
+    ADRES: "",
+    FCLTLA: "",
+    FCLTLO: "",
+  });
+
   const [searchKeyword, setSearchKeyword] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isShowSuggestions, setIsShowSuggestions] = useState(false);
-  const [searchType, setSearchType] = useState("keyword");
+  const [searchType] = useState("keyword");
   const [showGrades, setShowGrades] = useState(false);
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [gradeSeats, setGradeSeats] = useState({});
+  const [existingIds, setExistingIds] = useState([]);
+
+  // Error states
   const [idError, setIdError] = useState("");
   const [seatError, setSeatError] = useState("");
   const [selectedGradeError, setSelectedGradeError] = useState("");
   const [locationError, setLocationError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [existingIds, setExistingIds] = useState([]);
 
+  // Constants
   const GRADE_ORDER = ["VIP", "R", "S", "A", "B", "전석"];
-
   const GRADE_MAPPING = {
     VIP: 1,
     R: 2,
@@ -266,21 +293,36 @@ const PerformanceForm = () => {
     전석: 6,
   };
 
-  const [formData, setFormData] = useState({
-    MT10ID: "", // 공연장 ID (새로 추가)
-    FCLTYNM: "", // facilityName -> FCLTYNM
-    MT13CNT: "", // facilityCount -> MT13CNT
-    FCLTYCHARTR: "공공(문예회관)", // facilityType -> FCLTYCHARTR
-    OPENDE: "", // openYear -> OPENDE
-    SEATSCALE: "", // seatCount -> SEATSCALE
-    TELNO: "", // phoneNumber -> TELNO
-    RELATEURL: "", // website -> RELATEURL
-    ADRES: "", // address -> ADRES
-    FCLTLA: "", // latitude -> FCLTLA
-    FCLTLO: "", // longitude -> FCLTLO
-  });
+  // Effects
+  useEffect(() => {
+    const getExistingIds = async () => {
+      try {
+        const resp = await axiosApi.get("/performance/IDCheck");
+        if (resp.status === 200) {
+          const ids = resp.data
+            .map((item) => item.mt10ID)
+            .filter((id) => id !== null);
+          setExistingIds(ids);
+        }
+      } catch (error) {
+        console.error("ID 목록 조회 실패:", error);
+      }
+    };
+
+    getExistingIds();
+  }, []);
 
   useEffect(() => {
+    const totalSeats = parseInt(formData.SEATSCALE) || 0;
+
+    // 객석수가 0이거나 비어있으면 등급지정 관련 상태 초기화
+    if (!totalSeats) {
+      setShowGrades(false);
+      setSelectedGrades([]);
+      setGradeSeats({});
+      return;
+    }
+
     if (showGrades && selectedGrades.length > 0) {
       const invalidSeats = selectedGrades.some((grade) => {
         const seatCount = gradeSeats[GRADE_MAPPING[grade]];
@@ -292,18 +334,16 @@ const PerformanceForm = () => {
       } else {
         setSelectedGradeError("");
 
-        // 총 좌석 수 검증
         const totalGradeSeats = Object.values(gradeSeats).reduce(
           (sum, val) => sum + (parseInt(val) || 0),
           0
         );
-        const totalSeats = parseInt(formData.SEATSCALE) || 0;
 
-        if (totalSeats > 0 && totalGradeSeats > totalSeats) {
+        if (totalGradeSeats > totalSeats) {
           setSeatError(
             `총 객석수(${totalSeats})보다 등급별 좌석 합계(${totalGradeSeats})가 많습니다.`
           );
-        } else if (totalSeats > 0 && totalGradeSeats < totalSeats) {
+        } else if (totalGradeSeats < totalSeats) {
           setSeatError(
             `총 객석수(${totalSeats})와 등급별 좌석 합계(${totalGradeSeats})가 일치하지 않습니다.`
           );
@@ -317,28 +357,24 @@ const PerformanceForm = () => {
     }
   }, [gradeSeats, selectedGrades, formData.SEATSCALE, showGrades]);
 
-  // getExistingIds 함수 추가
-  const getExistingIds = async () => {
-    try {
-      const resp = await axiosApi.get("/performance/IDCheck");
-      if (resp.status === 200) {
-        // MT10ID 필드만 추출하고 null이 아닌 값만 필터링
-        const ids = resp.data
-          .map((item) => item.mt10ID) // mt10ID 값만 추출
-          .filter((id) => id !== null); // null 값 제거
-        console.log("Existing IDs:", ids);
-        setExistingIds(ids);
-      }
-    } catch (error) {
-      console.error("ID 목록 조회 실패:", error);
-    }
-  };
-
-  // useEffect에 추가 (기존 useEffect 유지하면서 새로 추가)
   useEffect(() => {
-    getExistingIds();
+    const loadMap = () => {
+      if (!window.kakao || !window.kakao.maps) {
+        return setTimeout(loadMap, 100);
+      }
+
+      const map = new window.kakao.maps.Map(container.current, {
+        center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+        level: 3,
+      });
+
+      mapInstanceRef.current = map;
+    };
+
+    loadMap();
   }, []);
 
+  // Validation functions
   const validateLocation = () => {
     if (!formData.ADRES || !formData.FCLTLA || !formData.FCLTLO) {
       setLocationError("지도에서 위치를 선택해주세요.");
@@ -348,7 +384,6 @@ const PerformanceForm = () => {
     return true;
   };
 
-  // 휴대전화 유효성 검사 함수
   const validatePhone = (phone) => {
     const pattern = /^\d{2,3}-\d{3,4}-\d{4}$/;
     if (!pattern.test(phone)) {
@@ -359,7 +394,6 @@ const PerformanceForm = () => {
     return true;
   };
 
-  // ID 유효성 검사 함수
   const validateMT10ID = (id) => {
     const pattern = /^FC\d+$/;
     if (!pattern.test(id)) {
@@ -378,7 +412,6 @@ const PerformanceForm = () => {
     return true;
   };
 
-  // 등급별 좌석 수 유효성 검사
   const validateGradeSeats = () => {
     if (!showGrades) return true;
 
@@ -398,6 +431,7 @@ const PerformanceForm = () => {
     return !hasError;
   };
 
+  // Event handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -406,18 +440,26 @@ const PerformanceForm = () => {
       [name]: value,
     }));
 
-    // MT10ID 입력 필드의 실시간 유효성 검사
-    if (name === "MT10ID") {
-      const pattern = /^FC\d+$/;
-      if (!pattern.test(value)) {
-        setIdError(
-          "공연장 ID는 FC(대문자)로 시작하고 뒤에는 숫자만 입력 가능합니다."
-        );
-      } else if (existingIds.includes(value)) {
-        setIdError("이미 존재하는 공연장 ID입니다.");
-      } else {
-        setIdError("");
+    // 객석수가 비어있거나 0인 경우 등급지정 관련 상태 초기화
+    if (name === "SEATSCALE") {
+      const numValue = parseInt(value);
+      if (!value || numValue <= 0) {
+        setShowGrades(false);
+        setSelectedGrades([]);
+        setGradeSeats({});
       }
+      // 음수나 0이 입력되었을 경우 값을 비움
+      if (numValue <= 0) {
+        setFormData(prev => ({
+          ...prev,
+          [name]: ""
+        }));
+        return;
+      }
+    }
+
+    if (name === "MT10ID") {
+      validateMT10ID(value);
     } else if (name === "TELNO") {
       validatePhone(value);
     }
@@ -426,33 +468,15 @@ const PerformanceForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ID 유효성 검사
-    if (!validateMT10ID(formData.MT10ID)) {
-      return;
-    }
-
-    // 위치 유효성 검사
-    if (!validateLocation()) {
-      return;
-    }
-
-    // 좌석 수 검증
-    if (!validateGradeSeats()) {
-      return;
-    }
-
-    // 핸드폰 유효성 검사
-    if (!validatePhone(formData.TELNO)) {
-      return;
-    }
-
-    // 기존 좌석 수 일치 검증
+    if (!validateMT10ID(formData.MT10ID)) return;
+    if (!validateLocation()) return;
+    if (!validateGradeSeats()) return;
+    if (!validatePhone(formData.TELNO)) return;
     if (seatError) {
       alert("좌석 수를 올바르게 입력해주세요.");
       return;
     }
 
-    // 제출 데이터 구성
     const seatData = {};
     if (showGrades) {
       Object.entries(gradeSeats).forEach(([gradeId, seatCount]) => {
@@ -533,23 +557,6 @@ const PerformanceForm = () => {
     }));
   };
 
-  useEffect(() => {
-    const loadMap = () => {
-      if (!window.kakao || !window.kakao.maps) {
-        return setTimeout(loadMap, 100);
-      }
-
-      const map = new window.kakao.maps.Map(container.current, {
-        center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3,
-      });
-
-      mapInstanceRef.current = map;
-    };
-
-    loadMap();
-  }, []);
-
   const handlePlaceClick = (place) => {
     setSearchKeyword(place.place_name);
     const coords = new window.kakao.maps.LatLng(place.y, place.x);
@@ -568,9 +575,7 @@ const PerformanceForm = () => {
       FCLTLA: place.y,
       FCLTLO: place.x,
     });
-    // 위치 선택 시 에러 메시지 초기화
     setLocationError("");
-
     setIsShowSuggestions(false);
   };
 
@@ -598,6 +603,7 @@ const PerformanceForm = () => {
               />
               {idError && <ErrorText>{idError}</ErrorText>}
             </FormGroup>
+            
             <FormGroup>
               <Label>공연장명:</Label>
               <Input
@@ -608,16 +614,7 @@ const PerformanceForm = () => {
                 required
               />
             </FormGroup>
-            <FormGroup>
-              <Label>공연장 시설 수:</Label>
-              <Input
-                type="number"
-                name="MT13CNT"
-                value={formData.MT13CNT}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
+
             <FormGroup>
               <Label>시설특성:</Label>
               <Input
@@ -628,8 +625,9 @@ const PerformanceForm = () => {
                 placeholder="공공(문예회관)"
               />
             </FormGroup>
+
             <FormGroup>
-              <Label>개관일:</Label>
+              <Label>개관년도:</Label>
               <Input
                 type="text"
                 name="OPENDE"
@@ -638,6 +636,18 @@ const PerformanceForm = () => {
                 required
               />
             </FormGroup>
+
+            <FormGroup>
+              <Label>공연장 시설 수:</Label>
+              <Input
+                type="number"
+                name="MT13CNT"
+                value={formData.MT13CNT}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+
             <FormGroup>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <div style={{ flex: 1 }}>
@@ -647,6 +657,12 @@ const PerformanceForm = () => {
                     name="SEATSCALE"
                     value={formData.SEATSCALE}
                     onChange={handleChange}
+                    min="1"
+                    onKeyPress={(e) => {
+                      if (!/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     required
                   />
                 </div>
@@ -655,6 +671,7 @@ const PerformanceForm = () => {
                     type="checkbox"
                     id="showGrades"
                     checked={showGrades}
+                    disabled={!formData.SEATSCALE || parseInt(formData.SEATSCALE) === 0}
                     onChange={(e) => setShowGrades(e.target.checked)}
                   />
                   <label htmlFor="showGrades">등급지정</label>
@@ -726,6 +743,7 @@ const PerformanceForm = () => {
               />
               {phoneError && <ErrorText>{phoneError}</ErrorText>}
             </FormGroup>
+
             <FormGroup>
               <Label>홈페이지:</Label>
               <Input
@@ -735,15 +753,16 @@ const PerformanceForm = () => {
                 onChange={handleChange}
               />
             </FormGroup>
+
             <SubmitButton
               type="submit"
               disabled={
                 seatError !== "" ||
-                idError !== "" || // 이미 있는 조건
+                idError !== "" ||
                 selectedGradeError !== "" ||
                 locationError !== "" ||
                 phoneError !== "" ||
-                existingIds.includes(formData.MT10ID) // ID 중복 체크 추가
+                existingIds.includes(formData.MT10ID)
               }
             >
               제출
