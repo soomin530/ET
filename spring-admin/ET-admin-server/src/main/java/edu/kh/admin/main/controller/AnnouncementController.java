@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +51,7 @@ public class AnnouncementController {
 	private final AnnouncementService service;
 	
 	@GetMapping("showAnnouncementList")
-	public ResponseEntity<Object> showMemberList() {
+	public ResponseEntity<Object> showAnnouncementList() {
 		List<Announcement> showAnnouncementList = service.showAnnouncementList();
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(showAnnouncementList);
@@ -58,6 +60,18 @@ public class AnnouncementController {
 					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
 		}
 	}
+	
+	@PostMapping("searchAnnouncementList")
+	public ResponseEntity<Object> searchAnnouncementList(@RequestBody Map<String, Object> formdata) {
+		List<Announcement> searchAnnouncementList = service.searchAnnouncementList(formdata);
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(searchAnnouncementList);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+		}
+	}
+	
 	
 	@GetMapping("/{announceNo:[0-9]+}")
 	public ResponseEntity<Object> getDetail(@PathVariable("announceNo") int announceNo) {

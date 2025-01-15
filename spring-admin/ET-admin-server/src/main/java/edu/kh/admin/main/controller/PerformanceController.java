@@ -60,7 +60,20 @@ public class PerformanceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
 		}
-	} 
+	}
+	
+	@GetMapping("IDCheck")
+	public ResponseEntity<Object> IDCheck() {
+		
+		List<Performance> IDCheckList = service.IDCheck();
+		log.info(IDCheckList.toString());
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(IDCheckList);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+		}
+	}
 	
 	
 	@PostMapping("searchPerformanceList")

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import styled, { keyframes } from "styled-components";
+import { axiosApi } from "../api/axoisAPI";
 
 // Styled Components
 const Container = styled.div`
@@ -184,7 +185,7 @@ const GradeCheckbox = styled.label`
   gap: 6px;
   cursor: pointer;
   user-select: none;
-  font-size:1rem;
+  font-size: 1rem;
   padding: 4px 4px;
   border-radius: 4px;
   background-color: ${(props) => (props.checked ? "#e2e8f0" : "transparent")};
@@ -224,7 +225,6 @@ const Title = styled.h1`
   justify-content: center;
 `;
 
-
 const BackArrow = styled.i`
   position: absolute;
   left: 0;
@@ -253,6 +253,7 @@ const PerformanceForm = () => {
   const [selectedGradeError, setSelectedGradeError] = useState("");
   const [locationError, setLocationError] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [existingIds, setExistingIds] = useState([]);
 
   const GRADE_ORDER = ["VIP", "R", "S", "A", "B", "전석"];
 
@@ -316,6 +317,28 @@ const PerformanceForm = () => {
     }
   }, [gradeSeats, selectedGrades, formData.SEATSCALE, showGrades]);
 
+  // getExistingIds 함수 추가
+  const getExistingIds = async () => {
+    try {
+      const resp = await axiosApi.get("/performance/IDCheck");
+      if (resp.status === 200) {
+        // MT10ID 필드만 추출하고 null이 아닌 값만 필터링
+        const ids = resp.data
+          .map((item) => item.mt10ID) // mt10ID 값만 추출
+          .filter((id) => id !== null); // null 값 제거
+        console.log("Existing IDs:", ids);
+        setExistingIds(ids);
+      }
+    } catch (error) {
+      console.error("ID 목록 조회 실패:", error);
+    }
+  };
+
+  // useEffect에 추가 (기존 useEffect 유지하면서 새로 추가)
+  useEffect(() => {
+    getExistingIds();
+  }, []);
+
   const validateLocation = () => {
     if (!formData.ADRES || !formData.FCLTLA || !formData.FCLTLO) {
       setLocationError("지도에서 위치를 선택해주세요.");
@@ -345,6 +368,12 @@ const PerformanceForm = () => {
       );
       return false;
     }
+
+    if (existingIds.includes(id)) {
+      setIdError("이미 존재하는 공연장 ID입니다.");
+      return false;
+    }
+
     setIdError("");
     return true;
   };
@@ -377,9 +406,18 @@ const PerformanceForm = () => {
       [name]: value,
     }));
 
-    // 실시간 유효성 검사
+    // MT10ID 입력 필드의 실시간 유효성 검사
     if (name === "MT10ID") {
-      validateMT10ID(value);
+      const pattern = /^FC\d+$/;
+      if (!pattern.test(value)) {
+        setIdError(
+          "공연장 ID는 FC(대문자)로 시작하고 뒤에는 숫자만 입력 가능합니다."
+        );
+      } else if (existingIds.includes(value)) {
+        setIdError("이미 존재하는 공연장 ID입니다.");
+      } else {
+        setIdError("");
+      }
     } else if (name === "TELNO") {
       validatePhone(value);
     }
@@ -540,13 +578,13 @@ const PerformanceForm = () => {
     <Container>
       <FormSection>
         <FormWrapper>
-        <Title>
-          <BackArrow
-            className="fas fa-arrow-left"
-            onClick={() => window.history.back()}
-          />
-          공연장 등록
-        </Title>
+          <Title>
+            <BackArrow
+              className="fas fa-arrow-left"
+              onClick={() => window.history.back()}
+            />
+            공연장 등록
+          </Title>
 
           <Form onSubmit={handleSubmit}>
             <FormGroup>
@@ -701,10 +739,11 @@ const PerformanceForm = () => {
               type="submit"
               disabled={
                 seatError !== "" ||
-                idError !== "" ||
+                idError !== "" || // 이미 있는 조건
                 selectedGradeError !== "" ||
                 locationError !== "" ||
-                phoneError !== ""
+                phoneError !== "" ||
+                existingIds.includes(formData.MT10ID) // ID 중복 체크 추가
               }
             >
               제출
