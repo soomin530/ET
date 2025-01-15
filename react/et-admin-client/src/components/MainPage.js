@@ -120,7 +120,7 @@ const WeatherCard = styled.div`
 
 // 날씨 아이콘
 const WeatherIcon = styled.div`
-  font-size: 4rem;
+  font-size: 6rem;
   margin: 1rem 0;
   animation: ${floatAnimation} 3s ease-in-out infinite;
 `;
@@ -208,13 +208,13 @@ export default function Main() {
   // 인사말 설정 효과
   useEffect(() => {
     const hour = currentTime.getHours();
-    if (hour >= 5 && hour < 12) {
+    if (hour >= 7 && hour < 12) {
       setGreeting("좋은 아침입니다");
       setWeatherIcon("🌅");
-    } else if (hour >= 12 && hour < 18) {
+    } else if (hour >= 12 && hour < 16) {
       setGreeting("좋은 오후입니다");
       setWeatherIcon("☀️");
-    } else if (hour >= 18 && hour < 22) {
+    } else if (hour >= 16 && hour < 20) {
       setGreeting("좋은 저녁입니다");
       setWeatherIcon("🌇");
     } else {
