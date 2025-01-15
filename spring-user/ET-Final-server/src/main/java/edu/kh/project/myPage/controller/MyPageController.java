@@ -272,7 +272,7 @@ public class MyPageController {
 	@GetMapping("memberInquirytList")
 	public String memberInquirytList() {
 		
-		return "mypage/memberInquirytList";
+		return "mypage/memberInquiryList";
 	}
 	
 	/** 회원 탈퇴 진행
