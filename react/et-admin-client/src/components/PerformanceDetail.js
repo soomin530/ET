@@ -334,31 +334,31 @@ const PerformanceForm = () => {
         });
 
       // 등급 정보 로드
-      axios
-        .get(`http://localhost:8081/performance/grade/${mt10ID}`)
-        .then((response) => {
-          const gradeData = response.data;
-          if (gradeData && gradeData.length > 0) {
-            setShowGrades(true); // 등급 섹션 표시
-
-            // 등급 ID를 등급 이름으로 변환하여 선택된 등급 설정
-            const selectedGradeNames = gradeData.map((item) => {
-              // GRADE_ORDER의 인덱스를 찾아 등급 이름 반환
-              return GRADE_ORDER[parseInt(item.gradeId) - 1];
-            });
-            setSelectedGrades(selectedGradeNames);
-
-            // 좌석 수 설정
-            const seatsData = {};
-            gradeData.forEach((item) => {
-              seatsData[item.gradeId] = item.seatCount;
-            });
-            setGradeSeats(seatsData);
-          }
-        })
-        .catch((error) => {
-          console.error("등급 정보 로드 에러:", error);
-        });
+      axios.get(`http://localhost:8081/performance/grade/${mt10ID}`)
+      .then((response) => {
+        const gradeData = response.data;
+        if (gradeData && gradeData.length > 0) {
+          setShowGrades(true);  // 등급 섹션 표시
+    
+          // 객체로 매핑된 좌석 수 데이터 생성
+          const seatsData = {};
+          gradeData.forEach(item => {
+            seatsData[item.gradeId] = parseInt(item.seatCount);
+          });
+          setGradeSeats(seatsData);
+    
+          // 등급 이름 목록 생성
+          const selectedGradeNames = gradeData.map(item => 
+            // gradeId가 1부터 시작하므로 -1 해서 인덱스 맞춤
+            GRADE_ORDER[item.gradeId - 1]
+          ).sort((a, b) => GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b));
+          
+          setSelectedGrades(selectedGradeNames);
+        }
+      })
+      .catch((error) => {
+        console.error("등급 정보 로드 에러:", error);
+      });
     }
   }, [mt10ID]);
 
@@ -447,6 +447,8 @@ const PerformanceForm = () => {
     }
   }, [formData.FCLTLA, formData.FCLTLO]);
 
+
+  
   const isValidPhoneNumber = (phoneNumber) => {
     if (!phoneNumber) return true;
     const pattern = /^\d{2,3}-\d{3,4}-\d{4}$/;
@@ -470,14 +472,14 @@ const PerformanceForm = () => {
     // 객석수 처리
     if (name === "SEATSCALE") {
       const numValue = parseInt(value);
-
+    
       // 빈 값이거나 0, 음수인 경우
       if (!value || value.trim() === "" || numValue <= 0) {
         // 등급지정 관련 모든 상태 초기화
         setShowGrades(false);
         setSelectedGrades([]);
         setGradeSeats({});
-
+    
         // formData 업데이트
         setFormData((prev) => ({
           ...prev,
@@ -600,10 +602,19 @@ const PerformanceForm = () => {
       }
     }
 
-    const submitData = {
-      ...formData,
-      gradeSeats: showGrades ? gradeSeats : null,
-    };
+    const seatData = {};
+if (showGrades) {
+  Object.entries(gradeSeats).forEach(([gradeId, seatCount]) => {
+    if (seatCount !== "") {
+      seatData[gradeId] = parseInt(seatCount);
+    }
+  });
+}
+
+const submitData = {
+  ...formData,
+  gradeSeats: showGrades ? seatData : null,
+};
 
     try {
       const response = await axios.post(
@@ -612,6 +623,7 @@ const PerformanceForm = () => {
       );
       if (response.data > 0) {
         alert("시설 정보가 변경되었습니다.");
+        window.history.back();
       } else {
         alert("변경 실패하였습니다");
       }

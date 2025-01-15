@@ -59,5 +59,11 @@ public interface PerformanceMapper {
 	 */
 	List<Performance> IDCheck();
 
+	/** 모든 좌석 삭제
+	 * @param deleteGrade
+	 * @return
+	 */
+	int deleteGrade(Map<String, Object> deleteGrade);
+
 
 }
