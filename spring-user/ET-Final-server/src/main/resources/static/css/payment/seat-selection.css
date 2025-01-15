@@ -1,0 +1,436 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  margin: 20px 0;
+}
+
+/* 메인 레이아웃 */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  /* 화면이 좁아질 경우 줄바꿈 */
+  width: 90%;
+  gap: 20px;
+  /* seat-container와 info-container 간격 */
+}
+
+.seat-container {
+  flex: 3;
+  /* 좌석 컨테이너가 더 넓게 차지 */
+  flex-basis: 60%;
+  /* 기본적으로 60% 차지 */
+  min-width: 300px;
+  /* 최소 너비를 설정해 잘리지 않게 */
+  min-height: 500px;
+  /* 최소 높이 설정 */
+  padding: 15px;
+  /* 내부 여백 추가 */
+  border: 1px solid #ddd;
+  /* 구분선 */
+  border-radius: 10px;
+  /* 모서리 둥글게 */
+  background-color: #fff;
+  /* 배경색 추가 */
+}
+
+.stage {
+  background-color: #444;
+  color: white;
+  text-align: center;
+  line-height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  height: 50px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+/* 좌석 컨테이너 스타일 */
+.seat-map {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* 등급 간 간격 */
+  margin-top: 15px;
+}
+
+/* 좌석 등급 라벨 */
+.grade-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #333;
+}
+
+/* 행 컨테이너 */
+.row-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  /* 열 간 간격 */
+}
+
+
+.seat {
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 30px;
+  font-size: 10px;
+  background-color: #e8e8e8;
+  cursor: pointer;
+  margin-bottom : 7px;
+}
+
+/* 좌석 등급별 색상 */
+.vip {
+  background-color: #b19cd9;
+}
+
+.r {
+  background-color: #85c1e9;
+}
+
+.s {
+  background-color: #82e0aa;
+}
+
+.a {
+  background-color: #f5b041;
+}
+
+.b {
+  background-color: #ffcccb;
+}
+
+.all {
+  background-color: #d3d3d3;
+}
+
+.seat.booked {
+  background-color: #e74c3c;
+  color: white;
+  cursor: not-allowed;
+}
+
+.selected {
+  background-color: #535a5c !important;
+  color: white;
+}
+
+/* 우측 UI 스타일 */
+.info-container {
+  flex: 1;
+  flex-basis: 30%;
+  /* 기본적으로 30% 차지 */
+  min-width: 250px;
+  /* 최소 너비를 설정해 잘리지 않게 */
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+
+  display: flex;
+  flex-direction: column;
+  /* 수직 정렬 */
+}
+
+.info-container h2 {
+  margin: 0 0 24px 0;
+  font-size: 18px;
+  color: #1a1a1a;
+  font-weight: 600;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f5f5f5;
+}
+
+.info-item {
+  margin-bottom: 16px;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  color: #333;
+}
+
+.info-item span:first-child {
+  color: #666;
+  font-weight: 500;
+}
+
+#seat-grade-info {
+
+  padding-top: 20px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+#seat-grade-info .grade-header {
+  display: flex;
+  justify-content: space-between;
+  /* 헤더 양쪽 정렬 */
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#seat-grade-info .grade-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#seat-grade-info .grade-item {
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 10px;
+}
+
+#seat-grade-info .color-box {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  margin-right: 8px;
+  border-radius: 3px;
+}
+
+#seat-grade-info .grade-text {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  /* 등급과 잔여석 사이 간격 */
+}
+
+#seat-grade-info .grade-text strong {
+  font-weight: bold;
+}
+
+
+#seat-grade-info .seat-count {
+  color: #e74c3c;
+  font-weight: normal;
+}
+
+#seat-grade-info .grade-price {
+  text-align: right;
+  min-width: 80px;
+  /* 최소 너비 설정 */
+  font-size: 14px;
+  color: #333;
+}
+
+
+
+/* 예매 상세 정보 */
+.reservation-info {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  /* 가로 배치 */
+  align-items: center;
+  /* 세로 정렬 */
+  justify-content: flex-start;
+  /* 가로 정렬 */
+  color: #333;
+  text-align: left;
+  /* 텍스트 정렬 */
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #fff;
+  margin-bottom: 20px;
+  gap: 15px;
+  /* 이미지와 텍스트 간격 */
+}
+
+.reservation-info img {
+  max-width: 130px;
+  /* 이미지 크기 조정 */
+  height: auto;
+  border-radius: 10px;
+}
+
+.reservation-info .details {
+  display: flex;
+  flex-direction: column;
+  /* 텍스트는 세로로 */
+  gap: 5px;
+  /* 텍스트 간격 */
+  font-size: 14px;
+  color: #555;
+}
+
+.reservation-info .details h3 {
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0;
+  white-space: normal;
+  /* 텍스트가 영역을 벗어나면 줄바꿈 */
+  word-break: break-word;
+  /* 긴 단어가 있을 경우 단어 단위로 줄바꿈 */
+}
+
+
+
+.btn-group {
+  display: flex;
+  /* 플렉스 컨테이너로 설정 */
+  justify-content: center;
+  /* 버튼을 중앙 정렬 */
+  gap: 10px;
+  /* 버튼 간격 */
+  margin-top: 20px;
+}
+
+.btn-group button {
+  flex: 1;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-group button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.confirm-btn {
+  background-color: #f43142;
+  color: white;
+  border: none;
+}
+
+.confirm-btn :hover{
+  background-color: #e12132;
+}
+
+
+.reset-btn {
+  background-color: #757575;
+  color: white;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .btn-group {
+    flex-direction: column;
+  }
+}
+
+
+/* 진행 단계 헤더 스타일 */
+.progress-header {
+  width: 100%;
+  background-color: white;
+  padding: 20px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.progress-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.step-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.progress-step.active .step-number {
+  background-color: #ff4500;
+  color: white;
+}
+
+.progress-step.active .step-text {
+  color: #ff4500;
+  font-weight: bold;
+}
+
+/* 진행 바 스타일 */
+.progress-line {
+  position: absolute;
+  top: 20px;
+  left: 70px;
+  right: 70px;
+  height: 2px;
+  background-color: #e8e8e8;
+  z-index: 0;
+}
+
+.progress-line-active {
+  position: absolute;
+  top: 20px;
+  left: 70px;
+  width: 0%;
+  height: 2px;
+  background-color: #ff4500;
+  transition: width 0.3s ease;
+  z-index: 0;
+}
+
+/* 각 단계 너비 설정 */
+body.step-1 .progress-line-active {
+  width: 33.3%;
+}
+
+body.step-2 .progress-line-active {
+  width: 66.6%;
+}
+
+body.step-3 .progress-line-active {
+  width: 100%;
+}

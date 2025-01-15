@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>찜목록 - 티켓팅 시스템</title>
+    <th:block th:replace="~{common/common}"></th:block>
+    <link rel="stylesheet" href="/css/myPage/favList.css">
+</head>
+
+<body>
+    <th:block th:replace="~{common/header}"></th:block>
+
+    <div class="parent">
+        <h2>찜목록</h2>
+    </div>
+
+    <div class="wishlist-container">
+        <div class="wishlist-header">
+            <div class="select-all-container">
+                <input type="checkbox" id="selectAll">
+                <label for="selectAll">전체 선택</label>
+            </div>
+            <button id="deleteSelected" class="delete-button" disabled>선택 삭제</button>
+        </div>
+
+        <div class="wishlist-grid" id="wishlistGrid">
+            <!-- 찜목록 아이템들이 여기에 동적으로 추가됩니다 -->
+        </div>
+        
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{common/footer}"></th:block>
+
+    <script src="/js/myPage/favList.js"></script>
+</body>
+
+</html>

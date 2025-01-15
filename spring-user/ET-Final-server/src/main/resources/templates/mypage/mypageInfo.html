@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>공연 예매 사이트</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+	<link rel="stylesheet" href="/css/myPage/mypageInfo.css">
+
+	<th:block th:replace="~{common/common}"></th:block>
+</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+	<!-- HTML 수정 부분 -->
+
+	<div class="container">
+		<!-- th:classappend를 사용하여 네이버 로그인 시 클래스 추가 -->
+		<div class="mypage-container"
+			th:classappend="${session.loginMember != null && session.loginMember.naverFl == 'Y'} ? '' : ''">
+
+			<div class="ticketInfo" onclick="handlePageAccess('ticketInfo')">
+				<h2>예매 내역</h2>
+			</div>
+
+			<!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+			<div class="favList" th:if="${session.loginMember != null}" onclick="handlePageAccess('favList')">
+				<h2>찜 목록</h2>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 비밀번호 확인 모달 -->
+	<div id="passwordModal" class="pwModal">
+		<div class="modalContent">
+			<span class="modal-cls" id="clsModal">&times;</span>
+			<div class="verify-box">
+				<div class="verify-title">정보 보호를 위해<br>비밀번호를 다시 한 번 확인합니다</div>
+				<div class="input-group">
+					<input type="password" id="passwordInput" onkeyup="checkCapsLock(event)" placeholder="비밀번호를 입력하세요">
+					<div id="mypagePwCheck"></div>
+				</div>
+				<div class="error-message" id="errorMsg">비밀번호가 일치하지 않습니다.</div>
+				<div class="button-group">
+					<button onclick="clsModal()" class="btn-cancel">취소</button>
+					<button id="verifyBtn" class="btn-verify">확인</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 로딩 스피너 -->
+	<div id="loadingSpinner" style="display: none;">
+		<div class="spinner"></div> <!-- Spinner 스타일 정의 필요 -->
+	</div>
+
+	<script src="/js/myPage/mypageInfo.js"></script>
+
+	<th:block th:replace="~{common/footer}"></th:block>
+</body>
+
+</html>

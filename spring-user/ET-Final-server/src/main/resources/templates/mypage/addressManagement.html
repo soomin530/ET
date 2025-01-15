@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>배송지 관리</title>
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+		<link rel="stylesheet" href="/css/myPage/addressManagement.css">
+
+		<th:block th:replace="~{common/common}"></th:block>
+
+	</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+
+	<div class="mypage-container">
+		<!-- 사이드바 -->
+		<div class="sidebar">
+			<nav class="sidebar-nav">
+				<ul class="menu-list">
+					<li class="menu-item">
+						<a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+					</li>
+					<!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+					<li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+						<a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link">1:1 문의</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="memberInquirytList"
+							class="mypage-side-menu-link nav-link active">문의내역</a>
+					</li>
+					<li class="menu-item">
+						<a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+
+		<div class="main-content">
+			<h1 class="page-title">배송지 관리</h1>
+			<p>나의 주소록은 최대 10개까지 저장할 수 있습니다.</p>
+			<button class="add-button">새 배송지 추가</button>
+
+			<div class="address-list">
+				<!-- 주소 목록이 여기에 동적으로 추가됨 -->
+			</div>
+
+			<!-- 새 배송지 추가 모달 -->
+			<div id="adsModal" class="adsModal">
+				<div class="adsModal-content">
+					<div class="adsModal-header">
+						<h2>배송지 추가</h2>
+						<span class="close-btn">&times;</span>
+					</div>
+					<form id="addressForm">
+						<div class="adsForm-group">
+							<label class="required" for="receiverName">받는 사람</label>
+							<input type="text" id="receiverName" required>
+						</div>
+
+						<div class="adsForm-group">
+							<label class="required" for="adsPostcode">우편번호</label>
+							<div class="address-search-group">
+								<input type="text" id="adsPostcode" readonly required>
+								<button type="button" id="adsSearchAddress" class="address-search-btn">주소 검색</button>
+							</div>
+						</div>
+
+						<div class="adsForm-group">
+							<label class="required" for="adsAddress">주소</label>
+							<input type="text" id="adsAddress" readonly required>
+						</div>
+
+						<div class="adsForm-group">
+							<label class="required" for="adsDetailAddress">상세주소</label>
+							<input type="text" id="adsDetailAddress" required>
+						</div>
+
+						<div class="adsForm-group">
+							<label class="required" for="adsPhone">휴대폰 번호</label>
+							<input type="tel" id="adsPhone" required placeholder="ex) 01012345678">
+							<span class="adsPhone-message" id="adsPhoneMessage"></span>
+						</div>
+
+						<div class="adsForm-group">
+							<label for="adsExtraPhone">추가 연락처</label>
+							<input type="tel" id="adsExtraPhone" placeholder="ex) 01012345678">
+							<span class="adsExtraPhone-message" id="adsExtraPhoneMessage"></span>
+						</div>
+
+						<div class="button-group">
+							<button type="button" class="adsCancel-btn" id="adsCancelBtn">취소</button>
+							<button type="submit" class="adsSubmit-btn" id="adsSubmitBtn">등록</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<!-- 배송지 수정 모달 -->
+			<div id="editModal" class="editModal">
+				<div class="editModal-content">
+					<div class="editModal-header">
+						<h2>배송지 수정</h2>
+						<span class="close-btn">&times;</span>
+					</div>
+					<form id="editForm">
+						<div class="editModal-group">
+							<label class="required" for="editReceiverName">받는 사람</label>
+							<input type="text" id="editReceiverName" required>
+						</div>
+
+						<div class="editModal-group">
+							<label class="required" for="editPostcode">우편번호</label>
+							<div class="address-search-group">
+								<input type="text" id="editPostcode" readonly required>
+								<button type="button" id="editSearchAddress" class="address-search-btn">주소 검색</button>
+							</div>
+						</div>
+
+						<div class="editModal-group">
+							<label class="required" for="editAddress">주소</label>
+							<input type="text" id="editAddress" readonly required>
+						</div>
+						<div class="editModal-group">
+							<label class="required" for="editDetailAddress">상세주소</label>
+							<input type="text" id="editDetailAddress" required>
+						</div>
+						<div class="editModal-group">
+							<label class="required" for="editPhone">휴대폰 번호</label>
+							<input type="tel" id="editPhone" required>
+							<span class="editPhone-message" id="editPhoneMessage"></span>
+
+						</div>
+						<div class="editModal-group">
+							<label for="editExtraPhone">추가 연락처</label>
+							<input type="tel" id="editExtraPhone">
+							<span class="editExtraPhone-message" id="editExtraPhoneMessage"></span>
+						</div>
+						<div class="button-group">
+							<button type="button" class="adsCancel-btn" id="editCancelBtn">취소</button>
+							<button type="submit" class="adsSubmit-btn" id="editSubmitBtn">수정 완료</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<!-- 삭제 확인 모달 -->
+			<div id="deleteModal" class="delete-modal">
+				<div class="delete-modal-content">
+					<h3>배송지 삭제</h3>
+					<p>선택한 배송지를 삭제하시겠습니까?</p>
+					<div class="button-group">
+						<button id="deleteCancel" class="cancel-btn">취소</button>
+						<button id="deleteConfirm" class="confirm-btn">삭제</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- common/footer 추가-->
+	<th:block th:replace="~{common/footer}"></th:block>
+
+	<script src="/js/myPage/addressManagement.js"></script>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+</body>
+
+</html>

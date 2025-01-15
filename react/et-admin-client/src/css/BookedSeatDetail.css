@@ -1,0 +1,345 @@
+/* BookedSeatDetail.css */
+/* Performance detail container */
+.performance-detail-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Header Section */
+.booked-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1rem;
+}
+
+.booked-detail-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Header Section */
+.booked-detail-header .booked-back-button {
+  width: auto !important; /* app.css 재정의 */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: #2563eb !important; /* 파란색 배경 */
+  border: none;
+  color: white !important; /* 흰색 텍스트 */
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.booked-detail-header .booked-back-button:hover {
+  background-color: #1d4ed8 !important; /* 호버 시 더 진한 파란색 */
+  color: #374151 !important;
+}
+
+.booked-detail-header .booked-back-button i {
+  font-size: 0.875rem;
+  color: white; /* 아이콘도 흰색으로 */
+}
+
+.booked-detail-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.booked-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+}
+
+.booked-back-button:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.booked-back-button i {
+  font-size: 0.875rem;
+}
+
+/* Main content layout */
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+}
+
+/* Info Section */
+.info-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.poster-container {
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.poster-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: cover;
+}
+
+.info-table-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.info-value {
+  color: #0f172a;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.info-value.period {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.info-value.price {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.info-value.address {
+  color: #475569;
+}
+
+/* Booking Section */
+.booking-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+}
+
+/* Calendar Styles */
+.calendar-container {
+  margin-bottom: 1.5rem;
+}
+
+.fc {
+  background: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.fc .fc-button-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.fc .fc-daygrid-day.available-date {
+  background-color: #dbeafe;
+  cursor: pointer;
+}
+
+.fc .fc-daygrid-day.selected-date {
+  background-color: #2563eb;
+}
+
+.fc .fc-daygrid-day.selected-date .fc-daygrid-day-number {
+  color: white;
+}
+
+.fc .fc-daygrid-day.fc-day-disabled {
+  background-color: #f1f5f9;
+  color: #cbd5e1;
+}
+
+/* Time Selection Buttons */
+.time-selection {
+  margin-top: 1.5rem;
+}
+
+.time-selection h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.time-button {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.time-button:hover {
+  background-color: #dbeafe;
+  border-color: #2563eb;
+}
+
+.time-button .time {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.time-button .status {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-left: 0.5rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading-spinner::before {
+  content: "";
+  width: 50px;
+  height: 50px;
+  border: 3px solid #dbeafe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .detail-content {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-section {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .performance-detail-container {
+    padding: 1rem;
+  }
+
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .info-label {
+    font-size: 0.9rem;
+  }
+
+  .info-value {
+    font-size: 0.9rem;
+  }
+}
+
+/* BookingSection Component Styles */
+.time-slots {
+  margin-top: 1rem;
+}
+
+.time-slot-button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.time-slot-button:hover {
+  background-color: #f8fafc;
+  border-color: #2563eb;
+}
+
+.time-slot-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.time-slot-time {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.time-slot-status {
+  font-size: 0.875rem;
+  color: #64748b;
+}

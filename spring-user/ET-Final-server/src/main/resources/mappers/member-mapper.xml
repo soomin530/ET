@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="edu.kh.project.member.model.mapper.MemberMapper">
+
+
+	<!-- 로그인 진행 -->
+	<select id="login" resultType="Member">
+		SELECT 
+			MEMBER_NO, 
+			MEMBER_ID,
+			MEMBER_NICKNAME, 
+			MEMBER_PW,
+			MEMBER_TEL, 
+			MEMBER_ADDRESS, 
+			PROFILE_IMG,
+			MEMBER_AUTH,
+			TO_CHAR(ENROLL_DATE, 'YYYY"년" MM"월" DD"일" HH24"시" MI"분" SS"초"') ENROLL_DATE, MEMBER_EMAIL,
+			MEMBER_EMAIL_ALARM,
+			MEMBER_EMAIL,
+			NAVER_FL
+		FROM "TB_MEMBER"
+		WHERE MEMBER_ID = #{memberId}
+		AND MEMBER_DEL_FL = 'N'
+	</select>
+
+
+	<!-- 이메일 중복 검사 -->
+	<select id="checkEmail" resultType="_int">
+		SELECT COUNT(*)
+		FROM
+		"TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_EMAIL = #{memberEmail}
+	</select>
+
+
+	<!-- 아이디 중복 검사 -->
+	<select id="checkId" resultType="_int">
+		SELECT COUNT(*)
+		FROM "TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_ID = #{memberId}
+	</select>
+
+
+	<!-- 닉네임 중복검사 -->
+	<select id="checkNickname" resultType="_int">
+		SELECT COUNT(*)
+		FROM
+		"TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_NICKNAME =
+		#{memberNickname}
+	</select>
+
+
+	<!-- 회원 가입 -->
+	<insert id="signup">
+		INSERT INTO "TB_MEMBER"
+		VALUES(
+			SEQ_MEMBER_NO.NEXTVAL,
+			#{memberId},
+			#{memberPw},
+			#{memberNickname},
+			#{memberTel},
+			#{memberAddress},
+			#{memberGender},
+			NULL,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			#{memberEmail},
+			DEFAULT
+		)
+	</insert>
+
+
+	<!-- 네이버 회원 조회 -->
+	<select id="selectNaverMember" resultType="Member">
+		SELECT * FROM TB_MEMBER
+		WHERE MEMBER_ID = #{memberId}
+		AND NAVER_FL = 'Y'
+		AND MEMBER_DEL_FL = 'N'
+	</select>
+
+
+	<!-- 네이버 회원 가입 -->
+	<insert id="insertNaverMember" parameterType="Member">
+		INSERT INTO TB_MEMBER (
+			MEMBER_NO,
+			MEMBER_ID,
+			MEMBER_PW,
+			MEMBER_NICKNAME,
+			MEMBER_TEL,
+			MEMBER_ADDRESS,
+			MEMBER_GENDER,
+			PROFILE_IMG,
+			MEMBER_AUTH,
+			MEMBER_EMAIL,
+			NAVER_FL
+		) VALUES (
+			SEQ_MEMBER_NO.NEXTVAL,
+			#{memberId},
+			#{memberPw},
+			#{memberNickname},
+			#{memberTel},
+			#{memberAddress},
+			#{memberGender},
+			#{profileImg},
+			#{memberAuth},
+			#{memberEmail},
+			'Y'
+		)
+	</insert>
+
+
+	<!-- 네이버 회원 정보 업데이트 -->
+	<update id="updateNaverMember" parameterType="Member">
+		UPDATE TB_MEMBER SET
+		MEMBER_NICKNAME = #{memberNickname},
+		MEMBER_EMAIL = #{memberEmail},
+		PROFILE_IMG = #{profileImg},
+		MEMBER_GENDER = #{memberGender}
+		WHERE MEMBER_ID = #{memberId}
+		AND NAVER_FL = 'Y'
+	</update>
+	
+	
+	<!-- 이메일로 회원 아이디 조회 -->
+	<select id="findByEmail">
+		SELECT 
+			MEMBER_ID
+		FROM "TB_MEMBER"
+		WHERE MEMBER_EMAIL = #{email}
+		AND MEMBER_DEL_FL = 'N'
+	</select>
+	
+	
+	<!-- 이메일로 회원 아이디 조회 -->
+	<select id="findByIdAndEmail">
+		SELECT 
+			MEMBER_NO,
+			MEMBER_EMAIL,
+			MEMBER_ID
+		FROM "TB_MEMBER"
+		WHERE MEMBER_EMAIL = #{email}
+		AND MEMBER_ID = #{memberId}
+		AND MEMBER_DEL_FL = 'N'
+	</select>
+	
+	
+	<!-- 비밀번호 변경 -->
+	<update id="updatePassword">
+		UPDATE "TB_MEMBER"
+		SET
+			MEMBER_PW = #{encPw}
+		WHERE MEMBER_NO = #{memberNo}
+	</update>
+
+
+	<insert id="insertVenue">
+		INSERT INTO "TB_VENUE"
+		VALUES(#{mt10id},
+		#{fcltynm},
+		#{mt13cnt},
+		#{fcltychartr},
+		#{opende},
+		#{seatscale},
+		#{telno},
+		#{relateurl},
+		#{adres},
+		#{fcltla},
+		#{fcltlo}
+		)
+	</insert>
+
+
+	<insert id="insertPerf">
+		INSERT INTO "TB_PERFORMANCES_DETAIL"
+		VALUES(
+			#{mt20id},
+			#{prfnm},
+			#{prfpdfrom},
+			#{prfpdto},
+			#{fcltynm},
+			#{prfcast},
+			#{prfruntime},
+			#{entrpsnm},
+			#{pcseguidance},
+			#{poster},
+			#{dtguidance},
+			#{area},
+			#{genrenm},
+			#{prfstate},
+			#{mt10id},
+			null
+		)
+	</insert>
+
+
+	<insert id="insertPerfTime">
+		INSERT INTO "TB_PERFORMANCE_TIME"
+		VALUES(#{mt20id},
+		#{dayOfWeek},
+		#{performanceTime}
+		)
+	</insert>
+
+	<insert id="insertTicketInto">
+		INSERT INTO "TB_PERFORMANCE_SEAT_PRICE"
+		(PRICE_ID, MT20ID, GRADE_ID, PRICE)
+		VALUES
+		(SEQ_PRICE_ID.NEXTVAL,
+		#{mt20id},
+		#{seatGradeId},
+		#{price}
+		)
+	</insert>
+
+	<insert id="insertVenueSeat">
+		INSERT INTO "TB_VENUE_SEAT_INFO"
+		(VENUE_SEAT_ID, MT10ID, GRADE_ID,
+		SEAT_COUNT)
+		VALUES
+		(SEAT_ID_SEQ.NEXTVAL,
+		#{mt10id},
+		#{gradeId},
+		#{seatCount}
+		)
+	</insert>
+
+
+	<select id="performanceDetails">
+		SELECT
+		MT20ID,
+		PCSEGUIDANCE,
+		MT10ID,
+		SEATSCALE
+		FROM TB_PERFORMANCES_DETAIL
+		JOIN TB_VENUE USING(MT10ID)
+		WHERE MT20ID NOT
+		IN('PF001', 'PF253358')
+	</select>
+
+
+
+</mapper>

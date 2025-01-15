@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>공연 등록 페이지</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<link rel="stylesheet" href="/css/perfmgr/perfmgr-registration.css">
+	<th:block th:replace="~{common/common}"></th:block>
+
+	<style>
+		.note-modal.show {
+			display: flex !important;
+			align-items: center;
+			justify-content: center;
+			background: rgba(0, 0, 0, 0.5) !important;
+			backdrop-filter: blur(0) !important;
+		}
+
+		.note-modal .modal-dialog {
+			max-width: 450px !important;
+			width: 90% !important;
+			margin: 0 !important;
+		}
+
+		.note-modal .modal-content {
+			width: 100% !important;
+			transform: none !important;
+			opacity: 1 !important;
+			padding: 0 !important;
+			border: none !important;
+			border-radius: 8px !important;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+		}
+
+		.note-modal .modal-header {
+			padding: 15px !important;
+			border-bottom: 1px solid #e5e5e5 !important;
+			margin-bottom: 0 !important;
+		}
+
+		.note-modal .modal-header .modal-title {
+			margin: 0 !important;
+			color: #333 !important;
+			font-size: 18px !important;
+		}
+
+		.note-modal .modal-header .close {
+			font-size: 24px !important;
+			color: #999 !important;
+			opacity: 1 !important;
+			padding: 0 !important;
+			margin: 0 !important;
+			background: none !important;
+			border: none !important;
+		}
+
+		.note-modal .modal-header .close:hover {
+			color: #333 !important;
+		}
+
+		.note-modal .modal-body {
+			padding: 20px !important;
+			display: block !important;
+		}
+
+		.note-modal .form-group {
+			margin-bottom: 15px !important;
+		}
+
+		.note-modal .note-form-label {
+			display: block !important;
+			margin-bottom: 8px !important;
+			color: #333 !important;
+			font-weight: normal !important;
+		}
+
+		.note-modal .note-image-input {
+			width: 100% !important;
+			padding: 8px !important;
+			margin-bottom: 10px !important;
+		}
+
+		.note-modal .note-image-url {
+			width: 100% !important;
+			padding: 8px 12px !important;
+			border: 1px solid #ddd !important;
+			border-radius: 4px !important;
+			margin-bottom: 0 !important;
+		}
+
+		.note-modal .modal-footer {
+			padding: 15px !important;
+			border-top: 1px solid #e5e5e5 !important;
+			display: flex !important;
+			justify-content: flex-end !important;
+			margin-top: 0 !important;
+		}
+
+		.note-modal .note-btn {
+			padding: 6px 12px !important;
+			border-radius: 4px !important;
+			font-size: 14px !important;
+			cursor: pointer !important;
+		}
+
+		.note-modal .note-btn-primary {
+			background: #004CFF !important;
+			color: white !important;
+			border: none !important;
+		}
+
+		.note-modal .note-btn-primary:disabled {
+			background: #cccccc !important;
+			cursor: not-allowed !important;
+		}
+
+		.note-modal .note-btn-primary:not(:disabled):hover {
+			background: #0039e5 !important;
+		}
+
+		@media (max-width: 768px) {
+			.note-modal .modal-dialog {
+				max-width: 90% !important;
+				margin: 20px auto !important;
+			}
+		}
+	</style>
+
+</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+	<div class="container" style="margin-top: 20px;">
+		<h1>공연 등록</h1>
+		<form id="performance-form">
+			<!-- 공연 장소 정보 -->
+			<div class="section-title">
+				<h4>공연 장소</h4>
+			</div>
+			<div class="form-group">
+				<label for="venue-search">장소 검색</label>
+				<div class="input-group mb-3">
+					<input type="text" id="venue-search" class="form-control" placeholder="공연장 이름 또는 주소로 검색">
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" id="search-venue">검색</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- 공연 장소 정보 -->
+			<div class="form-group">
+				<label for="venue-select">공연장 선택</label>
+				<select id="venue-select" class="form-control" required>
+					<option value="">공연장을 선택하세요</option>
+				</select>
+			</div>
+
+			<!-- 선택한 공연장 정보 -->
+			<div id="venue-info" class="card mt-3" style="display: none;">
+				<div class="card-body">
+					<h5 class="card-title">선택된 공연장 정보</h5>
+					<p class="card-text">
+						<strong>주소:</strong> <span id="venue-address"></span><br>
+						<strong>좌석수:</strong> <span id="venue-seats"></span>석
+					</p>
+				</div>
+			</div>
+
+			<!-- 가격 정보 -->
+			<div class="section-title">
+				<h4>티켓 가격</h4>
+			</div>
+			<div id="price-container">
+				<!-- 선택한 공연장 좌석 등급 비동기 조회 -->
+			</div>
+
+			<!-- 공연 기간 정보 -->
+			<div class="section-title">
+				<h4>공연 기간</h4>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="prfpdfrom">시작일</label>
+						<input type="text" id="prfpdfrom" name="prfpdfrom" class="form-control" required>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="prfpdto">종료일</label>
+						<input type="text" id="prfpdto" name="prfpdto" class="form-control" required>
+					</div>
+				</div>
+			</div>
+
+			<!-- 공연 시간 -->
+			<div class="section-title">
+				<h4>공연 시간</h4>
+			</div>
+			<div id="schedule-container">
+			</div>
+			<button type="button" class="btn btn-success add-btn" id="add-schedule">+ 공연 시간 추가</button>
+
+			<!-- 공연 포스터 정보 -->
+			<div class="form-group">
+				<label for="poster">공연 포스터</label>
+				<div class="custom-file">
+					<input type="file" class="custom-file-input" id="poster" accept="image/*" required>
+					<label class="custom-file-label" for="poster">포스터 이미지를 선택하세요</label>
+				</div>
+				<div id="poster-preview" class="mt-2" style="display: none;">
+					<img src="" alt="포스터 미리보기" style="max-width: 200px; max-height: 300px;">
+				</div>
+			</div>
+
+			<!-- 공연 기본 정보 -->
+			<div class="section-title">
+				<h4>기본 정보</h4>
+			</div>
+			<div class="form-group">
+				<label for="prfnm">공연명</label>
+				<input type="text" id="prfnm" name="prfnm" class="form-control" required>
+			</div>
+			<div class="form-group">
+				<label for="runtime">런타임(분)</label>
+				<input type="number" id="runtime" name="runtime" class="form-control" required>
+			</div>
+			<div class="form-group">
+				<label for="cast">출연진</label>
+				<textarea id="cast" name="cast" class="form-control" rows="3" required></textarea>
+			</div>
+			<div class="form-group">
+				<label for="genere">장르</label>
+				<select id="genere" name="genere" class="form-control" required>
+					<option value="">장르를 선택하세요</option>
+					<option value="연극">연극</option>
+					<option value="뮤지컬">뮤지컬</option>
+					<option value="클래식">클래식</option>
+				</select>
+			</div>
+
+
+			<!-- 공연 설명 -->
+			<div class="form-group">
+				<label for="description">공연 설명</label>
+				<textarea id="description" name="description" class="form-control"></textarea>
+			</div>
+
+			<button type="submit" class="btn btn-primary btn-lg btn-block mt-5">공연 등록</button>
+		</form>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.js"></script>
+	<script src="/js/perfmgr/perfmgr-registration.js"></script>
+
+	<script>
+		$(document).ready(function () {
+			// 이미지 다이얼로그를 위한 템플릿 오버라이드
+			$.summernote.options.template = {
+				image: function (option) {
+					return `
+		                <div class="note-modal show" tabindex="-1" role="dialog">
+		                    <div class="modal-dialog">
+		                        <div class="modal-content">
+		                            <div class="modal-header">
+		                                <h4 class="modal-title">${option.title}</h4>
+		                                <button type="button" class="close" data-dismiss="modal" role="button">×</button>
+		                            </div>
+		                            <div class="modal-body">${option.body}</div>
+		                        </div>
+		                    </div>
+		                </div>`;
+				}
+			};
+
+			// 모달 닫기 버튼 이벤트 핸들러 추가
+			$(document).on('click', '.note-modal .close', function () {
+				$(this).closest('.note-modal').modal('hide');
+				$(this).closest('.note-modal').hide();
+			});
+		});
+
+		$('#description').summernote({
+			height: 500,
+			lang: 'ko-KR',
+			toolbar: [
+				['fontname', ['fontname']],
+				['fontsize', ['fontsize']],
+				['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+				['color', ['forecolor', 'color']],
+				['para', ['ul', 'ol', 'paragraph']],
+				['insert', ['picture']]
+			],
+			fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', '맑은 고딕', '궁서', '굴림체', '굴림', '돋음체', '바탕체'],
+			fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72', '96'],
+			disableResizeEditor: true,
+			disableResizeImage: true,
+			shortcuts: false,
+			prettifyHtml: false,
+			// 콜백 함수들
+			callbacks: {
+				onImageUpload: function (files) {
+					for (let i = 0; i < files.length; i++) {
+						uploadImage(files[i], this);
+					}
+				},
+				onMediaDelete: function (target) {
+					deleteImage(target[0].src);
+				}
+			}
+		});
+		
+		function uploadImage(file, editor) {
+			const formData = new FormData();
+			formData.append('file', file);
+
+			$.ajax({
+				url: '/performanceApi/description/upload',
+				method: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					$(editor).summernote('insertImage', response.url);
+				},
+				error: function (xhr, status, error) {
+					console.error('이미지 업로드 실패:', error);
+					alert('이미지 업로드에 실패했습니다.');
+				}
+			});
+		}
+
+		function deleteImage(imageUrl) {
+			try {
+				$.ajax({
+					url: '/performanceApi/description/delete',
+					method: 'DELETE',
+					data: {imageUrl: imageUrl},
+					success: function (response) {
+						console.log('Image deleted successfully:', fileName);
+					},
+					error: function (xhr, status, error) {
+						console.error('Image deletion failed:', error);
+					}
+				});
+			} catch (error) {
+				console.error('Error in deleteImage function:', error);
+			}
+		}
+	</script>
+
+	<th:block th:replace="~{common/footer}"></th:block>
+</body>
+
+</html>

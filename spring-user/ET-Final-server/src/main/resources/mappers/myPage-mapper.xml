@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.project.myPage.model.mapper.MyPageMapper">
+
+	<!-- 암호화된 비밀번호 조회 -->
+	<select id="selectEncPw" parameterType="_int"
+		resultType="string">
+		SELECT MEMBER_PW
+		FROM "TB_MEMBER"
+		WHERE MEMBER_NO =
+		#{memberNo}
+	</select>
+
+
+	<!-- 비밀번호 변경 -->
+	<update id="changePw">
+		UPDATE "TB_MEMBER" SET
+		MEMBER_PW = #{encPw}
+		WHERE MEMBER_NO = #{memberNo}
+	</update>
+
+
+	<!-- 비밀번호 비교 조회 -->
+	<select id="memberPwCheck">
+		SELECT MEMBER_PW
+		FROM "TB_MEMBER"
+		WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+	
+	<!-- 네이버 회원 삭제 -->
+	<delete id="membershipNaverOut">
+		DELETE FROM "TB_MEMBER"
+		WHERE MEMBER_NO = #{memberNo}
+		AND NAVER_FL = 'Y'
+	</delete>
+
+
+	<!-- 회원정보 조회 -->
+	<select id="getMemberInfo">
+		SELECT
+		MEMBER_NO, MEMBER_ID, MEMBER_TEL,
+		MEMBER_NICKNAME, MEMBER_EMAIL, MEMBER_GENDER, NAVER_FL
+		FROM "TB_MEMBER"
+		WHERE
+		MEMBER_NO = #{memberNo}
+	</select>
+ 	
+	
+	<!-- 이메일 중복검사 -->
+	<select id="verifyEmail" resultType="_int">
+		SELECT COUNT(*)
+		FROM
+		"TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_EMAIL = #{memberEmail}
+	</select>
+	
+	
+	<!-- 닉네임 중복검사 -->
+	<select id="updateNickname" resultType="_int">
+		SELECT COUNT(*)
+		FROM
+		"TB_MEMBER"
+		WHERE MEMBER_DEL_FL = 'N'
+		AND MEMBER_NICKNAME =
+		#{memberNickname}
+	</select>
+	
+	
+	<!-- 회원 탈퇴 처리 -->
+	<update id="membershipOut">
+		UPDATE "TB_MEMBER"
+		SET
+			MEMBER_DEL_FL = 'Y'
+		WHERE MEMBER_NO = #{memberNo}
+	</update>
+	
+	
+	<!-- 회원 정보 수정 -->
+	<update id="updateMember">
+        UPDATE "TB_MEMBER" SET
+        MEMBER_EMAIL = #{memberEmail},
+        MEMBER_NICKNAME = #{memberNickname},
+        MEMBER_TEL = #{memberTel},
+        MEMBER_GENDER = #{memberGender}
+        WHERE MEMBER_NO = #{memberNo}
+    </update>
+    
+    
+    
+    <!-- 배송지 목록 조회(로드) -->
+    <select id="selectAddressList" parameterType="_int" resultType="AddressDTO">
+    SELECT ADDRESS_NO, MEMBER_NO, RECEIVERNAME, POSTCODE, ADDRESS, 
+           DETAILADDRESS, PHONE, EXTRAPHONE, BASIC_ADDRESS
+    FROM "TB_ADDRESS"
+    WHERE MEMBER_NO = #{memberNo}
+    ORDER BY BASIC_ADDRESS DESC, ADDRESS_NO DESC
+</select>
+
+ 
+    
+     <!-- 배송지 추가 -->
+    <insert id="insertAddress" parameterType="edu.kh.project.myPage.model.dto.AddressDTO">
+    INSERT INTO "TB_ADDRESS" (
+        ADDRESS_NO,          
+        MEMBER_NO, 
+        RECEIVERNAME, 
+        POSTCODE, 
+        ADDRESS, 
+        DETAILADDRESS, 
+        PHONE, 
+        EXTRAPHONE,
+        BASIC_ADDRESS       
+    ) VALUES (
+        SEQ_KEY_NO.NEXTVAL,  
+        #{memberNo}, 
+        #{receiverName}, 
+        #{postcode}, 
+        #{address}, 
+        #{detailAddress}, 
+        #{phone}, 
+        #{extraPhone},
+        'N'                 
+    )
+</insert>
+    
+    <!-- 중복 주소 체크  -->
+    <select id="countDuplicateAddress" parameterType="map" resultType="int">
+    SELECT COUNT(*) 
+    FROM "TB_ADDRESS" 
+    WHERE MEMBER_NO = #{memberNo} 
+    AND ADDRESS = #{address} 
+    AND DETAILADDRESS = #{detailAddress}
+   </select>
+    
+    
+    <!-- 주소 개수 체크 -->
+    <select id="getAddressCount" parameterType="_int" resultType="_int">
+    SELECT COUNT(*) FROM "TB_ADDRESS"
+    WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+	<!-- 기존 기본 배송지 해제하기 -->
+	<update id="resetBasicAddress" parameterType="int">
+    UPDATE "TB_ADDRESS" 
+    SET BASIC_ADDRESS = 'N'
+    WHERE MEMBER_NO = #{memberNo}
+	</update>
+
+	<!-- 새로운 기본 배송지 설정하기 -->
+	<update id="basicAddress" parameterType="map">
+    UPDATE "TB_ADDRESS" 
+    SET BASIC_ADDRESS = 'Y'
+    WHERE ADDRESS_NO = #{addressNo}
+    AND MEMBER_NO = #{memberNo}
+	</update>
+	
+	
+
+	<!-- 배송지 수정 -->
+	<update id="updateAddress" parameterType="AddressDTO">
+    UPDATE TB_ADDRESS
+    SET RECEIVERNAME = #{receiverName},
+        POSTCODE = #{postcode},
+        ADDRESS = #{address},
+        DETAILADDRESS = #{detailAddress},
+        PHONE = #{phone},
+        EXTRAPHONE = #{extraPhone}
+    WHERE ADDRESS_NO = #{addressNo}
+	</update>
+	
+	
+	<!-- 주소 데이터 조회 -->
+	<select id="selectAddress" parameterType="int" resultType="AddressDTO">
+    SELECT ADDRESS_NO, MEMBER_NO, RECEIVERNAME, POSTCODE, ADDRESS, 
+           DETAILADDRESS, PHONE, EXTRAPHONE, BASIC_ADDRESS
+    FROM "TB_ADDRESS"
+    WHERE ADDRESS_NO = #{addressNo}
+	</select>
+	
+	
+	
+	<!-- 배송지 삭제 -->
+	<delete id="deleteAddress" parameterType="map">
+    DELETE FROM "TB_ADDRESS"
+    WHERE ADDRESS_NO = #{addressNo}
+    AND MEMBER_NO = #{memberNo}
+	</delete>
+    
+    
+    <!-- 사용자 찜한 목록 조회 -->
+    <select id="userWishList">
+    	SELECT
+		    MT20ID,
+		    PRFNM,
+		    PRFPDFROM,
+		    PRFPDTO,
+		    FCLTYNM,
+		    PRFRUNTIME,
+		    POSTER,
+		    AVGRATING,
+		    MEMBER_NO
+		FROM (
+		    SELECT 
+		        A.*,
+		        ROWNUM AS RN
+		    FROM (
+		        SELECT
+		            MT20ID,
+		            PRFNM,
+		            PRFPDFROM,
+		            PRFPDTO,
+		            FCLTYNM,
+		            PRFRUNTIME,
+		            POSTER,
+		            NVL(PRFREVIEW_RANK, 0) as AVGRATING,
+		            MEMBER_NO
+		        FROM TB_PERFORMANCES_DETAIL
+		        JOIN TB_PERFORMANCE_WISH USING(MT20ID)
+		        WHERE MEMBER_NO = #{memberNo}
+		        ORDER BY MT20ID DESC
+		    ) A
+		)
+		<![CDATA[
+			WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
+		]]>
+    </select>
+    
+    <!-- 찜목록 삭제 -->
+	<delete id="deleteWishlistItems" parameterType="map">
+	    DELETE FROM TB_PERFORMANCE_WISH 
+	    WHERE MEMBER_NO = #{memberNo}
+	    AND MT20ID IN
+	    <foreach collection="performanceIds" item="id" open="(" separator="," close=")">
+	        #{id}
+	    </foreach>
+	</delete>
+	
+	<!-- 1:1 문의 작성 -->
+	<insert id="inquiryWrite" parameterType="map">
+		INSERT INTO "TB_INQUIRY"(
+			INQUIRY_NO,
+			INQUIRY_TITLE,
+			INQUIRY_CONTENT,
+			INQUIRY_DATE,
+			INQUIRY_DEL_FL,
+			MEMBER_NO
+		) VALUES (
+			SEQ_INQUIRY_NO.NEXTVAL,
+			#{inquiryTitle},
+			#{inquiryContent},
+			DEFAULT,
+			DEFAULT,
+			#{memberNo}
+		)
+	</insert>
+	
+	<!-- 오라클용 페이징 처리를 위한 매퍼 수정 -->
+	<select id="getInquiries" resultType="Inquiry">
+	    SELECT * FROM (
+	        SELECT ROWNUM rnum, A.* FROM (
+	            SELECT 
+	                INQUIRY_NO, INQUIRY_TITLE, INQUIRY_CONTENT,
+	                INQUIRY_DATE, INQUIRY_DEL_FL, MEMBER_NO,
+	                REPLY_IS, REPLY_CONTENT
+	            FROM TB_INQUIRY
+	            WHERE MEMBER_NO = #{memberNo}
+	            AND INQUIRY_DEL_FL = 'N'
+	            <if test='searchType == "title" and keyword != null and keyword != ""'>
+	                AND INQUIRY_TITLE LIKE '%' || #{keyword} || '%'
+	            </if>
+	            <if test='searchType == "content" and keyword != null and keyword != ""'>
+	                AND INQUIRY_CONTENT LIKE '%' || #{keyword} || '%'
+	            </if>
+	            ORDER BY INQUIRY_NO DESC
+	        ) A WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{limit}
+	    ) WHERE rnum > #{offset}
+	</select>
+	
+	<!-- 문의 총 개수 조회 -->
+    <select id="getInquiryCount" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_INQUIRY
+        WHERE MEMBER_NO = #{memberNo}
+        AND INQUIRY_DEL_FL = 'N'
+        <if test='searchType == "title" and keyword != null and keyword != ""'>
+            AND INQUIRY_TITLE LIKE '%' || #{keyword} || '%'
+        </if>
+        <if test='searchType == "content" and keyword != null and keyword != ""'>
+            AND INQUIRY_CONTENT LIKE '%' || #{keyword} || '%'
+        </if>
+    </select>
+
+    <!-- 문의 상세 조회 -->
+    <select id="getInquiryDetail" resultType="Inquiry">
+        SELECT 
+        	INQUIRY_NO,
+			INQUIRY_TITLE,
+			INQUIRY_CONTENT,
+			TO_CHAR(INQUIRY_DATE, 'YYYY-MM-DD') AS INQUIRY_DATE,
+			INQUIRY_DEL_FL,
+			MEMBER_NO,
+			REPLY_IS,
+			REPLY_CONTENT
+        FROM TB_INQUIRY
+        WHERE INQUIRY_NO = #{inquiryNo}
+        AND INQUIRY_DEL_FL = 'N'
+    </select>
+    
+    <!-- 문의 사항 삭제  -->
+	<update id="deleteInquiry">
+	    UPDATE TB_INQUIRY
+	    SET INQUIRY_DEL_FL = 'Y'
+	    WHERE INQUIRY_NO = #{inquiryNo}
+	   	AND MEMBER_NO = #{memberNo}
+	</update>
+	
+	
+    
+    <!-- 예매 상세 정보 조회 -->
+	<select id="selectBookingHistory" parameterType="int" resultType="edu.kh.project.myPage.model.dto.ticketInfoDTO">
+	    SELECT
+	        TO_CHAR(BOOKING_DATE, 'YYYY-MM-DD HH24:MI:SS') AS BOOKING_DATE,
+        	TO_CHAR(PAID_AT, 'YYYY-MM-DD HH24:MI:SS') AS PAID_AT,
+	        BOOKING_ID AS bookingId,
+	        PERFORMANCE_NAME AS performanceName,  
+	        SHOW_DATE_TIME AS showDateTime,
+	        TICKET_COUNT AS ticketCount,
+	        TO_CHAR(CANCELABLE_UNTIL, 'YYYY-MM-DD HH24:MI:SS') AS CANCELABLE_UNTIL,
+	        BOOKING_STATUS AS bookingStatus,
+	        MEMBER_NO AS memberNo,
+        	MT20ID AS mt20id
+	    FROM TB_BOOKING_HISTORY
+	    WHERE  MEMBER_NO = #{memberNo}
+	     <if test="status != null and status != '' and status != 'ALL'">
+	         AND BOOKING_STATUS = #{status} 
+	     </if>
+	     <if test="startDate != null and startDate != ''">
+	        AND BOOKING_DATE >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	    </if>
+	    <if test="endDate != null and endDate != ''">
+	    	AND BOOKING_DATE >= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	    </if>
+	     <if test="bookingId != null and bookingId != ''">
+	         AND BOOKING_ID = #{bookingId}
+	     </if>
+	    ORDER BY BOOKING_DATE DESC
+	</select>
+	
+	
+	<!-- 예매 상세 정보 조회 -->
+	<select id="selectBookingDetail" resultType="edu.kh.project.myPage.model.dto.ticketInfoDTO">
+	    SELECT 
+	        tb.BOOKING_DATE AS bookingDate,
+	        tp.PAID_AT AS paidAt,
+	        tb.MERCHANT_UID AS bookingId,
+	        pd.PRFNM AS performanceName,
+	        pd.POSTER AS poster,
+	        pd.FCLTYNM AS fcltyName,
+	        TO_CHAR(ts.SHOW_DATE, 'YYYY-MM-DD') || ' ' || ts.SHOW_TIME AS showDateTime,
+	        COUNT(ts.SEATS_ID) AS ticketCount,
+	        LISTAGG(ts.SEATS_ID, ', ') WITHIN GROUP (ORDER BY ts.SEATS_ID) AS seatInfo,
+	        TRUNC(ts.SHOW_DATE - 1) AS cancelableUntil,
+	        tb.BOOKING_STATUS AS bookingStatus,
+	        tp.PAID_AMOUNT AS totalPaid
+	    FROM 
+	        TB_TICKET_BOOKING tb
+	    JOIN TB_TICKET_SEAT ts 
+		   ON tb.MERCHANT_UID = ts.MERCHANT_UID
+	    JOIN TB_PERFORMANCES_DETAIL pd ON tb.MT20ID = pd.MT20ID
+	    JOIN TB_PAYMENT tp ON tb.MERCHANT_UID = tp.MERCHANT_UID
+	    WHERE 
+	        tb.MERCHANT_UID = #{bookingId}
+	        AND tb.MEMBER_NO = #{memberNo}
+	        AND tb.BOOKING_STATUS IN ('COMPLETE', 'CANCELED')
+	    GROUP BY 
+	        tb.BOOKING_DATE, tp.PAID_AT, tb.MERCHANT_UID, pd.PRFNM, pd.POSTER, pd.FCLTYNM, ts.SHOW_DATE, ts.SHOW_TIME, tb.BOOKING_STATUS, tp.PAID_AMOUNT
+	</select>
+	
+	
+	
+	<!-- TB_TICKET_SEAT: 예약된 좌석 삭제 -->
+	<delete id="deleteTicketSeat" parameterType="string">
+	    DELETE FROM TB_TICKET_SEAT
+	    WHERE MERCHANT_UID = #{bookingId}
+	</delete>
+	
+	<!-- TB_PAYMENT: 결제 상태 업데이트 -->
+	<update id="updatePaymentStatus" parameterType="string">
+	    UPDATE TB_PAYMENT
+	    SET STATUS = 'CANCELED'
+	    WHERE MERCHANT_UID = #{bookingId}
+	</update>
+	
+	<!-- TB_TICKET_BOOKING: 예약 상태 업데이트 -->
+	<update id="updateBookingStatus" parameterType="map">
+	    UPDATE TB_TICKET_BOOKING
+	    SET BOOKING_STATUS = 'CANCELED'
+	    WHERE MERCHANT_UID = #{bookingId}
+	    AND MEMBER_NO = #{memberNo}
+	</update>
+	
+	<!-- TB_BOOKING_HISTORY: 예매 내역 상태 업데이트 -->
+	<update id="updateHistoryStatus" parameterType="string">
+	    UPDATE TB_BOOKING_HISTORY
+	    SET BOOKING_STATUS = 'CANCELED'
+	    WHERE BOOKING_ID = #{bookingId}
+	</update>
+	
+	
+</mapper>

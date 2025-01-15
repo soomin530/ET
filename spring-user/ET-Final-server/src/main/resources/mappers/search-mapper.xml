@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper	namespace="edu.kh.project.search.model.mapper.SearchMapper">
+
+	<!-- 공연 검색 -->
+    <select id="searchPerformances" >
+        SELECT 
+		    MT20ID,
+		    PRFNM,
+		    FCLTYNM,
+		    PRFPDTO,
+		    POSTER
+		FROM 
+		    TB_PERFORMANCES_DETAIL
+		WHERE UPPER(PRFNM) LIKE '%' || UPPER(#{keyword}) || '%'
+		ORDER BY 
+		    PRFPDFROM DESC
+    </select>
+    
+    <!-- 공지사항 검색 -->
+    <select id="searchNotices">
+        SELECT 
+		    ANNOUNCE_NO,
+			ANNOUNCE_TITLE,
+			ANNOUNCE_CONTENT,
+			ANNOUNCE_WRITE_DATE,
+			ANNOUNCE_DEL_FL
+		FROM 
+		    ANNOUNCEMENT
+		WHERE 
+		    UPPER(ANNOUNCE_TITLE) LIKE '%' || UPPER(#{keyword}) || '%'
+		    OR UPPER(ANNOUNCE_CONTENT) LIKE '%' || UPPER(#{keyword}) || '%'
+		AND ANNOUNCE_DEL_FL = 'N'
+		ORDER BY 
+		    ANNOUNCE_WRITE_DATE DESC
+    </select>
+    
+    <!-- 공연 제목 자동완성 -->
+    <select id="getPerformanceSuggestions" resultType="map">
+    	<![CDATA[
+	        SELECT 
+			    PRFNM AS TITLE,
+			    'performance' AS TYPE,
+			    MT20ID AS ID
+			FROM 
+			    TB_PERFORMANCES_DETAIL
+			WHERE UPPER(PRFNM) LIKE '%' || UPPER(#{keyword}) || '%'
+			AND ROWNUM <= 5
+		]]>
+    </select>
+    
+    <!-- 공지사항 제목 자동완성 -->
+    <select id="getNoticeSuggestions" resultType="map">
+    	<![CDATA[
+	        SELECT 
+	            ANNOUNCE_TITLE AS TITLE,
+	            'notice' AS TYPE,
+	            ANNOUNCE_NO AS ID
+	        FROM 
+	            ANNOUNCEMENT
+	        WHERE UPPER(ANNOUNCE_TITLE) LIKE '%' || UPPER(#{keyword}) || '%'
+	        AND ANNOUNCE_DEL_FL = 'N'
+	        AND ROWNUM <= 5
+        ]]>
+    </select>
+
+
+</mapper>

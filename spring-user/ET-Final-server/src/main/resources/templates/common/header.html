@@ -1,64 +1,99 @@
-<header th:fragment="header">
-	<nav class="navbar">
-		<div class="container-fluid">
-			<div class="logo">
-				<img th:src="@{/apple-touch-icon.png}" alt="ET e.ticket Logo">
-				ET e.ticket
+<!-- 메인 레이아웃 구조 -->
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ET e.ticket</title>
+</head>
+
+<body>
+	<!-- 헤더 시작 -->
+	<header th:fragment="header">
+		<nav class="navbar">
+			<div class="container-fluid">
+				<!-- 로고 영역 -->
+				<a href="/" class="logo">
+					<img th:src="@{/apple-touch-icon.png}" alt="ET e.ticket Logo">
+					ET e.ticket
+				</a>
+
+				<div class="nav-menu">
+					<a href="/performance/genre/musical" class="nav-link">뮤지컬</a>
+					<a href="/performance/genre/theater" class="nav-link">연극</a>
+					<a href="/performance/genre/classic" class="nav-link">클래식</a>
+				</div>
+
+				<div class="search-container">
+					<div class="search-wrapper">
+						<input type="text" id="searchInput" placeholder="검색어를 입력하세요" autocomplete="off">
+						<button id="searchButton">검색</button>
+
+						<!-- 연관검색어 결과 표시 영역 -->
+						<div class="search-suggestions" id="searchSuggestions">
+							<!-- 자동완성 결과가 여기에 동적으로 추가됨 -->
+						</div>
+					</div>
+				</div>
+
+				<!-- 로그인 상태별 버튼 영역 -->
+				<div class="header-buttons" th:with="member=${session.loginMember}">
+					<!-- 비로그인 상태 -->
+					<th:block th:if="${member == null}">
+						<button class="login-button" onclick="openModal('loginModal')">로그인</button>
+						<button class="signup-button" onclick="openModal('selectModal')">회원가입</button>
+					</th:block>
+
+					<!-- 로그인 상태 -->
+					<th:block th:if="${member != null}">
+						<!-- 네이버 로그인 회원 -->
+						<th:block th:if="${member.naverFl == 'Y'}">
+							<button class="nickname-button" th:text="${member.memberNickname}"
+								onclick="location.href='/mypage/memberInfo'">닉네임</button>
+							<button class="mypage-button" onclick="location.href='/mypage/mypageInfo'">마이페이지</button>
+							<button class="logout-button" onclick="naverLogoutSession()">로그아웃</button>
+						</th:block>
+
+						<!-- 일반 회원 -->
+						<th:block th:if="${member.naverFl == 'N' && member.memberAuth == 1}">
+							<button class="nickname-button" th:text="${member.memberNickname}"
+								onclick="location.href='/mypage/memberInfo'">닉네임</button>
+							<button class="mypage-button" onclick="location.href='/mypage/mypageInfo'">마이페이지</button>
+							<button class="logout-button" onclick="logoutSession()">로그아웃</button>
+						</th:block>
+
+						<!-- 시스템 관리자 -->
+						<th:block th:if="${member.memberAuth == 2}">
+							<button class="nickname-button" th:text="${member.memberNickname}"
+								onclick="location.href='http://localhost:3000'"></button>
+							<button class="logout-button" onclick="logoutSession()">로그아웃</button>
+						</th:block>
+
+						<!-- 공연 관리자 -->
+						<th:block th:if="*{member.memberAuth == 3}">
+							<button class="nickname-button" th:text="*{member.concertManagerNickname}" style="cursor: unset;">공연관리자 닉네임</button>
+							<button id="performanceManagerButton" class="performance-manage-button"
+								onclick="location.href='/perfmgr/perfmgr-management'">공연관리</button>
+							<button class="logout-button" onclick="perfLogoutSession()">로그아웃</button>
+						</th:block>
+				</div>
 			</div>
+		</nav>
 
-			<div class="nav-menu">
-				<a href="#" class="nav-link">뮤지컬</a>
-				<a href="#" class="nav-link">연극</a>
-				<a href="#" class="nav-link">클래식</a>
-			</div>
+		<!-- 모달 참조 수정 -->
+		<th:block th:replace="~{common/modals/login :: loginModal}"></th:block>
+		<th:block th:replace="~{common/modals/admin-login :: adminLoginModal}"></th:block>
+		<th:block th:replace="~{common/modals/signup-select :: selectModal}"></th:block>
+		<th:block th:replace="~{common/modals/user-signup :: userSignupModal}"></th:block>
+		<th:block th:replace="~{common/modals/manager-signup :: managerSignupModal}"></th:block>
+	</header>
 
-			<div class="search-container">
-				<input type="text" placeholder="검색어를 입력하세요">
-				<button>검색</button>
-			</div>
+	<!-- Scripts -->
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="/js/header.js"></script>
+	<script src="/js/perfmgr/perfmgr.js"></script>
+	<script src="/js/common/search.js"></script>
+</body>
 
-			<div class="header-buttons">
-				<button class="login-button" onclick="openModal('loginModal')">로그인</button>
-				<button onclick="openModal('signupModal')">회원가입</button>
-			</div>
-		</div>
-	</nav>
-</header>
-
-<!-- Modal for Login -->
-<div id="loginModal" class="modal">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h2>로그인</h2>
-			<span class="close" onclick="closeModal('loginModal')">&times;</span>
-		</div>
-		<div class="modal-body">
-			<input type="text" placeholder="이메일" required>
-			<input type="password" placeholder="비밀번호" required>
-			<button>로그인</button>
-		</div>
-		<div class="modal-footer">
-			<p>아직 계정이 없으신가요? <a href="#" onclick="openModal('signupModal'); closeModal('loginModal')">회원가입</a></p>
-		</div>
-	</div>
-</div>
-
-<!-- Modal for Signup -->
-<div id="signupModal" class="modal">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h2>회원가입</h2>
-			<span class="close" onclick="closeModal('signupModal')">&times;</span>
-		</div>
-		<div class="modal-body">
-			<input type="text" placeholder="이메일" required>
-			<input type="password" placeholder="비밀번호" required>
-			<input type="password" placeholder="비밀번호 확인" required>
-			<button>회원가입</button>
-		</div>
-		<div class="modal-footer">
-			<p>이미 계정이 있으신가요? <a href="#" onclick="openModal('loginModal'); closeModal('signupModal')">로그인</a></p>
-		</div>
-	</div>
-</div>
-
+</html>

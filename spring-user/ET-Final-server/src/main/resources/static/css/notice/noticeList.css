@@ -1,0 +1,271 @@
+.notice-container {
+	max-width: 1200px;
+	margin: 100px auto 50px;
+	padding: 0 20px;
+}
+
+.notice-header-section {
+	text-align: center;
+	/* margin-bottom: 50px; */
+	/* padding: 20px 0; */
+	/* border-bottom: 1px solid #eee; */
+}
+
+.notice-title {
+	font-size: 2.5rem;
+	color: #333;
+	margin-bottom: 15px;
+	font-weight: 700;
+}
+
+.notice-subtitle {
+	color: #666;
+	font-size: 1.1rem;
+	font-weight: 300;
+}
+
+.notice-list {
+	background: #fff;
+	border-radius: 15px;
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+}
+
+.notice-item {
+	border-bottom: 1px solid #eee;
+	transition: all 0.3s ease;
+}
+
+.notice-item:last-child {
+	border-bottom: none;
+}
+
+.notice-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 25px 30px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	position: relative;
+}
+
+.notice-header:hover {
+	background-color: rgba(0, 76, 255, 0.02);
+}
+
+.notice-info {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	flex: 1;
+}
+
+.notice-badge {
+	background: linear-gradient(135deg, #004CFF, #0039e5);
+	color: white;
+	padding: 5px 12px;
+	border-radius: 20px;
+	font-size: 0.85rem;
+	font-weight: 500;
+}
+
+.notice-subject {
+	font-weight: 500;
+	color: #333;
+	font-size: 1.1rem;
+	transition: color 0.3s ease;
+}
+
+.notice-meta {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+}
+
+.notice-date {
+	color: #888;
+	font-size: 0.95rem;
+	font-weight: 400;
+}
+
+.notice-arrow {
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background-color: #f8f9fa;
+	transition: all 0.3s ease;
+}
+
+.notice-item.active .notice-arrow {
+	background-color: #004CFF;
+	transform: rotate(180deg);
+}
+
+.notice-item.active .notice-arrow i {
+	color: white;
+}
+
+.fa-chevron-down {
+	font-size: 0.9rem;
+	color: #666;
+	transition: transform 0.3s ease;
+}
+
+.notice-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.notice-item.active .notice-arrow i {
+    transform: rotate(180deg);
+}
+
+.notice-content-inner {
+	padding: 30px;
+	line-height: 1.8;
+	color: #444;
+	font-size: 1.05rem;
+}
+
+/* 호버 효과 */
+.notice-item:hover .notice-subject {
+	color: #004CFF;
+}
+
+.notice-item.active .notice-header {
+	background-color: rgba(0, 76, 255, 0.05);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+	.notice-container {
+		margin: 60px auto 30px;
+		padding: 0 15px;
+	}
+
+	.notice-title {
+		font-size: 2rem;
+	}
+
+	.notice-header {
+		padding: 20px;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	.notice-meta {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.notice-badge {
+		font-size: 0.8rem;
+		padding: 4px 10px;
+	}
+
+	.notice-subject {
+		font-size: 1rem;
+	}
+}
+
+/* 우수민 공지사항 검색 추가 */
+.notice-search-container {
+	justify-self: center;
+	width: 60%;
+	border-bottom: 1px solid #e9ecef;
+	padding: 30px 0;
+	margin-bottom: 30px;
+}
+
+.notice-search-box {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+.notice-search-input {
+	flex: 1;
+	height: 42px;
+	padding: 0 16px;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	font-size: 15px;
+	transition: all 0.2s;
+}
+
+.notice-search-input:focus {
+	outline: none;
+	border-color: #4263eb;
+	box-shadow: 0 0 0 3px rgba(66, 99, 235, 0.1);
+}
+
+.notice-search-type {
+	height: 42px;
+	padding: 0 12px;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	background-color: white;
+	font-size: 15px;
+	min-width: 120px;
+	cursor: pointer;
+}
+
+.notice-search-button {
+	height: 42px;
+	padding: 0 24px;
+	background-color: #4263eb;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-weight: 500;
+	font-size: 15px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.notice-search-button:hover {
+	background-color: #364fc7;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 20px;
+    display: none;
+}
+
+.loading-indicator.show {
+    display: block;
+}
+
+@media (max-width: 768px) {
+	.notice-search-box {
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.notice-search-input {
+		width: 100%;
+		flex: none;
+	}
+
+	.notice-search-type {
+		width: calc(50% - 4px);
+		min-width: 0;
+	}
+
+	.notice-search-button {
+		width: calc(50% - 4px);
+	}
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>아이디/비밀번호 찾기</title>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+	
+	<th:block th:replace="~{common/common}"></th:block>
+	<link rel="stylesheet" href="/css/common/findMember.css">
+	
+</head>
+
+<body>
+	<th:block th:replace="~{common/header}"></th:block>
+
+	<div class="container">
+		<div class="page-header">
+			<h2>아이디/비밀번호 찾기</h2>
+		</div>
+		
+		<!-- 네이버 사용자 안내 문구 추가 -->
+	    <div class="social-login-notice">
+	        <p>📢 네이버 계정으로 가입하신 경우, 네이버에서 직접 계정 정보를 찾아주세요.</p>
+	        <a href="https://nid.naver.com/user2/help/idInquiry" target="_blank" class="naver-link">네이버 아이디 찾기</a>
+	        <a href="https://nid.naver.com/user2/help/pwInquiry" target="_blank" class="naver-link">네이버 비밀번호 찾기</a>
+	    </div>
+
+		<!-- 탭 버튼 -->
+		<div class="tab-buttons">
+			<button type="button" id="switchIdMode" class="tab-button find-id-btn">아이디 찾기</button>
+			<button type="button" id="switchPwMode" class="tab-button find-pw-btn">비밀번호 찾기</button>
+		</div>
+
+		<!-- 아이디 찾기 폼 -->
+		<form id="findIdForm" class="find-form">
+			<div class="input-group">
+				<div class="verification-container">
+					<input type="email" id="findIdEmail" class="input-field" placeholder="이메일" required>
+					<button type="button" class="auth-button get-code-btn">인증번호 받기</button>
+				</div>
+				<div class="message" id="findIdEmailMessage"></div>
+			</div>
+
+			<div class="input-group">
+				<div class="verification-container">
+					<input type="text" id="findIdVerificationCode" class="input-field" placeholder="인증번호 입력" required>
+					<button type="button" class="auth-button verify-code-btn">인증확인</button>
+				</div>
+				<div class="message" id="findIdVerifyMessage"></div>
+			</div>
+
+			<button type="button" class="submit-button find-id-submit" id="findIdButton">아이디 정보 조회</button>
+		</form>
+
+		<!-- 비밀번호 찾기 폼 -->
+		<form id="findPwForm" class="find-form" style="display: none;">
+			<div class="input-group">
+				<input type="text" id="findPwId" class="input-field" placeholder="아이디" required>
+				<div class="message" id="findIdMessage"></div>
+			</div>
+
+			<div class="input-group">
+				<div class="verification-container">
+					<input type="email" id="findPwEmail" class="input-field" placeholder="이메일" required>
+					<button type="button" class="auth-button get-code-btn">인증번호 받기</button>
+				</div>
+				<div class="message" id="findPwEmailMessage"></div>
+			</div>
+
+			<div class="input-group">
+				<div class="verification-container">
+					<input type="text" id="findPwVerificationCode" class="input-field" placeholder="인증번호 입력" required>
+					<button type="button" class="auth-button verify-code-btn">인증확인</button>
+				</div>
+				<div class="message" id="findPwVerifyMessage"></div>
+			</div>
+
+			<button type="button" class="submit-button find-pw-submit" id="findPwButton">비밀번호 재설정</button>
+		</form>
+
+	</div>
+
+	<th:block th:replace="~{common/footer}"></th:block>
+
+	<script src="/js/common/findMember.js"></script>
+	
+</body>
+
+</html>

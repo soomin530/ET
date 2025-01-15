@@ -1,0 +1,187 @@
+/* 공통 스타일 */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* 폼 요소 */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.input-group-append .btn {
+    z-index: 0;
+}
+
+/* 선택 요소 */
+#venue-select {
+    max-width: 100%;
+}
+
+#venue-info {
+    transition: all 0.3s ease;
+}
+
+/* 섹션 스타일 */
+.section-title {
+    margin: 30px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+/* 그룹 컨테이너 */
+.schedule-group,
+.price-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    position: relative;
+    background-color: #fff;
+}
+
+.schedule-group {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 제거 버튼 */
+.remove-schedule {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+/* 시간 입력 */
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.time-input {
+    width: 120px;
+    text-align: center;
+}
+
+/* 버튼 스타일 */
+.add-btn {
+    margin: 10px 0 20px;
+    width: 100%;
+}
+
+/* 요일 선택 버튼 그룹 */
+.days-checkbox-group {
+    margin: 10px 0;
+}
+
+.days-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+}
+
+.days-buttons .btn {
+    border-radius: 20px;
+    padding: 8px 15px;
+    margin: 0;
+    flex: 0 0 auto;
+    font-weight: 500;
+}
+
+.days-buttons .btn input[type="checkbox"] {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+.days-buttons .btn.active {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.days-buttons .btn-outline-warning.active {
+    background-color: #ffc107;
+    color: #000;
+}
+
+/* Flatpickr 커스텀 스타일 */
+.flatpickr-day.disabled {
+    background-color: #ffebee;
+    text-decoration: line-through;
+    cursor: not-allowed;
+}
+
+.flatpickr-day.disabled:hover {
+    background-color: #ffcdd2;
+}
+
+.flatpickr-day.selected {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+/* 멀티 셀렉트 */
+select[multiple] {
+    height: 120px;
+}
+
+.btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #f8f9fa;
+    border-color: #ddd;
+}
+
+#poster-preview {
+    position: relative;
+    display: none;
+    margin-top: 10px;
+    max-width: 200px;  /* 이미지 컨테이너의 최대 너비 설정 */
+}
+
+#poster-preview img {
+    width: 100%;
+    height: auto;
+    display: block;  /* 이미지 아래 여백 제거 */
+}
+
+.close-preview {
+    position: absolute;
+    top: 5px;           /* 상단에서 약간 여백 */
+    right: 5px;         /* 우측에서 약간 여백 */
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 68, 68, 0.9);  /* 배경색 약간 투명하게 */
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 2;         /* 이미지보다 위에 표시되도록 z-index 추가 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);  /* 그림자 효과 */
+}
+
+.close-preview:hover {
+    background-color: rgba(204, 0, 0, 0.95);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}

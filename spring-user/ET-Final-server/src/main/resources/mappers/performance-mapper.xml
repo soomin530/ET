@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.project.performance.model.mapper.PerformanceMapper">
+
+	<!-- 장르별 공연 목록 조회 -->
+	<select id="genre" resultType="Performance">
+	    SELECT MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER, PRFREVIEW_RANK, PERFORMANCE_DEL_FL
+	    FROM TB_PERFORMANCES_DETAIL
+	    WHERE GENRENM = #{genre}
+	    AND PERFORMANCE_DEL_FL = 'N'
+	</select>
+	
+	<!-- 공연 목록 페이징 조회 (검색 기능 추가) -->
+	<select id="genreWithPaging" resultType="Performance">
+		SELECT *
+		FROM (
+		    SELECT
+		        p.MT20ID, p.PRFNM, p.PRFPDFROM, p.PRFPDTO, p.FCLTYNM, p.POSTER, NVL(p.PRFREVIEW_RANK, 0) as AVGRATING, p.PERFORMANCE_DEL_FL,
+		        <if test="filter == 'rating'">
+		            COALESCE(p.PRFREVIEW_RANK, 0) as RATING,
+		        </if>
+		        ROW_NUMBER() OVER (
+		            ORDER BY
+		            <choose>
+		                <when test="filter == 'rating'">
+		                    COALESCE(p.PRFREVIEW_RANK, 0) DESC, p.PRFPDFROM DESC
+		                </when>
+		                <when test="filter == 'upcoming'">
+		                    p.PRFPDFROM ASC
+		                </when>
+		                <when test="filter == 'ongoing'">
+		                    p.PRFPDTO ASC
+		                </when>
+		                <otherwise>
+		                    p.PRFPDFROM DESC
+		                </otherwise>
+		            </choose>
+		        ) AS RN
+		    FROM TB_PERFORMANCES_DETAIL p
+		    <where>
+		        <if test="genre != null and genre != ''">
+		            p.GENRENM = #{genre}
+		        </if>
+		        <if test="searchKeyword != null and searchKeyword != ''">
+		            <choose>
+		                <when test="searchType == 'title'">
+		                    AND UPPER(p.PRFNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                </when>
+		                <when test="searchType == 'venue'">
+		                    AND UPPER(p.FCLTYNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                </when>
+		                <otherwise>
+		                    AND (
+		                        UPPER(p.PRFNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                        OR UPPER(p.FCLTYNM) LIKE UPPER('%' || #{searchKeyword} || '%')
+		                    )
+		                </otherwise>
+		            </choose>
+		        </if>
+		        <if test="filter == 'upcoming'">
+		            <![CDATA[ AND p.PRFPDFROM > TRUNC(SYSDATE) ]]>
+		        </if>
+		        <if test="filter == 'ongoing'">
+		            <![CDATA[ 
+		                AND p.PRFPDFROM <= TRUNC(SYSDATE)
+		                AND p.PRFPDTO >= TRUNC(SYSDATE)
+		            ]]>
+		        </if>
+		    </where>
+		)
+		<![CDATA[
+		WHERE RN > #{offset} AND RN <= #{offset} + #{pageSize}
+		    AND PERFORMANCE_DEL_FL = 'N'
+		]]>
+	</select>
+	
+	<!-- 공연 상세페이지 조회 -->
+	<select id="detail">
+		SELECT 
+			TPD.MT20ID, 
+			TPD.POSTER, 
+			TPD.PRFNM, 
+			TPD.FCLTYNM, 
+			TPD.PRFPDFROM, 
+			TPD.PRFPDTO,  
+			TPD.PRFRUNTIME, 
+			TPD.PRFCAST, 
+			TPD.PCSEGUIDANCE, 
+			NVL(TPD.PRFREVIEW_RANK, 0) as AVGRATING, 
+			TPD.DESCRIPTION,
+			TPD.PERFORMANCE_DEL_FL,
+			TV.ADRES
+		FROM TB_PERFORMANCES_DETAIL TPD
+		JOIN TB_VENUE TV USING(MT10ID)
+		WHERE MT20ID = #{mt20id}
+		AND PERFORMANCE_DEL_FL = 'N'
+	</select>
+	
+	<!-- 공연 위도, 경도 조회 -->
+	<select id="selectPerformanceById">
+		SELECT FCLTLA, FCLTLO
+		FROM TB_VENUE JOIN TB_PERFORMANCES_DETAIL USING(MT10ID)
+		WHERE MT20ID = #{mt20id}
+	</select>
+	
+	<!-- 스케줄 조회 -->
+	<select id="getScheduleData" resultType="map">
+        SELECT 
+		   p.MT20ID,
+		   pt.DAY_OF_WEEK,
+		   CASE 
+		       WHEN pt.DAY_OF_WEEK = 1 THEN '월요일'
+		       WHEN pt.DAY_OF_WEEK = 2 THEN '화요일'
+		       WHEN pt.DAY_OF_WEEK = 3 THEN '수요일'
+		       WHEN pt.DAY_OF_WEEK = 4 THEN '목요일'
+		       WHEN pt.DAY_OF_WEEK = 5 THEN '금요일'
+		       WHEN pt.DAY_OF_WEEK = 6 THEN '토요일'
+		       WHEN pt.DAY_OF_WEEK = 7 THEN '일요일'
+		   END AS day_name,
+		   pt.PERFORMANCE_TIME as time,
+		   'available' as status  
+		FROM 
+		   TB_PERFORMANCES_DETAIL p
+		   INNER JOIN TB_PERFORMANCE_TIME pt ON p.MT20ID = pt.MT20ID
+		   LEFT JOIN TB_TICKET_SEAT ts ON (
+		       ts.MT20ID = p.MT20ID
+		       AND ts.SHOW_TIME = pt.PERFORMANCE_TIME
+		       AND ts.SHOW_DATE >= TRUNC(SYSDATE)
+		   )
+		WHERE 
+		   p.MT20ID = #{mt20id}
+		   AND pt.DAY_OF_WEEK IS NOT NULL
+		GROUP BY 
+		   p.MT20ID,
+		   pt.DAY_OF_WEEK,
+		   pt.PERFORMANCE_TIME
+		ORDER BY 
+		   pt.DAY_OF_WEEK, 
+		   pt.PERFORMANCE_TIME
+    </select>
+   
+    
+	<!-- 좌석 조회 -->
+	<select id="getRemainingSeats">
+		<![CDATA[
+	        SELECT 
+		        pt.PERFORMANCE_TIME as time,
+		        (v.SEATSCALE - NVL((
+		            SELECT COUNT(*)
+		            FROM ETFIVE.TB_TICKET_SEAT ts_sub
+		            WHERE ts_sub.MT20ID = #{performanceId}
+		            AND ts_sub.SHOW_DATE = TO_DATE(#{selectedDate}, 'YYYY-MM-DD')
+		            AND ts_sub.SEAT_STATUS IN ('BOOKED', 'BLOCKED')
+		            AND ts_sub.SHOW_TIME = pt.PERFORMANCE_TIME
+		        ), 0)) AS seats,
+		        'available' as seatStatus
+		    FROM ETFIVE.TB_VENUE v
+		    JOIN ETFIVE.TB_PERFORMANCES_DETAIL pd ON v.MT10ID = pd.MT10ID
+		    JOIN ETFIVE.TB_PERFORMANCE_TIME pt ON pd.MT20ID = pt.MT20ID
+		    WHERE pd.MT20ID = #{performanceId}
+		    AND pt.DAY_OF_WEEK = CASE 
+		        WHEN TO_CHAR(TO_DATE(#{selectedDate}, 'YYYY-MM-DD'), 'D') = '1' THEN 7  -- 일요일
+		        ELSE TO_CHAR(TO_DATE(#{selectedDate}, 'YYYY-MM-DD'), 'D') - 1
+		    END
+		    AND v.SEATSCALE > 0
+		    ORDER BY pt.PERFORMANCE_TIME
+		]]>
+    </select>
+   
+    
+    <!-- 주요 공연 소개 -->
+    <select id="mainPerform">
+    	<![CDATA[
+	    	SELECT
+				MT20ID,
+				POSTER,
+				PRFNM
+			FROM
+				(
+					SELECT MT20ID, POSTER, PRFNM, PRFSTATE
+					FROM TB_PERFORMANCES_DETAIL
+					ORDER BY
+					DBMS_RANDOM.VALUE )
+			WHERE
+				ROWNUM <= 3
+			AND PRFSTATE = '공연중'
+			ORDER BY PRFNM
+		]]>
+    </select>
+    
+    
+    <!-- 공연 점수 별 순위 10개 -->
+    <select id="performanceRanking">
+    	<![CDATA[
+	    	SELECT *
+			FROM (
+			    SELECT 
+			        MT20ID,
+			        PRFSTATE,
+			        PRFNM,
+			        POSTER,
+			        PRFREVIEW_RANK,
+			        REVIEW_COUNT,
+			        AVG_RATING
+			    FROM 
+			        ETFIVE.VW_PERFORMANCE_RANKING
+			    ORDER BY 
+			        PRFREVIEW_RANK DESC, AVG_RATING DESC
+			) 
+			WHERE ROWNUM <= 10
+			AND PRFSTATE = '공연중'
+		]]>
+	</select>
+    
+    <!-- 리뷰 등록 -->
+    <insert id="insertReview">
+    	INSERT INTO TB_PERFORMANCE_REVIEW
+        VALUES (
+        	SEQ_REVIEW_NO.NEXTVAL, 
+        	#{reviewContent}, 
+        	#{reviewStar}, 
+        	DEFAULT,
+        	NULL, 
+        	DEFAULT, 
+        	#{memberNo},
+        	#{mt20id}
+        )
+    </insert>
+    
+    <!-- 리뷰 중복 여부 확인 -->
+    <select id="selectReviewCount">
+    	SELECT COUNT(*)
+    	FROM TB_PERFORMANCE_REVIEW
+    	WHERE MEMBER_NO = #{memberNo}
+    	AND MT20ID = #{mt20id}
+    </select>
+    
+    <!-- 리뷰 수정 -->
+    <update id="updateReview">
+    	UPDATE TB_PERFORMANCE_REVIEW
+    	SET 
+    		REVIEW_CONTENT = #{reviewContent},
+    		REVIEW_STAR = #{reviewStar}
+    	WHERE REVIEW_NO = #{reviewNo}
+    </update>
+    
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteReview">
+    	DELETE FROM TB_PERFORMANCE_REVIEW
+    	WHERE REVIEW_NO = #{reviewNo}
+    	AND MEMBER_NO = #{memberNo}
+    </delete>
+    
+    <!-- 리뷰 목록 조회 -->
+    <select id="selectReviewsByPerformanceId">
+		SELECT MT20ID, REVIEW_STAR, REVIEW_CONTENT, CREATE_DATE, MEMBER_NO, REVIEW_NO, MEMBER_NICKNAME 
+		FROM TB_PERFORMANCE_REVIEW JOIN TB_MEMBER USING(MEMBER_NO)
+		WHERE MT20ID = #{mt20id}
+		ORDER BY CREATE_DATE DESC
+    </select>
+    
+    <!-- 공연장 좌석 목록 -->
+    <select id="priceSeatInfoList">
+    	SELECT
+    		SEAT_COUNT,
+    		GRADE_ID,
+    		GRADE_NAME
+    	FROM TB_VENUE_SEAT_INFO
+    	JOIN TB_SEAT_GRADE USING(GRADE_ID)
+    	WHERE MT10ID = #{mt10id}
+    	ORDER BY GRADE_ID ASC
+    </select>
+    
+    <!-- 공연 일정 중복 체크 -->
+    <select id="getReservedDates">
+    	<![CDATA[
+	    	SELECT 
+			    TO_CHAR(TO_DATE(PRFPDFROM, 'YYYY-MM-DD'), 'YYYY-MM-DD') AS PRFPDFROM,
+				TO_CHAR(TO_DATE(PRFPDTO, 'YYYY-MM-DD'), 'YYYY-MM-DD') AS PRFPDTO
+			FROM TB_PERFORMANCES_DETAIL
+			WHERE MT10ID = #{mt10id}
+			AND TO_DATE(PRFPDTO, 'YYYY-MM-DD') >= TRUNC(SYSDATE)
+			AND PRFSTATE != '공연종료'
+			ORDER BY TO_DATE(PRFPDFROM, 'YYYY-MM-DD')
+		]]>
+    </select>
+    
+    <!-- 공연 기본 정보 저장 -->
+    <insert id="insertPerformance">
+        INSERT INTO TB_PERFORMANCES_DETAIL (
+            MT20ID, PRFNM, PRFPDFROM, PRFPDTO, FCLTYNM, POSTER,
+            PRFCAST, PRFRUNTIME, PCSEGUIDANCE, DTGUIDANCE, AREA,
+            GENRENM, PRFSTATE, DESCRIPTION, MT10ID, CONCERT_MANAGER_NO
+        ) VALUES (
+            #{mt20id}, #{prfnm}, #{prfpdfrom}, #{prfpdto}, #{fcltynm}, #{poster},
+            #{prfcast}, #{prfruntime}, #{pcseguidance}, #{dtguidance}, #{area},
+            #{genrenm}, #{prfstate}, #{description}, #{mt10id}, #{concertManagerNo}
+        )
+    </insert>
+    
+    <!-- 공연 가격 정보 저장 -->
+    <insert id="insertPerformancePrice">
+        INSERT INTO TB_PERFORMANCE_SEAT_PRICE (
+            PRICE_ID, MT20ID, GRADE_ID, PRICE
+        ) VALUES (
+            SEQ_PRICE_ID.NEXTVAL,
+            #{mt20id},
+            #{grade},
+            #{price}
+        )
+    </insert>
+    
+    <!-- 공연 시간 정보 저장 -->
+    <insert id="insertPerformanceTime">
+        INSERT INTO TB_PERFORMANCE_TIME (
+            MT20ID, DAY_OF_WEEK, PERFORMANCE_TIME
+        ) VALUES (
+            #{mt20id}, #{dayOfWeek}, #{performanceTime}
+        )
+    </insert>
+    
+    
+    <!-- 관리자 공연 등록
+    	-> 공연장 이름 또는 주소 검색시 공연장 목록 가져오기
+   	 -->
+   	 <select id="selectVenueList">
+   	 	SELECT MT10ID, FCLTYNM, ADRES, SEATSCALE
+   	 	FROM TB_VENUE
+   	 </select>
+   	 
+   	 <!-- 찜 추가 -->
+   	 <insert id="insertWishList">
+   	 	INSERT INTO TB_PERFORMANCE_WISH
+   	 	VALUES(
+   	 		SEQ_WISH_NO.NEXTVAL,
+   	 		#{memberNo},
+   	 		#{mt20id},
+   	 		DEFAULT
+   	 	)
+   	 </insert>
+   	 
+   	 <!-- 찜 취소 -->
+   	 <delete id="deleteWishList">
+ 	    DELETE FROM TB_PERFORMANCE_WISH
+	    WHERE MEMBER_NO = #{memberNo}
+	    AND MT20ID = #{mt20id}
+   	 </delete>
+   	 
+   	 <!-- 찜 목록 조회 -->
+   	 <select id="checkWishList">
+   	 	SELECT COUNT(*)
+   	 	FROM TB_PERFORMANCE_WISH
+   	 	WHERE MEMBER_NO = #{memberNo}
+	    AND MT20ID = #{mt20id}
+   	 </select>
+   	 
+   	 <!-- 찜 상태 확인 -->
+   	 <select id="selectWishList">
+   	 	SELECT COUNT(*)
+   	 	FROM TB_PERFORMANCE_WISH
+   	 	WHERE MEMBER_NO = #{memberNo}
+   	 	AND MT20ID = #{mt20id}
+   	 </select>
+	
+</mapper>

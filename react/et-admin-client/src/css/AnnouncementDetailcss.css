@@ -1,0 +1,129 @@
+.write-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 2rem 1rem;
+}
+
+.write-form-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.editor-wrapper {
+  margin-bottom: 2rem;
+}
+
+.quill-editor {
+  height: 600px;
+  margin-bottom: 3rem; /* 3rem으로 증가 */
+ }
+ 
+ /* 또는 button-group에 margin-top 추가 */
+ .button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem; /* 여기에 margin 추가 */
+ }
+
+.back-button,
+.submit-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.back-button {
+  background-color: #6b7280;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #4b5563;
+}
+
+.submit-button {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .write-form-wrapper {
+    padding: 1.5rem;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .back-button,
+  .submit-button {
+    width: 100%;
+  }
+}
+
+/* 버튼 색상 통일 */
+.back-button {
+  background-color: #4B5563;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #374151;
+}
+
+.submit-button {
+  background-color: #2563eb;  /* 파랑색으로 통일 */
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #e65d00;
+}
+
+/* 반응형 디자인 강화 */
+@media (max-width: 768px) {
+  .write-form-wrapper {
+    padding: 1rem;
+  }
+
+  .quill-editor {
+    height: 400px;  /* 모바일에서는 높이 줄임 */
+  }
+
+  .button-group {
+    margin-top: 1rem;
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공연 예매 사이트</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/main-style.css">
+
+  <link rel="stylesheet" href="/css/myPage/ticketInfo.css">
+  
+
+  <th:block th:replace="~{common/common}"></th:block>
+</head>
+
+<body>
+  <th:block th:replace="~{common/header}"></th:block>
+  <!-- HTML 수정 부분 -->
+
+  <div class="container">
+
+    <div class="parent">
+      <h2>예매 내역</h2>
+    </div>
+
+    <main class="content-area">
+      <div class="ticket-filter">
+
+        <div class="date-filter-group">
+            <label>조회 기간:</label>
+            <input type="date" id="startDateFilter" />
+            <span>~</span>
+            <input type="date" id="endDateFilter" />
+          <button id="filterButton" class="btn-filter">조회</button>
+        </div>
+        
+        <div class="filter-group">
+          <label>
+            <input type="radio" name="statusFilter" value="ALL" checked /> 전체
+          </label>
+          <label>
+            <input type="radio" name="statusFilter" value="예매" /> 예매
+          </label>
+          <label>
+            <input type="radio" name="statusFilter" value="CANCELED" /> 취소
+          </label>
+        </div>
+      </div>
+      
+      <div class="ticket-table-container">
+        <table class="ticket-table">
+          <thead>
+              <tr>
+                  <th>예매일</th>
+                  <th>결제일시</th>
+                  <th>예약번호</th>
+                  <th>공연명</th>
+                  <th>공연일시</th>
+                  <th>매수</th>
+                  <th>취소 가능일</th>
+                  <th>상태</th>
+                  <th>상세</th>
+              </tr>
+          </thead>
+          <tbody id="ticketTableBody"></tbody>
+      </table>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+    </main>
+  </div>
+
+
+
+  <!-- 로딩 스피너 -->
+  <div id="loadingSpinner" style="display: none;">
+    <div class="spinner"></div> <!-- Spinner 스타일 정의 필요 -->
+  </div>
+
+  <script src="/js/myPage/ticketInfo.js"></script>
+
+  <th:block th:replace="~{common/footer}"></th:block>
+</body>
+
+</html>
