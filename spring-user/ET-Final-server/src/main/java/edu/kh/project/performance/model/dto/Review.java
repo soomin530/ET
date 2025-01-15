@@ -1,8 +1,5 @@
 package edu.kh.project.performance.model.dto;
 
-import java.util.List;
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

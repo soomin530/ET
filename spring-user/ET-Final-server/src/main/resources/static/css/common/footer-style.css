@@ -3,6 +3,8 @@ footer {
     color: #fff;
     padding: 50px 0 20px;
     margin-top: 80px;
+    min-height: 300px;
+    position: relative;
 }
 
 .footer-content {
@@ -12,6 +14,7 @@ footer {
     grid-template-columns: repeat(4, 1fr);
     gap: 40px;
     padding: 0 20px;
+    min-height: 200px;
 }
 
 .footer-section h3 {
@@ -85,10 +88,12 @@ footer {
     font-size: 0.9em;
 }
 
-/* 반응형 디자인 */
 @media (max-width: 1024px) {
     .footer-content {
         grid-template-columns: repeat(2, 1fr);
+    }
+    footer {
+        min-height: 400px;
     }
 }
 
@@ -97,15 +102,13 @@ footer {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-
     footer {
+        min-height: 600px;
         padding: 40px 0 20px;
     }
-
     .footer-section {
         text-align: center;
     }
-
     .social-icons {
         justify-content: center;
     }

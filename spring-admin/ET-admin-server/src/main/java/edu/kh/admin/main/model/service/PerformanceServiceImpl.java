@@ -35,6 +35,11 @@ public class PerformanceServiceImpl implements PerformanceService{
 		}
 		
 		@Override
+		public List<Performance> IDCheck() {
+		return mapper.IDCheck();
+		}
+		
+		@Override
 		public int insert(Map<String, Object> formdata) {
 	
 			

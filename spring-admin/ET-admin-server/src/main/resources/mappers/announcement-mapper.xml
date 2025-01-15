@@ -7,6 +7,28 @@
 	ORDER BY ANNOUNCE_NO ASC
 	</select>
 	
+	<select id="searchAnnouncementList">
+	SELECT *
+		FROM 
+			ANNOUNCEMENT
+		WHERE 
+			ANNOUNCE_DEL_FL  = 'N'
+	        <choose>
+	            <when test="selectedValue == '제목'">
+	                AND ANNOUNCE_TITLE LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <when test="selectedValue == '내용'">
+	                AND ANNOUNCE_CONTENT LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <otherwise>
+	                AND ANNOUNCE_WRITE_DATE LIKE '%' || #{inputValue} || '%' 
+	            </otherwise>
+	        </choose>
+		ORDER BY 
+			ANNOUNCE_NO ASC
+		
+	</select>
+	
 	
 	<select id="announceDetail">
 	SELECT ANNOUNCE_TITLE,ANNOUNCE_CONTENT 

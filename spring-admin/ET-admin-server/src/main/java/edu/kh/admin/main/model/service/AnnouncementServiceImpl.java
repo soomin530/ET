@@ -30,6 +30,11 @@ public class AnnouncementServiceImpl implements AnnouncementService{
 			
 		}
 		
+		// 검색한 목록 띄우기
+		@Override
+		public List<Announcement> searchAnnouncementList(Map<String, Object> formdata) {
+		return mapper.searchAnnouncementList(formdata);
+		}
 		
 		// 상세 목록 띄우기
 		@Override

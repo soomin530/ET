@@ -269,24 +269,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
     });
 
-  function renderPerformanceInfo(data) {
-    const reservationInfo = document.querySelector(".reservation-info");
+	function renderPerformanceInfo(data) {
+	    const reservationInfo = document.querySelector(".reservation-info");
 
-    if (!data) {
-      reservationInfo.innerHTML = `<p style="color: red;">공연 정보를 불러올 수 없습니다.</p>`;
-      return;
-    }
+	    if (!data) {
+	        reservationInfo.innerHTML = `<p style="color: red;">공연 정보를 불러올 수 없습니다.</p>`;
+	        return;
+	    }
 
-    reservationInfo.innerHTML = `
-    <img src="${data.poster}" alt="${data.prfnm}" />
-    <div class="details">
-      <h3>${data.prfnm}</h3>
-      <p> ${data.prfpdfrom} ~ ${data.prfpdto}</p>
-      <p> ${data.fcltynm}</p>
-      <p> ${data.prfruntime}</p>
-    </div>`
-      ;
-  }
+	    // 이미지 요소 생성
+	    const img = new Image();
+	    img.src = data.poster;
+	    img.alt = data.prfnm;
+	    img.loading = 'lazy';
+	    img.decoding = 'async';
+
+	    // 이미지 로드 완료 시 loaded 클래스 추가
+	    if (!img.complete) {
+	        img.onload = function() {
+	            this.classList.add('loaded');
+	            img.onload = null;
+	        };
+	    } else {
+	        img.classList.add('loaded');
+	    }
+
+	    // 이미지 로드 실패 시 기본 이미지로 대체
+	    img.onerror = function() {
+	        if (this.src !== '/images/default-poster.png') {
+	            this.src = '/images/default-poster.png';
+	        }
+	        this.onerror = null;
+	    };
+
+	    // 이미지와 상세 정보를 포함한 HTML 생성
+	    const imageContainer = document.createElement('div');
+	    imageContainer.className = 'image-container';
+	    imageContainer.appendChild(img);
+
+	    const detailsHtml = `
+	        <div class="details">
+	            <h3>${data.prfnm}</h3>
+	            <p>${data.prfpdfrom} ~ ${data.prfpdto}</p>
+	            <p>${data.fcltynm}</p>
+	            <p>${data.prfruntime}</p>
+	        </div>
+	    `;
+
+	    reservationInfo.innerHTML = '';
+	    reservationInfo.appendChild(imageContainer);
+	    reservationInfo.insertAdjacentHTML('beforeend', detailsHtml);
+	}
 
 
 

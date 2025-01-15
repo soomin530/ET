@@ -82,7 +82,7 @@
 									<th>별점</th>
 									<td class="performance-rank">
 										<div class="review-stars">
-											<th:block th:with="stars=${performance.prfreviewRank}">
+											<th:block th:with="stars=${performance.avgRating}">
 												<span class="static-stars"
 													th:text="${'★'.repeat(stars) + '☆'.repeat(5 - stars)}"></span>
 												<span class="numeric-rating" th:text="|${stars}/5|"></span>
