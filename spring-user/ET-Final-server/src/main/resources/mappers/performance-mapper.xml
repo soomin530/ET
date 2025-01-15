@@ -201,7 +201,7 @@
 			        POSTER,
 			        PRFREVIEW_RANK,
 			        REVIEW_COUNT,
-			        AVG_RATING
+			        ROUND(AVG_RATING, 1) AS AVG_RATING
 			    FROM 
 			        ETFIVE.VW_PERFORMANCE_RANKING
 			    ORDER BY 

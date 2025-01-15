@@ -3,11 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Payment Page</title>
+    <title>결제 페이지</title>
     <!-- jQuery CDN 추가 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- 아임포트 스크립트 추가 -->
     <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+
+    <!-- fontawesome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <!-- CSS 파일 링크 -->
     <link rel="stylesheet" href="/css/payment/payment.css">
@@ -39,18 +42,70 @@
 
     <div class="payment-container">
         <div class="info-section">
-            <h3>좌석 정보: <span id="seat-info"></span></h3>
-            <h3>예매자 : <span id="booking-nickname"></span></h3>
-            <h3>이메일 : <span id="booking-email"></span></h3>
-            <h3>연락처: <span id="booking-phone"></span></h3>
-            <h3>총 결제 금액: <span id="total-price"></span></h3>
+            <div class="section-header">
+                <i class="fas fa-ticket-alt"></i>
+                <h2>예매 정보</h2>
+            </div>
+            <div class="booking-info">
+                <div class="info-item">
+                    <i class="fas fa-chair"></i>
+                    <h3>좌석 정보: <span id="seat-info"></span></h3>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <h3>예매자: <span id="booking-nickname"></span></h3>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <h3>이메일: <span id="booking-email"></span></h3>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <h3>연락처: <span id="booking-phone"></span></h3>
+                </div>
+            </div>
+            <div class="total-price-section">
+                <div class="price-header">총 결제 금액</div>
+                <div class="price-amount" id="total-price"></div>
+            </div>
         </div>
+    
+        <div class="payment-methods">
+            <div class="section-header">
+                <i class="fas fa-credit-card"></i>
+                <h2>결제 수단 선택</h2>
+            </div>
+            <div class="payment-options">
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="card" id="cardPay">
+                    <div class="option-card">
+                        <i class="fas fa-credit-card"></i>
+                        <span>신용/체크카드 (이니시스)</span>
+                        <div class="check-mark"></div>
+                    </div>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="payment" value="kakaopay" id="kakaoPay">
+                    <div class="option-card">
+                        <i class="fas fa-wallet"></i>
+                        <span>카카오페이</span>
+                        <div class="check-mark"></div>
+                    </div>
+                </label>
+            </div>
 
-        <div class="payment-buttons">
-            <button type="button" class="prev-btn" id="prev-btn">이전 단계</button> <!-- 이전 단계 버튼 -->
-            <button id="cardPay">카드 결제</button>
-            <button id="kakaoPay">카카오페이 결제</button>
+            <div class="action-buttons">
+                <button type="button" class="prev-btn" id="prev-btn">
+                     이전 단계
+                </button>
+                <button type="button" class="pay-btn" id="pay-btn">
+                    결제하기 
+                </button>
+            </div>
         </div>
+    
+        
+
     </div>
 
      <!-- JS 파일 연결 -->

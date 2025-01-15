@@ -231,6 +231,12 @@ public interface MyPageMapper {
 	 */
 	int updateHistoryStatus(String bookingId);
 
+	/** 기본 배송지 정보 조회
+	 * @param memberNo
+	 * @return
+	 */
+	AddressDTO selectDefaultAddress(int memberNo);
+
 	
 
 

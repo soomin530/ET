@@ -400,8 +400,23 @@ public class MyPageController {
 	 */
 	@ResponseBody
 	@GetMapping("updateNickname")
-	public int updateNickname(@RequestParam("userNickname") String userNickname) {
-		return service.updateNickname(userNickname);
+	public int updateNickname(@RequestParam("userNickname") String userNickname,
+						@RequestParam("currentNickname") String currentNickname
+			) {
+		
+		
+		
+		
+		
+		// 입력된 닉네임이 현재 사용자의 닉네임과 같다면 사용 가능(중복 아님)
+	    if (userNickname.equals(currentNickname)) {
+	        return 0;
+	    }
+	    
+	    // 다른 사용자의 닉네임과 중복 체크
+	    return service.updateNickname(userNickname);
+		
+		
 	}
 
 	@PostMapping("/updateInfo")
@@ -536,6 +551,18 @@ public class MyPageController {
 			log.error("예매 취소 중 오류 발생: ", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
 		}
+	}
+	
+	
+	@GetMapping("defaultAddress")
+	@ResponseBody
+	public ResponseEntity<AddressDTO> getDefaultAddress(@SessionAttribute("loginMember")Member loginMember){
+		    AddressDTO defaultAddress = service.getDefaultAddress(loginMember.getMemberNo()); // 기본 배송지 가져오기
+		    
+		    if (defaultAddress != null) {
+		        return ResponseEntity.ok(defaultAddress); // 기본 배송지 반환
+		    }
+		    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
 }

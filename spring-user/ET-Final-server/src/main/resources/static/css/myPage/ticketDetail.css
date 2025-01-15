@@ -32,7 +32,6 @@ body {
   padding: 0 20px;
   flex: 1;
   /* 남은 공간을 채움 */
-  min-height: calc(100vh - 200px); /* 화면 크기에서 footer 높이만큼 뺌 */
 }
 
 .poster-image {
