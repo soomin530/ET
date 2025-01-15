@@ -5,15 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.kh.admin.common.util.Utility;
 import edu.kh.admin.main.model.dto.Member;
 import edu.kh.admin.main.model.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceImpl implements MemberService{
 
 		private final MemberMapper mapper;
-		private final BCryptPasswordEncoder bcrypt;
 		
 		@Override
 		public List<Member> showMemberList() {

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import edu.kh.admin.main.model.dto.ConcertManager;
 import edu.kh.admin.main.model.service.ConcertManagerService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController 
 @CrossOrigin( origins = "http://localhost:3000",

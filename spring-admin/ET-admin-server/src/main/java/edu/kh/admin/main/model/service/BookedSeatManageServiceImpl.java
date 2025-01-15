@@ -15,7 +15,6 @@ import edu.kh.admin.main.model.dto.ScheduleInfo;
 import edu.kh.admin.main.model.dto.Seat;
 import edu.kh.admin.main.model.mapper.BookedSeatManageMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional

@@ -165,7 +165,8 @@ public class MyPageApiController {
     public String inquiryDetail(@PathVariable(value="inquiryNo") int inquiryNo, Model model) {
         Inquiry inquiry = service.getInquiryDetail(inquiryNo);
         model.addAttribute("inquiry", inquiry);
-        return "myPage/memberInquirytDetail";
+        
+        return "mypage/memberInquiryDetail";
     }
     
     /** 해당 문의 사항 삭제

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class PerformanceServiceImpl implements PerformanceService{
 
 		private final PerformanceMapper mapper;
-		private final BCryptPasswordEncoder bcrypt;
 		
 		@Override
 		public List<Performance> showPerformanceList() {

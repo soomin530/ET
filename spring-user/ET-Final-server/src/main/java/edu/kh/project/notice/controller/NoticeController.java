@@ -43,7 +43,7 @@ public class NoticeController {
         List<Notice> list = service.getNoticeList(0, 10, null, "all");
         model.addAttribute("noticeList", list);
         
-        return "/notice/noticeList";
+        return "notice/noticeList";
     }
     
     /** 공지사항 무한스크롤 데이터 로드
