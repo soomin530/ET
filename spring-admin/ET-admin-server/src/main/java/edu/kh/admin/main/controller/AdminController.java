@@ -17,21 +17,18 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import edu.kh.admin.common.jwt.JwtTokenUtil;
 import edu.kh.admin.main.model.dto.DashboardData;
 import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.dto.Performance;
 import edu.kh.admin.main.model.service.AdminService;
 import edu.kh.admin.main.model.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true", methods = {
 		RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS })
 @RequestMapping("admin")
 @RequiredArgsConstructor
-@Slf4j
 @SessionAttributes({ "loginMember" })
 public class AdminController {
 

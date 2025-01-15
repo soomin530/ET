@@ -9,12 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.kh.admin.main.model.dto.DashboardData;
 import edu.kh.admin.main.model.mapper.AdminMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
-@Slf4j
 public class AdminServiceImpl implements AdminService{
 
 		private final AdminMapper mapper;
