@@ -86,7 +86,7 @@ document.getElementById('booking-form').addEventListener('submit', (e) => {
     }
 
     // 유효성 검사
-    if (!name || !phone || !email) {
+    if (!nickname || !phone || !email) {
         alert("모든 필드를 입력해주세요.");
         return;
     }
@@ -97,10 +97,12 @@ document.getElementById('booking-form').addEventListener('submit', (e) => {
         return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert("올바른 이메일 형식을 입력해주세요.");
-        return;
-    }
+   // 이메일 유효성 검사 (기본 이메일 형식 + 도메인 확장자 검사)
+   const emailRegex = /^[^\s@]+@[^\s@]+\.(com|kr|net|org|co\.kr|edu|gov|io)$/i;
+   if (!emailRegex.test(email)) {
+       alert("올바른 이메일 형식을 입력해주세요. 예: example@domain.com");
+       return;
+   }
 
     const bookingInfo = { nickname, phone, email };
     // 예매자 정보 localStorage에 저장

@@ -1,3 +1,4 @@
+/* 기본 스타일 */
 * {
   margin: 0;
   padding: 0;
@@ -5,12 +6,12 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
+  
   background-color: #f8f9fa;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0;
 }
 
 /* 진행 단계 헤더 스타일 */
@@ -36,8 +37,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  z-index: 1;
 }
 
 .step-number {
@@ -57,7 +56,7 @@ body {
   color: white;
 }
 
-.progress-step .step-text {
+.step-text {
   font-size: 14px;
   color: #999;
 }
@@ -70,8 +69,8 @@ body {
 .progress-line {
   position: absolute;
   top: 20px;
-  left: 70px;
-  right: 70px;
+  left: 40px;
+  right: 40px;
   height: 2px;
   background-color: #ddd;
   z-index: 0;
@@ -80,50 +79,124 @@ body {
 .progress-line-active {
   position: absolute;
   top: 20px;
-  left: 70px;
+  left: 40px;
   width: 100%;
-  /* 3단계이므로 100% */
   height: 2px;
   background-color: #ff4500;
+  z-index: 1;
   transition: width 0.3s ease;
-  z-index: 0;
 }
 
 /* 페이지 로드 애니메이션 */
 @keyframes fadeIn {
   from {
-      opacity: 0;
-      transform: translateY(10px);
+    opacity: 0;
+    transform: translateY(10px);
   }
-
   to {
-      opacity: 1;
-      transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* 컨테이너 스타일 개선 */
+/* 컨테이너 스타일 */
 .payment-container {
-  background-color: #fff;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
+  background-color: white;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 600px;
+  max-width: 1200px;
   animation: fadeIn 0.5s ease-in-out;
+  position: relative;  /* 상대 위치를 사용 */
 }
 
 .payment-container:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* 정보 섹션 개선 */
 .info-section {
   background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 25px;
-  margin-bottom: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #eee;
+}
+
+.section-header i {
+  font-size: 24px;
+  color: #ff4500;
+}
+
+.section-header h2 {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding-top: 10px;
+}
+
+.info-item h3 {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #555;
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-item h3 span {
+  margin-left: 15px;
+  margin-right: 5px;
+  display: inline-block;
+  font-weight: bold;
+  color: #333;
+}
+
+.total-price-section {
+  margin-top: 20px;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.price-header {
+  font-size: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.price-amount {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ff4500;
+  letter-spacing: 1px;
+}
+
 
 .info-section h3 {
   margin: 10px 0;
@@ -144,91 +217,158 @@ body {
   color: #ff4500;
 }
 
-/* 결제 버튼 그룹 개선 */
-.payment-buttons {
+.info-section h3:last-child {
+  font-size: 18px;
+  color: #ff4500;
+  margin-top: 20px;
+ 
+  border-top: 2px dashed #eee;
+}
+
+/* 결제 방법 */
+.payment-methods {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 상단 정보와 하단 버튼 간격 확보 */
+  height: 100%; /* 전체 높이를 차지하여 아래로 밀리게 함 */
+}
+
+
+.payment-options {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.payment-buttons button {
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+.payment-option {
   cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.2s;
+  flex: 1;
+  min-width: 220px;
+  text-align: center;
 }
 
-.payment-buttons button:hover {
-  transform: translateY(-3px);
+.payment-option input {
+  display: none;
 }
 
-/* 이전 단계 버튼 */
+.option-card {
+  padding: 15px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.option-card:hover {
+  background-color: #fff7f2;
+  border-color: #ff4500;
+}
+
+.payment-option input:checked + .option-card {
+  border-color: #ff4500;
+  background-color: #fff9f7;
+}
+
+.option-card i {
+  font-size: 32px;
+  color: #666;
+}
+
+.option-card img {
+  width: 80%;
+  max-width: 150px;
+}
+
+.check-mark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  margin-top: 8px;
+}
+
+.payment-option input:checked + .option-card .check-mark {
+  border-color: #ff4500;
+  background-color: #ff4500;
+}
+
+.check-mark::after {
+  content: '';
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.payment-option input:checked + .option-card .check-mark::after {
+  display: block;
+}
+
+/* 결제 및 이전 버튼 */
+.action-buttons {
+  margin-top: auto; /* 자동으로 하단으로 이동 */
+  gap: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-buttons button {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: white;
+}
+
 .prev-btn {
   background-color: #757575;
   color: white;
+  border: none;
 }
 
 .prev-btn:hover {
   background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 카드 결제 버튼 */
-#cardPay {
-  background-color: #ff5722;
+.pay-btn {
+  width: 100%;
+  background-color: #f43142;
   color: white;
-}
-
-#cardPay:hover {
-  background-color: #e64a19;
-}
-
-/* 카카오페이 버튼 */
-#kakaoPay {
-  background-color: #fee500;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-#kakaoPay:before {
-  content: "";
-  /* 카카오페이 로고를 추가할 수 있는 공간 */
-  width: 24px;
-  height: 24px;
-}
-
-/* 반응형 디자인 개선 */
-@media (max-width: 768px) {
-  .payment-container {
-      width: 95%;
-      padding: 20px;
-  }
-
-  .payment-buttons {
-      flex-direction: column;
-  }
-
-  .payment-buttons button {
-      width: 100%;
-  }
-}
-
-/* 총 결제 금액 강조 */
-.info-section h3:last-child {
+  padding: 15px;
   font-size: 18px;
-  color: #ff4500;
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 2px dashed #eee;
+  border-radius: 12px;
 }
 
-.info-section h3:last-child span {
-  font-size: 20px;
-  font-weight: 700;
-  color: #ff4500;
+.pay-btn:hover {
+  background-color: #e12132;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 반응형 처리 */
+@media (max-width: 768px) {
+  .payment-options {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
 }

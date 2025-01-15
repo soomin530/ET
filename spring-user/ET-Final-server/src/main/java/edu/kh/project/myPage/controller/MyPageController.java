@@ -538,4 +538,16 @@ public class MyPageController {
 		}
 	}
 	
+	
+	@GetMapping("defaultAddress")
+	@ResponseBody
+	public ResponseEntity<AddressDTO> getDefaultAddress(@SessionAttribute("loginMember")Member loginMember){
+		    AddressDTO defaultAddress = service.getDefaultAddress(loginMember.getMemberNo()); // 기본 배송지 가져오기
+		    
+		    if (defaultAddress != null) {
+		        return ResponseEntity.ok(defaultAddress); // 기본 배송지 반환
+		    }
+		    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	}
+	
 }

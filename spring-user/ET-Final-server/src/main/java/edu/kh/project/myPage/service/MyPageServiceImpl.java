@@ -374,6 +374,15 @@ public class MyPageServiceImpl implements MyPageService {
 			throw new RuntimeException("예매 취소 실패");
 		}
 	}
+
+
+	/**  기본 배송지 정보 조회
+	 *	 @author 나찬웅 
+	 */
+	@Override
+	public AddressDTO getDefaultAddress(int memberNo) {
+		return mapper.selectDefaultAddress(memberNo);
+	}
 	
 
 	

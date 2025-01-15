@@ -35,4 +35,10 @@ public interface StatisticsBatchMapper {
 	 */
 	int updatePerformanceReviewRanks();
 
+	/** 공연 기간이 지난 예매 내역 종료 처리
+	 * @author 나찬웅
+	 * @return
+	 */
+	int updateExpiredBookings();
+
 }

@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 아임포트 가맹점 코드
   const impCode = "imp00237821";
 
+  // 좌석 정보
   const seatInfo = JSON.parse(localStorage.getItem("selectedSeats"))
     .map((seat) => {
       const parts = seat.seatId.split("-");
@@ -25,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const performanceId = localStorage.getItem("performanceId"); // 공연 ID
   const facilityId = localStorage.getItem("facilityId"); // 공연 시설 ID
-
   if (performanceId && facilityId) {
     console.log("공연 ID:", performanceId);
     console.log("공연 시설 ID:", facilityId);
@@ -45,9 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("booking-nickname").textContent = bookingInfo.nickname; // 닉네임
   document.getElementById("booking-email").textContent = bookingInfo.email; // 이메일
   document.getElementById("booking-phone").textContent = bookingInfo.phone; // 연락처
-
   document.getElementById("total-price").textContent = totalPrice;
-
   document.getElementById("prev-btn").addEventListener("click", () => {
     // localStorage에서 필수 정보를 가져옴
     const mt20id = localStorage.getItem("performanceId");
@@ -64,9 +62,18 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = `/payment/booking-info?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${selectedTime}&dayOfWeek=${dayOfWeek}`;
   });
 
-  // 결제 버튼 이벤트 리스너 추가
-  document.getElementById("cardPay").addEventListener("click", () => handlePayment("html5_inicis.INIpayTest", "card"));
-  document.getElementById("kakaoPay").addEventListener("click", () => handlePayment("kakaopay", "card"));
+  // 결제 버튼 이벤트
+  const payButton = document.getElementById("pay-btn");
+
+  payButton.addEventListener("click", () => {
+    const selectedPayment = document.querySelector("input[name='payment']:checked");
+    if (!selectedPayment) {
+      alert("결제 수단을 선택해 주세요.");
+      return;
+    }
+    const paymentMethod = selectedPayment.value; // 카드 or 카카오페이
+    handlePayment(paymentMethod === "kakaopay" ? "kakaopay" : "html5_inicis.INIpayTest", "card");
+  });
   
   // 결제 처리 함수
   function handlePayment(pg, payMethod) {
