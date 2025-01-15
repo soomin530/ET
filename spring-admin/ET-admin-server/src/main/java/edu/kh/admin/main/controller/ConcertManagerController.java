@@ -15,14 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import edu.kh.admin.main.model.dto.Announcement;
 import edu.kh.admin.main.model.dto.ConcertManager;
-import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.dto.Performance;
 import edu.kh.admin.main.model.service.ConcertManagerService;
-import edu.kh.admin.main.model.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController 
 @CrossOrigin( origins = "http://localhost:3000",
@@ -32,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 				           RequestMethod.DELETE, RequestMethod.OPTIONS})
 @RequestMapping("manager")
 @RequiredArgsConstructor
-@Slf4j
 @SessionAttributes({ "loginMember" })
 public class ConcertManagerController {
 

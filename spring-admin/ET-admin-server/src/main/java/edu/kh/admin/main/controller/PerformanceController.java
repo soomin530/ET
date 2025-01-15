@@ -120,7 +120,7 @@ public class PerformanceController {
 	
 	@PostMapping("update")
 	public ResponseEntity<Object> update(@RequestBody Map<String, Object> formdata)  {
-
+			log.info(formdata.toString());
 			int result = service.update(formdata);
 			//log.info(result+"");
 			

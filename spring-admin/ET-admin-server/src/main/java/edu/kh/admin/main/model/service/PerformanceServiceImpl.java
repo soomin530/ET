@@ -1,11 +1,9 @@
 package edu.kh.admin.main.model.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,16 +11,13 @@ import edu.kh.admin.main.model.dto.Performance;
 import edu.kh.admin.main.model.dto.SeatInfo;
 import edu.kh.admin.main.model.mapper.PerformanceMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
-@Slf4j
 public class PerformanceServiceImpl implements PerformanceService{
 
 		private final PerformanceMapper mapper;
-		private final BCryptPasswordEncoder bcrypt;
 		
 		@Override
 		public List<Performance> showPerformanceList() {
