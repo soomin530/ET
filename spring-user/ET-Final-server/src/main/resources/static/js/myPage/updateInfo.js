@@ -304,7 +304,7 @@ userNickname.addEventListener("input", (e) => {
 		}
 
 		// 3) 중복 검사 (유효한 경우)
-		fetch("/mypage/updateNickname?userNickname=" + inputNickname)
+		fetch(`/mypage/updateNickname?userNickname=${inputNickname}&currentNickname=${document.getElementById("userNickname").value}`)
 			.then(resp => resp.text())
 			.then(count => {
 
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 
 	// 비밀번호 검증이 필요한 페이지들
-	const pagesNeedingVerification = ['changePw', 'membershipOut'];
+	const pagesNeedingVerification = ['updateInfo','changePw','addressManagement','membershipOut'];
 
 	// 현재 활성화된 메뉴 설정
 	const setActiveMenu = () => {
