@@ -29,7 +29,7 @@
 			padding: 20px;
 			border-right: 1px solid #ddd;
 			position: fixed;
-			height: 50vh;
+			height: 70vh;
 			/* 70vh로 높이 설정 */
 			z-index: 1;
 			top: 90px;
@@ -95,13 +95,14 @@
 			position: relative; /* 부모 컨테이너에 위치를 상대적으로 설정 */
     	margin-bottom: 20px;
     	display: flex;
-    	/* flex-direction: column;  입력 필드와 메시지가 수직으로 배치되도록 설정  */
+    	flex-wrap: wrap; /* 메시지가 다음 줄로 넘어갈 수 있도록 설정 */
+			align-items: flex-start;
 		}
 
 		.form-group label {
 			width: 120px;
 			font-weight: 500;
-			margin-bottom: 5px; /* 라벨과 입력 필드 간의 간격 추가 */
+			padding-top: 8px; /* 입력창과 세로 중앙 정렬을 위한 패딩 */
 		}
 
 		.form-group input[type="text"],
@@ -112,7 +113,7 @@
 			border: 1px solid #ddd;
 			border-radius: 4px;
 			font-size: 14px;
-			margin-bottom: 5px; /* 입력 필드와 메시지 간의 간격 추가 */
+			
 		}
 
 		.form-group input:disabled {
@@ -120,20 +121,27 @@
 			cursor: not-allowed;
 		}
 
-		.form-group.gender {
-			margin-top: 15px;
+		#emailVerification {
+			position: relative; /* 부모 컨테이너에 위치를 상대적으로 설정 */
+    	margin-bottom: 20px;
+    	display: flex;
+    	flex-wrap: wrap; /* 메시지가 다음 줄로 넘어갈 수 있도록 설정 */
+			align-items: flex-start;
 		}
 
-		.form-group.gender input[type="radio"] {
-			margin-right: 5px;
-		}
 
-		.form-group.gender label:not(:first-child) {
-			width: auto;
-			margin-right: 20px;
-		}
+		.edit-btn {
+    padding: 8px 15px;
+    background: linear-gradient(135deg, #004CFF, #0039e5);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+	  margin-left: 8.5px;
+	}
 
-		.edit-btn,
     .verify-btn {
     padding: 8px 15px;
     background: linear-gradient(135deg, #004CFF, #0039e5);
@@ -143,7 +151,7 @@
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s ease;
-	  margin-left: 10px;
+	  margin-left: 15px;
 }
 
 	  .edit-btn:hover,
@@ -156,10 +164,8 @@
     background-color: rgb(0, 0, 121);
 }
 		.form-actions {
-			display: flex;
-			margin-left: 150px;
-			gap: 10px;
-			margin-top: 50px;
+			margin-top: 30px;
+			padding-left: 120px; /* 라벨 너비만큼 패딩 */
 		}
 
 		.cancelBtn {
@@ -217,17 +223,66 @@
 			border-radius: 5px;
 		}
 
+		/* 이메일 폼 그룹을 위한 특별한 스타일 */
+		.input-button-group {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 입력창과 버튼 사이 간격 */
+		}
+
 		.update-message {
-    display: block;
-    margin-top: 5px;
-    font-size: 12px;
-    color: #d9534f; /* 에러 메시지 색상 */
-    clear: both; /* 메시지가 입력 필드 아래로 내려가도록 보장 */
+			width: 100%; /* 전체 너비 사용 */
+    	margin-left: 120px; /* label width와 동일 */
+    	margin-top: 5px; /* 위쪽 여백 */
+    	font-size: 15px;
 	}
 
 	.update-message.confirm {
     color: #5cb85c; /* 확인 메시지 색상 */
 	}
+
+	.verification-message {
+			width: 100%; /* 전체 너비 사용 */
+    	margin-left: 120px; /* label width와 동일 */
+    	margin-bottom: 15px;
+    	font-size: 15px;
+			color: #d9363e;
+	}
+
+	.verification-message.confirm {
+    color: #5cb85c; /* 확인 메시지 색상 */
+	}
+
+	.form-group.gender {
+			display: flex;
+    	align-items: center;
+   		margin-bottom: 20px;
+		}
+
+		.form-group.gender label:first-child {
+    width: 120px; /* 라벨 너비 고정 */
+    font-weight: 500;
+		}
+
+		.form-group.gender input[type="radio"] {
+    margin: 0 5px 0 0; /* 라디오 버튼과 텍스트 사이 간격 */
+		}	
+
+		.form-group.gender label:not(:first-child) {
+			width: auto;
+    margin-right: 20px; /* 라디오 버튼 그룹 사이 간격 */
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+		}
+
+		/* 라디오 버튼 옵션들을 감싸는 컨테이너 */
+		.radio-group {
+    display: flex;
+    align-items: center;
+		}
+
+	
 
 	</style>
 </head>
@@ -287,11 +342,13 @@
 					</div>
 
 					<div class="form-group">
-						<label for="userEmail">이메일</label>
-						<input type="text" name="verificationEmail" id="verificationEmail" placeholder="이메일을 입력하세요">
+						<label for="verificationEmail">이메일</label>
+						<div class="input-button-group">
+								<input type="text" name="verificationEmail" id="verificationEmail" placeholder="이메일을 입력하세요">
+								<button type="button" class="edit-btn" id="verificationBtn">인증번호 받기</button>
+						</div>
 						<span class="verification-message" id="verificationEmailMessage"></span>
-						<button type="button" class="edit-btn" id="verificationBtn">인증번호 받기</button>
-					</div>
+				</div>
 
 					<div id="emailVerification" style="margin-top : 10px;">
 						<div class="form-group">
@@ -303,12 +360,18 @@
 					</div>
 
 					<div class="form-group gender">
-						<label>성별</label>
-						<input type="radio" id="male" name="gender" value="M">
-						<label for="male">남</label>
-						<input type="radio" id="female" name="gender" value="F">
-						<label for="female">여</label>
-					</div>
+    				<label>성별</label>
+    					<div class="radio-group">
+        				<label for="male">
+            		<input type="radio" id="male" name="gender" value="M">
+            			남
+        				</label>
+        				<label for="female">
+            		<input type="radio" id="female" name="gender" value="F">
+            			여
+        				</label>
+    				</div>
+				</div>
 
 					<div class="form-actions">
 						<button type="button" class="cancelBtn">취소</button>

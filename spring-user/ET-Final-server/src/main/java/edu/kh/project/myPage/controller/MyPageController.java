@@ -400,8 +400,23 @@ public class MyPageController {
 	 */
 	@ResponseBody
 	@GetMapping("updateNickname")
-	public int updateNickname(@RequestParam("userNickname") String userNickname) {
-		return service.updateNickname(userNickname);
+	public int updateNickname(@RequestParam("userNickname") String userNickname,
+						@RequestParam("currentNickname") String currentNickname
+			) {
+		
+		
+		
+		
+		
+		// 입력된 닉네임이 현재 사용자의 닉네임과 같다면 사용 가능(중복 아님)
+	    if (userNickname.equals(currentNickname)) {
+	        return 0;
+	    }
+	    
+	    // 다른 사용자의 닉네임과 중복 체크
+	    return service.updateNickname(userNickname);
+		
+		
 	}
 
 	@PostMapping("/updateInfo")

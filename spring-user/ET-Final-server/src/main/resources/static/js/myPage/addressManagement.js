@@ -164,24 +164,29 @@ document.addEventListener('DOMContentLoaded', function() {
 	addressForm.addEventListener('submit', async function(e) {
 		e.preventDefault();
 
-		// 0108 문제 시 삭제
-		// 변경된 값이 있는지 확인
-		const phoneData = {};
-		let addressIsModified = false;
+		// // 0108 문제 시 삭제
+		// // 변경된 값이 있는지 확인
+		// const phoneData = {};
+		// let addressIsModified = false;
 
-		// 휴대폰 번호
-		const phoneValue = document.getElementById("adsPhone").value.trim();
-		if (phoneValue && phoneCheckObj.adsPhone) {
-			phoneData.phone = phoneValue;
-			addressIsModified = true;
-		}
-		// 추가 연락처
-		const extraPhoneValue = document.getElementById("adsExtraPhone").value.trim();
-		if (extraPhoneValue && phoneCheckObj.adsExtraPhone) {
-			phoneData.extraPhone = extraPhoneValue;
-			addressIsModified = true;
-		}
+		// // 휴대폰 번호
+		// const phoneValue = document.getElementById("adsPhone").value.trim();
+		// if (phoneValue && phoneCheckObj.adsPhone) {
+		// 	phoneData.phone = phoneValue;
+		// 	addressIsModified = true;
+		// }
+		// // 추가 연락처
+		// const extraPhoneValue = document.getElementById("adsExtraPhone").value.trim();
+		// if (extraPhoneValue && phoneCheckObj.adsExtraPhone) {
+		// 	phoneData.extraPhone = extraPhoneValue;
+		// 	addressIsModified = true;
+		// }
 
+		// 모든 유효성 검사가 통과했는지 확인
+	if (!phoneCheckObj.adsPhone || !phoneCheckObj.adsExtraPhone) {
+		alert('휴대폰 번호 또는 추가 연락처가 유효하지 않습니다. 다시 확인해 주세요.');
+		return;
+	}
 
 		// 중복 요청 방지용 버튼 비활성화
 		const submitButton = document.getElementById('adsSubmitBtn');
@@ -622,21 +627,27 @@ editExtraPhone.addEventListener("input", e => {
 document.getElementById('editForm').addEventListener('submit', async function(e) {
 	e.preventDefault();
 
-	// 변경된 값이 있는지 확인
-	const phoneData = {};
-	let addressIsModified = false;
+	// // 변경된 값이 있는지 확인
+	// const phoneData = {};
+	// let addressIsModified = false;
 
-	// 휴대폰 번호
-	const phoneValue = document.getElementById("editPhone").value.trim();
-	if (phoneValue && phoneCheckObj.editPhone) {
-		phoneData.phone = phoneValue;
-		addressIsModified = true;
-	}
-	// 추가 연락처
-	const extraPhoneValue = document.getElementById("editExtraPhone").value.trim();
-	if (extraPhoneValue && phoneCheckObj.editExtraPhone) {
-		phoneData.extraPhone = extraPhoneValue;
-		addressIsModified = true;
+	// // 휴대폰 번호
+	// const phoneValue = document.getElementById("editPhone").value.trim();
+	// if (phoneValue && phoneCheckObj.editPhone) {
+	// 	phoneData.phone = phoneValue;
+	// 	addressIsModified = true;
+	// }
+	// // 추가 연락처
+	// const extraPhoneValue = document.getElementById("editExtraPhone").value.trim();
+	// if (extraPhoneValue && phoneCheckObj.editExtraPhone) {
+	// 	phoneData.extraPhone = extraPhoneValue;
+	// 	addressIsModified = true;
+	// }
+
+	// 전화번호 유효성 검사 결과 확인
+	if (!phoneCheckObj.editPhone || !phoneCheckObj.editExtraPhone) {
+		alert('휴대폰 번호 또는 추가 연락처가 유효하지 않습니다. 다시 확인해 주세요.');
+		return;
 	}
 
 	const phone = document.getElementById('editPhone').value.trim();
@@ -790,7 +801,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 
 	// 비밀번호 검증이 필요한 페이지들
-	const pagesNeedingVerification = ['changePw', 'membershipOut'];
+	const pagesNeedingVerification = ['updateInfo','changePw','membershipOut'];
 
 	// 현재 활성화된 메뉴 설정
 	const setActiveMenu = () => {
