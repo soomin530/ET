@@ -207,7 +207,7 @@ const GradeCheckbox = styled.label`
   gap: 6px;
   cursor: pointer;
   user-select: none;
-  font-size:1rem;
+  font-size: 1rem;
   padding: 4px 4px;
   border-radius: 4px;
   background-color: ${(props) => (props.checked ? "#e2e8f0" : "transparent")};
@@ -311,7 +311,8 @@ const PerformanceForm = () => {
   useEffect(() => {
     if (mt10ID) {
       // 기본 정보 로드
-      axios.get(`http://localhost:8081/performance/${mt10ID}`)
+      axios
+        .get(`http://localhost:8081/performance/${mt10ID}`)
         .then((response) => {
           const performanceData = response.data[0];
           setFormData({
@@ -331,24 +332,25 @@ const PerformanceForm = () => {
         .catch((error) => {
           console.error("API 호출 에러:", error);
         });
-  
+
       // 등급 정보 로드
-      axios.get(`http://localhost:8081/performance/grade/${mt10ID}`)
+      axios
+        .get(`http://localhost:8081/performance/grade/${mt10ID}`)
         .then((response) => {
           const gradeData = response.data;
           if (gradeData && gradeData.length > 0) {
-            setShowGrades(true);  // 등급 섹션 표시
-            
+            setShowGrades(true); // 등급 섹션 표시
+
             // 등급 ID를 등급 이름으로 변환하여 선택된 등급 설정
-            const selectedGradeNames = gradeData.map(item => {
+            const selectedGradeNames = gradeData.map((item) => {
               // GRADE_ORDER의 인덱스를 찾아 등급 이름 반환
               return GRADE_ORDER[parseInt(item.gradeId) - 1];
             });
             setSelectedGrades(selectedGradeNames);
-  
+
             // 좌석 수 설정
             const seatsData = {};
-            gradeData.forEach(item => {
+            gradeData.forEach((item) => {
               seatsData[item.gradeId] = item.seatCount;
             });
             setGradeSeats(seatsData);
@@ -362,6 +364,14 @@ const PerformanceForm = () => {
 
   // 등급별 좌석 수 검증
   useEffect(() => {
+    // 객석수가 없거나 0 이하인 경우 등급지정 불가
+    if (!formData.SEATSCALE || parseInt(formData.SEATSCALE) <= 0) {
+      setShowGrades(false);
+      setSelectedGrades([]);
+      setGradeSeats({});
+      return;
+    }
+
     if (showGrades && selectedGrades.length > 0) {
       const invalidSeats = selectedGrades.some((grade) => {
         const seatCount = gradeSeats[GRADE_MAPPING[grade]];
@@ -379,11 +389,11 @@ const PerformanceForm = () => {
         );
         const totalSeats = parseInt(formData.SEATSCALE) || 0;
 
-        if (totalSeats > 0 && totalGradeSeats > totalSeats) {
+        if (totalGradeSeats > totalSeats) {
           setSeatError(
             `총 객석수(${totalSeats})보다 등급별 좌석 합계(${totalGradeSeats})가 많습니다.`
           );
-        } else if (totalSeats > 0 && totalGradeSeats < totalSeats) {
+        } else if (totalGradeSeats < totalSeats) {
           setSeatError(
             `총 객석수(${totalSeats})와 등급별 좌석 합계(${totalGradeSeats})가 일치하지 않습니다.`
           );
@@ -456,12 +466,40 @@ const PerformanceForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
 
-    // 실시간 유효성 검사
+    // 객석수 처리
+    if (name === "SEATSCALE") {
+      const numValue = parseInt(value);
+
+      // 빈 값이거나 0, 음수인 경우
+      if (!value || value.trim() === "" || numValue <= 0) {
+        // 등급지정 관련 모든 상태 초기화
+        setShowGrades(false);
+        setSelectedGrades([]);
+        setGradeSeats({});
+
+        // formData 업데이트
+        setFormData((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+        return;
+      }
+
+      // 유효한 값인 경우 formData 업데이트
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      // 다른 필드들의 경우 기존 로직 유지
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+
+    // 기존의 유효성 검사 유지
     if (name === "FCLTYNM") {
       setValidationErrors((prev) => ({
         ...prev,
@@ -587,13 +625,13 @@ const PerformanceForm = () => {
     <Container>
       <FormSection>
         <FormWrapper>
-        <Title>
-          <BackArrow
-            className="fas fa-arrow-left"
-            onClick={() => window.history.back()}
-          />
-          공연장 정보 수정
-        </Title>
+          <Title>
+            <BackArrow
+              className="fas fa-arrow-left"
+              onClick={() => window.history.back()}
+            />
+            공연장 정보 수정
+          </Title>
           <Form onSubmit={handleSubmit}>
             <FormGroup>
               <Label>공연장 ID:</Label>
@@ -622,16 +660,6 @@ const PerformanceForm = () => {
               )}
             </FormGroup>
             <FormGroup>
-              <Label>공연장 시설 수:</Label>
-              <Input
-                type="number"
-                name="MT13CNT"
-                value={formData.MT13CNT}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
               <Label>시설특성:</Label>
               <Input
                 type="text"
@@ -652,6 +680,22 @@ const PerformanceForm = () => {
               />
             </FormGroup>
             <FormGroup>
+              <Label>공연장 시설 수:</Label>
+              <Input
+                type="number"
+                name="MT13CNT"
+                value={formData.MT13CNT}
+                onChange={handleChange}
+                required
+                min="1"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </FormGroup>
+            <FormGroup>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <div style={{ flex: 1 }}>
                   <Label>객석수:</Label>
@@ -660,6 +704,12 @@ const PerformanceForm = () => {
                     name="SEATSCALE"
                     value={formData.SEATSCALE}
                     onChange={handleChange}
+                    min="1"
+                    onKeyPress={(e) => {
+                      if (!/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     required
                   />
                 </div>
@@ -668,6 +718,9 @@ const PerformanceForm = () => {
                     type="checkbox"
                     id="showGrades"
                     checked={showGrades}
+                    disabled={
+                      !formData.SEATSCALE || parseInt(formData.SEATSCALE) <= 0
+                    }
                     onChange={(e) => setShowGrades(e.target.checked)}
                   />
                   <label htmlFor="showGrades">등급지정</label>
@@ -782,7 +835,7 @@ const PerformanceForm = () => {
         </SearchContainer>
 
         <MapContainer ref={container} />
-          
+
         <LocationInfo>
           <LocationText>
             주소: {formData.ADRES || "위치를 선택해주세요"}
@@ -792,11 +845,8 @@ const PerformanceForm = () => {
           {locationError && <ErrorText>{locationError}</ErrorText>}
         </LocationInfo>
       </MapSection>
-
-      
     </Container>
   );
 };
-
 
 export default PerformanceForm;

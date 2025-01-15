@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class BookedSeatManageServiceImpl implements BookedSeatManageService {
 
 	private final BookedSeatManageMapper mapper;
