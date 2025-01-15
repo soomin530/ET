@@ -842,4 +842,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+// 기본 배송지 정보를 서버에서 가져오기
+async function fetchDefaultAddressFromServer() {
+	try {
+		const response = await fetch('/mypage/defaultAddress'); // 기본 배송지 API 호출
+
+		if (response.ok) {
+			const defaultAddress = await response.json(); // 기본 배송지 정보 가져오기
+
+			// 로컬스토리지에 저장
+			localStorage.setItem('defaultAddress', JSON.stringify(defaultAddress));
+			console.log('기본 배송지 정보를 로컬스토리지에 저장했습니다:', defaultAddress);
+
+		} else {
+			console.warn('기본 배송지 정보를 가져오지 못했습니다.');
+		}
+	} catch (error) {
+		console.error('기본 배송지 정보를 가져오는 중 오류:', error);
+	}
+}
+
+// 페이지 로드 시 기본 배송지 확인
+document.addEventListener('DOMContentLoaded', async function () {
+	loadAddressList(); // 기존 배송지 목록 불러오기
+
+	// 로컬스토리지에서 기본 배송지를 확인
+	const defaultAddress = localStorage.getItem('defaultAddress');
+	if (!defaultAddress) {
+		console.log('로컬스토리지에 기본 배송지가 없음. 서버에서 가져옵니다.');
+		await fetchDefaultAddressFromServer(); // 기본 배송지를 서버에서 가져와 로컬스토리지에 저장
+	} else {
+		console.log('로컬스토리지에서 기본 배송지 정보를 가져왔습니다:', JSON.parse(defaultAddress));
+	}
+});
+
 

@@ -220,6 +220,13 @@ public interface MyPageService {
 	 */
 	boolean cancelBooking(String bookingId, int memberNo);
 
+
+	/** 기본 배송지 정보 조회
+	 * @param memberNo
+	 * @return
+	 */
+	AddressDTO getDefaultAddress(int memberNo);
+
 	
 	
 	

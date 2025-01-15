@@ -196,5 +196,15 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
 	        log.error("Error updating performance review ranks: ", e);
 	    }
 	}
+	
+	 /** 공연 날짜가 지난 예매 내역 공연 종료 처리
+	 * @author 나찬웅
+	 */
+	@Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+	public void updateExpiredBookings() {
+		int updateRows = mapper.updateExpiredBookings();
+		
+		
+	}
     
 }
