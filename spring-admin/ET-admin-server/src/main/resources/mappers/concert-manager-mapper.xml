@@ -1,65 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="edu.kh.admin.main.model.mapper.ConcertManagerMapper">
+<mapper
+	namespace="edu.kh.admin.main.model.mapper.ConcertManagerMapper">
 
 	<!-- 모든 공연 조회 -->
-	<select id="managerEnrollList" >
-		SELECT  CONCERT_MANAGER_NO,
-				CONCERT_MANAGER_NICKNAME,
-				CONCERT_MANAGER_TEL,
-				CONCERT_MANAGER_ENROLL_DATE 
-		FROM 
-			"TB_CONCERT_MANAGER"
-		WHERE 
-			CONCERT_MANAGER_DEL_FL  = 'Y'
-		ORDER BY 
-			CONCERT_MANAGER_ENROLL_DATE ASC
+	<select id="managerEnrollList">
+		SELECT CONCERT_MANAGER_NO,
+		CONCERT_MANAGER_NICKNAME,
+		CONCERT_MANAGER_TEL,
+		CONCERT_MANAGER_ENROLL_DATE
+		FROM
+		"TB_CONCERT_MANAGER"
+		WHERE
+		CONCERT_MANAGER_DEL_FL = 'Y'
+		ORDER BY
+		CONCERT_MANAGER_ENROLL_DATE DESC
 	</select>
-	
+
 	<!-- 검색된 모든 공연 조회 -->
-	<select id="searchManagerEnrollList"> 
-	    SELECT  CONCERT_MANAGER_NO,
-				CONCERT_MANAGER_NICKNAME,
-				CONCERT_MANAGER_TEL,
-				CONCERT_MANAGER_ENROLL_DATE 
-		FROM 
-			"TB_CONCERT_MANAGER"
-		WHERE 
-			CONCERT_MANAGER_DEL_FL  = 'Y'
-	        <choose>
-	            <when test="selectedValue == '이름'">
-	                AND CONCERT_MANAGER_NICKNAME LIKE '%' || #{inputValue} || '%' 
-	            </when>
-	            <when test="selectedValue == '전화번호'">
-	                AND CONCERT_MANAGER_TEL LIKE '%' || #{inputValue} || '%' 
-	            </when>
-	            <otherwise>
-	                AND CONCERT_MANAGER_ENROLL_DATE LIKE '%' || #{inputValue} || '%' 
-	            </otherwise>
-	        </choose>
-		ORDER BY 
-			CONCERT_MANAGER_ENROLL_DATE ASC
-		
+	<select id="searchManagerEnrollList">
+		SELECT CONCERT_MANAGER_NO,
+		CONCERT_MANAGER_NICKNAME,
+		CONCERT_MANAGER_TEL,
+		CONCERT_MANAGER_ENROLL_DATE
+		FROM
+		"TB_CONCERT_MANAGER"
+		WHERE
+		CONCERT_MANAGER_DEL_FL = 'Y'
+		<choose>
+			<when test="selectedValue == '이름'">
+				AND CONCERT_MANAGER_NICKNAME LIKE '%' || #{inputValue} || '%'
+			</when>
+			<when test="selectedValue == '전화번호'">
+				AND CONCERT_MANAGER_TEL LIKE '%' || #{inputValue} || '%'
+			</when>
+			<otherwise>
+				AND CONCERT_MANAGER_ENROLL_DATE LIKE '%' || #{inputValue} || '%'
+			</otherwise>
+		</choose>
+		ORDER BY
+		CONCERT_MANAGER_ENROLL_DATE DESC
+
 	</select>
 
 	<select id="concertManagerDetail">
-	SELECT CONCERT_MANAGER_NICKNAME, CONCERT_MANAGER_TEL,CONCERT_MANAGER_COMPANY,CONCERT_MANAGER_COMPANY_COMMENT,CONCERT_MANAGER_EMAIL 
-	FROM TB_CONCERT_MANAGER
-	WHERE CONCERT_MANAGER_NO = ${concertManagerNo}
+		SELECT CONCERT_MANAGER_NICKNAME,
+		CONCERT_MANAGER_TEL,CONCERT_MANAGER_COMPANY,CONCERT_MANAGER_COMPANY_COMMENT,CONCERT_MANAGER_EMAIL
+		FROM TB_CONCERT_MANAGER
+		WHERE CONCERT_MANAGER_NO = ${concertManagerNo}
 	</select>
-	
+
 	<update id="agree">
-	UPDATE TB_CONCERT_MANAGER
-	SET 
-	    CONCERT_MANAGER_DEL_FL = 'N'
-	WHERE 
-	    CONCERT_MANAGER_NO = #{concertManagerNo}
+		UPDATE TB_CONCERT_MANAGER
+		SET
+		CONCERT_MANAGER_DEL_FL = 'N'
+		WHERE
+		CONCERT_MANAGER_NO = #{concertManagerNo}
 	</update>
-	
+
 	<delete id="delete">
-	DELETE FROM TB_CONCERT_MANAGER
-	WHERE CONCERT_MANAGER_NO = #{concertManagerNo}	
+		DELETE FROM TB_CONCERT_MANAGER
+		WHERE CONCERT_MANAGER_NO = #{concertManagerNo}
 	</delete>
-	
+
 
 </mapper>

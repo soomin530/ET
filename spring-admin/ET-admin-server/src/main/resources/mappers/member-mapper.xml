@@ -3,74 +3,78 @@
 <mapper namespace="edu.kh.admin.main.model.mapper.MemberMapper">
 
 	<!-- 모든 회원 조회 -->
-	<select id="showMemberList" >
-		SELECT MEMBER_NO, MEMBER_NICKNAME ,MEMBER_ADDRESS ,MEMBER_TEL 
+	<select id="showMemberList">
+		SELECT MEMBER_NO, MEMBER_NICKNAME
+		,MEMBER_ADDRESS ,MEMBER_TEL
 		FROM "TB_MEMBER"
 		WHERE MEMBER_DEL_FL = 'N'
 		AND MEMBER_AUTH = '1'
-		ORDER BY MEMBER_NO ASC
+		ORDER BY
+		ENROLL_DATE DESC
 	</select>
 
 	<!-- 검색된 모든 회원 조회 -->
 	<select id="searchShowMemberList">
-	    SELECT 
-	        MEMBER_NO, 
-	        MEMBER_NICKNAME, 
-	        MEMBER_ADDRESS, 
-	        MEMBER_TEL 
-	    FROM 
-	        "TB_MEMBER"
-	    WHERE 
-	        MEMBER_DEL_FL = 'N'
-	        AND MEMBER_AUTH = '1'
-	        <choose>
-	            <when test="selectedValue == '회원이름'">
-	                AND MEMBER_NICKNAME LIKE '%' || #{inputValue} || '%' 
-	            </when>
-	            <when test="selectedValue == '주소'">
-	                AND MEMBER_ADDRESS LIKE '%' || #{inputValue} || '%' 
-	            </when>
-	            <otherwise>
-	                AND MEMBER_TEL LIKE '%' || #{inputValue} || '%' 
-	            </otherwise>
-	        </choose>
-	    ORDER BY 
-	        MEMBER_NO ASC
+		SELECT
+		MEMBER_NO,
+		MEMBER_NICKNAME,
+		MEMBER_ADDRESS,
+		MEMBER_TEL
+		FROM
+		"TB_MEMBER"
+		WHERE
+		MEMBER_DEL_FL = 'N'
+		AND MEMBER_AUTH = '1'
+		<choose>
+			<when test="selectedValue == '회원이름'">
+				AND MEMBER_NICKNAME LIKE '%' || #{inputValue} || '%'
+			</when>
+			<when test="selectedValue == '주소'">
+				AND MEMBER_ADDRESS LIKE '%' || #{inputValue} || '%'
+			</when>
+			<otherwise>
+				AND MEMBER_TEL LIKE '%' || #{inputValue} || '%'
+			</otherwise>
+		</choose>
+		ORDER BY
+		ENROLL_DATE DESC
 	</select>
 
-	
+
 	<select id="memberDetail">
-	SELECT MEMBER_NICKNAME, MEMBER_TEL, MEMBER_ADDRESS,MEMBER_GENDER,MEMBER_EMAIL
-	FROM "TB_MEMBER"
-	WHERE MEMBER_NO = ${memberNo}
+		SELECT MEMBER_NICKNAME, MEMBER_TEL,
+		MEMBER_ADDRESS,MEMBER_GENDER,MEMBER_EMAIL
+		FROM "TB_MEMBER"
+		WHERE MEMBER_NO = ${memberNo}
 	</select>
-	
+
 	<update id="delete">
-	UPDATE TB_MEMBER
-	SET MEMBER_DEL_FL = 'Y'
-	WHERE MEMBER_NO = ${memberNo}
+		UPDATE TB_MEMBER
+		SET MEMBER_DEL_FL = 'Y'
+		WHERE MEMBER_NO = ${memberNo}
 	</update>
-	
+
 
 	<update id="update">
-	UPDATE TB_MEMBER 
-    SET 
-        MEMBER_NICKNAME = #{memberNickname},
-        MEMBER_TEL = #{memberTel}
-    WHERE MEMBER_NO = #{memberNo}
+		UPDATE TB_MEMBER
+		SET
+		MEMBER_NICKNAME = #{memberNickname},
+		MEMBER_TEL = #{memberTel}
+		WHERE MEMBER_NO = #{memberNo}
 	</update>
-	
+
 
 	<!-- 이메일로 관리자인지 확인 조회 -->
 	<select id="findByEmail">
 		SELECT
-			MEMBER_NO,
-			MEMBER_EMAIL,
-			MEMBER_AUTH,
-			MEMBER_EMAIL
+		MEMBER_NO,
+		MEMBER_EMAIL,
+		MEMBER_AUTH,
+		MEMBER_EMAIL
 		FROM "TB_MEMBER"
 		WHERE MEMBER_EMAIL = #{memberEmail}
-		AND MEMBER_NO = #{memberNo}
+		AND MEMBER_NO =
+		#{memberNo}
 	</select>
 
 
