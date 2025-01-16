@@ -16,8 +16,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://t1.kakaocdn.net")
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedOrigins("https://t1.kakaocdn.net", "https://final-project-react-individual.vercel.app")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
     
 }

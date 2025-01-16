@@ -776,3 +776,29 @@ signUpForm.addEventListener("submit", e => {
 	// 모든 검증을 통과했을 때만 폼을 제출합니다
 	signUpForm.submit();
 });
+
+async function checkAdminAndRedirect(button) {
+    try {
+        // 쿠키 체크 없이 바로 인증 시도
+        const response = await fetch('https://43.202.85.129/admin/auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',  // 쿠키가 자동으로 포함됨
+            body: JSON.stringify({
+                memberEmail: button.getAttribute('data-email'),
+                memberNo: button.getAttribute('data-no')
+            })
+        });
+
+        if (response.ok) {
+            window.location.href = 'https://final-project-react-individual.vercel.app';
+        } else {
+            alert('관리자 인증에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('인증 확인 중 오류 발생:', error);
+        alert('인증 확인 중 오류가 발생했습니다.');
+    }
+}
