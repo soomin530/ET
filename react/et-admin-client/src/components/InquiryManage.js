@@ -240,7 +240,7 @@ const InquiryList = ({
 if (window.confirm("정말로 이 문의사항을 삭제하시겠습니까?")) {
   try {
     const response = await axios.post(
-      `http://localhost:8081/inquiry/delete/${inquiryNo}`
+      `https://43.202.85.129/inquiry/delete/${inquiryNo}`
     );
     if (response.data > 0) {
       alert("문의사항이 삭제되었습니다.");
