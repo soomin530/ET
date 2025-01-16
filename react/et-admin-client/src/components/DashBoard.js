@@ -81,14 +81,14 @@ font-family: "Arial", sans-serif;
           if (adminCheckResponse.data.isAdmin) {
             setIsAdmin(true);
           } else {
-            window.location.href = "http://modeunticket.store"; // localhost:80으로 이동
+            window.location.href = "http://localhost:80"; // localhost:80으로 이동
           }
         } else {
-          window.location.href = "http://modeunticket.store"; // localhost:80으로 이동
+          window.location.href = "http://localhost:80"; // localhost:80으로 이동
         }
       } catch (error) {
         console.error("인증 실패:", error);
-        window.location.href = "http://modeunticket.store"; // localhost:80으로 이동
+        window.location.href = "http://localhost:80"; // localhost:80으로 이동
       }
     };
 
