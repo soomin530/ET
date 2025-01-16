@@ -554,6 +554,11 @@ public class MyPageController {
 	}
 	
 	
+	/**
+	 * @param loginMember
+	 * @author 나찬웅
+	 * @return
+	 */
 	@GetMapping("defaultAddress")
 	@ResponseBody
 	public ResponseEntity<AddressDTO> getDefaultAddress(@SessionAttribute("loginMember")Member loginMember){
@@ -561,8 +566,9 @@ public class MyPageController {
 		    
 		    if (defaultAddress != null) {
 		        return ResponseEntity.ok(defaultAddress); // 기본 배송지 반환
+		    } else  {
+		    	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("등록된 기본 배송지가 없습니다.");
 		    }
-		    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
 }
