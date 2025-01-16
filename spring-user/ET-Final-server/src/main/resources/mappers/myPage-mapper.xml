@@ -411,6 +411,7 @@
 	<!-- 기본 배송지 조회 -->
 	<select id="selectDefaultAddress" resultType="edu.kh.project.myPage.model.dto.AddressDTO">
 		SELECT *
+		FROM TB_ADDRESS
 		WHERE MEMBER_NO = #{memberNo}
 		AND BASIC_ADDRESS = 'Y'
 	</select>

@@ -31,12 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("공연 시설 ID:", facilityId);
   }
 
-   // 로컬스토리지에서 defaultAddress 가져오기
-   const defaultAddress = JSON.parse(localStorage.getItem("defaultAddress"));
-   if (!defaultAddress) {
-    alert("배송지 정보가 없습니다. 배송지를 추가해 주세요.");
-    return;
-  }
+  // 배송지 정보 가져오기
+  const defaultAddress = JSON.parse(localStorage.getItem("defaultAddress"));
+    if (!defaultAddress) {
+        alert("배송지 정보가 없습니다. 배송지를 추가해 주세요.");
+        return;
+    }
+
   // buyerAddr 생성: address + detailAddress
   const buyerAddr = `${defaultAddress.address} ${defaultAddress.detailAddress}`;
   const buyerPostcode = defaultAddress.postcode;
