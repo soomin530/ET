@@ -21,7 +21,7 @@ import { axiosApi } from "../api/axoisAPI";
 import { NavLink, Route, Routes } from "react-router";
 import ManagerEnrollDetail from "./ManagerEnrollDetail.js";
 
-
+// 일단은 이렇게 주석이라도 달아봐야지
 
 // react-router-dom 이용한 라우팅 방법
 // react-router-dom : React 애플리케이션에서 라우팅을 구현하기 위해 사용하는 라이브러리
@@ -48,56 +48,55 @@ font-family: "Arial", sans-serif;
 `;
 
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = useState(false);
+  // const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    const verifyAdmin = async () => {
-      try {
-        // 리프레시 토큰으로 새 액세스 토큰 요청
-        const response = await axiosApi.post(
-          "/admin/refresh",
-          {},
-          {
-            withCredentials: true,
-          }
-        );
+  // useEffect(() => {
+  //   const verifyAdmin = async () => {
+  //     try {
+  //       console.log("인증 프로세스 시작");
+        
+  //       // 단일 인증 요청으로 변경
+  //       const response = await axiosApi.post(
+  //         "/admin/auth",
+  //         {},  // 페이로드는 빈 객체로 시작
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       );
 
-        const newAccessToken = response.data.accessToken;
+  //       console.log("인증 응답:", response);
+  //       const newAccessToken = response.data.accessToken;
 
-        if (newAccessToken) {
-          localStorage.setItem("accessToken", newAccessToken);
+  //       if (newAccessToken) {
+  //         console.log("액세스 토큰 저장");
+  //         localStorage.setItem("accessToken", newAccessToken);
+  //         setIsAdmin(true);
+  //       } else {
+  //         console.log("인증 실패, 메인 페이지로 리다이렉트");
+  //         window.location.href = "http://modeunticket.store/";
+  //       }
+  //     } catch (error) {
+  //       console.error("인증 실패 상세:", {
+  //         message: error.message,
+  //         response: error.response?.data,
+  //         status: error.response?.status,
+  //         config: {
+  //           url: error.config?.url,
+  //           method: error.config?.method,
+  //           headers: error.config?.headers,
+  //           baseURL: error.config?.baseURL
+  //         }
+  //       });
+  //       window.location.href = "http://modeunticket.store/";
+  //     }
+  //   };
 
-          // 토큰에서 이메일 추출
-          const payload = JSON.parse(atob(newAccessToken.split(".")[1]));
+  //   verifyAdmin();
+  // }, [navigate]);
 
-          // memberEmail로 관리자 권한 확인 API 호출
-          const adminCheckResponse = await axiosApi.get("/admin/check", {
-            params: {
-              memberEmail: payload.memberEmail,
-              memberNo: payload.memberNo,
-            },
-          });
-
-          if (adminCheckResponse.data.isAdmin) {
-            setIsAdmin(true);
-          } else {
-            window.location.href = "http://localhost:80"; // localhost:80으로 이동
-          }
-        } else {
-          window.location.href = "http://localhost:80"; // localhost:80으로 이동
-        }
-      } catch (error) {
-        console.error("인증 실패:", error);
-        window.location.href = "http://localhost:80"; // localhost:80으로 이동
-      }
-    };
-
-    verifyAdmin();
-  }, [navigate]);
-
-  if (!isAdmin) {
-    return null;
-  }
+  // if (!isAdmin) {
+  //   return null;
+  // }
 
   return (
     <div className="dash-board-container">

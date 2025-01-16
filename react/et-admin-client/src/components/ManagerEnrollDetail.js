@@ -254,7 +254,7 @@ const ManagerEnrollDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8081/manager/${concertManagerNo}`)
+      .get(`https://43.202.85.129/manager/${concertManagerNo}`)
       .then((response) => {
         console.log("API 응답 데이터:", response.data);
         const memberData = response.data[0];
@@ -282,7 +282,7 @@ const ManagerEnrollDetail = () => {
 
   const handleAgree = () => {
     axios
-      .post(`http://localhost:8081/manager/agree/${concertManagerNo}`)
+      .post(`https://43.202.85.129/manager/agree/${concertManagerNo}`)
       .then((response) => {
         alert('승인이 완료되었습니다.');
         window.history.back();
@@ -296,7 +296,7 @@ const ManagerEnrollDetail = () => {
   const handleDelete = () => {
     if (window.confirm('정말로 삭제하시겠습니까?')) {
       axios
-        .post(`http://localhost:8081/manager/delete/${concertManagerNo}`)
+        .post(`https://43.202.85.129/manager/delete/${concertManagerNo}`)
         .then((response) => {
           alert('삭제가 완료되었습니다.');
           window.history.back();
@@ -317,7 +317,7 @@ const ManagerEnrollDetail = () => {
     };
     
     axios
-      .post(`http://localhost:8081/manager/update/${concertManagerNo}`, serverFormData)
+      .post(`https://43.202.85.129/manager/update/${concertManagerNo}`, serverFormData)
       .then((response) => {
         alert(response.data);
       })

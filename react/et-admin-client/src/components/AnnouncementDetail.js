@@ -141,7 +141,7 @@ function Write() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8081/announcement/${announceNo}`)
+      .get(`https://43.202.85.129/announcement/${announceNo}`)
       .then((response) => {
         console.log("API 응답 데이터:", response.data);
         // response.data[0]로 접근해야 함 (배열의 첫 번째 요소)
@@ -199,7 +199,7 @@ function Write() {
 
     try {
       const response = await axios({
-        url: 'http://localhost:8081/announcement/update',
+        url: 'https://modeunticket.store/announcement/update',
         method: 'POST',
         data: formData,
         withCredentials: true,
