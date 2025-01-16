@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin(origins = "https://final-project-react-individual.vercel.app", allowedHeaders = "*", allowCredentials = "true", methods = {
+@CrossOrigin(origins = "http://final-project-react-individual.vercel.app", allowedHeaders = "*", allowCredentials = "true", methods = {
 		RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS })
 @RequestMapping("admin")
 @RequiredArgsConstructor
@@ -69,6 +69,8 @@ public class AdminController {
     		@RequestParam(value="memberNo") String memberNo) {
         // memberEmail로 DB에서 회원 조회
         Member member = memberService.findByEmail(memberEmail, memberNo);
+        
+        System.out.println("관리자 조회 확인");
         
         // 관리자 여부 확인 (memberAuth == 2)
         boolean isAdmin = member != null && member.getMemberAuth() == 2;
