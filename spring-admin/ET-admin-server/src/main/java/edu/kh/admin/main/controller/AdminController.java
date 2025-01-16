@@ -43,7 +43,7 @@ public class AdminController {
 	 * @param resp
 	 * @return
 	 */
-	@PostMapping("/refresh")
+	@PostMapping("refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse resp) {
         try {
         	// Refresh Token 추출
@@ -64,7 +64,7 @@ public class AdminController {
 	 * @param memberEmail
 	 * @return
 	 */
-	@GetMapping("/check")
+	@GetMapping("check")
     public ResponseEntity<?> checkAdminStatus(@RequestParam(value="memberEmail") String memberEmail,
     		@RequestParam(value="memberNo") String memberNo) {
         // memberEmail로 DB에서 회원 조회
