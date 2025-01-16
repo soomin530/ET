@@ -13,11 +13,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const selectedTime = urlParams.get('selectedTime');
   const dayOfWeek = urlParams.get('dayOfWeek');
 
-
+  const defaultAddress = await checkAndSetDefaultAddress();
 
   // 진행 단계 표시 업데이트
   const steps = document.querySelectorAll('.progress-step');
   const progressBar = document.getElementById('progressBar');
+  
 
   // 각 단계에 active 클래스 추가 또는 제거
   steps.forEach((step, index) => {
@@ -392,6 +393,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSelectedSeatsInfo();
   });
 
+  
+
+
+
+  // 기본 주소지
+  async function checkAndSetDefaultAddress() {
+    let defaultAddress = JSON.parse(localStorage.getItem("defaultAddress"));
+  
+      if (!defaultAddress) {
+          console.log("로컬 스토리지에 기본 배송지가 없습니다. 서버에서 가져옵니다...");
+          try {
+              const response = await fetch('/mypage/defaultAddress');
+  
+              if (response.ok) {
+                  defaultAddress = await response.json();
+                  if (defaultAddress) {
+                      localStorage.setItem("defaultAddress", JSON.stringify(defaultAddress));
+                      console.log("기본 배송지를 로컬 스토리지에 저장했습니다:", defaultAddress);
+                  } else {
+                      console.warn("서버에서 기본 배송지를 가져올 수 없습니다.");
+                      return;
+                  }
+              } else {
+                  console.log(response.body);
+                  return;
+              }
+          } catch (error) {
+              console.error("기본 배송지 확인 중 오류 발생:", error);
+          }
+      }
+      return defaultAddress;
+  }
+
 
   // 좌석 선택 완료 버튼 이벤트
   document.getElementById("confirm-btn").addEventListener("click", () => {
@@ -400,6 +434,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if(!accessToken) {
       alert("예약 정보를 확인 하려면 로그인이 필요합니다.");
+      window.close();  // 창 닫기
+    }
+    
+    if(!defaultAddress) {
+      alert("예약 정보를 확인 하려면 기본 배송지를 등록해주세요.");
       window.close();  // 창 닫기
     }
 
