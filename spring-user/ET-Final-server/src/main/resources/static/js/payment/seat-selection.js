@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const seatData = parseData(rawData.seats || []); // seats 배열 처리
       const bookedSeats = rawData.bookedSeats || []; // bookedSeats 배열 처리
 
-      console.log("예약된 좌석 데이터 (bookedSeats):", bookedSeats);
 
       generateSeatsFromData(seatData);
       disableBookedSeats(bookedSeats);
@@ -74,8 +73,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     seatMap.innerHTML = "";
 
     updateSeatGradeInfo(seatData); // `seat-grade-info` 업데이트
-
-    console.log("좌석 데이터:", seatData); // 전체 좌석 데이터 출력
 
     seatData.forEach((data) => {
       const gradeSection = document.createElement("div");
