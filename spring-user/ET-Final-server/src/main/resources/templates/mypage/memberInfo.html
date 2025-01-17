@@ -25,7 +25,10 @@
 		<!-- th:classappend를 사용하여 네이버 로그인 시 클래스 추가 -->
 		<div class="member-container"
 			th:classappend="${session.loginMember != null && session.loginMember.naverFl == 'Y'} ? '' : ''">
-			<div class="updateInfo" onclick="handlePageAccess('updateInfo')">
+
+			<!-- 네이버 로그인이 아닐 때만 회원정보 수정 표시 -->
+			<div class="updateInfo" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}"
+				onclick="handlePageAccess('updateInfo')">
 				<h2>회원 정보 수정</h2>
 			</div>
 
@@ -42,15 +45,15 @@
 			<div class="membershipOut" onclick="handlePageAccess('membershipOut')">
 				<h2>회원탈퇴</h2>
 			</div>
-			
+
 			<div class="memberInquiryt" onclick="handlePageAccess('memberInquiryt')">
 				<h2>1:1문의</h2>
 			</div>
-			
+
 			<div class="memberInquirytList" onclick="handlePageAccess('memberInquirytList')">
 				<h2>문의내역</h2>
 			</div>
-			
+
 		</div>
 	</div>
 
