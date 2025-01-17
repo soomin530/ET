@@ -119,7 +119,6 @@ const performLogin = () => {
 
 	// saveId 체크박스가 있다면
 	const saveIdCheckbox = document.getElementById('saveIdCheckbox');
-	console.log(saveIdCheckbox);
 	if (saveIdCheckbox && saveIdCheckbox.checked) {
 		form.append('saveId', 'on');
 	}
