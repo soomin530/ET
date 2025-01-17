@@ -62,17 +62,19 @@ public interface MemberService {
 	 */
 	int updatePassword(int memberNo, String password);
 	
-	void insertVenue(Map<String, Object> venue);
+	/** 관리자 전용
+	 * @param memberEmail
+	 * @param valueOf
+	 * @return
+	 */
+	Member findAdminByEmail(String memberEmail, String valueOf);
 
-	void insertPerf(Map<String, Object> perfMap);
-
-	void insertPerfTime(Map<String, Object> perfTime);
-
-	void insertTicketInto(Map<String, Object> ticketInfo);
-
-	List<Map<String, String>> performanceDetails();
-
-	void insertVenueSeat(Map<String, Object> seat);
-
+	/** 비밀번호 체크
+	 * @param token
+	 * @param newPassword
+	 * @return
+	 */
+	boolean checkPreviousPassword(String memberNo, String newPassword);
+	
 
 }

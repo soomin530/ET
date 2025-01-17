@@ -47,7 +47,6 @@ class SearchHandler {
 		try {
 			const response = await fetch(`/search/suggestions/${encodeURIComponent(query)}`);
 			const suggestions = await response.json();
-			console.log(suggestions);
 			this.displaySuggestions(suggestions);
 		} catch (error) {
 			console.error('Failed to fetch suggestions:', error);
@@ -85,7 +84,6 @@ class SearchHandler {
 
 	performSearch() {
 		const query = this.searchInput.value.trim();
-		console.log(query);
 		if (query) {
 			window.location.href = `/search/searchResult/${encodeURIComponent(query)}`;
 		}

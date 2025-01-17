@@ -65,9 +65,11 @@
 
 						<!-- 시스템 관리자 -->
 						<th:block th:if="${member.memberAuth == 2}">
-							<button class="nickname-button" th:text="${member.memberNickname}"
-								onclick="location.href='http://localhost:3000'"></button>
-							<button class="logout-button" onclick="logoutSession()">로그아웃</button>
+						    <button class="nickname-button" th:text="${member.memberNickname}"
+						            th:data-email="${member.memberEmail}"
+						            th:data-no="${member.memberNo}"
+						            onclick="checkAdminAndRedirect(this)"></button>
+						    <button class="logout-button" onclick="logoutSession()">로그아웃</button>
 						</th:block>
 
 						<!-- 공연 관리자 -->

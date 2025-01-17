@@ -62,7 +62,7 @@ public class EmailServiceImpl implements EmailService{
 			
 			// 메일 기본 정보 설정
 			helper.setTo(email); // 받는 사람(수신자)
-			helper.setSubject("[ET e.ticket] 회원 가입 인증번호 입니다."); // 제목
+			helper.setSubject("[ET e.ticket] 인증번호 입니다."); // 제목
 			helper.setText( loadHtml(authKey, htmlName) , true ); // HTML 내용 설정
 			// 인증번호입니다 : ag2dcd 
 			// helper.setText( "인증번호입니다 : " +  authKey );
