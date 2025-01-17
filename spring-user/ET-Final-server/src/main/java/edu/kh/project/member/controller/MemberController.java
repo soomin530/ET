@@ -33,11 +33,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("member")
 @SessionAttributes({ "loginMember" })
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
 	private final MemberService service;
@@ -444,7 +446,34 @@ public class MemberController {
 			return "redirect:/member/find";
 		}
 	}
+	
+	/** 이전 비밀번호 체크
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/checkPreviousPassword")
+    public ResponseEntity<Map<String, Boolean>> checkPreviousPassword(@RequestBody Map<String, String> request) {
+        Map<String, Boolean> response = new HashMap<>();
+        
+        try {
+            String memberNo = jwtTokenUtil.getMemberNoFromToken(request.get("token"));
+            String newPassword = request.get("newPassword");
+            
+            boolean isDuplicate = service.checkPreviousPassword(memberNo, newPassword);
+            response.put("isDuplicate", isDuplicate);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("이전 비밀번호 확인 중 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
+	/** 비밀번호 변경
+	 * @param paramMap
+	 * @return
+	 */
 	@PostMapping("/resetPassword")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody Map<String, Object> paramMap) {

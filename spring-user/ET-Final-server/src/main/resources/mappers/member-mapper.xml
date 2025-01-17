@@ -171,90 +171,14 @@
 		AND MEMBER_NO =
 		#{memberNo}
 	</select>
-
-
-	<insert id="insertVenue">
-		INSERT INTO "TB_VENUE"
-		VALUES(#{mt10id},
-		#{fcltynm},
-		#{mt13cnt},
-		#{fcltychartr},
-		#{opende},
-		#{seatscale},
-		#{telno},
-		#{relateurl},
-		#{adres},
-		#{fcltla},
-		#{fcltlo}
-		)
-	</insert>
-
-
-	<insert id="insertPerf">
-		INSERT INTO "TB_PERFORMANCES_DETAIL"
-		VALUES(
-			#{mt20id},
-			#{prfnm},
-			#{prfpdfrom},
-			#{prfpdto},
-			#{fcltynm},
-			#{prfcast},
-			#{prfruntime},
-			#{entrpsnm},
-			#{pcseguidance},
-			#{poster},
-			#{dtguidance},
-			#{area},
-			#{genrenm},
-			#{prfstate},
-			#{mt10id},
-			null
-		)
-	</insert>
-
-
-	<insert id="insertPerfTime">
-		INSERT INTO "TB_PERFORMANCE_TIME"
-		VALUES(#{mt20id},
-		#{dayOfWeek},
-		#{performanceTime}
-		)
-	</insert>
-
-	<insert id="insertTicketInto">
-		INSERT INTO "TB_PERFORMANCE_SEAT_PRICE"
-		(PRICE_ID, MT20ID, GRADE_ID, PRICE)
-		VALUES
-		(SEQ_PRICE_ID.NEXTVAL,
-		#{mt20id},
-		#{seatGradeId},
-		#{price}
-		)
-	</insert>
-
-	<insert id="insertVenueSeat">
-		INSERT INTO "TB_VENUE_SEAT_INFO"
-		(VENUE_SEAT_ID, MT10ID, GRADE_ID,
-		SEAT_COUNT)
-		VALUES
-		(SEAT_ID_SEQ.NEXTVAL,
-		#{mt10id},
-		#{gradeId},
-		#{seatCount}
-		)
-	</insert>
-
-
-	<select id="performanceDetails">
+	
+	
+	<!-- 이전 비밀번호 조회 -->
+	<select id="selectPreviousPasswords">
 		SELECT
-		MT20ID,
-		PCSEGUIDANCE,
-		MT10ID,
-		SEATSCALE
-		FROM TB_PERFORMANCES_DETAIL
-		JOIN TB_VENUE USING(MT10ID)
-		WHERE MT20ID NOT
-		IN('PF001', 'PF253358')
+			MEMBER_PW
+		FROM "TB_MEMBER"
+		WHERE MEMBER_NO = #{memberNo}
 	</select>
 
 

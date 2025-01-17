@@ -4,18 +4,6 @@ $(document).ready(function() {
 });
 
 function initializeComponents() {
-	// Summernote 초기화
-	$('#description').summernote({
-		height: 300,
-		lang: 'ko-KR',
-		placeholder: '공연 설명을 입력하세요.',
-		callbacks: {
-			onImageUpload: function(files) {
-				uploadImage(files[0], this);
-			}
-		}
-	});
-
 	// 공연장 목록 로드
 	loadVenues();
 

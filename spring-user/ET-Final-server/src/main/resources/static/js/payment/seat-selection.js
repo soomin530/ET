@@ -445,6 +445,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.close(); // 창 닫기
     } else if (!defaultAddress) {
       alert("주문자 정보를 확인 하려면 기본 배송지를 등록해주세요.");
+	  window.opener.location.href = '/mypage/memberInfo'; // 부모 창 위치 변경
       window.close(); // 창 닫기
     } else if (selectedSeats.size === 0) {
       alert("좌석을 선택해주세요.");
