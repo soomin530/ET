@@ -11,10 +11,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -231,18 +229,5 @@ public class NaverController {
 		return "redirect:/";
 	}
 
-	/**
-	 * 예외 처리
-	 * 
-	 * @param e
-	 * @param model
-	 * @return
-	 */
-	@ExceptionHandler(Exception.class)
-	public String handleException(Exception e, Model model) {
-		log.error("네이버 로그인 오류", e);
-		model.addAttribute("errorMessage", "로그인 처리 중 오류가 발생했습니다");
-		return "error/oauth";
-	}
 
 }
