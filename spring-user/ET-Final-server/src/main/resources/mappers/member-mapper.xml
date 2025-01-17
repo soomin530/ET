@@ -158,6 +158,19 @@
 			MEMBER_PW = #{encPw}
 		WHERE MEMBER_NO = #{memberNo}
 	</update>
+	
+	<!-- 이메일로 관리자인지 확인 조회 -->
+	<select id="findAdminByEmail" parameterType="map" resultType="Member">
+		SELECT
+		MEMBER_NO,
+		MEMBER_EMAIL,
+		MEMBER_AUTH,
+		MEMBER_EMAIL
+		FROM "TB_MEMBER"
+		WHERE MEMBER_EMAIL = #{memberEmail}
+		AND MEMBER_NO =
+		#{memberNo}
+	</select>
 
 
 	<insert id="insertVenue">

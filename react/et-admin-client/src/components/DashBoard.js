@@ -21,89 +21,83 @@ import { axiosApi } from "../api/axoisAPI";
 import { NavLink, Route, Routes } from "react-router";
 import ManagerEnrollDetail from "./ManagerEnrollDetail.js";
 
-
+// 일단은 이렇게 주석이라도 달아봐야지
 
 // react-router-dom 이용한 라우팅 방법
 // react-router-dom : React 애플리케이션에서 라우팅을 구현하기 위해 사용하는 라이브러리
 // 라우팅(router) : 사용자가 요청한 URL 경로에 따라 적절한 페이지 or 리소스 제공하는 과정
 export default function DashBoard() {
+  // 스타일드 컴포넌트 정의
+  const StyledNavLink = styled(NavLink)`
+    text-decoration: none;
+    color: inherit;
+    font-size: 2rem;
+    transition: transform 0.3s ease; /* 호버 시 부드럽게 커지는 효과 */
 
+    &:hover {
+      transform: scale(1.2); /* 글자가 커짐 */
+    }
+  `;
 
-// 스타일드 컴포넌트 정의
-const StyledNavLink = styled(NavLink)`
-text-decoration: none;
-color: inherit;
-font-size: 2rem;
-transition: transform 0.3s ease; /* 호버 시 부드럽게 커지는 효과 */
+  const Title = styled.h1`
+    text-align: center;
+    margin: 20px 0;
+    font-family: "Arial", sans-serif;
+  `;
 
-&:hover {
-  transform: scale(1.2); /* 글자가 커짐 */
-}
-`;
-
-const Title = styled.h1`
-text-align: center;
-margin: 20px 0;
-font-family: "Arial", sans-serif;
-`;
-
-  const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const verifyAdmin = async () => {
       try {
-        // 리프레시 토큰으로 새 액세스 토큰 요청
-        const response = await axiosApi.post(
-          "/admin/refresh",
-          {},
-          {
-            withCredentials: true,
-          }
-        );
+        const params = new URLSearchParams(window.location.search);
+        const stateParam = params.get("state");
 
-        const newAccessToken = response.data.accessToken;
+        if (!stateParam) {
+          window.location.href = "http://modeunticket.store/";
+          return;
+        }
 
-        if (newAccessToken) {
-          localStorage.setItem("accessToken", newAccessToken);
+        const state = JSON.parse(atob(decodeURIComponent(stateParam)));
 
-          // 토큰에서 이메일 추출
-          const payload = JSON.parse(atob(newAccessToken.split(".")[1]));
+        // 시간 체크 (5분 이내)
+        if (new Date().getTime() - state.timestamp > 5 * 60 * 1000) {
+          window.location.href = "http://modeunticket.store/";
+          return;
+        }
 
-          // memberEmail로 관리자 권한 확인 API 호출
-          const adminCheckResponse = await axiosApi.get("/admin/check", {
-            params: {
-              memberEmail: payload.memberEmail,
-              memberNo: payload.memberNo,
-            },
-          });
+        // API 서버에 토큰 확인
+        const response = await fetch("https://43.202.85.129/admin/verify", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-          if (adminCheckResponse.data.isAdmin) {
-            setIsAdmin(true);
-          } else {
-            window.location.href = "http://localhost:80"; // localhost:80으로 이동
-          }
+        if (response.ok) {
+          setIsAdmin(true);
+          window.adminToken = state.token;
         } else {
-          window.location.href = "http://localhost:80"; // localhost:80으로 이동
+          window.location.href = "http://modeunticket.store/";
         }
       } catch (error) {
-        console.error("인증 실패:", error);
-        window.location.href = "http://localhost:80"; // localhost:80으로 이동
+        console.error("관리자 검증 실패:", error);
+        window.location.href = "http://modeunticket.store/";
       }
     };
 
     verifyAdmin();
   }, [navigate]);
 
-  if (!isAdmin) {
-    return null;
-  }
+  if (!isAdmin) return null;
 
   return (
     <div className="dash-board-container">
       <Title className="dash-board-title">
-      <StyledNavLink to="/">관리자 페이지</StyledNavLink>
-    </Title>
+        <StyledNavLink to="/">관리자 페이지</StyledNavLink>
+      </Title>
 
       <div className="main-show-container">
         {/* 라우터 탭 */}
@@ -119,7 +113,6 @@ font-family: "Arial", sans-serif;
         {/* 라우터 콘텐츠 */}
         <div className="main-content">
           <Routes>
-
             <Route path="/" element={<MainPage />} />
             <Route path="/UserManage" element={<UserManage />} />
             <Route path="/PerformanceManage" element={<PerformanceManage />} />
