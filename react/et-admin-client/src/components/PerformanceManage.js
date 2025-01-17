@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
 import { useNavigate } from "react-router-dom";
-import "./PerformanceNew.js"
-import styled from 'styled-components';
+import "./PerformanceNew.js";
+import styled from "styled-components";
 
 // 페이지네이션 스타일 컴포넌트
 const PaginationContainer = styled.div`
@@ -21,20 +21,20 @@ const PageButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${props => props.active ? '#ff7f27' : '#e0e0e0'};
+  border: 1px solid ${(props) => (props.active ? "#ff7f27" : "#e0e0e0")};
   border-radius: 4px;
-  background-color: ${props => props.active ? '#ff7f27' : 'white'};
-  color: ${props => props.active ? 'white' : '#333'};
+  background-color: ${(props) => (props.active ? "#ff7f27" : "white")};
+  color: ${(props) => (props.active ? "white" : "#333")};
   font-size: 14px;
-  font-weight: ${props => props.active ? '600' : '400'};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${props => props.disabled ? '0.5' : '1'};
+  font-weight: ${(props) => (props.active ? "600" : "400")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   transition: all 0.2s ease-in-out;
 
   &:hover:not(:disabled) {
-    background-color: ${props => props.active ? '#ff7f27' : '#fff3e0'};
+    background-color: ${(props) => (props.active ? "#ff7f27" : "#fff3e0")};
     border-color: #ff7f27;
-    color: ${props => props.active ? 'white' : '#ff7f27'};
+    color: ${(props) => (props.active ? "white" : "#ff7f27")};
     transform: translateY(-1px);
   }
 
@@ -114,15 +114,20 @@ const TableCell = styled.td`
   color: #333;
   text-align: center;
   white-space: nowrap;
-  overflow: hidden;    
+  overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
 `;
 
 // 페이지네이션 컴포넌트
-const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
+const Pagination = ({
+  totalItems,
+  itemsPerPage,
+  currentPage,
+  onPageChange,
+}) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  
+
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
@@ -131,17 +136,14 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
 
   return (
     <PaginationContainer>
-      <ArrowButton
-        onClick={() => onPageChange(1)}
-        disabled={currentPage === 1}
-      >
-        {'<<'}
+      <ArrowButton onClick={() => onPageChange(1)} disabled={currentPage === 1}>
+        {"<<"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        {'<'}
+        {"<"}
       </ArrowButton>
 
       {[...Array(endPage - startPage + 1)].map((_, index) => {
@@ -157,24 +159,29 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
         );
       })}
 
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        {'>'}
+        {">"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
       >
-        {'>>'}
+        {">>"}
       </ArrowButton>
     </PaginationContainer>
   );
 };
 
 // PerformanceList 컴포넌트
-const PerformanceList = ({ performanceList, currentPage, itemsPerPage, onPageChange }) => {
+const PerformanceList = ({
+  performanceList,
+  currentPage,
+  itemsPerPage,
+  onPageChange,
+}) => {
   const navigate = useNavigate();
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -196,17 +203,21 @@ const PerformanceList = ({ performanceList, currentPage, itemsPerPage, onPageCha
             <StyledTable>
               <thead>
                 <tr>
-                  <TableHeader style={{ width: '10%' }}>번호</TableHeader>
-                  <TableHeader style={{ width: '30%' }}>공연 시설명</TableHeader>
-                  <TableHeader style={{ width: '40%' }}>주소</TableHeader>
-                  <TableHeader style={{ width: '20%' }}>전화번호</TableHeader>
+                  <TableHeader style={{ width: "10%" }}>번호</TableHeader>
+                  <TableHeader style={{ width: "30%" }}>
+                    공연 시설명
+                  </TableHeader>
+                  <TableHeader style={{ width: "40%" }}>주소</TableHeader>
+                  <TableHeader style={{ width: "20%" }}>전화번호</TableHeader>
                 </tr>
               </thead>
               <tbody>
                 {currentItems.map((performance, index) => (
                   <TableRow
                     key={performance.mt10ID}
-                    onClick={() => navigate(`/performance/${performance.mt10ID}`)}
+                    onClick={() =>
+                      navigate(`/performance/${performance.mt10ID}`)
+                    }
                   >
                     <TableCell>{getListNumber(index)}</TableCell>
                     <TableCell>{performance.fcltynm}</TableCell>
@@ -232,8 +243,8 @@ const PerformanceList = ({ performanceList, currentPage, itemsPerPage, onPageCha
 // 메인 PerformanceManage 컴포넌트
 export default function PerformanceManage() {
   const [performanceList, setPerformanceList] = useState([]);
-  const [selectedValue, setSelectedValue] = useState('시설명');
-  const [inputValue, setInputValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState("시설명");
+  const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -244,28 +255,27 @@ export default function PerformanceManage() {
     setSelectedValue(e.target.value);
   };
 
-  const handleInputChange = (e) => {  
+  const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSubmit(e);  
+    if (e.key === "Enter") {
+      handleSubmit(e);
     }
   };
 
   const options = [
-    { id: 1, label: '시설명' },
-    { id: 2, label: '주소' },
-    { id: 3, label: '전화번호' },
+    { id: 1, label: "시설명" },
+    { id: 2, label: "주소" },
+    { id: 3, label: "전화번호" },
   ];
 
-  const getPerformanceList = async() => {
+  const getPerformanceList = async () => {
     try {
       const resp = await axiosApi.get("/performance/showPerformanceList");
-      if(resp.status === 200){
+      if (resp.status === 200) {
         setPerformanceList(resp.data);
-        console.log(resp.data);
       }
     } catch (error) {
       console.log("공연장 : " + error);
@@ -277,51 +287,56 @@ export default function PerformanceManage() {
   }, []);
 
   useEffect(() => {
-    if(performanceList != null){
+    if (performanceList != null) {
       setLoading(false);
     }
   }, [performanceList]);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!inputValue || inputValue.trim() === ''){
+    if (!inputValue || inputValue.trim() === "") {
       alert("검색어를 입력해주세요");
       return;
     }
 
     const formData = {
       selectedValue: selectedValue,
-      inputValue: inputValue  
+      inputValue: inputValue,
     };
-    
+
     try {
-      const resp = await axiosApi.post("/performance/searchPerformanceList", formData);
-  
+      const resp = await axiosApi.post(
+        "/performance/searchPerformanceList",
+        formData
+      );
+
       if (resp.status === 200) {
         const getData = resp.data;
         setPerformanceList(getData);
         setCurrentPage(1); // 검색 후 첫 페이지로 이동
       } else {
-        throw new Error('서버 요청 실패');
+        throw new Error("서버 요청 실패");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
-  if(loading) {
+  if (loading) {
     return <h1>Loading...</h1>;
   }
 
   return (
     <div className="menu-box">
-      <TitleContainer onClick={() => {
-        getPerformanceList();
-        setCurrentPage(1);
-        setInputValue('');
-        setSelectedValue('제목');
-      }}>
+      <TitleContainer
+        onClick={() => {
+          getPerformanceList();
+          setCurrentPage(1);
+          setInputValue("");
+          setSelectedValue("제목");
+        }}
+      >
         <h4>공연장관리</h4>
       </TitleContainer>
 
@@ -347,8 +362,8 @@ export default function PerformanceManage() {
         </form>
       </div>
 
-      <div className="main-table-container" style={{ textAlign: 'center' }}>
-        <PerformanceList 
+      <div className="main-table-container" style={{ textAlign: "center" }}>
+        <PerformanceList
           performanceList={performanceList}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
@@ -357,9 +372,9 @@ export default function PerformanceManage() {
       </div>
 
       <div className="write-button-container">
-        <button 
+        <button
           className="write-button"
-          onClick={() => navigate('/PerformanceNew')}
+          onClick={() => navigate("/PerformanceNew")}
         >
           신규등록
         </button>
