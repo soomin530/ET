@@ -337,10 +337,10 @@
 	         AND BOOKING_STATUS = #{status} 
 	     </if>
 	     <if test="startDate != null and startDate != ''">
-	        AND BOOKING_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	        AND TRUNC(BOOKING_DATE) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
 	    </if>
 	    <if test="endDate != null and endDate != ''">
-	    	AND BOOKING_DATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	    	AND TRUNC(BOOKING_DATE) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
 	    </if>
 	     <if test="bookingId != null and bookingId != ''">
 	         AND BOOKING_ID = #{bookingId}
