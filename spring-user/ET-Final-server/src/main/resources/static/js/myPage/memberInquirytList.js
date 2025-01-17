@@ -116,7 +116,6 @@ function getNaverCookie(name) {
 
 // 사이드 메뉴 초기화
 function initializeSideMenu() {
-	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 
 	const pagesNeedingVerification = ['updateInfo','changePw','addressManagement','membershipOut'];
 

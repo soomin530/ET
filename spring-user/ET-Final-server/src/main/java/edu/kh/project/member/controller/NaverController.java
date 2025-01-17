@@ -78,7 +78,7 @@ public class NaverController {
 	 * @param session
 	 * @return
 	 */
-	@GetMapping("callback")
+	@GetMapping("/callback")
 	public String naverCallback(@RequestParam(name = "code", required = false) String code,
 			@RequestParam(name = "state", required = false) String state,
 			@RequestParam(name = "error", required = false) String error, HttpSession session) {
@@ -101,7 +101,7 @@ public class NaverController {
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "process", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/process", method = { RequestMethod.GET, RequestMethod.POST })
 	public String processNaverLogin(HttpSession session, HttpServletResponse resp) {
 		// 임시 저장된 값 가져오기
 		String code = (String) session.getAttribute("naverCode");

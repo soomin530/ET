@@ -33,7 +33,6 @@ async function fetchTicketDetail(bookingId) {
       posterImage.src = data.poster || "/img/default-poster.png";  // 이미지가 없을 경우 기본 이미지 경로
       posterImage.alt = `${data.performanceName} 포스터`;
 
-      console.log(data); // 공연 정보 출력
     } else {
       document.getElementById("ticketDetail").innerText = "데이터를 불러오지 못했습니다.";
     }
@@ -52,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cancelBooking() {
   const bookingId = window.location.pathname.split("/").pop();
 
-  console.log(`Received bookingId: ${bookingId}`); // 로그 출력
 
   const response = await fetch(`/mypage/cancelBooking?bookingId=${bookingId}`, {
     method: "POST",

@@ -98,7 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
       function (rsp) {
         if (rsp.success) {
           // 결제 성공 시 처리
-          console.log("결제 성공:", rsp);
 
           alert(`결제가 성공적으로 완료되었습니다.\n고유ID: ${rsp.imp_uid}`);
 
@@ -133,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
             showDate: localStorage.getItem("selectedDate"), // 공연 날짜 추가
             showTime: localStorage.getItem("selectedTime"), // 공연 시간 추가
           };
-          console.log("전송할 결제 데이터:", paymentData);
 
           // 서버로 결제 검증 요청
           $.ajax({

@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		addressForm.reset();
 	});
 
+	// 모달 외부 클릭 시 모달 닫기
+	window.addEventListener('click', function(event) {
+	if (event.target === adsModal) {
+			adsModal.classList.remove('show');
+			addressForm.reset();
+			}
+	});
+
+
+
 	// 문서 전체에 이벤트 위임을 사용
 	document.addEventListener('click', function(e) {
 		if (e.target.classList.contains('close-btn')) {
@@ -391,7 +401,6 @@ function displayAddressList(addresses) {
 				try {
 					// addressNo 값을 버튼의 data-address-no 속성에서 가져옴
 					const addressNo = setDefaultBtn.getAttribute('data-address-no');
-					console.log('Sending addressNo:', addressNo); // 디버깅용 로그
 
 					if (!addressNo) {
 						alert('주소 번호가 유효하지 않습니다.');
@@ -426,7 +435,6 @@ function displayAddressList(addresses) {
 
 						try {
 							localStorage.setItem('defaultAddress', JSON.stringify(defaultAddressInfo));
-							console.log('Default address saved to localStorage:', defaultAddressInfo);
 						} catch (storageError) {
 							console.error('LocalStorage save failed:', storageError);
 						}
@@ -460,7 +468,6 @@ function displayAddressList(addresses) {
 		function clearDefaultAddress() {
 			try {
 				localStorage.removeItem('defaultAddress');
-				console.log('Default address removed from localStorage');
 			} catch (error) {
 				console.error('Error removing from localStorage:', error);
 			}
@@ -473,7 +480,6 @@ function displayAddressList(addresses) {
 					...addressInfo,
 					lastUpdated: new Date().toISOString()
 				}));
-				console.log('Default address updated in localStorage');
 			} catch (error) {
 				console.error('Error updating localStorage:', error);
 			}
@@ -556,7 +562,6 @@ const editPhoneMessage = document.querySelector("#editPhoneMessage");
 
 editPhone.addEventListener("input", e => {
 
-	console.log("작동중");
 
 	const inputEditPhone = e.target.value;
 
@@ -709,7 +714,16 @@ function closeEditModal() {
 	document.getElementById('editForm').reset();
 }
 
+// 취소 버튼 클릭 시 모달 닫기
 document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
+
+// 모달 외부 클릭 시 모달 닫기
+window.addEventListener('click', function(event) {
+	const editModal = document.getElementById('editModal');
+	if (event.target === editModal) {
+			closeEditModal();
+	}
+});
 
 
 //  배송지 수정에서 다음 주소 창 띄우기
@@ -752,13 +766,25 @@ function openDeleteModal(addressNo) {
 
 	// 삭제 확인 버튼에 이벤트 리스너 추가
 	document.getElementById('deleteConfirm').onclick = async () => {
-		await deleteAddress(addressNo);
+			await deleteAddress(addressNo);
+			closeDeleteModal(); // 삭제 후 모달 닫기
 	};
 
 	// 취소 버튼에 이벤트 리스너 추가
-	document.getElementById('deleteCancel').onclick = () => {
-		deleteModal.style.display = 'none';
-	};
+	document.getElementById('deleteCancel').onclick = closeDeleteModal;
+
+	// 모달 외부 클릭 시 모달 닫기
+	window.addEventListener('click', function(event) {
+			if (event.target === deleteModal) {
+					closeDeleteModal();
+			}
+	});
+}
+
+// 모달 닫기 함수
+function closeDeleteModal() {
+	const deleteModal = document.getElementById('deleteModal');
+	deleteModal.style.display = 'none';
 }
 
 // 배송지 삭제 실행 함수
@@ -798,7 +824,6 @@ function getNaverCookie(name) {
 
 // 사이드바
 document.addEventListener('DOMContentLoaded', function() {
-	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 
 	// 비밀번호 검증이 필요한 페이지들
 	const pagesNeedingVerification = ['updateInfo','changePw','membershipOut'];
@@ -848,7 +873,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 	// 로컬스토리지에서 기본 배송지를 확인
 	const defaultAddress = localStorage.getItem('defaultAddress');
 	if (!defaultAddress) {
-		console.log('로컬스토리지에 기본 배송지가 없음. 서버에서 가져옵니다.');
 		await fetchDefaultAddressFromServer(); // 기본 배송지를 서버에서 가져와 로컬스토리지에 저장
 	} else {
 		console.log('로컬스토리지에서 기본 배송지 정보를 가져왔습니다:', JSON.parse(defaultAddress));
