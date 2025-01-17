@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		addressForm.reset();
 	});
 
+	// 모달 외부 클릭 시 모달 닫기
+	window.addEventListener('click', function(event) {
+	if (event.target === adsModal) {
+			adsModal.classList.remove('show');
+			addressForm.reset();
+			}
+	});
+
+
+
 	// 문서 전체에 이벤트 위임을 사용
 	document.addEventListener('click', function(e) {
 		if (e.target.classList.contains('close-btn')) {
@@ -709,7 +719,16 @@ function closeEditModal() {
 	document.getElementById('editForm').reset();
 }
 
+// 취소 버튼 클릭 시 모달 닫기
 document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
+
+// 모달 외부 클릭 시 모달 닫기
+window.addEventListener('click', function(event) {
+	const editModal = document.getElementById('editModal');
+	if (event.target === editModal) {
+			closeEditModal();
+	}
+});
 
 
 //  배송지 수정에서 다음 주소 창 띄우기
@@ -752,13 +771,25 @@ function openDeleteModal(addressNo) {
 
 	// 삭제 확인 버튼에 이벤트 리스너 추가
 	document.getElementById('deleteConfirm').onclick = async () => {
-		await deleteAddress(addressNo);
+			await deleteAddress(addressNo);
+			closeDeleteModal(); // 삭제 후 모달 닫기
 	};
 
 	// 취소 버튼에 이벤트 리스너 추가
-	document.getElementById('deleteCancel').onclick = () => {
-		deleteModal.style.display = 'none';
-	};
+	document.getElementById('deleteCancel').onclick = closeDeleteModal;
+
+	// 모달 외부 클릭 시 모달 닫기
+	window.addEventListener('click', function(event) {
+			if (event.target === deleteModal) {
+					closeDeleteModal();
+			}
+	});
+}
+
+// 모달 닫기 함수
+function closeDeleteModal() {
+	const deleteModal = document.getElementById('deleteModal');
+	deleteModal.style.display = 'none';
 }
 
 // 배송지 삭제 실행 함수
