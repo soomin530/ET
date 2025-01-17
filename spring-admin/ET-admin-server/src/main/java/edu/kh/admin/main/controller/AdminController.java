@@ -77,39 +77,37 @@ public class AdminController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token refresh failed: " + e.getMessage());
 		}
 	}
-	
-	@PostMapping("auth")
-    public ResponseEntity<?> authenticateAdmin(
-            @RequestBody Map<String, String> payload,
-            HttpServletRequest request,
-            HttpServletResponse response) {
-        
-        log.debug("관리자 인증 요청 받음");
-        try {
-            Member member = memberService.findByEmail(
-                payload.get("memberEmail"), 
-                payload.get("memberNo")
-            );
-            
-            if (member == null || member.getMemberAuth() != 2) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Not authorized");
-            }
 
-            JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(
-                payload.get("memberNo"), 
-                payload.get("memberEmail")
-            );
-            
-            return ResponseEntity.ok()
-                    .body(Map.of("accessToken", tokenInfo.accessToken()));
-                
-        } catch (Exception e) {
-            log.error("인증 실패: ", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Authentication failed: " + e.getMessage());
-        }
-    }
+	@PostMapping("auth")
+	public ResponseEntity<?> authenticateAdmin(@RequestBody Map<String, String> payload, HttpServletRequest request,
+	        HttpServletResponse response) {
+
+	    log.debug("관리자 인증 요청 받음");
+	    try {
+	        // 이메일과 회원 번호를 이용해 관리자 인증
+	        Member member = memberService.findByEmail(payload.get("memberEmail"), payload.get("memberNo"));
+
+	        // 회원이 없거나 관리자 권한이 없는 경우
+	        if (member == null || member.getMemberAuth() != 2) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+	                    .body(Map.of("isAdmin", false, "message", "Not authorized"));
+	        }
+
+	        // 인증이 성공한 경우, 토큰 생성
+	        JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(payload.get("memberNo"),
+	                payload.get("memberEmail"));
+
+	        // 관리자 권한 확인 후, Access Token 반환
+	        return ResponseEntity.ok().body(Map.of("isAdmin", true, "accessToken", tokenInfo.accessToken()));
+
+	    } catch (Exception e) {
+	        log.error("인증 실패: ", e);
+	        // 인증 실패 시, 적절한 메시지와 함께 오류 응답
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                .body(Map.of("isAdmin", false, "message", "Authentication failed: " + e.getMessage()));
+	    }
+	}
+
 
 	/**
 	 * 관리자 인지 확인
