@@ -5,12 +5,10 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -27,12 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@CrossOrigin(origins = {
-	    "https://final-project-react-individual.vercel.app", 
-	    "http://modeunticket.store",
-	    "https://modeunticket.store"
-	},  allowedHeaders = "*", allowCredentials = "true", methods = {
-		RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS })
 @RequestMapping("admin")
 @RequiredArgsConstructor
 @SessionAttributes({ "loginMember" })
@@ -87,39 +79,37 @@ public class AdminController {
 	}
 	
 	@PostMapping("auth")
-	public ResponseEntity<?> authenticateAdmin(
-	        @RequestBody Map<String, String> payload,
-	        HttpServletRequest request,
-	        HttpServletResponse response) {
-	    
-	    log.debug("관리자 인증 요청 받음");
-	    try {
-	        
-	        // 관리자 권한 확인
-	        Member member = memberService.findByEmail(
-	            payload.get("memberEmail"), 
-	            payload.get("memberNo")
-	        );
-	        
-	        if (member == null || member.getMemberAuth() != 2) {
-	            log.debug("관리자 권한 없음");
-	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-	                    .body("Not authorized");
-	        }
+    public ResponseEntity<?> authenticateAdmin(
+            @RequestBody Map<String, String> payload,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        
+        log.debug("관리자 인증 요청 받음");
+        try {
+            Member member = memberService.findByEmail(
+                payload.get("memberEmail"), 
+                payload.get("memberNo")
+            );
+            
+            if (member == null || member.getMemberAuth() != 2) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Not authorized");
+            }
 
-	        log.debug("관리자 인증 성공");
-	        
-	        JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(payload.get("memberNo"), payload.get("memberEmail"));
-	        
-	        return ResponseEntity.ok()
-	            .body(Map.of("accessToken", tokenInfo.accessToken()));
-	            
-	    } catch (Exception e) {
-	        log.error("인증 실패: ", e);
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	            .body("Authentication failed: " + e.getMessage());
-	    }
-	}
+            JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(
+                payload.get("memberNo"), 
+                payload.get("memberEmail")
+            );
+            
+            return ResponseEntity.ok()
+                    .body(Map.of("accessToken", tokenInfo.accessToken()));
+                
+        } catch (Exception e) {
+            log.error("인증 실패: ", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Authentication failed: " + e.getMessage());
+        }
+    }
 
 	/**
 	 * 관리자 인지 확인

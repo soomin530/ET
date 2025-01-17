@@ -16,11 +16,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://t1.kakaocdn.net", "https://final-project-react-individual.vercel.app")
+                .allowedOrigins("https://final-project-react-individual.vercel.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true)
+                .allowedHeaders("Content-Type", "Authorization", "X-Requested-With")
+                .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Authorization")
+                .allowCredentials(true)  // 이 설정이 중요합니다
                 .maxAge(3600);
     }
-    
 }
