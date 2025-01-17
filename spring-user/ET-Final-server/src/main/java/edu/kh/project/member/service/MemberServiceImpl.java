@@ -127,6 +127,18 @@ public class MemberServiceImpl implements MemberService {
 		
 		return mapper.updatePassword(paramMap);
 	}
+	
+	
+	// 관리자 전용
+	@Override
+	public Member findAdminByEmail(String memberEmail, String memberNo) {
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		paramMap.put("memberEmail", memberEmail);
+		paramMap.put("memberNo", memberNo);
+		
+		return mapper.findAdminByEmail(paramMap);
+	}
 
 
 	@Override
@@ -158,5 +170,6 @@ public class MemberServiceImpl implements MemberService {
 	public void insertVenueSeat(Map<String, Object> seat) {
 		mapper.insertVenueSeat(seat);
 	}
+
 
 }
