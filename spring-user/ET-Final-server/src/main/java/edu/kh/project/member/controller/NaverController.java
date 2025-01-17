@@ -57,7 +57,7 @@ public class NaverController {
 	 * 
 	 * @return
 	 */
-	@GetMapping("/login")
+	@GetMapping("login")
 	public String naverLogin() {
 		// state용 난수 생성
 		String state = UUID.randomUUID().toString();
@@ -80,7 +80,7 @@ public class NaverController {
 	 * @param session
 	 * @return
 	 */
-	@GetMapping("/callback")
+	@GetMapping("callback")
 	public String naverCallback(@RequestParam(name = "code", required = false) String code,
 			@RequestParam(name = "state", required = false) String state,
 			@RequestParam(name = "error", required = false) String error, HttpSession session) {
@@ -103,7 +103,7 @@ public class NaverController {
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "/process", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "process", method = { RequestMethod.GET, RequestMethod.POST })
 	public String processNaverLogin(HttpSession session, HttpServletResponse resp) {
 		// 임시 저장된 값 가져오기
 		String code = (String) session.getAttribute("naverCode");
@@ -143,13 +143,13 @@ public class NaverController {
 			// Member 객체에 매핑
 			Member naverMember = new Member();
 			naverMember.setMemberId(response.getString("id")); // 네이버 고유 ID
-			naverMember.setMemberEmail(response.getString("email")); // 네이버 이메일
+			naverMember.setMemberEmail(response.getString("id")); // 네이버 이메일(아이디로 대체)
 			naverMember.setMemberNickname(response.getString("nickname")); // 네이버 닉네임
 			naverMember.setMemberGender(response.getString("gender").toUpperCase()); // M/F
 			naverMember.setNaverFl("Y"); // 네이버 로그인 회원
 			naverMember.setMemberAuth(1); // 일반회원 권한
 			naverMember.setMemberPw("naver" + response.getString("id")); // 임의 비밀번호
-			naverMember.setMemberTel(response.getString("mobile").replaceAll("-", "")); // 기본값
+			naverMember.setMemberTel("00000000000"); // 기본값
 			naverMember.setMemberAddress(" "); // 기본값
 
 			// 프로필 이미지가 있다면 저장
@@ -206,7 +206,7 @@ public class NaverController {
 	 * @param response
 	 * @return
 	 */
-	@PostMapping("/logout")
+	@PostMapping("logout")
 	public String naverLogout(HttpSession session, SessionStatus status, HttpServletResponse response) {
 		try {
 			// Refresh Token 쿠키 삭제
