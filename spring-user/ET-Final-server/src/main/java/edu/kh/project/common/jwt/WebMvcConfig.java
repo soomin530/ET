@@ -66,6 +66,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                .allowedOrigins(
                    "https://t1.kakaocdn.net",
                    "http://modeunticket.store",
+                   "https://modeunticket.store",
                    "http://43.202.85.129"
                )
                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

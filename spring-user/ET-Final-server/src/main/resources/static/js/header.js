@@ -777,28 +777,25 @@ signUpForm.addEventListener("submit", e => {
 	signUpForm.submit();
 });
 
-async function checkAdminAndRedirect(button) {
-    try {
-        // 쿠키 체크 없이 바로 인증 시도
-        const response = await fetch('https://43.202.85.129/admin/auth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',  // 쿠키가 자동으로 포함됨
-            body: JSON.stringify({
-                memberEmail: button.getAttribute('data-email'),
-                memberNo: button.getAttribute('data-no')
-            })
-        });
+// 메인 사이트(modeunticket.store)에서의 코드
+// 프론트엔드에서는 폼 제출방식으로 변경
+function checkAdminAndRedirect(button) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/member/admin';  // 컨텍스트 경로에 맞게 수정
 
-        if (response.ok) {
-            window.location.href = 'https://final-project-react-individual.vercel.app';
-        } else {
-            alert('관리자 인증에 실패했습니다.');
-        }
-    } catch (error) {
-        console.error('인증 확인 중 오류 발생:', error);
-        alert('인증 확인 중 오류가 발생했습니다.');
-    }
+    const memberEmail = document.createElement('input');
+    memberEmail.type = 'hidden';
+    memberEmail.name = 'memberEmail';
+    memberEmail.value = button.getAttribute('data-email');
+
+    const memberNo = document.createElement('input');
+    memberNo.type = 'hidden';
+    memberNo.name = 'memberNo';
+    memberNo.value = button.getAttribute('data-no');
+
+    form.appendChild(memberEmail);
+    form.appendChild(memberNo);
+    document.body.appendChild(form);
+    form.submit();
 }

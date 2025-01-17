@@ -1,7 +1,9 @@
 package edu.kh.project.member.controller;
 
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +50,39 @@ public class MemberController {
 
 	// @Autowired
 	// private RedisTemplate<String, String> redisTemplate;
+	
+	@PostMapping("admin")
+	public String adminAuth(Member inputMember, RedirectAttributes ra) {
+
+	    // 로그인 서비스를 재사용해서 관리자 체크
+	    Member member = service.findAdminByEmail(
+	        inputMember.getMemberEmail(), 
+	        String.valueOf(inputMember.getMemberNo())
+	    );
+
+	    // 관리자가 아닌 경우
+	    if (member == null || member.getMemberAuth() != 2) {
+	        ra.addFlashAttribute("message", "관리자 권한이 없습니다.");
+	        return "redirect:/";
+	    }
+
+	    // 토큰 생성 - 기존 login 메서드에서 사용하는 방식과 동일하게
+	    TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(
+	        String.valueOf(member.getMemberNo()), 
+	        member.getMemberEmail()
+	    );
+
+	    String state = "state=" + URLEncoder.encode(Base64.getEncoder().encodeToString(
+	        String.format("{\"timestamp\":%d,\"token\":\"%s\",\"memberEmail\":\"%s\",\"memberNo\":\"%s\"}", 
+	            System.currentTimeMillis(), 
+	            tokenInfo.accessToken(),
+	            member.getMemberEmail(),
+	            member.getMemberNo()
+	        ).getBytes()
+	    ), StandardCharsets.UTF_8);
+
+	    return "redirect:https://final-project-react-individual.vercel.app/?" + state;
+	}
 
 	/**
 	 * 로그인 진행
@@ -110,7 +145,7 @@ public class MemberController {
 		Map<String, Object> responseData = new HashMap<>();
 		responseData.put("accessToken", tokenInfo.accessToken());
 		responseData.put("memberInfo", loginMember);
-
+		
 		return ResponseEntity.ok(responseData); // 로그인 성공 시 200 OK 반환
 	}
 

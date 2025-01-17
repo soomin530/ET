@@ -27,82 +27,77 @@ import ManagerEnrollDetail from "./ManagerEnrollDetail.js";
 // react-router-dom : React 애플리케이션에서 라우팅을 구현하기 위해 사용하는 라이브러리
 // 라우팅(router) : 사용자가 요청한 URL 경로에 따라 적절한 페이지 or 리소스 제공하는 과정
 export default function DashBoard() {
+  // 스타일드 컴포넌트 정의
+  const StyledNavLink = styled(NavLink)`
+    text-decoration: none;
+    color: inherit;
+    font-size: 2rem;
+    transition: transform 0.3s ease; /* 호버 시 부드럽게 커지는 효과 */
 
+    &:hover {
+      transform: scale(1.2); /* 글자가 커짐 */
+    }
+  `;
 
-// 스타일드 컴포넌트 정의
-const StyledNavLink = styled(NavLink)`
-text-decoration: none;
-color: inherit;
-font-size: 2rem;
-transition: transform 0.3s ease; /* 호버 시 부드럽게 커지는 효과 */
+  const Title = styled.h1`
+    text-align: center;
+    margin: 20px 0;
+    font-family: "Arial", sans-serif;
+  `;
 
-&:hover {
-  transform: scale(1.2); /* 글자가 커짐 */
-}
-`;
-
-const Title = styled.h1`
-text-align: center;
-margin: 20px 0;
-font-family: "Arial", sans-serif;
-`;
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
-  // const [isAdmin, setIsAdmin] = useState(false);
 
-  // useEffect(() => {
-  //   const verifyAdmin = async () => {
-  //     try {
-  //       console.log("인증 프로세스 시작");
-        
-  //       // 단일 인증 요청으로 변경
-  //       const response = await axiosApi.post(
-  //         "/admin/auth",
-  //         {},  // 페이로드는 빈 객체로 시작
-  //         {
-  //           withCredentials: true,
-  //         }
-  //       );
+  useEffect(() => {
+    const verifyAdmin = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const stateParam = params.get("state");
 
-  //       console.log("인증 응답:", response);
-  //       const newAccessToken = response.data.accessToken;
+        if (!stateParam) {
+          window.location.href = "http://modeunticket.store/";
+          return;
+        }
 
-  //       if (newAccessToken) {
-  //         console.log("액세스 토큰 저장");
-  //         localStorage.setItem("accessToken", newAccessToken);
-  //         setIsAdmin(true);
-  //       } else {
-  //         console.log("인증 실패, 메인 페이지로 리다이렉트");
-  //         window.location.href = "http://modeunticket.store/";
-  //       }
-  //     } catch (error) {
-  //       console.error("인증 실패 상세:", {
-  //         message: error.message,
-  //         response: error.response?.data,
-  //         status: error.response?.status,
-  //         config: {
-  //           url: error.config?.url,
-  //           method: error.config?.method,
-  //           headers: error.config?.headers,
-  //           baseURL: error.config?.baseURL
-  //         }
-  //       });
-  //       window.location.href = "http://modeunticket.store/";
-  //     }
-  //   };
+        const state = JSON.parse(atob(decodeURIComponent(stateParam)));
 
-  //   verifyAdmin();
-  // }, [navigate]);
+        // 시간 체크 (5분 이내)
+        if (new Date().getTime() - state.timestamp > 5 * 60 * 1000) {
+          window.location.href = "http://modeunticket.store/";
+          return;
+        }
 
-  // if (!isAdmin) {
-  //   return null;
-  // }
+        // API 서버에 토큰 확인
+        const response = await fetch("https://43.202.85.129/admin/verify", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          setIsAdmin(true);
+          window.adminToken = state.token;
+        } else {
+          window.location.href = "http://modeunticket.store/";
+        }
+      } catch (error) {
+        console.error("관리자 검증 실패:", error);
+        window.location.href = "http://modeunticket.store/";
+      }
+    };
+
+    verifyAdmin();
+  }, [navigate]);
+
+  if (!isAdmin) return null;
 
   return (
     <div className="dash-board-container">
       <Title className="dash-board-title">
-      <StyledNavLink to="/">관리자 페이지</StyledNavLink>
-    </Title>
+        <StyledNavLink to="/">관리자 페이지</StyledNavLink>
+      </Title>
 
       <div className="main-show-container">
         {/* 라우터 탭 */}
@@ -118,7 +113,6 @@ font-family: "Arial", sans-serif;
         {/* 라우터 콘텐츠 */}
         <div className="main-content">
           <Routes>
-
             <Route path="/" element={<MainPage />} />
             <Route path="/UserManage" element={<UserManage />} />
             <Route path="/PerformanceManage" element={<PerformanceManage />} />

@@ -73,6 +73,12 @@ public interface MemberMapper {
 	 * @return
 	 */
 	int updatePassword(Map<String, Object> paramMap);
+	
+	/** 이메일로 관리자 확인
+	 * @param memberEmail
+	 * @return
+	 */
+	Member findAdminByEmail(Map<String, Object> paramMap);
 
 	void insertVenue(Map<String, Object> venue);
 
@@ -85,5 +91,6 @@ public interface MemberMapper {
 	List<Map<String, String>> performanceDetails();
 
 	void insertVenueSeat(Map<String, Object> seat);
+
 
 }

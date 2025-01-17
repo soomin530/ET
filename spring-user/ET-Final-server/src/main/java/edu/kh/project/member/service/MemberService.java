@@ -62,6 +62,13 @@ public interface MemberService {
 	 */
 	int updatePassword(int memberNo, String password);
 	
+	/** 관리자 전용
+	 * @param memberEmail
+	 * @param valueOf
+	 * @return
+	 */
+	Member findAdminByEmail(String memberEmail, String valueOf);
+	
 	void insertVenue(Map<String, Object> venue);
 
 	void insertPerf(Map<String, Object> perfMap);
@@ -73,6 +80,7 @@ public interface MemberService {
 	List<Map<String, String>> performanceDetails();
 
 	void insertVenueSeat(Map<String, Object> seat);
+
 
 
 }
