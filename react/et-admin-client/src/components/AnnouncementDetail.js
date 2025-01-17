@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import { axiosApi } from '../api/axoisAPI';
-import ReactQuill from 'react-quill';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { axiosApi } from "../api/axoisAPI";
+import ReactQuill from "react-quill";
+import styled from "styled-components";
 
 // Styled Components
 const Container = styled.div`
@@ -88,7 +88,7 @@ const Button = styled.button`
 `;
 
 const BackButton = styled(Button)`
-  background-color: #4B5563;
+  background-color: #4b5563;
 
   &:hover {
     background-color: #374151;
@@ -96,12 +96,12 @@ const BackButton = styled(Button)`
 `;
 
 const SubmitButton = styled(Button)`
- background-color: #10B981; // 초록색으로 변경
- color: white;
+  background-color: #10b981; // 초록색으로 변경
+  color: white;
 
- &:hover {
-   background-color: #059669; // hover시 더 진한 초록색
- }
+  &:hover {
+    background-color: #059669; // hover시 더 진한 초록색
+  }
 `;
 
 const Title = styled.h1`
@@ -115,7 +115,6 @@ const Title = styled.h1`
   align-items: center;
   justify-content: center;
 `;
-
 
 const BackArrow = styled.i`
   position: absolute;
@@ -133,25 +132,23 @@ const BackArrow = styled.i`
 function Write() {
   const { announceNo } = useParams(); // URL에서 memberNo 가져오기
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
+    title: "",
+    content: "",
   });
   const [isLoading, setIsLoading] = useState(true); // 데이터 로딩 상태 추가
 
-
   useEffect(() => {
     axios
-      .get(`https://43.202.85.129/announcement/${announceNo}`)
+      .get(`https://adminmodeunticket.store/announcement/${announceNo}`)
       .then((response) => {
-        console.log("API 응답 데이터:", response.data);
         // response.data[0]로 접근해야 함 (배열의 첫 번째 요소)
-        const AnnounceData = response.data[0];  // 여기를 수정
+        const AnnounceData = response.data[0]; // 여기를 수정
         setFormData({
-          title: AnnounceData.announceTitle || '',
-          content: AnnounceData.announceContent || '',
+          title: AnnounceData.announceTitle || "",
+          content: AnnounceData.announceContent || "",
         });
-        setTitle(AnnounceData.announceTitle || ''); // title 업데이트
-        setContent(AnnounceData.announceContent || ''); // content 업데이트
+        setTitle(AnnounceData.announceTitle || ""); // title 업데이트
+        setContent(AnnounceData.announceContent || ""); // content 업데이트
         setIsLoading(false);
       })
       .catch((error) => {
@@ -159,7 +156,6 @@ function Write() {
         setIsLoading(false);
       });
   }, [announceNo]);
-
 
   const modules = {
     toolbar: {
@@ -174,8 +170,7 @@ function Write() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [file, setFile] = useState(null);
-  //console.log(content);
-  
+
   const handleTitleChange = (e) => {
     setTitle(e.currentTarget.value);
   };
@@ -186,43 +181,42 @@ function Write() {
   };
 
   const handleSubmit = async () => {
-
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
     // announceNo를 문자열로 변환
     formData.append("announceNo", String(announceNo));
-    
+
     if (file) {
       formData.append("file", file);
     }
 
     try {
       const response = await axios({
-        url: 'https://modeunticket.store/announcement/update',
-        method: 'POST',
+        url: "https://adminmodeunticket.store/announcement/update",
+        method: "POST",
         data: formData,
         withCredentials: true,
       });
-  
-          // 서버에서 반환한 값이 1이면 새로고침, 0이면 실패 alert
-    if (response.data === 1) {
-      // 새로고침
-      window.location.reload();
-      alert("수정이 완료되었습니다")
-    } else {
-      // 실패 alert
-      alert('수정 실패');
-    }
+
+      // 서버에서 반환한 값이 1이면 새로고침, 0이면 실패 alert
+      if (response.data === 1) {
+        // 새로고침
+        window.location.reload();
+        alert("수정이 완료되었습니다");
+      } else {
+        // 실패 alert
+        alert("수정 실패");
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
   return (
     <Container>
       <FormWrapper>
-      <Title>
+        <Title>
           <BackArrow
             className="fas fa-arrow-left"
             onClick={() => window.history.back()}
@@ -238,23 +232,21 @@ function Write() {
             onChange={handleTitleChange}
           />
         </InputGroup>
-        
+
         <EditorWrapper>
           <ReactQuill
             className="quill-editor"
             modules={modules}
-            value={content} 
+            value={content}
             onChange={setContent}
           />
         </EditorWrapper>
-        
+
         <ButtonGroup>
           <BackButton onClick={() => window.history.back()}>
             뒤로가기
           </BackButton>
-          <SubmitButton onClick={handleSubmit}>
-            제출
-          </SubmitButton>
+          <SubmitButton onClick={handleSubmit}>제출</SubmitButton>
         </ButtonGroup>
       </FormWrapper>
     </Container>

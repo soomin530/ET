@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
 import { useNavigate } from "react-router-dom";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 // 페이지네이션 스타일 컴포넌트
 const PaginationContainer = styled.div`
@@ -20,20 +20,20 @@ const PageButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${props => props.active ? '#ff7f27' : '#e0e0e0'};
+  border: 1px solid ${(props) => (props.active ? "#ff7f27" : "#e0e0e0")};
   border-radius: 4px;
-  background-color: ${props => props.active ? '#ff7f27' : 'white'};
-  color: ${props => props.active ? 'white' : '#333'};
+  background-color: ${(props) => (props.active ? "#ff7f27" : "white")};
+  color: ${(props) => (props.active ? "white" : "#333")};
   font-size: 14px;
-  font-weight: ${props => props.active ? '600' : '400'};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${props => props.disabled ? '0.5' : '1'};
+  font-weight: ${(props) => (props.active ? "600" : "400")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   transition: all 0.2s ease-in-out;
 
   &:hover:not(:disabled) {
-    background-color: ${props => props.active ? '#ff7f27' : '#fff3e0'};
+    background-color: ${(props) => (props.active ? "#ff7f27" : "#fff3e0")};
     border-color: #ff7f27;
-    color: ${props => props.active ? 'white' : '#ff7f27'};
+    color: ${(props) => (props.active ? "white" : "#ff7f27")};
     transform: translateY(-1px);
   }
 
@@ -114,15 +114,20 @@ const TableCell = styled.td`
   color: #333;
   text-align: center;
   white-space: nowrap;
-  overflow: hidden;    
+  overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
 `;
 
 // 페이지네이션 컴포넌트
-const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
+const Pagination = ({
+  totalItems,
+  itemsPerPage,
+  currentPage,
+  onPageChange,
+}) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  
+
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
@@ -131,17 +136,14 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
 
   return (
     <PaginationContainer>
-      <ArrowButton
-        onClick={() => onPageChange(1)}
-        disabled={currentPage === 1}
-      >
-        {'<<'}
+      <ArrowButton onClick={() => onPageChange(1)} disabled={currentPage === 1}>
+        {"<<"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        {'<'}
+        {"<"}
       </ArrowButton>
 
       {[...Array(endPage - startPage + 1)].map((_, index) => {
@@ -157,24 +159,29 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
         );
       })}
 
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        {'>'}
+        {">"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
       >
-        {'>>'}
+        {">>"}
       </ArrowButton>
     </PaginationContainer>
   );
 };
 
 // ManagerEnrollList 컴포넌트
-const ManagerEnrollList = ({ enrollList, currentPage, itemsPerPage, onPageChange }) => {
+const ManagerEnrollList = ({
+  enrollList,
+  currentPage,
+  itemsPerPage,
+  onPageChange,
+}) => {
   const navigate = useNavigate();
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -189,24 +196,28 @@ const ManagerEnrollList = ({ enrollList, currentPage, itemsPerPage, onPageChange
   return (
     <section>
       {enrollList.length === 0 ? (
-        <p style={{ textAlign: 'center', padding: '20px' }}>신청 내역이 없습니다.</p>
+        <p style={{ textAlign: "center", padding: "20px" }}>
+          신청 내역이 없습니다.
+        </p>
       ) : (
         <>
           <TableContainer>
             <StyledTable>
               <thead>
                 <tr>
-                  <TableHeader style={{ width: '15%' }}>번호</TableHeader>
-                  <TableHeader style={{ width: '30%' }}>이름</TableHeader>
-                  <TableHeader style={{ width: '25%' }}>전화번호</TableHeader>
-                  <TableHeader style={{ width: '30%' }}>신청날짜</TableHeader>
+                  <TableHeader style={{ width: "15%" }}>번호</TableHeader>
+                  <TableHeader style={{ width: "30%" }}>이름</TableHeader>
+                  <TableHeader style={{ width: "25%" }}>전화번호</TableHeader>
+                  <TableHeader style={{ width: "30%" }}>신청날짜</TableHeader>
                 </tr>
               </thead>
               <tbody>
                 {currentItems.map((enroll, index) => (
                   <TableRow
                     key={enroll.concertManagerNo}
-                    onClick={() => navigate(`/manager/${enroll.concertManagerNo}`)}
+                    onClick={() =>
+                      navigate(`/manager/${enroll.concertManagerNo}`)
+                    }
                   >
                     <TableCell>{getListNumber(index)}</TableCell>
                     <TableCell>{enroll.concertManagerNickname}</TableCell>
@@ -218,7 +229,7 @@ const ManagerEnrollList = ({ enrollList, currentPage, itemsPerPage, onPageChange
             </StyledTable>
           </TableContainer>
           {/* 페이지네이션은 테이블 외부에 위치 */}
-          <div style={{ marginTop: '20px' }}>
+          <div style={{ marginTop: "20px" }}>
             <Pagination
               totalItems={enrollList.length}
               itemsPerPage={itemsPerPage}
@@ -235,8 +246,8 @@ const ManagerEnrollList = ({ enrollList, currentPage, itemsPerPage, onPageChange
 // 메인 ManagerEnroll 컴포넌트
 export default function ManagerEnroll() {
   const [enrollList, setEnrollList] = useState([]);
-  const [selectedValue, setSelectedValue] = useState('이름');
-  const [inputValue, setInputValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState("이름");
+  const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -252,15 +263,15 @@ export default function ManagerEnroll() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSubmit(e);
     }
   };
 
   const options = [
-    { id: 1, label: '이름' },
-    { id: 2, label: '전화번호' },
-    { id: 3, label: '신청날짜' },
+    { id: 1, label: "이름" },
+    { id: 2, label: "전화번호" },
+    { id: 3, label: "신청날짜" },
   ];
 
   const getEnrollList = async () => {
@@ -287,28 +298,31 @@ export default function ManagerEnroll() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!inputValue || inputValue.trim() === '') {
+    if (!inputValue || inputValue.trim() === "") {
       alert("검색어를 입력해주세요");
       return;
     }
 
     const formData = {
       selectedValue: selectedValue,
-      inputValue: inputValue
+      inputValue: inputValue,
     };
 
     try {
-      const resp = await axiosApi.post("/manager/searchManagerEnrollList", formData);
+      const resp = await axiosApi.post(
+        "/manager/searchManagerEnrollList",
+        formData
+      );
 
       if (resp.status === 200) {
         const getData = resp.data;
         setEnrollList(getData);
         setCurrentPage(1); // 검색 후 첫 페이지로 이동
       } else {
-        throw new Error('서버 요청 실패');
+        throw new Error("서버 요청 실패");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
@@ -318,12 +332,14 @@ export default function ManagerEnroll() {
 
   return (
     <div className="menu-box">
-      <TitleContainer onClick={() => {
-        getEnrollList();
-        setCurrentPage(1);
-        setInputValue('');
-        setSelectedValue('이름');
-      }}>
+      <TitleContainer
+        onClick={() => {
+          getEnrollList();
+          setCurrentPage(1);
+          setInputValue("");
+          setSelectedValue("이름");
+        }}
+      >
         <h4>업체계정신청</h4>
       </TitleContainer>
 
@@ -349,7 +365,7 @@ export default function ManagerEnroll() {
         </form>
       </div>
 
-      <div className="main-table-container" style={{ textAlign: 'center' }}>
+      <div className="main-table-container" style={{ textAlign: "center" }}>
         <ManagerEnrollList
           enrollList={enrollList}
           currentPage={currentPage}

@@ -21,8 +21,6 @@ import { axiosApi } from "../api/axoisAPI";
 import { NavLink, Route, Routes } from "react-router";
 import ManagerEnrollDetail from "./ManagerEnrollDetail.js";
 
-// 일단은 이렇게 주석이라도 달아봐야지
-
 // react-router-dom 이용한 라우팅 방법
 // react-router-dom : React 애플리케이션에서 라우팅을 구현하기 위해 사용하는 라이브러리
 // 라우팅(router) : 사용자가 요청한 URL 경로에 따라 적절한 페이지 or 리소스 제공하는 과정
@@ -46,10 +44,21 @@ export default function DashBoard() {
   `;
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const verifyAdmin = async () => {
+    const checkAdminStatus = async () => {
+      const storedAdminAuth = localStorage.getItem("adminAuth");
+      const storedAdminToken = localStorage.getItem("adminToken");
+
+      // 인증 정보가 있으면 바로 인증 상태를 유지
+      if (storedAdminAuth && storedAdminToken) {
+        setIsAdmin(true);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const params = new URLSearchParams(window.location.search);
         const stateParam = params.get("state");
@@ -61,36 +70,59 @@ export default function DashBoard() {
 
         const state = JSON.parse(atob(decodeURIComponent(stateParam)));
 
-        // 시간 체크 (5분 이내)
         if (new Date().getTime() - state.timestamp > 5 * 60 * 1000) {
+          localStorage.removeItem("adminAuth");
+          localStorage.removeItem("adminToken");
           window.location.href = "http://modeunticket.store/";
           return;
         }
 
-        // API 서버에 토큰 확인
-        const response = await fetch("https://43.202.85.129/admin/verify", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${state.token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        // API 호출로 관리자 권한 확인
+        const response = await fetch(
+          "https://adminmodeunticket.store/admin/auth",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json", // 명시적으로 JSON 응답 요청
+            },
+            body: JSON.stringify({
+              memberEmail: state.memberEmail,
+              memberNo: state.memberNo,
+            }),
+          }
+        );
 
-        if (response.ok) {
-          setIsAdmin(true);
-          window.adminToken = state.token;
-        } else {
-          window.location.href = "http://modeunticket.store/";
+        const checkData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(checkData.message || "관리자 권한 확인 실패");
         }
+
+        if (!checkData.accessToken) {
+          throw new Error("인증 토큰이 없습니다");
+        }
+
+        localStorage.setItem("adminAuth", "true");
+        localStorage.setItem("adminToken", checkData.accessToken);
+        setIsAdmin(true);
+
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, "", newUrl);
       } catch (error) {
-        console.error("관리자 검증 실패:", error);
-        window.location.href = "http://modeunticket.store/";
+        console.error("관리자 검증 실패. 전체 에러:", error);
+        localStorage.removeItem("adminAuth");
+        localStorage.removeItem("adminToken");
+        //window.location.href = "http://modeunticket.store/";
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    verifyAdmin();
-  }, [navigate]);
+    checkAdminStatus();
+  }, []); // 빈 배열을 넣으면 컴포넌트가 처음 마운트될 때만 실행됨
 
+  if (isLoading) return <div>Loading...</div>;
   if (!isAdmin) return null;
 
   return (
