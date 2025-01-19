@@ -103,8 +103,8 @@ function createPerformanceElement(performance) {
             <div class="performance-venue">${escapeHtml(performance.fcltynm)}</div>
 			<div class="performance-rank">
             <div class="review-stars">
-                <span class="static-stars">${createStarRating(performance.prfreviewRank)}</span>
-                <span class="numeric-rating">${performance.prfreviewRank}/5</span>
+                <span class="static-stars">${createStarRating(performance.avgRating)}</span>
+                <span class="numeric-rating">${performance.avgRating}/5</span>
             </div>
         </div>
     </div>

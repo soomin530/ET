@@ -4,11 +4,11 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>1:1 문의 작성</title>
+	<title>문의내역</title>
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<link rel="stylesheet" href="/css/myPage/memberInquiryt.css">
 	<th:block th:replace="~{common/common}"></th:block>
+	<link rel="stylesheet" href="/css/myPage/memberInquirytList.css">
 
 </head>
 
@@ -46,35 +46,46 @@
 
 		<!-- 메인 컨텐츠 -->
 		<div class="main-content">
-			<h2 class="page-title">1:1 문의 작성</h2>
+			<h2 class="page-title">문의내역</h2>
 
-			<form class="inquiry-form" id="inquiryForm" method="POST" th:action="@{/mypageApi/inquiryWrite}">
-				<div class="form-group">
-					<label for="inquiryTitle">제목</label>
-					<input type="text" id="inquiryTitle" name="inquiryTitle" maxlength="100" required>
-					<div class="error-message" id="titleError">제목을 입력해주세요.</div>
-				</div>
+			<!-- 검색 영역 -->
+			<div class="inquiry-search-container">
+				<select class="inquiry-search-select" id="searchType">
+					<option value="title">제목</option>
+					<option value="content">내용</option>
+				</select>
+				<input type="text" class="inquiry-search-input" id="searchKeyword" placeholder="검색어를 입력하세요">
+				<button class="inquiry-search-btn" onclick="searchInquiries()">검색</button>
+			</div>
 
-				<div class="form-group">
-					<label for="inquiryContent">문의내용</label>
-					<textarea id="inquiryContent" name="inquiryContent" maxlength="2000" required></textarea>
-					<div class="error-message" id="contentError">문의내용을 입력해주세요.</div>
-				</div>
+			<!-- 문의 목록 테이블 -->
+			<table class="inquiry-table">
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성일</th>
+						<th>답변상태</th>
+					</tr>
+				</thead>
+				<tbody id="inquiryTableBody">
+					<!-- 동적으로 추가될 내용 -->
+				</tbody>
+			</table>
 
-				<div class="form-actions">
-					<button type="button" class="cancel-btn" onclick="location.href='/mypage/memberInquirytList'">취소</button>
-					<button type="submit" class="submit-btn">등록</button>
-				</div>
-			</form>
+			<!-- 페이지네이션 -->
+			<div class="pagination" id="pagination">
+				<!-- 동적으로 추가될 페이지네이션 버튼들 -->
+			</div>
 		</div>
 	</div>
 
 	<th:block th:replace="~{common/footer}"></th:block>
+	
+	<script src="/js/myPage/memberInquirytList.js"></script>
 
 	<script>
 	</script>
-	
-	<script src="/js/myPage/memberInquiryt.js"></script>
 </body>
 
 </html>

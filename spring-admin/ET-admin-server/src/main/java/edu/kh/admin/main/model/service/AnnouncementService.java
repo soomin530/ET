@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import edu.kh.admin.main.model.dto.Announcement;
-import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.dto.Performance;
 
 public interface AnnouncementService {
 
@@ -44,6 +42,13 @@ public interface AnnouncementService {
 	 * @return
 	 */
 	int delete(int announceNo);
+ 
+
+	/** 검색한 글들 찾기
+	 * @param formdata 
+	 * @return
+	 */
+	List<Announcement> searchAnnouncementList(Map<String, Object> formdata);
 
 
 	

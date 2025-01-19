@@ -19,8 +19,16 @@ async function fetchFilteredTicketInfo() {
   const selectedStatus = document.querySelector(
     "input[name='statusFilter']:checked"
   ).value;
+
   const startDate = document.getElementById("startDateFilter").value;
   const endDate = document.getElementById("endDateFilter").value;
+
+  // 종료일이 시작일보다 빠른 경우
+  if (new Date(startDate) > new Date(endDate)) {
+    alert("종료일은 시작일보다 빠를 수 없습니다.");
+    return; // 함수 종료
+  }
+
 
   // URL 구성
   let url = `/mypage/ticketInfo/data?status=${selectedStatus}`;
@@ -63,30 +71,34 @@ function renderTableData(data) {
 
   data.forEach((booking) => {
     const row = document.createElement("tr");
-    const statusClass =
-      booking.bookingStatus === "예매" ? "status-booked" : "status-canceled";
-    const bookingDate = booking.bookingDate
-      ? new Date(booking.bookingDate).toLocaleDateString()
-      : "정보 없음";
-    const paidAt = booking.paidAt
-      ? new Date(booking.paidAt.replace(" ", "T")).toLocaleString()
-      : "-";
-    const cancelableUntil = booking.cancelableUntil
-      ? new Date(booking.cancelableUntil.replace(" ", "T")).toLocaleDateString()
-      : "정보 없음";
+    let statusClass = "";
+    let statusText = booking.bookingStatus;
+
+    // 상태 값 변환 및 클래스 설정
+    switch (statusText) {
+      case "CANCELED":
+        statusText = "취소";
+        statusClass = "status-canceled";
+        break;
+      case "예매":
+        statusText = "예매";
+        statusClass = "status-booked";
+        break;
+      case "EXPIRED":
+        statusText = "종료";
+        statusClass = "status-expired"; // 스타일링을 위해 추가 클래스
+        break;
+    }
+
+    const bookingDate = booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : "정보 없음";
+    const paidAt = booking.paidAt ? new Date(booking.paidAt.replace(" ", "T")).toLocaleString() : "-";
+    const cancelableUntil = booking.cancelableUntil ? new Date(booking.cancelableUntil.replace(" ", "T")).toLocaleDateString(): "정보 없음";
     const showDateTime = booking.showDateTime || "미정";
 
-    let statusText = booking.bookingStatus;
-    // 상태 값 변환
-    if (statusText === "CANCELED") {
-      statusText = "취소";
-    } else if (statusText === "COMPLETE") {
-      statusText = "예매";
-    }
 
     // 취소된 예매일 경우 상세 버튼 제거
     const detailButtonHtml =
-      booking.bookingStatus === "CANCELED"
+      booking.bookingStatus === "CANCELED" || booking.bookingStatus === "EXPIRED"
         ? `<td></td>` // 취소된 경우 빈 셀로 표시
         : `<td>
           <a href="/mypage/ticketDetail/${booking.bookingId}">

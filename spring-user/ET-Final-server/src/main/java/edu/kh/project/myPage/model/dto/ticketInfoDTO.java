@@ -1,10 +1,5 @@
 package edu.kh.project.myPage.model.dto;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-
-import edu.kh.project.payment.model.dto.Booking;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

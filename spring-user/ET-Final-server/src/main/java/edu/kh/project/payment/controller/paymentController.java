@@ -1,7 +1,6 @@
 package edu.kh.project.payment.controller;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,6 @@ public class paymentController {
 	@Value("${iamport.api.secret}")
 	private String apiSecret;
 
-	@PostMapping("validate")
 	public ResponseEntity<Map<String, Object>> verifyPayment(@RequestBody Map<String, String> request) {
 		String impUid = request.get("imp_uid");
 

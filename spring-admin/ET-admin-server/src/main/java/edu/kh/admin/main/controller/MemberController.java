@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +19,9 @@ import edu.kh.admin.main.model.dto.Member;
 import edu.kh.admin.main.model.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import oracle.jdbc.proxy.annotation.Post;
 
 @RestController 
-@CrossOrigin( origins = "http://localhost:3000",
+@CrossOrigin( origins = "https://final-project-react-individual.vercel.app/",
 			  allowedHeaders = "*",
 			  allowCredentials = "true",
 			  methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 

@@ -1,7 +1,6 @@
 package edu.kh.project.member.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.member.model.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,19 +25,10 @@ public class MemberServiceImpl implements MemberService {
 	// 로그인 진행
 	@Override
 	public Member login(Member inputMember) {
-		// 암호화 진행
-		String bcryptPassword = bcrypt.encode(inputMember.getMemberPw());
-
-		// 1. 아이디 일치하면서 탈퇴하지 않은 회원 조회
 		Member loginMember = mapper.login(inputMember.getMemberId());
 
-		// 2. 만약에 일치하는 아이디가 없어서 조회 결과가 null 인 경우
 		if (loginMember == null)
 			return null;
-
-		// 3. 입력 받은 비밀번호(평문 : inputMember.getMemberPw())와
-		// 암호화된 비밀번호(loginMember.getMemberPw())
-		// 두 비밀번호가 일치하는지 확인
 
 		// 일치하지 않으면
 		if (!bcrypt.matches(inputMember.getMemberPw(), loginMember.getMemberPw())) {
@@ -104,6 +92,10 @@ public class MemberServiceImpl implements MemberService {
         	naverMember.setMemberPw(encPw);
             // 새로운 네이버 회원인 경우 회원가입 처리
             mapper.insertNaverMember(naverMember);
+            
+            Member searchMember = mapper.selectNaverMember(naverMember.getMemberId());
+            naverMember.setMemberNo(searchMember.getMemberNo());
+            
             return naverMember;
         }
         
@@ -138,36 +130,33 @@ public class MemberServiceImpl implements MemberService {
 		
 		return mapper.updatePassword(paramMap);
 	}
-
-
+	
+	
+	// 관리자 전용
 	@Override
-	public void insertVenue(Map<String, Object> venue) {
-		mapper.insertVenue(venue);
+	public Member findAdminByEmail(String memberEmail, String memberNo) {
+		Map<String, Object> paramMap = new HashMap<>();
+		
+		paramMap.put("memberEmail", memberEmail);
+		paramMap.put("memberNo", memberNo);
+		
+		return mapper.findAdminByEmail(paramMap);
 	}
 
+	
+	// 비밀번호 체크
 	@Override
-	public void insertPerf(Map<String, Object> perfMap) {
-		mapper.insertPerf(perfMap);
+	public boolean checkPreviousPassword(String memberNo, String newPassword) {
+		// 토큰에서 회원 정보 추출
+        if (memberNo == null) {
+        	return false;
+        }
+
+        // 이전 비밀번호 이력 조회
+        String previousPasswords = mapper.selectPreviousPasswords(memberNo);
+
+        return bcrypt.matches(newPassword, previousPasswords);
 	}
 
-	@Override
-	public void insertPerfTime(Map<String, Object> perfTime) {
-		mapper.insertPerfTime(perfTime);
-	}
-
-	@Override
-	public void insertTicketInto(Map<String, Object> ticketInfo) {
-		mapper.insertTicketInto(ticketInfo);
-	}
-
-	@Override
-	public List<Map<String, String>> performanceDetails() {
-		return mapper.performanceDetails();
-	}
-
-	@Override
-	public void insertVenueSeat(Map<String, Object> seat) {
-		mapper.insertVenueSeat(seat);
-	}
 
 }

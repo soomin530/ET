@@ -1,13 +1,7 @@
 package edu.kh.admin.main.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,24 +13,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.multipart.MultipartFile;
 
-import edu.kh.admin.main.model.dto.Announcement;
 import edu.kh.admin.main.model.dto.Inquiry;
-import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.service.AnnouncementService;
 import edu.kh.admin.main.model.service.InquiryService;
-import edu.kh.admin.main.model.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController 
-@CrossOrigin( origins = "http://localhost:3000",
+@CrossOrigin( origins = "https://final-project-react-individual.vercel.app",
 			  allowedHeaders = "*",
 			  allowCredentials = "true",
 			  methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
@@ -91,6 +77,16 @@ public class InquiryController {
 		formData.put("inquiryNo", inquiryNo);
 		
 	    int result = service.reply(formData);
+	    if (result > 0) {
+	        return ResponseEntity.ok(result);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
+	
+	@PostMapping("delete/{inquiryNo:[0-9]+}")
+	public ResponseEntity<Object> delete(@PathVariable("inquiryNo") int inquiryNo) {
+	    int result = service.delete(inquiryNo);
 	    if (result > 0) {
 	        return ResponseEntity.ok(result);
 	    } else {

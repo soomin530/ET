@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import jakarta.servlet.MultipartConfigElement;
-import lombok.val;
 
 
 @Configuration

@@ -87,7 +87,6 @@ newPasswordInput.addEventListener("input", debounce(async (e) => {
 	} else {
 		// 기본 유효성 검사를 통과한 경우에만 서버 검증 수행
 		const isDuplicate = await checkPreviousPassword(password);
-		console.log(isDuplicate);
 		if (isDuplicate) {
 			passwordMessage.innerText = "이전에 사용한 비밀번호입니다. 다른 비밀번호를 입력해주세요.";
 			passwordMessage.style.color = "red";

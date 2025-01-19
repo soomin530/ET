@@ -1,26 +1,31 @@
 /* BookedSeatManage.css */
 .performance-container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 20px;
+	width: 100%; /* 추가 */
+    text-align: -webkit-center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 .performance-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr); /* 5열에서 3열로 변경 */
-	gap: 30px; /* 간격 증가 */
-	margin-bottom: 30px;
+	width: 100%; /* 추가 */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 30px;
 }
 
 .performance-item {
 	border: 1px solid #eee;
-	border-radius: 12px; /* 테두리 둥글기 증가 */
-	overflow: hidden;
-	transition: transform 0.3s ease;
-	cursor: pointer;
-	contain: content;
-	background: white; /* 배경색 추가 */
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 기본 그림자 추가 */
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    /* contain: content; 제거 */
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;  /* 추가 */
+    flex-direction: column; /* 추가 */
 }
 
 .performance-item:hover {
@@ -33,6 +38,8 @@
 	padding-top: 140%;
 	background: #f5f5f5;
 	overflow: hidden;
+	min-height: 300px; /* 추가: 최소 높이 설정 */
+	width: 100%; /* 추가: 너비 명시적 설정 */
 }
 
 .image-container img {
@@ -44,6 +51,7 @@
 	object-fit: cover;
 	opacity: 1;
 	transition: opacity 0.2s ease;
+	min-height: 300px; /* 추가: 이미지 최소 높이 설정 */
 }
 
 .image-container img.loaded {

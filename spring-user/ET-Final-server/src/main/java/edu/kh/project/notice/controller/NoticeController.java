@@ -15,12 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import edu.kh.project.notice.model.dto.Notice;
 import edu.kh.project.notice.model.service.NoticeService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("notice")
 @RequiredArgsConstructor
-@Slf4j
 public class NoticeController {
     
     private final NoticeService service;
@@ -39,13 +37,13 @@ public class NoticeController {
      * @param model
      * @return
      */
-    @GetMapping("/list")
+    @GetMapping("list")
     public String getNoticeList(Model model) {
         // 초기 공지사항 목록 로드 (첫 페이지)
         List<Notice> list = service.getNoticeList(0, 10, null, "all");
         model.addAttribute("noticeList", list);
         
-        return "/notice/noticeList";
+        return "notice/noticeList";
     }
     
     /** 공지사항 무한스크롤 데이터 로드
@@ -55,7 +53,7 @@ public class NoticeController {
      * @param searchType
      * @return
      */
-    @GetMapping("/api/load")
+    @GetMapping("api/load")
     @ResponseBody
     public Map<String, Object> loadMoreNotices(
             @RequestParam(value="page", defaultValue = "1") int page,

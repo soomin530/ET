@@ -723,8 +723,6 @@ window.addEventListener('unload', () => {
 // 기존의 예매 버튼 클릭 이벤트를 수정
 document.getElementById("booking-btn").onclick = function() {
 	const calendar = window.calendarInstance;
-	console.log("선택된 날짜:", calendar.selectedDate);
-	console.log("선택된 시간:", calendar.selectedTime);
 
 	if (calendar.selectedDate && calendar.selectedTime) {
 		// mt20id 값 가져오기

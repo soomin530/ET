@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,10 @@ public class PerformanceApiController {
 	private PerformanceService performanceService;
 	
 	@Value("${my.performance.location}")
-    private String uploadPath;
+	private String performanceLocation;
+	
+	@Value("${my.performance.resource-handler}")
+	private String resourceHandler;
 
 	/**
 	 * 잔여 좌석 개수 조회
@@ -146,122 +150,133 @@ public class PerformanceApiController {
 	 */
 	@PostMapping("/register")
 	@ResponseBody
-	public ResponseEntity<?> register(@RequestBody PerformanceRegistrationDTO dto,
-			@SessionAttribute("loginMember") PerfMgr loginMember) throws Exception {
-		try {
+	public ResponseEntity register(@RequestBody PerformanceRegistrationDTO dto, 
+	                             @SessionAttribute("loginMember") PerfMgr loginMember) throws Exception {
+	    try {
+	        // Base64 이미지가 있는 경우 파일로 저장
+	        if (dto.getPosterBase64() != null && !dto.getPosterBase64().isEmpty()) {
+	            String uploadDir = performanceLocation; // application.properties에서 설정된 경로 사용
+	            String filename = saveBase64Image(dto.getPosterBase64(), uploadDir, dto.getPosterFileName());
+	            dto.setPosterFileName(filename); // 저장된 파일명 설정
+	        }
 
-			// Base64 이미지가 있는 경우 파일로 저장
-			if (dto.getPosterBase64() != null && !dto.getPosterBase64().isEmpty()) {
-				String uploadDir = "uploads/posters"; // 실제 경로로 수정 필요
-				String filename = saveBase64Image(dto.getPosterBase64(), uploadDir, dto.getPosterFileName());
-				dto.setPosterFileName(filename); // 저장된 파일명 설정
-			}
+	        dto.setConcertManagerNo(loginMember.getConcertManagerNo());
+	        dto.setEntrpsnm(loginMember.getConcertManagerCompany());
 
-			dto.setConcertManagerNo(loginMember.getConcertManagerNo());
-			dto.setEntrpsnm(loginMember.getConcertManagerCompany());
+	        // 공연 등록
+	        int result = performanceService.registerPerformance(dto);
+	        return ResponseEntity.ok(result);
 
-			// 공연 등록
-			// 기본 공연 정보 TB_PERFORMANCES_DETAIL
-			// 좌석별 가격 정보 TB_PERFORMANCE_SEAT_PRICE
-			// 공연 요일, 시간 TB_PERFORMANCE_TIME
-			int result = performanceService.registerPerformance(dto);
-
-			return ResponseEntity.ok(result);
-
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
+	    } catch (Exception e) {
+	        log.error("Performance registration failed", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
 	}
 
-	private String saveBase64Image(String base64Data, String uploadDir, String originalFilename) throws IOException {
-		// 파일명 생성 (중복 방지)
-		String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-		String filename = UUID.randomUUID().toString() + extension;
 
-		// 디렉토리 생성
-		File directory = new File(uploadDir);
-		if (!directory.exists()) {
-			directory.mkdirs();
-		}
+	private String saveBase64Image(String base64Image, String uploadDir, String originalFilename) throws Exception {
+	    // Base64 데이터에서 실제 이미지 데이터 추출
+	    String[] parts = base64Image.split(",");
+	    String imageData = parts.length > 1 ? parts[1] : parts[0];
 
-		// Base64를 파일로 저장
-		byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-		Path filepath = Paths.get(uploadDir, filename);
-		Files.write(filepath, imageBytes);
+	    // 파일 확장자 추출
+	    String extension = "";
+	    int extensionIndex = originalFilename.lastIndexOf(".");
+	    if (extensionIndex > 0) {
+	        extension = originalFilename.substring(extensionIndex);
+	    }
 
-		return filename;
+	    // 고유한 파일명 생성
+	    String filename = UUID.randomUUID().toString() + extension;
+	    
+	    // 업로드 디렉토리 생성
+	    File directory = new File(uploadDir);
+	    if (!directory.exists()) {
+	        directory.mkdirs();
+	    }
+
+	    // 파일 경로 생성
+	    String filePath = uploadDir + File.separator + filename;
+
+	    // Base64 디코딩 및 파일 저장
+	    try {
+	        byte[] imageBytes = Base64.getDecoder().decode(imageData);
+	        Files.write(Paths.get(filePath), imageBytes);
+	    } catch (IOException e) {
+	        throw new Exception("Failed to save image file", e);
+	    }
+
+	    return filename;
 	}
 	
-    /** 공연 설명 이미지 업로드
-     * @param file
-     * @return
+	/**
+     * 공연 설명 이미지 업로드
      */
-    @PostMapping("/description/upload")
-    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
-        try {
-            // 원본 파일명에서 확장자 추출
-            String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            
-            // 새로운 파일명 생성 (UUID + 확장자)
-            String newFileName = UUID.randomUUID().toString() + extension;
-            
-            // 저장할 전체 경로 생성
-            File directory = new File(uploadPath);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            
-            // 파일 저장
-            File savedFile = new File(uploadPath + newFileName);
-            file.transferTo(savedFile);
-            
-            // 이미지 URL 생성 (리소스 핸들러 패턴에 맞춤)
-            String imageUrl = "/images/performance/" + newFileName;
-            
-            // 응답 생성
-            Map<String, String> response = new HashMap<>();
-            response.put("url", imageUrl);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "이미지 업로드에 실패했습니다."));
-        }
-    }
+	@PostMapping("/description/upload")
+	public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
+	    try {
+	        // 원본 파일명에서 확장자 추출
+	        String originalFilename = file.getOriginalFilename();
+	        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+	        
+	        // 새로운 파일명 생성
+	        String newFileName = UUID.randomUUID().toString() + extension;
 
-    /** 공연 설명 이미지 삭제
-     * @param imageUrl
-     * @return
+	        // 저장 경로 생성
+	        Path uploadPath = Paths.get(performanceLocation);
+	        
+	        // 디렉토리가 없으면 생성
+	        if (!Files.exists(uploadPath)) {
+	            Files.createDirectories(uploadPath);
+	        }
+	        
+	        // 파일 저장 경로 생성
+	        Path filePath = uploadPath.resolve(newFileName);
+	        log.info("File will be saved to: {}", filePath.toString());
+	        
+	        // Files.copy를 사용하여 파일 저장
+	        Files.copy(file.getInputStream(), filePath);
+
+	        // 이미지 URL 생성
+	        String imageUrl = resourceHandler.replace("/**", "/") + newFileName;
+	        log.info("Image URL created: {}", imageUrl);
+	        
+	        return ResponseEntity.ok(Map.of("url", imageUrl));
+
+	    } catch (IOException e) {
+	        log.error("File upload failed", e);
+	        return ResponseEntity
+	                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(Map.of("error", "이미지 업로드에 실패했습니다."));
+	    }
+	}
+
+    /**
+     * 공연 설명 이미지 삭제
      */
     @DeleteMapping("/description/delete")
-    public ResponseEntity<Map<String, String>> deleteImage(@RequestParam(value="imageUrl") String imageUrl) {
+    public ResponseEntity<Map<String, String>> deleteImage(@RequestParam("imageUrl") String imageUrl) {
         try {
-            // URL에서 파일명 추출 (/images/performance/filename.jpg 형식에서)
+            // URL에서 파일명 추출
             String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
             
             // 파일 경로 생성
-            File file = new File(uploadPath + fileName);
-            
+            Path filePath = Paths.get(performanceLocation, fileName);
+            log.info("Attempting to delete file: {}", filePath.toString());
+
             // 파일 존재 여부 확인
-            if (!file.exists()) {
+            if (!Files.exists(filePath)) {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "파일을 찾을 수 없습니다."));
             }
-            
+
             // 파일 삭제
-            if (file.delete()) {
-                return ResponseEntity.ok(Map.of("message", "이미지가 성공적으로 삭제되었습니다."));
-            } else {
-                throw new IOException("파일 삭제 실패");
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+            Files.delete(filePath);
+            return ResponseEntity.ok(Map.of("message", "이미지가 성공적으로 삭제되었습니다."));
+
+        } catch (IOException e) {
+            log.error("File deletion failed", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "이미지 삭제에 실패했습니다."));

@@ -2,13 +2,12 @@
 package edu.kh.project.payment.service;
 
 import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.text.SimpleDateFormat;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -115,7 +114,6 @@ public class paymentServiceImpl implements paymentService {
 	        cal.add(Calendar.DATE, -1);  // 하루 전 계산
 
 	        // `Date`를 다시 문자열로 변환
-	        String cancelableUntilStr = dateFormat.format(cal.getTime());
 	        Timestamp cancelableUntil = new Timestamp(cal.getTime().getTime());
 
 	        String performanceName = performanceDetail.getPrfnm();

@@ -1,3 +1,7 @@
+
+
+
+
 // 로컬스토리지에서 데이터 가져오기
 const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')); 
 
@@ -74,6 +78,18 @@ phoneInput.addEventListener('input', () => {
 document.getElementById('booking-form').addEventListener('submit', (e) => {
     e.preventDefault();
 
+    // 로컬스토리지에서 defaultAddress 가져오기
+    const defaultAddress = JSON.parse(localStorage.getItem("defaultAddress"));
+    if (!defaultAddress) {
+        alert("배송지 정보가 없습니다. 배송지를 추가해 주세요.");
+        // 현재 창 닫기 시도
+        if (confirm("배송지 등록 페이지로 이동하시겠습니까?")) {
+            window.open("/mypage/addressManagement", "_self"); // 같은 창에서 열기
+            window.close(); // 창 닫기 시도 (브라우저에 따라 허용되지 않을 수 있음)
+        }
+        return;
+    }
+
     const nickname = document.getElementById('nickname').value.trim(); // 닉네임
     const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();       // 이메일
@@ -86,7 +102,7 @@ document.getElementById('booking-form').addEventListener('submit', (e) => {
     }
 
     // 유효성 검사
-    if (!name || !phone || !email) {
+    if (!nickname || !phone || !email) {
         alert("모든 필드를 입력해주세요.");
         return;
     }
@@ -97,10 +113,12 @@ document.getElementById('booking-form').addEventListener('submit', (e) => {
         return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert("올바른 이메일 형식을 입력해주세요.");
-        return;
-    }
+   // 이메일 유효성 검사 (기본 이메일 형식 + 도메인 확장자 검사)
+   const emailRegex = /^[^\s@]+@[^\s@]+\.(com|kr|net|org|co\.kr|edu|gov|io)$/i;
+   if (!emailRegex.test(email)) {
+       alert("올바른 이메일 형식을 입력해주세요. 예: example@domain.com");
+       return;
+   }
 
     const bookingInfo = { nickname, phone, email };
     // 예매자 정보 localStorage에 저장

@@ -54,5 +54,16 @@ public interface PerformanceMapper {
 	 */
 	List<SeatInfo> seatInfoDetailList(String mt10id);
 
+	/** ID 중복 체크 
+	 * @return
+	 */
+	List<Performance> IDCheck();
+
+	/** 모든 좌석 삭제
+	 * @param deleteGrade
+	 * @return
+	 */
+	int deleteGrade(Map<String, Object> deleteGrade);
+
 
 }

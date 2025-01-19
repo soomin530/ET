@@ -10,9 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.kh.project.notice.model.dto.Notice;
 import edu.kh.project.notice.model.mapper.NoticeMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor

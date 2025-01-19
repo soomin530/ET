@@ -12,6 +12,125 @@
 	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
 	<th:block th:replace="~{common/common}"></th:block>
 
+	<style>
+		.note-modal.show {
+			display: flex !important;
+			align-items: center;
+			justify-content: center;
+			background: rgba(0, 0, 0, 0.5) !important;
+			backdrop-filter: blur(0) !important;
+		}
+
+		.note-modal .modal-dialog {
+			max-width: 450px !important;
+			width: 90% !important;
+			margin: 0 !important;
+		}
+
+		.note-modal .modal-content {
+			width: 100% !important;
+			transform: none !important;
+			opacity: 1 !important;
+			padding: 0 !important;
+			border: none !important;
+			border-radius: 8px !important;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+		}
+
+		.note-modal .modal-header {
+			padding: 15px !important;
+			border-bottom: 1px solid #e5e5e5 !important;
+			margin-bottom: 0 !important;
+		}
+
+		.note-modal .modal-header .modal-title {
+			margin: 0 !important;
+			color: #333 !important;
+			font-size: 18px !important;
+		}
+
+		.note-modal .modal-header .close {
+			font-size: 24px !important;
+			color: #999 !important;
+			opacity: 1 !important;
+			padding: 0 !important;
+			margin: 0 !important;
+			background: none !important;
+			border: none !important;
+		}
+
+		.note-modal .modal-header .close:hover {
+			color: #333 !important;
+		}
+
+		.note-modal .modal-body {
+			padding: 20px !important;
+			display: block !important;
+		}
+
+		.note-modal .form-group {
+			margin-bottom: 15px !important;
+		}
+
+		.note-modal .note-form-label {
+			display: block !important;
+			margin-bottom: 8px !important;
+			color: #333 !important;
+			font-weight: normal !important;
+		}
+
+		.note-modal .note-image-input {
+			width: 100% !important;
+			padding: 8px !important;
+			margin-bottom: 10px !important;
+		}
+
+		.note-modal .note-image-url {
+			width: 100% !important;
+			padding: 8px 12px !important;
+			border: 1px solid #ddd !important;
+			border-radius: 4px !important;
+			margin-bottom: 0 !important;
+		}
+
+		.note-modal .modal-footer {
+			padding: 15px !important;
+			border-top: 1px solid #e5e5e5 !important;
+			display: flex !important;
+			justify-content: flex-end !important;
+			margin-top: 0 !important;
+		}
+
+		.note-modal .note-btn {
+			padding: 6px 12px !important;
+			border-radius: 4px !important;
+			font-size: 14px !important;
+			cursor: pointer !important;
+		}
+
+		.note-modal .note-btn-primary {
+			background: #004CFF !important;
+			color: white !important;
+			border: none !important;
+		}
+
+		.note-modal .note-btn-primary:disabled {
+			background: #cccccc !important;
+			cursor: not-allowed !important;
+		}
+
+		.note-modal .note-btn-primary:not(:disabled):hover {
+			background: #0039e5 !important;
+		}
+
+		@media (max-width: 768px) {
+			.note-modal .modal-dialog {
+				max-width: 90% !important;
+				margin: 20px auto !important;
+			}
+		}
+	</style>
+
 </head>
 
 <body>
@@ -108,6 +227,30 @@
 		};
 
 		$(document).ready(function () {
+			// 이미지 다이얼로그를 위한 템플릿 오버라이드
+			$.summernote.options.template = {
+				image: function (option) {
+					return `
+					                <div class="note-modal show" tabindex="-1" role="dialog">
+					                    <div class="modal-dialog">
+					                        <div class="modal-content">
+					                            <div class="modal-header">
+					                                <h4 class="modal-title">${option.title}</h4>
+					                                <button type="button" class="close" data-dismiss="modal" role="button">×</button>
+					                            </div>
+					                            <div class="modal-body">${option.body}</div>
+					                        </div>
+					                    </div>
+					                </div>`;
+				}
+			};
+
+			// 모달 닫기 버튼 이벤트 핸들러 추가
+			$(document).on('click', '.note-modal .close', function () {
+				$(this).closest('.note-modal').modal('hide');
+				$(this).closest('.note-modal').hide();
+			});
+
 			$('#descriptionEditor').summernote({
 				height: 500,
 				lang: 'ko-KR',
@@ -121,6 +264,11 @@
 				],
 				fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', '맑은 고딕', '궁서', '굴림체', '굴림', '돋음체', '바탕체'],
 				fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72', '96'],
+				disableResizeEditor: true,
+				disableResizeImage: true,
+				shortcuts: false,
+				prettifyHtml: false,
+				// 콜백 함수들
 				callbacks: {
 					onImageUpload: function (files) {
 						for (let i = 0; i < files.length; i++) {

@@ -199,7 +199,7 @@
 		    FCLTYNM,
 		    PRFRUNTIME,
 		    POSTER,
-		    PRFREVIEW_RANK,
+		    AVGRATING,
 		    MEMBER_NO
 		FROM (
 		    SELECT 
@@ -214,7 +214,7 @@
 		            FCLTYNM,
 		            PRFRUNTIME,
 		            POSTER,
-		            PRFREVIEW_RANK,
+		            NVL(PRFREVIEW_RANK, 0) as AVGRATING,
 		            MEMBER_NO
 		        FROM TB_PERFORMANCES_DETAIL
 		        JOIN TB_PERFORMANCE_WISH USING(MT20ID)
@@ -337,10 +337,10 @@
 	         AND BOOKING_STATUS = #{status} 
 	     </if>
 	     <if test="startDate != null and startDate != ''">
-	        AND BOOKING_DATE >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	        AND TRUNC(BOOKING_DATE) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
 	    </if>
 	    <if test="endDate != null and endDate != ''">
-	    	AND BOOKING_DATE >= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	    	AND TRUNC(BOOKING_DATE) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
 	    </if>
 	     <if test="bookingId != null and bookingId != ''">
 	         AND BOOKING_ID = #{bookingId}
@@ -408,5 +408,12 @@
 	    WHERE BOOKING_ID = #{bookingId}
 	</update>
 	
+	<!-- 기본 배송지 조회 -->
+	<select id="selectDefaultAddress" resultType="edu.kh.project.myPage.model.dto.AddressDTO">
+		SELECT *
+		FROM TB_ADDRESS
+		WHERE MEMBER_NO = #{memberNo}
+		AND BASIC_ADDRESS = 'Y'
+	</select>
 	
 </mapper>

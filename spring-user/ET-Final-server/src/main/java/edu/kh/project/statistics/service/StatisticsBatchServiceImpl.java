@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -196,6 +195,16 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
 	    } catch (Exception e) {
 	        log.error("Error updating performance review ranks: ", e);
 	    }
+	}
+	
+	 /** 공연 날짜가 지난 예매 내역 공연 종료 처리
+	 * @author 나찬웅
+	 */
+	@Scheduled(cron = "0 0 12 * * ?") // 매일 정오 실행
+	public void updateExpiredBookings() {
+		int updateRows = mapper.updateExpiredBookings();
+		
+		
 	}
     
 }

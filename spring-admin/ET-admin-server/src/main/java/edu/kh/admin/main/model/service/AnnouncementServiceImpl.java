@@ -3,22 +3,16 @@ package edu.kh.admin.main.model.service;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.admin.main.model.dto.Announcement;
-import edu.kh.admin.main.model.dto.ConcertManager;
-import edu.kh.admin.main.model.dto.Member;
 import edu.kh.admin.main.model.mapper.AnnouncementMapper;
-import edu.kh.admin.main.model.mapper.ConcertManagerMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
-@Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService{
 
 		private final AnnouncementMapper mapper;
@@ -30,6 +24,11 @@ public class AnnouncementServiceImpl implements AnnouncementService{
 			
 		}
 		
+		// 검색한 목록 띄우기
+		@Override
+		public List<Announcement> searchAnnouncementList(Map<String, Object> formdata) {
+		return mapper.searchAnnouncementList(formdata);
+		}
 		
 		// 상세 목록 띄우기
 		@Override

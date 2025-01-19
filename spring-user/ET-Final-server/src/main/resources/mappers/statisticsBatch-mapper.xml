@@ -75,5 +75,16 @@
 	        AND pr.REVIEW_DEL_FL = 'N'
 	    )
 	</update>
+	
+	
+	<!-- 공연 기간이 지난 예매 내역 종료 처리 -->
+	<update id="updateExpiredBookings">
+		<![CDATA[
+			UPDATE TB_BOOKING_HISTORY
+			SET BOOKING_STATUS = 'EXPIRED'
+			WHERE TO_DATE(SHOW_DATE_TIME, 'YYYY-MM-DD HH24:MI:SS') < SYSDATE 
+    		AND BOOKING_STATUS = '예매'
+		]]>
+	</update>
 
 </mapper>

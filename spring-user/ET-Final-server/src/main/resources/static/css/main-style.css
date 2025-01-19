@@ -398,7 +398,6 @@ body {
 /* 금액 셀 우측 정렬 */
 .statistics-section td:last-child {
 	text-align: center;
-	font-family: 'Courier New', monospace;
 }
 
 /* 반응형 디자인 */
@@ -436,7 +435,7 @@ body {
 /* 티커 애니메이션 컨테이너 */
 .ticker {
     display: inline-flex;
-    animation: ticker 30s linear infinite;
+    animation: ticker 40s linear infinite;
     white-space: nowrap;
 }
 

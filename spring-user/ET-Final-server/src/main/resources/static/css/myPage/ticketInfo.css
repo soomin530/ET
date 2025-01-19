@@ -186,6 +186,12 @@ input[type="radio"] {
   font-weight: bold;
 }
 
+.status-expired {
+  color: #666;
+  font-weight: bold;
+}
+
+
 .btn-detail {
   background-color: #007bff;
   color: white;

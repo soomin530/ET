@@ -9,643 +9,12 @@
 		<title>배송지 관리</title>
 
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-
+		<link rel="stylesheet" href="/css/myPage/addressManagement.css">
 
 		<th:block th:replace="~{common/common}"></th:block>
 
-		<style>
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
-
-			body {
-				font-family: 'Noto Sans KR', sans-serif;
-				min-height: 100vh;
-				display: block;
-
-				
-			}
-
-			.main-content {
-				flex: 1;
-				padding: 40px;
-				margin-left: 200px;
-				z-index: 2;
-				position: relative;
-			}
-
-			.mypage-container {
-				display: flex;
-				min-height: calc(100vh - 200px);
-				position: relative;
-			}
-
-			.menu-list {
-				list-style: none;
-			}
-
-			.menu-item {
-				margin-bottom: 15px;
-			}
-
-			.menu-item a {
-				text-decoration: none;
-				color: #333;
-				display: flex;
-				align-items: center;
-				padding: 10px;
-				border-radius: 5px;
-				transition: background-color 0.2s;
-			}
-
-			.menu-item a:hover {
-				background-color: #eee;
-			}
-
-			.page-title {
-				margin-top: 0;
-				/* 기존 마진 제거 */
-				font-size: 24px;
-				margin-bottom: 30px;
-				padding-bottom: 15px;
-				border-bottom: 2px solid #333;
-			}
-
-			.header {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-bottom: 20px;
-			}
-
-
-			/*사이드바*/
-			.sidebar {
-				width: 200px;
-				background-color: #f8f9fa;
-				padding: 20px;
-				border-right: 1px solid #ddd;
-				position: fixed;
-				height: 70vh;
-				/* updateInfo.html과 동일하게 설정 */
-				z-index: 1;
-				top: 90px;
-			}
-
-			.sidebar-nav {
-				width: 100%;
-			}
-
-			.nav-link {
-				text-decoration: none;
-				color: #333;
-				display: block;
-				padding: 10px;
-				transition: background-color 0.2s;
-			}
-
-			.nav-link.active {
-				background-color: #ff4d4f;
-				color: white;
-				border-radius: 5px;
-			}
-
-			.nav-link:hover {
-				background-color: #eee;
-			}
-
-			.nav-link:hover:not(.active) {
-				background-color: #eee;
-				border-radius: 5px;
-			}
-
-
-			/*배송지 추가 모달창*/
-			.adsModal {
-				display: none;
-				/* 기본적으로 숨김 */
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background-color: rgba(0, 0, 0, 0.5);
-				/* 반투명 배경 */
-				z-index: 1000;
-				/* 다른 요소 위에 표시 */
-				justify-content: center;
-				/* 수평 가운데 정렬 */
-				align-items: center;
-				/* 수직 가운데 정렬 */
-			}
-
-			.adsModal.show {
-				display: flex;
-				/* 모달이 보이도록 설정 */
-			}
-
-			.adsModal-content {
-				background-color: white;
-				padding: 30px;
-				border-radius: 10px;
-				width: 90%;
-				/* 모바일 화면을 고려한 넓이 */
-				max-width: 500px;
-				/* 최대 넓이 제한 */
-				position: relative;
-				/* 내부 요소 위치 조정 가능 */
-				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-				/* 그림자 효과 */
-				animation: modalFadeIn 0.3s ease-in-out;
-				/* 모달 등장 애니메이션 */
-			}
-
-			.adsModal-header {
-				margin-bottom: 20px;
-				padding-bottom: 10px;
-				border-bottom: 1px solid #ddd;
-				/* 구분선 추가 */
-			}
-
-			.adsModal-header h2 {
-				margin: 0;
-				font-size: 1.5rem;
-				color: #333;
-			}
-
-			.adsForm-group {
-				margin-bottom: 15px;
-			}
-
-			.adsForm-group label {
-				display: block;
-				margin-bottom: 5px;
-				font-weight: bold;
-				color: #555;
-			}
-
-			.adsForm-group input {
-				width: 100%;
-				padding: 10px;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				font-size: 14px;
-				box-sizing: border-box;
-			}
-
-			.adsForm-group .required::after {
-				content: " *";
-				color: red;
-			}
-
-			.address-search-group {
-				display: flex;
-				gap: 10px;
-			}
-
-			.address-search-group input {
-				flex: 1;
-			}
-
-			.address-search-btn {
-				padding: 10px;
-				background-color: #333;
-				color: white;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				transition: background-color 0.3s ease;
-			}
-
-			.address-search-btn:hover {
-				background-color: #555;
-			}
-
-			.button-group {
-				display: flex;
-				justify-content: flex-end;
-				gap: 10px;
-				margin-top: 20px;
-			}
-
-			.adsCancel-btn {
-				background-color: #ddd;
-				color: #333;
-				padding: 10px 20px;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				transition: background-color 0.3s ease;
-			}
-
-			.adsCancel-btn:hover {
-				background-color: #bbb;
-			}
-
-			.adsSubmit-btn {
-				background-color: #333;
-				color: white;
-				padding: 10px 20px;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				transition: background-color 0.3s ease;
-			}
-
-			.adsSubmit-btn:hover {
-				background-color: #555;
-			}
-
-			.adsForm-group input:focus {
-				outline: none;
-				border-color: #333;
-				box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-			}
-
-			/* 모달 팝업 등장 애니메이션 */
-			@keyframes modalFadeIn {
-				from {
-					opacity: 0;
-					transform: translateY(-20px);
-				}
-
-				to {
-					opacity: 1;
-					transform: translateY(0);
-				}
-			}
-
-
-
-
-			.add-button {
-				padding: 10px 20px;
-				background-color: #333;
-				color: white;
-				border: none;
-				border-radius: 5px;
-				cursor: pointer;
-			}
-
-			.add-button:hover {
-				background-color: #555;
-			}
-
-			.address-list {
-				border-top: 2px solid #333;
-			}
-
-
-
-
-
-			.address-content {
-				flex-grow: 1;
-				padding-left: 40px;
-				/* 체크박스와의 간격 */
-			}
-
-			.address-name {
-				font-weight: bold;
-				margin-bottom: 5px;
-			}
-
-			.action-buttons {
-				display: none;
-				gap: 10px;
-			}
-
-			.action-buttons.show {
-				display: flex;
-			}
-
-			.edit-button,
-			.delete-button {
-				padding: 5px 15px;
-				border: none;
-				border-radius: 3px;
-				cursor: pointer;
-			}
-
-			.edit-button {
-				background-color: #4CAF50;
-				color: white;
-			}
-
-			.delete-button {
-				background-color: #f44336;
-				color: white;
-			}
-
-			.sidebar-nav {
-				width: 100%;
-			}
-
-			.nav-link {
-				text-decoration: none;
-				color: #333;
-				display: block;
-				padding: 10px;
-				transition: background-color 0.2s;
-			}
-
-			.nav-link.active {
-				background-color: #ff4d4f;
-				color: white;
-				border-radius: 5px;
-			}
-
-			.nav-link:hover {
-				background-color: #eee;
-			}
-
-			.nav-link:hover:not(.active) {
-				background-color: #eee;
-				border-radius: 5px;
-			}
-
-
-			
-
-
-			/*js에서 주소목록*/
-			.address-item {
-				position: relative;
-				padding: 20px;
-				border: 1px solid #ddd;
-				margin-bottom: 10px;
-				border-radius: 5px;
-				background-color: #fff;
-				display: flex;
-				align-items: center;
-			}
-
-			.address-list {
-				margin-top: 20px;
-			}
-
-			.address-item:hover {
-				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-			}
-
-			.receiver {
-				font-size: 16px;
-				margin-bottom: 8px;
-			}
-
-			.address-detail {
-				color: #333;
-				margin-bottom: 8px;
-			}
-
-			.adsPhone {
-				color: #666;
-				font-size: 14px;
-			}
-
-			.no-address {
-				text-align: center;
-				color: #666;
-				padding: 20px;
-			}
-
-			.address-header {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-bottom: 10px;
-			}
-
-			.default-badge {
-				background-color: #007bff;
-				color: white;
-				padding: 2px 8px;
-				border-radius: 12px;
-				font-size: 12px;
-				margin-left: 8px;
-			}
-
-			.set-default-btn {
-				position: absolute;
-				top: 10px;
-				right: 10px;
-				padding: 5px 10px;
-				border: 1px solid #007bff;
-				background-color: white;
-				color: #007bff;
-				border-radius: 4px;
-				cursor: pointer;
-			}
-
-			.set-default-btn:hover {
-				background-color: #007bff;
-				color: white;
-			}
-
-			.set-default-btn:disabled {
-				border-color: #ccc;
-				color: #ccc;
-				cursor: not-allowed;
-			}
-
-
-			/* 체크박스*/
-			.address-checkbox {
-				position: absolute;
-				top: 50%;
-				left: 10px;
-				transform: translateY(-50%);
-			}
-
-			.address-info {
-				margin-left: 1rem;
-			}
-
-			.address-actions {
-				display: none;
-				position: absolute;
-				right: 10px;
-				/* 우측에서의 거리 조정 */
-				bottom: 10px;
-				/* 하단에서의 거리 조정 */
-				padding: 10px;
-				z-index: 1000;
-				/* 다른 요소 위에 표시되도록 z-index 설정 */
-			}
-
-			.address-item {
-				position: relative;
-				/* 자식 요소의 절대 위치 설정을 위한 상대 위치 */
-			}
-
-			.address-actions.show {
-				display: block;
-			}
-
-
-			
-
-
-			/*수정 모달창*/
-			.editModal {
-				display: none;
-				/* 기본적으로 숨김 */
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background-color: rgba(0, 0, 0, 0.5);
-				/* 반투명 배경 */
-				justify-content: center;
-				/* 수평 가운데 정렬 */
-				align-items: center;
-				/* 수직 가운데 정렬 */
-				z-index: 1000;
-				/* 다른 요소 위에 표시 */
-				
-			}
-
-			.editModal.show {
-				display: flex;
-				/* 모달이 보이도록 설정 */
-			}
-
-			.editModal-content {
-				height: 60%;
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%; /* 모바일 화면을 고려한 넓이 */
-    max-width: 500px; /* 최대 넓이 제한 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-    animation: modalFadeIn 0.3s ease-in-out; /* 모달 등장 애니메이션 */
-}
-
-			.editModal-header {
-				margin-bottom: 20px;
-				padding-bottom: 10px;
-				border-bottom: 1px solid #ddd;
-				/* 구분선 추가 */
-			}
-
-			.editModal-header h2 {
-				margin: 0;
-				font-size: 1.5rem;
-				color: #333;
-			}
-
-			.editModal-group {
-				margin-bottom: 15px;
-			}
-
-			.editModal-group label {
-				display: block;
-				margin-bottom: 5px;
-				font-weight: bold;
-				color: #555;
-			}
-
-			.editModal-group input {
-				width: 100%;
-				padding: 10px;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				font-size: 14px;
-				box-sizing: border-box;
-			}
-
-			.editModal-group input:focus {
-				outline: none;
-				border-color: #333;
-				box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-			}
-
-			@keyframes modalFadeIn {
-				from {
-					opacity: 0;
-					transform: translateY(-20px);
-				}
-
-				to {
-					opacity: 1;
-					transform: translateY(0);
-				}
-			}
-
-
-			
-
-			.edit-btn,
-			.delete-btn {
-				padding: 8px 16px;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-			}
-
-			.edit-btn {
-				background-color: #4CAF50;
-				color: white;
-			}
-
-			.delete-btn {
-				background-color: #f44336;
-				color: white;
-			}
-
-			.delete-modal {
-				display: none;
-				position: fixed;
-				z-index: 1000;
-				left: 0;
-				top: 0;
-				width: 100%;
-				height: 100%;
-				justify-content: center;
-				/* 수평 가운데 정렬 */
-				align-items: center;
-				background-color: rgba(0, 0, 0, 0.5);
-			}
-
-			.delete-modal-content {
-				background-color: white;
-				
-				padding: 20px;
-				border-radius: 5px;
-				width: 300px;
-				text-align: center;
-			}
-
-			/*배송지 삭제창*/
-			.cancel-btn,
-			.confirm-btn {
-				padding: 5px 10px;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-			}
-
-			.cancel-btn {
-				background-color: #0c0c0c;
-				color: white;
-			}
-
-			.confirm-btn {
-				background-color: #f44336;
-				color: white;
-			}
-
-			.address-item {
-    		cursor: pointer;
-			}
-		</style>
-
+		
 	</head>
-
 
 <body>
 	<th:block th:replace="~{common/header}"></th:block>
@@ -653,30 +22,30 @@
 	<div class="mypage-container">
 		<!-- 사이드바 -->
 		<div class="sidebar">
-			<nav class="sidebar-nav">
-				<ul class="menu-list">
-					<li class="menu-item">
-						<a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
-					</li>
-					<!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
-					<li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
-						<a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link">1:1 문의</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="memberInquirytList"
-							class="mypage-side-menu-link nav-link active">문의내역</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
-					</li>
-				</ul>
-			</nav>
+		    <nav class="sidebar-nav">
+		        <ul class="menu-list">
+		            <!-- 네이버 로그인이 아닐 때만 회원정보수정 표시 -->
+		            <li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+		                <a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+		            </li>
+		            <!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+		            <li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+		                <a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link">1:1 문의</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="memberInquirytList" class="mypage-side-menu-link nav-link active">문의내역</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+		            </li>
+		        </ul>
+		    </nav>
 		</div>
 
 		<div class="main-content">
@@ -688,13 +57,12 @@
 				<!-- 주소 목록이 여기에 동적으로 추가됨 -->
 			</div>
 
-
-
 			<!-- 새 배송지 추가 모달 -->
 			<div id="adsModal" class="adsModal">
 				<div class="adsModal-content">
 					<div class="adsModal-header">
 						<h2>배송지 추가</h2>
+						<span class="close-btn">&times;</span>
 					</div>
 					<form id="addressForm">
 						<div class="adsForm-group">
@@ -706,9 +74,7 @@
 							<label class="required" for="adsPostcode">우편번호</label>
 							<div class="address-search-group">
 								<input type="text" id="adsPostcode" readonly required>
-
 								<button type="button" id="adsSearchAddress" class="address-search-btn">주소 검색</button>
-
 							</div>
 						</div>
 
@@ -747,6 +113,7 @@
 				<div class="editModal-content">
 					<div class="editModal-header">
 						<h2>배송지 수정</h2>
+						<span class="close-btn">&times;</span>
 					</div>
 					<form id="editForm">
 						<div class="editModal-group">
@@ -754,17 +121,13 @@
 							<input type="text" id="editReceiverName" required>
 						</div>
 
-
 						<div class="editModal-group">
 							<label class="required" for="editPostcode">우편번호</label>
 							<div class="address-search-group">
 								<input type="text" id="editPostcode" readonly required>
-
 								<button type="button" id="editSearchAddress" class="address-search-btn">주소 검색</button>
-
 							</div>
 						</div>
-
 
 						<div class="editModal-group">
 							<label class="required" for="editAddress">주소</label>

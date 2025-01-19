@@ -4,7 +4,28 @@
 
 	<select id="showAnnouncementList">
 	SELECT * FROM ANNOUNCEMENT WHERE ANNOUNCEMENT.ANNOUNCE_DEL_FL ='N' 
-	ORDER BY ANNOUNCE_NO ASC
+	ORDER BY ANNOUNCE_WRITE_DATE DESC
+	</select>
+	
+	<select id="searchAnnouncementList">
+	SELECT *
+		FROM 
+			ANNOUNCEMENT
+		WHERE 
+			ANNOUNCE_DEL_FL  = 'N'
+	        <choose>
+	            <when test="selectedValue == '제목'">
+	                AND ANNOUNCE_TITLE LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <when test="selectedValue == '내용'">
+	                AND ANNOUNCE_CONTENT LIKE '%' || #{inputValue} || '%' 
+	            </when>
+	            <otherwise>
+	                AND TO_CHAR(ANNOUNCE_WRITE_DATE, 'YYYY-MM-DD HH24:MI:SS') LIKE '%' || ${inputValue} || '%' 
+	            </otherwise>
+	        </choose>
+	ORDER BY
+	ANNOUNCE_WRITE_DATE DESC
 	</select>
 	
 	

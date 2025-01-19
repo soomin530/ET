@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController 
-@CrossOrigin( origins = "http://localhost:3000",
+@CrossOrigin( origins = "https://final-project-react-individual.vercel.app",
 			  allowedHeaders = "*",
 			  allowCredentials = "true",
 			  methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
@@ -60,7 +60,20 @@ public class PerformanceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
 		}
-	} 
+	}
+	
+	@GetMapping("IDCheck")
+	public ResponseEntity<Object> IDCheck() {
+		
+		List<Performance> IDCheckList = service.IDCheck();
+		log.info(IDCheckList.toString());
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(IDCheckList);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("회원 목록 조회 중 문제가 발생했음 : " + e.getMessage());
+		}
+	}
 	
 	
 	@PostMapping("searchPerformanceList")
@@ -107,7 +120,7 @@ public class PerformanceController {
 	
 	@PostMapping("update")
 	public ResponseEntity<Object> update(@RequestBody Map<String, Object> formdata)  {
-
+			log.info(formdata.toString());
 			int result = service.update(formdata);
 			//log.info(result+"");
 			

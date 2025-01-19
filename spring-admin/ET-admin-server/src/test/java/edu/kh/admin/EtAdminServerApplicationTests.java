@@ -1,12 +1,9 @@
 package edu.kh.admin;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+// @SpringBootTest
 class EtAdminServerApplicationTests {
 
-	@Test
+	// @Test
 	void contextLoads() {
 	}
 

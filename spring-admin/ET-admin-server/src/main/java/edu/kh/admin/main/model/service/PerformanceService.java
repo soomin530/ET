@@ -45,6 +45,11 @@ public interface PerformanceService {
 	 */
 	List<SeatInfo> seatInfoDetailList(String mt10id);
 
+	/** ID 중복 조회용
+	 * @return
+	 */
+	List<Performance> IDCheck();
+
 
 
 	

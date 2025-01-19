@@ -22,12 +22,10 @@ import edu.kh.project.myPage.model.dto.Inquiry;
 import edu.kh.project.myPage.service.MyPageService;
 import edu.kh.project.performance.model.dto.Performance;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("mypageApi")
-@Slf4j
 @SessionAttributes({ "loginMember" })
 public class MyPageApiController {
 
@@ -167,7 +165,8 @@ public class MyPageApiController {
     public String inquiryDetail(@PathVariable(value="inquiryNo") int inquiryNo, Model model) {
         Inquiry inquiry = service.getInquiryDetail(inquiryNo);
         model.addAttribute("inquiry", inquiry);
-        return "myPage/memberInquirytDetail";
+        
+        return "mypage/memberInquiryDetail";
     }
     
     /** 해당 문의 사항 삭제

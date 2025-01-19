@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import edu.kh.project.search.model.dto.SearchResultDTO;
-import edu.kh.project.search.model.dto.Suggestion;
 
 public interface SearchService {
 

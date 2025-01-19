@@ -3,10 +3,7 @@ package edu.kh.admin.main.model.service;
 import java.util.List;
 import java.util.Map;
 
-import edu.kh.admin.main.model.dto.Announcement;
 import edu.kh.admin.main.model.dto.Inquiry;
-import edu.kh.admin.main.model.dto.Member;
-import edu.kh.admin.main.model.dto.Performance;
 
 public interface InquiryService {
 
@@ -33,6 +30,12 @@ public interface InquiryService {
 	 * @return
 	 */
 	List<Inquiry> searchInquiryList(Map<String, Object> formData);
+
+	/** 문의 삭제
+	 * @param inquiryNo
+	 * @return
+	 */
+	int delete(int inquiryNo);
 
 
 
