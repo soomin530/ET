@@ -52,7 +52,6 @@ body {
   flex: 1; /* 남은 공간을 채움 */
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 200px); /* 화면 크기에서 footer 높이만큼 뺌 */
 }
 
 .content-area {
