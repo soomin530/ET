@@ -268,12 +268,13 @@ public class PerfmgrController {
 		Performance performance = service.getPerformanceById(mt20id);
 		log.info("Retrieved performance: {}", performance);
 
-		if (performance == null) {
+		if (performance == null) { // 공연 정보가 없으면 404 에러 페이지 반환
 			log.warn("No performance found for ID: {}", mt20id);
 			return "error/404";
 		}
 
 		model.addAttribute("performance", performance);
+		// 조회된 정보를 모델에 담아 상세 페이지로 전달
 		return "perfmgr/perfmgr-manager-detail";
 	}
 	
