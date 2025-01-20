@@ -27,6 +27,14 @@
 		WHERE MEMBER_NO = #{memberNo}
 	</select>
 	
+	<!-- 현재 회원의 티켓 예매 내역 확인 -->
+	<select id="countTicketBookings" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM TB_TICKET_BOOKING 
+	    WHERE MEMBER_NO = #{memberNo}
+	    AND BOOKING_STATUS = 'COMPLETE'
+	</select>
+	
 	
 	<!-- 네이버 회원 삭제 -->
 	<delete id="membershipNaverOut">
@@ -352,6 +360,7 @@
 	<!-- 예매 상세 정보 조회 -->
 	<select id="selectBookingDetail" resultType="edu.kh.project.myPage.model.dto.ticketInfoDTO">
 	    SELECT 
+	    	tb.mt20id AS mt20id,
 	        tb.BOOKING_DATE AS bookingDate,
 	        tp.PAID_AT AS paidAt,
 	        tb.MERCHANT_UID AS bookingId,
@@ -375,7 +384,7 @@
 	        AND tb.MEMBER_NO = #{memberNo}
 	        AND tb.BOOKING_STATUS IN ('COMPLETE', 'CANCELED')
 	    GROUP BY 
-	        tb.BOOKING_DATE, tp.PAID_AT, tb.MERCHANT_UID, pd.PRFNM, pd.POSTER, pd.FCLTYNM, ts.SHOW_DATE, ts.SHOW_TIME, tb.BOOKING_STATUS, tp.PAID_AMOUNT
+	        tb.mt20id, tb.BOOKING_DATE, tp.PAID_AT, tb.MERCHANT_UID, pd.PRFNM, pd.POSTER, pd.FCLTYNM, ts.SHOW_DATE, ts.SHOW_TIME, tb.BOOKING_STATUS, tp.PAID_AMOUNT
 	</select>
 	
 	

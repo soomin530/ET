@@ -90,6 +90,13 @@ public class MyPageServiceImpl implements MyPageService {
 		}
 
 	}
+	
+	// 현재 회원의 티켓 예매 내역 확인
+	@Override
+	public boolean checkTicketBookingExists(int memberNo) {
+		int count = mapper.countTicketBookings(memberNo);
+        return count > 0;
+	}
 
 	// 네이버 회원 삭제
 	@Override
@@ -383,7 +390,6 @@ public class MyPageServiceImpl implements MyPageService {
 	public AddressDTO getDefaultAddress(int memberNo) {
 		return mapper.selectDefaultAddress(memberNo);
 	}
-	
 
 	
 

@@ -1,5 +1,6 @@
 package edu.kh.project.myPage.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -275,6 +276,26 @@ public class MyPageController {
 		
 		return "mypage/memberInquiryList";
 	}
+	
+	// 티켓 예매 내역 확인
+    @GetMapping("/checkBookingExists")
+    public ResponseEntity<Map<String, Boolean>> checkBookingExists(
+        @SessionAttribute("loginMember") Member loginMember
+    ) {
+        try {
+            // 현재 회원의 티켓 예매 내역 확인
+            boolean hasBooking = service.checkTicketBookingExists(loginMember.getMemberNo());
+            
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("hasBooking", hasBooking);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                               .body(null);
+        }
+    }
 	
 	/** 회원 탈퇴 진행
 	 * @param requestMap

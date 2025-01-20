@@ -56,6 +56,11 @@ public interface MyPageService {
 	 */
 	int memberPwCheck(String memberPw, int memberNo);
 	
+	/** 현재 회원의 티켓 예매 내역 확인
+	 * @param memberNo
+	 * @return
+	 */
+	boolean checkTicketBookingExists(int memberNo);
 	
 	/** 네이버 회원 삭제
 	 * @param memberNo
@@ -226,6 +231,7 @@ public interface MyPageService {
 	 * @return
 	 */
 	AddressDTO getDefaultAddress(int memberNo);
+
 
 	
 	

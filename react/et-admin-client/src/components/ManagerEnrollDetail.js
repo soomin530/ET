@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
 
 // Styled Components
 const Container = styled.div`
@@ -114,7 +114,7 @@ const Button = styled.button`
 
 const BackButton = styled(Button)`
   background-color: #6b7280;
-  
+
   &:hover {
     background-color: #4b5563;
   }
@@ -124,7 +124,7 @@ const SubmitButton = styled(Button)`
   background-color: #3b82f6;
   position: relative;
   overflow: hidden;
-  
+
   &:before,
   &:after,
   & span:before,
@@ -135,7 +135,7 @@ const SubmitButton = styled(Button)`
   & i:after,
   & em:before,
   & em:after {
-    content: '';
+    content: "";
     position: absolute;
     width: 2px;
     height: 2px;
@@ -145,30 +145,80 @@ const SubmitButton = styled(Button)`
     opacity: 0;
   }
 
-  &:before { top: 20%; left: 30%; }
-  &:after { top: 60%; left: 70%; }
-  & span:before { top: 40%; left: 20%; }
-  & span:after { top: 30%; left: 80%; }
-  & div:before { top: 70%; left: 40%; }
-  & div:after { top: 45%; left: 60%; }
-  & i:before { top: 25%; left: 50%; }
-  & i:after { top: 50%; left: 25%; }
-  & em:before { top: 80%; left: 65%; }
-  & em:after { top: 15%; left: 75%; }
-  
+  &:before {
+    top: 20%;
+    left: 30%;
+  }
+  &:after {
+    top: 60%;
+    left: 70%;
+  }
+  & span:before {
+    top: 40%;
+    left: 20%;
+  }
+  & span:after {
+    top: 30%;
+    left: 80%;
+  }
+  & div:before {
+    top: 70%;
+    left: 40%;
+  }
+  & div:after {
+    top: 45%;
+    left: 60%;
+  }
+  & i:before {
+    top: 25%;
+    left: 50%;
+  }
+  & i:after {
+    top: 50%;
+    left: 25%;
+  }
+  & em:before {
+    top: 80%;
+    left: 65%;
+  }
+  & em:after {
+    top: 15%;
+    left: 75%;
+  }
+
   &:hover {
     background-color: #2563eb;
-    
-    &:before { animation: twinkle 1s infinite 0.1s; }
-    &:after { animation: twinkle 1.2s infinite 0.3s; }
-    & span:before { animation: twinkle 0.9s infinite 0.5s; }
-    & span:after { animation: twinkle 1.1s infinite 0.7s; }
-    & div:before { animation: twinkle 1.3s infinite 0.2s; }
-    & div:after { animation: twinkle 1s infinite 0.4s; }
-    & i:before { animation: twinkle 1.2s infinite 0.6s; }
-    & i:after { animation: twinkle 0.9s infinite 0.8s; }
-    & em:before { animation: twinkle 1.1s infinite 0.3s; }
-    & em:after { animation: twinkle 1s infinite 0.5s; }
+
+    &:before {
+      animation: twinkle 1s infinite 0.1s;
+    }
+    &:after {
+      animation: twinkle 1.2s infinite 0.3s;
+    }
+    & span:before {
+      animation: twinkle 0.9s infinite 0.5s;
+    }
+    & span:after {
+      animation: twinkle 1.1s infinite 0.7s;
+    }
+    & div:before {
+      animation: twinkle 1.3s infinite 0.2s;
+    }
+    & div:after {
+      animation: twinkle 1s infinite 0.4s;
+    }
+    & i:before {
+      animation: twinkle 1.2s infinite 0.6s;
+    }
+    & i:after {
+      animation: twinkle 0.9s infinite 0.8s;
+    }
+    & em:before {
+      animation: twinkle 1.1s infinite 0.3s;
+    }
+    & em:after {
+      animation: twinkle 1s infinite 0.5s;
+    }
   }
 
   @keyframes twinkle {
@@ -190,7 +240,10 @@ const SubmitButton = styled(Button)`
     }
   }
 
-  & span, & div, & i, & em {
+  & span,
+  & div,
+  & i,
+  & em {
     position: absolute;
     top: 0;
     left: 0;
@@ -202,7 +255,7 @@ const SubmitButton = styled(Button)`
 
 const DeleteButton = styled(Button)`
   background-color: #dc3545;
-  
+
   &:hover {
     background-color: #bb2d3b;
   }
@@ -229,7 +282,6 @@ const Title = styled.h1`
   justify-content: center;
 `;
 
-
 const BackArrow = styled.i`
   position: absolute;
   left: 0;
@@ -246,24 +298,23 @@ const BackArrow = styled.i`
 const ManagerEnrollDetail = () => {
   const { concertManagerNo } = useParams();
   const [formData, setFormData] = useState({
-    nickname: '',
-    address: '',
-    tel: '',
+    nickname: "",
+    address: "",
+    tel: "",
   });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     axios
-      .get(`https://43.202.85.129/manager/${concertManagerNo}`)
+      .get(`https://adminmodeunticket.store/manager/${concertManagerNo}`)
       .then((response) => {
-        console.log("API 응답 데이터:", response.data);
         const memberData = response.data[0];
         setFormData({
-          nickname: memberData.concertManagerNickname || '',
-          tel: memberData.concertManagerTel || '',
-          company: memberData.concertManagerCompany || '',
-          comment: memberData.concertManagerCompanyComment || '',
-          email: memberData.concertManagerEmail || '',
+          nickname: memberData.concertManagerNickname || "",
+          tel: memberData.concertManagerTel || "",
+          company: memberData.concertManagerCompany || "",
+          comment: memberData.concertManagerCompanyComment || "",
+          email: memberData.concertManagerEmail || "",
         });
         setIsLoading(false);
       })
@@ -282,28 +333,30 @@ const ManagerEnrollDetail = () => {
 
   const handleAgree = () => {
     axios
-      .post(`https://43.202.85.129/manager/agree/${concertManagerNo}`)
+      .post(`https://adminmodeunticket.store/manager/agree/${concertManagerNo}`)
       .then((response) => {
-        alert('승인이 완료되었습니다.');
+        alert("승인이 완료되었습니다.");
         window.history.back();
       })
       .catch((error) => {
         console.error(error);
-        alert('승인 처리에 실패했습니다.');
+        alert("승인 처리에 실패했습니다.");
       });
   };
 
   const handleDelete = () => {
-    if (window.confirm('정말로 삭제하시겠습니까?')) {
+    if (window.confirm("정말로 삭제하시겠습니까?")) {
       axios
-        .post(`https://43.202.85.129/manager/delete/${concertManagerNo}`)
+        .post(
+          `https://adminmodeunticket.store/manager/delete/${concertManagerNo}`
+        )
         .then((response) => {
-          alert('삭제가 완료되었습니다.');
+          alert("삭제가 완료되었습니다.");
           window.history.back();
         })
         .catch((error) => {
           console.error(error);
-          alert('삭제 처리에 실패했습니다.');
+          alert("삭제 처리에 실패했습니다.");
         });
     }
   };
@@ -315,15 +368,18 @@ const ManagerEnrollDetail = () => {
       memberAddress: formData.address,
       memberTel: formData.tel,
     };
-    
+
     axios
-      .post(`https://43.202.85.129/manager/update/${concertManagerNo}`, serverFormData)
+      .post(
+        `https://adminmodeunticket.store/manager/update/${concertManagerNo}`,
+        serverFormData
+      )
       .then((response) => {
         alert(response.data);
       })
       .catch((error) => {
         console.error(error);
-        alert('회원 정보 수정에 실패했습니다.');
+        alert("회원 정보 수정에 실패했습니다.");
       });
   };
 
@@ -334,7 +390,7 @@ const ManagerEnrollDetail = () => {
   return (
     <Container>
       <FormWrapper>
-      <Title>
+        <Title>
           <BackArrow
             className="fas fa-arrow-left"
             onClick={() => window.history.back()}
@@ -347,7 +403,7 @@ const ManagerEnrollDetail = () => {
             <Input
               type="text"
               name="nickname"
-              value={formData.nickname || ''}
+              value={formData.nickname || ""}
               onChange={handleChange}
               readOnly
             />
@@ -357,7 +413,7 @@ const ManagerEnrollDetail = () => {
             <Input
               type="text"
               name="tel"
-              value={formData.tel || ''}
+              value={formData.tel || ""}
               onChange={handleChange}
               readOnly
             />
@@ -367,7 +423,7 @@ const ManagerEnrollDetail = () => {
             <Input
               type="text"
               name="company"
-              value={formData.company || ''}
+              value={formData.company || ""}
               onChange={handleChange}
               readOnly
             />
@@ -376,7 +432,7 @@ const ManagerEnrollDetail = () => {
             <Label>코멘트:</Label>
             <TextArea
               name="comment"
-              value={formData.comment || ''}
+              value={formData.comment || ""}
               onChange={handleChange}
               readOnly
             />
@@ -386,7 +442,7 @@ const ManagerEnrollDetail = () => {
             <Input
               type="text"
               name="email"
-              value={formData.email || ''}
+              value={formData.email || ""}
               onChange={handleChange}
               readOnly
             />

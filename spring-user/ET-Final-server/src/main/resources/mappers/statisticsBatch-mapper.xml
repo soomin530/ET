@@ -39,9 +39,9 @@
     <update id="updateExpiredPerformances">
     	<![CDATA[
 		    UPDATE TB_PERFORMANCES_DETAIL 
-		    SET PRFSTATE = '공연종료'
-		    WHERE TO_CHAR(TO_DATE(PRFPDTO, 'YYYY-MM-DD'), 'YYYY-MM-DD') < TRUNC(SYSDATE)
-		    AND PRFSTATE != '공연종료'
+			SET PRFSTATE = '공연종료'
+			WHERE TO_DATE(REPLACE(PRFPDTO, '-', '.'), 'YYYY.MM.DD') < TRUNC(SYSDATE)
+			AND PRFSTATE != '공연종료'
 	    ]]>
 	</update>
 	

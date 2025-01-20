@@ -284,4 +284,10 @@ public class PerformanceController {
         
         return response;
 	}
+	
+	@GetMapping("/poster")
+    public String showPoster() {
+        return "performance/posterViewer"; // posterViewer.html로 연결
+    }
+	
 }

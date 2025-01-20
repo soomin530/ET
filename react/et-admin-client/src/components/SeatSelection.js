@@ -36,8 +36,6 @@ const SeatManagement = () => {
         const allSeats = parseData(response.data.seats || []);
         const bookedAndBlockedSeats = response.data.bookedSeats || [];
 
-        console.log(allSeats);
-
         setSeatData(allSeats);
 
         // BOOKED와 BLOCKED 상태를 나누어 저장
@@ -159,9 +157,7 @@ const SeatManagement = () => {
     // 일반 좌석 상태 변경 (예: 비활성화)
     const newStatus = getNextStatus(currentStatus);
     try {
-      const confirmBlock = window.confirm(
-        "해당 좌석을 비활성화 하시겠습니까?"
-      );
+      const confirmBlock = window.confirm("해당 좌석을 비활성화 하시겠습니까?");
       if (!confirmBlock) return;
 
       // 좌석 등급 ID 찾기
@@ -374,14 +370,11 @@ const SeatManagement = () => {
             <span>{section.GRADENAME}</span>
             <span>
               예약:{" "}
-              {section.TOTALSEATCOUNT - section.AVAILABLESEATCOUNT - section.BLOCKEDSEATCOUNT}{" "}
-              / 
-              비활성화{" "}
-              {section.BLOCKEDSEATCOUNT}{" "}
-              /
-              전체:{" "}
+              {section.TOTALSEATCOUNT -
+                section.AVAILABLESEATCOUNT -
+                section.BLOCKEDSEATCOUNT}{" "}
+              / 비활성화 {section.BLOCKEDSEATCOUNT} / 전체:{" "}
               {section.TOTALSEATCOUNT}
-
             </span>
           </div>
         ))}

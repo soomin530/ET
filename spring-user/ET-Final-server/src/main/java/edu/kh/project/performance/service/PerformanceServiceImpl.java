@@ -230,10 +230,15 @@ public class PerformanceServiceImpl implements PerformanceService {
 
 			// 가격 정보 문자열 생성
 			String pcseguidance = dto.getPrices().stream()
-					.map(price -> price.getGradeName() + "석 " + String.format("%,d", price.getPrice()) + "원")
-					.collect(Collectors.joining(", "));
-			performanceMap.put("pcseguidance", pcseguidance);
-
+				    .map(price -> {
+				        String gradeName = price.getGradeName();
+				        // 전석인 경우 "석" 제외
+				        String suffix = "전석".equals(gradeName) ? "" : "석";
+				        return gradeName + suffix + " " + String.format("%,d", price.getPrice()) + "원";
+				    })
+				    .collect(Collectors.joining(", "));
+				performanceMap.put("pcseguidance", pcseguidance);
+				
 			// 공연 시간 문자열 생성
 			String dtguidance = createDtguidance(dto.getSchedules());
 			performanceMap.put("dtguidance", dtguidance);

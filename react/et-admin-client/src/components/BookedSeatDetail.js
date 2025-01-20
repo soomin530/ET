@@ -120,9 +120,13 @@ const PerformanceDetail = () => {
     const endDate = new Date(performance.prfpdto);
 
     // 오늘 이전 날짜이거나 공연 기간을 벗어난 경우
-  if (currentDate < today || currentDate < startDate || currentDate > endDate) {
-    return "fc-day-disabled";
-  }
+    if (
+      currentDate < today ||
+      currentDate < startDate ||
+      currentDate > endDate
+    ) {
+      return "fc-day-disabled";
+    }
 
     let classNames = formattedDate === selectedDate ? "selected-date" : "";
 

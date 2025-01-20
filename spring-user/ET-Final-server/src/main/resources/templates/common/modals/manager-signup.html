@@ -13,39 +13,39 @@
 			<div class="modal-body">
 				<form id="managerSignUpForm" action="/perfmgr/signup" method="POST">
 					<!-- 이메일 인증 부분 -->
-					<input type="text" name="concertManagerEmail" id="managerEmail" placeholder="이메일을 입력하세요">
+					<input type="text" name="concertManagerEmail" id="managerEmail" placeholder="이메일을 입력하세요 *">
 					<span class="signUp-message" id="managerEmailMessage"></span>
 					<button type="button" class="auth-btn get-code-btn" id="managerSendAuthKeyBtn">인증번호 받기</button>
 
 					<div class="verification-container" style="margin-top : 10px;">
-						<input type="text" id="managerAuthKey" placeholder="인증번호 입력">
+						<input type="text" id="managerAuthKey" placeholder="인증번호 입력 *">
 						<button type="button" class="auth-btn verify-code-btn" id="managerCheckAuthKeyBtn">인증하기</button>
 					</div>
 					<span class="signUp-message" id="managerAuthKeyMessage"></span>
 
 					<!-- 기본 정보 입력 -->
-					<input id="concertManagerId" name="concertManagerId" type="text" placeholder="아이디 입력">
+					<input id="concertManagerId" name="concertManagerId" type="text" placeholder="아이디 입력 *">
 					<span class="signUp-message" id="managerIdMessage"></span>
 
-					<input id="concertManagerPw" name="concertManagerPw" type="password" placeholder="비밀번호 입력">
+					<input id="concertManagerPw" name="concertManagerPw" type="password" placeholder="비밀번호 입력 *">
 					<span class="signUp-message" id="managerPwMessage"></span>
 
-					<input id="concertManagerPwConfirm" type="password" placeholder="비밀번호 확인 입력">
+					<input id="concertManagerPwConfirm" type="password" placeholder="비밀번호 확인 입력 *">
 					<span class="signUp-message" id="managerConfirmPwMessage"></span>
 
-					<input id="concertManagerNickname" name="concertManagerNickname" type="text" placeholder="닉네임">
+					<input id="concertManagerNickname" name="concertManagerNickname" type="text" placeholder="닉네임 *">
 					<span class="signUp-message" id="managerNickMessage"></span>
 
 					<input id="concertManagerTel" name="concertManagerTel" type="text"
-						placeholder="전화번호 (예: 010-1234-5678)">
+						placeholder="전화번호 (예: 010-1234-5678) *">
 					<span class="signUp-message" id="managerTelMessage"></span>
 
 					<!-- 사업체 정보 -->
-					<input id="concertManagerCompany" name="concertManagerCompany" type="text" placeholder="사업체명">
+					<input id="concertManagerCompany" name="concertManagerCompany" type="text" placeholder="사업체명 *">
 					<span class="signUp-message" id="managerCompanyMessage"></span>
 
 					<textarea id="concertManagerCompanyComment" name="concertManagerCompanyComment"
-						placeholder="사업체 소개 (500자 이내)" maxlength="500" style="height : 120px; width: 87%;"></textarea>
+						placeholder="사업체 소개 (500자 이내) *" maxlength="500" style="height : 120px; width: 87%;"></textarea>
 					<span class="signUp-message" id="managerCompanyCommentMessage"></span>
 
 					<button type="submit" class="auth-btn sign-up-btn">회원가입</button>
