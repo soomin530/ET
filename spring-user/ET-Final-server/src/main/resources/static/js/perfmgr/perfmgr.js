@@ -450,19 +450,23 @@ const concertManagerTel = document.querySelector("#concertManagerTel");
 const managerTelMessage = document.querySelector("#managerTelMessage");
 
 concertManagerTel.addEventListener("input", e => {
-	const inputTel = e.target.value;
+	// 입력값 업데이트
+	e.target.value = inputTel;
 
-	if (inputTel.trim().length === 0) {
-		managerTelMessage.innerText = "전화번호를 입력해주세요.(- 제외)";
+	// 유효성 검사를 위해 하이픈 제거
+	const cleanNumber = inputTel.replace(/-/g, '');
+
+	if (cleanNumber.trim().length === 0) {
+		managerTelMessage.innerText = "전화번호를 입력해주세요.";
 		managerTelMessage.classList.remove("confirm", "error");
 		managerCheckObj.concertManagerTel = false;
-		concertManagerTel.value = "";
 		return;
 	}
 
-	const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
+	// 전화번호 정규식 (01로 시작하는 10-11자리 숫자)
+	const regExp = /^01[0-9]{8,9}$/;
 
-	if (!regExp.test(inputTel)) {
+	if (!regExp.test(cleanNumber)) {
 		managerTelMessage.innerText = "유효하지 않은 전화번호 형식입니다.";
 		managerTelMessage.classList.add("error");
 		managerTelMessage.classList.remove("confirm");
@@ -470,10 +474,31 @@ concertManagerTel.addEventListener("input", e => {
 		return;
 	}
 
-	managerTelMessage.innerText = "유효한 전화번호 형식입니다.";
-	managerTelMessage.classList.add("confirm");
-	managerTelMessage.classList.remove("error");
-	managerCheckObj.concertManagerTel = true;
+	// 중복 검사 수행
+	fetch("/perfmgr/checkTel?concertManagerTel=" + cleanNumber)
+		.then(resp => resp.text())
+		.then(count => {
+			if (count == 1) { // 중복 O
+				managerTelMessage.innerText = "이미 사용중인 전화번호입니다.";
+				managerTelMessage.classList.add("error");
+				managerTelMessage.classList.remove("confirm");
+				managerCheckObj.concertManagerTel = false;
+				return;
+			}
+
+			// 중복 X이면서 유효한 형식인 경우
+			managerTelMessage.innerText = "사용 가능한 전화번호입니다.";
+			managerTelMessage.classList.add("confirm");
+			managerTelMessage.classList.remove("error");
+			managerCheckObj.concertManagerTel = true;
+		})
+		.catch(err => {
+			console.log(err);
+			managerTelMessage.innerText = "전화번호 중복 검사 중 오류가 발생했습니다.";
+			managerTelMessage.classList.add("error");
+			managerTelMessage.classList.remove("confirm");
+			managerCheckObj.concertManagerTel = false;
+		});
 });
 
 /* 사업체명 유효성 검사 */
@@ -549,7 +574,7 @@ managerSignUpForm.addEventListener("submit", e => {
 	for (let key in managerCheckObj) {
 		if (!managerCheckObj[key]) {
 			let str;
-			
+
 			switch (key) {
 				case "managerAuthKey":
 					str = "이메일이 인증되지 않았습니다"; break;

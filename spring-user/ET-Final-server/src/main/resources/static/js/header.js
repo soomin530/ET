@@ -690,17 +690,21 @@ memberTel.addEventListener("input", e => {
 
 	const inputTel = e.target.value;
 
-	if (inputTel.trim().length === 0) {
-		telMessage.innerText = "전화번호를 입력해주세요.(- 제외)";
+	// 유효성 검사
+	// 하이픈 제거 후 검사
+	const cleanNumber = inputTel.replace(/-/g, '');
+
+	if (cleanNumber.trim().length === 0) {
+		telMessage.innerText = "전화번호를 입력해주세요.";
 		telMessage.classList.remove("confirm", "error");
 		checkObj.memberTel = false;
-		memberTel.value = "";
 		return;
 	}
 
-	const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
+	// 전화번호 정규식 (01로 시작하는 10-11자리 숫자)
+	const regExp = /^01[0-9]{8,9}$/;
 
-	if (!regExp.test(inputTel)) {
+	if (!regExp.test(cleanNumber)) {
 		telMessage.innerText = "유효하지 않은 전화번호 형식입니다.";
 		telMessage.classList.add("error");
 		telMessage.classList.remove("confirm");
@@ -708,10 +712,31 @@ memberTel.addEventListener("input", e => {
 		return;
 	}
 
-	telMessage.innerText = "유효한 전화번호 형식입니다.";
-	telMessage.classList.add("confirm");
-	telMessage.classList.remove("error");
-	checkObj.memberTel = true;
+	// 중복 검사 수행
+	fetch("/member/checkTel?memberTel=" + cleanNumber)
+		.then(resp => resp.text())
+		.then(count => {
+			if (count == 1) { // 중복 O
+				telMessage.innerText = "이미 사용중인 전화번호입니다.";
+				telMessage.classList.add("error");
+				telMessage.classList.remove("confirm");
+				checkObj.memberTel = false;
+				return;
+			}
+
+			// 중복 X이면서 유효한 형식인 경우
+			telMessage.innerText = "사용 가능한 전화번호입니다.";
+			telMessage.classList.add("confirm");
+			telMessage.classList.remove("error");
+			checkObj.memberTel = true;
+		})
+		.catch(err => {
+			console.log(err);
+			telMessage.innerText = "전화번호 중복 검사 중 오류가 발생했습니다.";
+			telMessage.classList.add("error");
+			telMessage.classList.remove("confirm");
+			checkObj.memberTel = false;
+		});
 
 });
 
@@ -779,22 +804,22 @@ signUpForm.addEventListener("submit", e => {
 // 메인 사이트(modeunticket.store)에서의 코드
 // 프론트엔드에서는 폼 제출방식으로 변경
 function checkAdminAndRedirect(button) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/member/admin';  // 컨텍스트 경로에 맞게 수정
+	const form = document.createElement('form');
+	form.method = 'POST';
+	form.action = '/member/admin';  // 컨텍스트 경로에 맞게 수정
 
-    const memberEmail = document.createElement('input');
-    memberEmail.type = 'hidden';
-    memberEmail.name = 'memberEmail';
-    memberEmail.value = button.getAttribute('data-email');
+	const memberEmail = document.createElement('input');
+	memberEmail.type = 'hidden';
+	memberEmail.name = 'memberEmail';
+	memberEmail.value = button.getAttribute('data-email');
 
-    const memberNo = document.createElement('input');
-    memberNo.type = 'hidden';
-    memberNo.name = 'memberNo';
-    memberNo.value = button.getAttribute('data-no');
+	const memberNo = document.createElement('input');
+	memberNo.type = 'hidden';
+	memberNo.name = 'memberNo';
+	memberNo.value = button.getAttribute('data-no');
 
-    form.appendChild(memberEmail);
-    form.appendChild(memberNo);
-    document.body.appendChild(form);
-    form.submit();
+	form.appendChild(memberEmail);
+	form.appendChild(memberNo);
+	document.body.appendChild(form);
+	form.submit();
 }

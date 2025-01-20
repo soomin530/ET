@@ -453,24 +453,22 @@ public class MyPageController {
 		
 	}
 	
-	  /** 전화번호 중복 검사
+	/** 전화번호 중복 검사
      * @param userTel : 입력한 전화번호
      * @param currentTel : 현재 사용자의 전화번호
      * @return 중복이면 1, 아니면 0
      */
 	@GetMapping("/verifyTel")
-	public Integer checkTel(@RequestParam("userTel") String userTel, 
-	                       @RequestParam("currentTel") String currentTel) {
-
-	    // 입력한 전화번호와 현재 전화번호가 같으면 중복 검사 불필요
+	@ResponseBody
+	public ResponseEntity<Integer> checkTel(@RequestParam("userTel") String userTel, 
+            @RequestParam("currentTel") String currentTel) {
+	    // 현재 전화번호와 동일한 경우
 	    if (userTel.equals(currentTel)) {
-	        return 0; // 중복 아님
+	        return ResponseEntity.ok(0); // 중복 아님을 나타내는 0 반환
 	    }
-
-	    // 전화번호 중복 검사 서비스 호출
+	    
 	    int result = service.checkTel(userTel);
-
-	    return service.checkTel(userTel); // Integer를 String으로 변환하여 반환
+	    return ResponseEntity.ok(result); // ResponseEntity로 감싸서 반환
 	}
 
 
