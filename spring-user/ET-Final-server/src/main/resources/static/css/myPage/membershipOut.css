@@ -214,3 +214,8 @@ body {
 .menu-item a:hover {
 	background-color: #eee;
 }
+
+.notice-box .important {
+    color: #e74c3c;
+    font-weight: bold;
+}

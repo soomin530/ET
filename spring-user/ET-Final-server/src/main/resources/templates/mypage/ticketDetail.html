@@ -8,8 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-  <link rel="stylesheet" href="/css/main-style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 
   <link rel="stylesheet" href="/css/myPage/ticketDetail.css">
 
@@ -64,15 +63,15 @@
         </div>
       </div>
       
-      <!-- QR Code -->
-      <div class="border-t border-gray-200 pt-6">
-        <div class="qr-placeholder">
-          <span>QR Code</span>
-        </div>
-        <p class="text-center text-sm text-gray-500 mt-2">
-          입장 시 QR코드를 제시해 주세요.
-        </p>
-      </div>
+	  <!-- QR Code -->
+	  <div class="border-t border-gray-200 pt-6">
+	      <div class="qr-container">
+	          <div id="qrCode" class="qr-code"></div>
+	      </div>
+	      <p class="text-center text-sm text-gray-500 mt-2">
+	          QR코드를 스캔하시면 공연 포스터를 확인하실 수 있습니다.
+	      </p>
+	  </div>
 
       <!-- Footer -->
       <div class="button-group">

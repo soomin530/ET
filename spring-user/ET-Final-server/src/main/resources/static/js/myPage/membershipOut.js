@@ -34,6 +34,22 @@ async function confirmWithdrawal() {
                 return;
             }
         }
+		
+		// 티켓 예매 내역 확인 요청
+        const checkBookingResponse = await fetch('/mypage/checkBookingExists', {
+            method: 'GET'
+        });
+
+        if (!checkBookingResponse.ok) {
+            throw new Error('서버 응답 오류');
+        }
+
+        const bookingResult = await checkBookingResponse.json();
+        
+        if (bookingResult.hasBooking) {
+            alert('티켓 예매 내역이 있어 탈퇴할 수 없습니다.\n예매 취소 후 다시 시도해 주세요.');
+            return;
+        }
 
         const response = await fetch('/mypage/membershipOut', {
             method: 'POST',
