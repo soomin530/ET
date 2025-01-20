@@ -11,7 +11,6 @@ function loadUserInfo() {
 		.then(response => response.json())
 		.then(data => {
 
-			console.log("데이터", data);
 
 			// 폼에 데이터 채우기
 			document.getElementById("userId").value = data.memberId || "";
@@ -144,7 +143,6 @@ verificationEmail.addEventListener("input", e => {
 verificationBtn.addEventListener("click", () => {
 
 	if (mypageCheckObj.verificationEmail) {
-		console.log("1 mypageCheckObj : ", mypageCheckObj);
 
 		mypageCheckObj.authKey = false;
 		verificationMessage.innerText = "";
@@ -205,7 +203,6 @@ verificationBtn.addEventListener("click", () => {
 
 		}, 1000); // 1초 지연시간
 	} else {
-		console.log("2 mypageCheckObj : ", mypageCheckObj);
 		alert("이메일을 다시 확인해 주세요.");
 		verificationEmail.focus();
 	}
@@ -620,7 +617,6 @@ function getNaverCookie(name) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 
 	// 비밀번호 검증이 필요한 페이지들
 	const pagesNeedingVerification = ['updateInfo','changePw','addressManagement','membershipOut'];

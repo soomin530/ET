@@ -20,6 +20,7 @@ import edu.kh.project.performance.model.dto.Performance;
 import edu.kh.project.performance.model.dto.Review;
 import edu.kh.project.performance.model.dto.ScheduleInfo;
 import edu.kh.project.performance.service.PerformanceService;
+import edu.kh.project.statistics.service.StatisticsBatchService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -28,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class PerformanceController {
 
 	private final PerformanceService performanceService;
+	
+	private final StatisticsBatchService batchService;
 
 	/**
 	 * 공연 목록 페이지로 이동
@@ -117,6 +120,7 @@ public class PerformanceController {
 	        if(isInserted) {
                 response.put("success", true);
                 response.put("message", "리뷰가 등록되었습니다.");
+                batchService.updatePerformanceReviewRanks();
             } else {
                 response.put("success", false);
                 response.put("message", "리뷰 등록에 실패했습니다.");
@@ -284,4 +288,10 @@ public class PerformanceController {
         
         return response;
 	}
+	
+	@GetMapping("/poster")
+    public String showPoster() {
+        return "performance/posterViewer"; // posterViewer.html로 연결
+    }
+	
 }

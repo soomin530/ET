@@ -31,6 +31,12 @@ public interface InquiryService {
 	 */
 	List<Inquiry> searchInquiryList(Map<String, Object> formData);
 
+	/** 문의 삭제
+	 * @param inquiryNo
+	 * @return
+	 */
+	int delete(int inquiryNo);
+
 
 
 	

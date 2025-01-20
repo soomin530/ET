@@ -4,7 +4,7 @@ const scrollToTopButton = document.getElementById('scrollToTop');
 // 스크롤 버튼 이벤트 리스너 등록
 scrollToTopButton.addEventListener('click', scrollToTop);
 window.addEventListener('scroll', throttle(toggleScrollButton, 100), { passive: true }); 
-																		// 이벤트가 발생했을 때 실행할 함수  // 이벤트 옵션(이벤트 핸들러가 기본 동작을 방해하지 않는다고 브라우저에 알려줌)
+									// 이벤트가 발생했을 때 실행할 함수  // 이벤트 옵션(이벤트 핸들러가 기본 동작을 방해하지 않는다고 브라우저에 알려줌)
 
 // 스크롤 버튼 표시/숨김 처리
 // 스크롤 위치에 따라 버튼의 표시 여부를 결정하는 함수
@@ -41,6 +41,10 @@ function throttle(func, limit) {
 }
 
 // 스크롤 이벤트 핸들러
+// 사용자가 페이지 하단에 가까워지면 자동으로 추가 데이터를 로드
+// 스크롤 위치가 하단에서 300px 이내일 때 새로운 데이터 요청
+// 중복 로딩 방지를 위한 isLoading 체크
+// 150ms 쓰로틀링 적용으로 성능 최적화
 const scrollHandler = throttle(() => {
 	if (isLoading || !hasMoreData) return;
 	// 데이터를 로드 중이거나 로드할 데이터가 더 이상 없는 경우 스크롤 작업을 중단

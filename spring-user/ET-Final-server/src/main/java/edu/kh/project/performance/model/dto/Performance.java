@@ -43,6 +43,9 @@ public class Performance {
 	private String adres;				// 공연장 위치
 	private int memberNo;				// 회원 번호
 	
+	private String posterBase64;    // Base64 형식의 포스터 이미지 데이터
+	private String posterFileName;  // 원본 포스터 파일명
+	
 	
 	
 	

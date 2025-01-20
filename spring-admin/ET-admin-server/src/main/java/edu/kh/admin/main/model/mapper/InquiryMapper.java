@@ -19,6 +19,8 @@ public interface InquiryMapper {
 
 	List<Inquiry> searchInquiryList(Map<String, Object> formData);
 
+	int delete(int inquiryNo);
+
 
 
 }

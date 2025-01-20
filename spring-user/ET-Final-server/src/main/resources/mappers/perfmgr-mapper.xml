@@ -108,7 +108,8 @@
 	        PRFNM = #{prfnm},
 	        PRFRUNTIME = #{prfruntime},
 	        PRFCAST = #{prfcast},
-	        DESCRIPTION = #{description}
+	        DESCRIPTION = #{description},
+	        POSTER = #{poster}
 	    WHERE
 	        MT20ID = #{mt20id}
 	</update>

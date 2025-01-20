@@ -184,7 +184,7 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
 	    }
 	}
 	
-	// StatisticsBatchServiceImpl.java에 추가할 메서드
+	// 공연 리뷰 평점 평균 업데이트
 	@Scheduled(cron = "0 0 3 * * *")
 	public void updatePerformanceReviewRanks() {
 	    try {
@@ -200,7 +200,7 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
 	 /** 공연 날짜가 지난 예매 내역 공연 종료 처리
 	 * @author 나찬웅
 	 */
-	@Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+	@Scheduled(cron = "0 0 12 * * ?") // 매일 정오 실행
 	public void updateExpiredBookings() {
 		int updateRows = mapper.updateExpiredBookings();
 		

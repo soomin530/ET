@@ -229,6 +229,8 @@ const InquiryList = ({
   currentPage,
   itemsPerPage,
   onPageChange,
+  isReplied,
+  setIsReplied,
 }) => {
   const navigate = useNavigate();
 
@@ -238,10 +240,12 @@ const InquiryList = ({
     if (window.confirm("정말로 이 문의사항을 삭제하시겠습니까?")) {
       try {
         const response = await axios.post(
-          `http://localhost:8081/inquiry/delete/${inquiryNo}`
+          `https://adminmodeunticket.store/inquiry/delete/${inquiryNo}`
         );
         if (response.data > 0) {
           alert("문의사항이 삭제되었습니다.");
+          sessionStorage.setItem("isReplied", String(isReplied));
+          sessionStorage.setItem("replyIs", isReplied ? "Y" : "N");
           window.location.reload();
         } else {
           alert("삭제에 실패했습니다.");
@@ -399,9 +403,58 @@ export default function InquiryManage() {
     }
   };
 
+  // 기존의 두 useEffect를 제거하고 하나의 useEffect로 통합
   useEffect(() => {
-    getInquiryList();
-  }, []);
+    const init = async () => {
+      // 세션 스토리지에서 저장된 상태 확인
+      const savedIsReplied = sessionStorage.getItem("isReplied");
+      const savedReplyIs = sessionStorage.getItem("replyIs");
+
+      // 저장된 상태가 있으면 적용
+      if (savedIsReplied !== null) {
+        setIsReplied(savedIsReplied === "true");
+        try {
+          const resp = await axiosApi.post("/inquiry/showInquiryList", {
+            replyIs: savedReplyIs,
+          });
+          if (resp.status === 200) {
+            setInquiryList(resp.data);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error("데이터 로드 에러:", error);
+          setLoading(false);
+        }
+      } else {
+        // 저장된 상태가 없으면 기본 데이터 로드
+        try {
+          const resp = await axiosApi.post("/inquiry/showInquiryList", {
+            replyIs: "N",
+          });
+          if (resp.status === 200) {
+            setInquiryList(resp.data);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error("데이터 로드 에러:", error);
+          setLoading(false);
+        }
+      }
+
+      // 세션 스토리지 클리어
+      sessionStorage.removeItem("isReplied");
+      sessionStorage.removeItem("replyIs");
+    };
+
+    init();
+  }, []); // 컴포넌트 마운트 시 한 번만 실행
+
+  // loading 상태 체크를 위한 useEffect는 유지
+  useEffect(() => {
+    if (inquiryList != null) {
+      setLoading(false);
+    }
+  }, [inquiryList]);
 
   useEffect(() => {
     if (inquiryList != null) {
@@ -494,10 +547,10 @@ export default function InquiryManage() {
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
+          isReplied={isReplied} // 추가: isReplied 상태 전달
+          setIsReplied={setIsReplied} // 추가: setIsReplied 함수 전달
         />
       </div>
-
-    
     </div>
   );
 }

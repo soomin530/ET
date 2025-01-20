@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
-import '../css/Login.css';
-import { AuthContext } from './AuthContext';
+import React, { useContext } from "react";
+import "../css/Login.css";
+import { AuthContext } from "./AuthContext";
 
 function Login() {
-
   const globalState = useContext(AuthContext);
 
   return (
@@ -13,20 +12,20 @@ function Login() {
       <form onSubmit={globalState.handleLogin}>
         <div className="form-group">
           <label htmlFor="username">이메일:</label>
-          <input 
-            type="email" 
+          <input
+            type="email"
             id="email"
-            onChange={globalState.changeInputEmail} 
-            required 
+            onChange={globalState.changeInputEmail}
+            required
           />
         </div>
         <div className="form-group">
           <label htmlFor="password">비밀번호:</label>
-          <input 
-            type="password" 
-            id="password" 
-            onChange={globalState.changeInputPw} 
-            required 
+          <input
+            type="password"
+            id="password"
+            onChange={globalState.changeInputPw}
+            required
           />
         </div>
         <button type="submit">로그인</button>

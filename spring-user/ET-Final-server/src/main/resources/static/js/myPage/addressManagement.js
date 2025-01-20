@@ -401,7 +401,6 @@ function displayAddressList(addresses) {
 				try {
 					// addressNo 값을 버튼의 data-address-no 속성에서 가져옴
 					const addressNo = setDefaultBtn.getAttribute('data-address-no');
-					console.log('Sending addressNo:', addressNo); // 디버깅용 로그
 
 					if (!addressNo) {
 						alert('주소 번호가 유효하지 않습니다.');
@@ -436,7 +435,6 @@ function displayAddressList(addresses) {
 
 						try {
 							localStorage.setItem('defaultAddress', JSON.stringify(defaultAddressInfo));
-							console.log('Default address saved to localStorage:', defaultAddressInfo);
 						} catch (storageError) {
 							console.error('LocalStorage save failed:', storageError);
 						}
@@ -470,7 +468,6 @@ function displayAddressList(addresses) {
 		function clearDefaultAddress() {
 			try {
 				localStorage.removeItem('defaultAddress');
-				console.log('Default address removed from localStorage');
 			} catch (error) {
 				console.error('Error removing from localStorage:', error);
 			}
@@ -483,7 +480,6 @@ function displayAddressList(addresses) {
 					...addressInfo,
 					lastUpdated: new Date().toISOString()
 				}));
-				console.log('Default address updated in localStorage');
 			} catch (error) {
 				console.error('Error updating localStorage:', error);
 			}
@@ -566,7 +562,6 @@ const editPhoneMessage = document.querySelector("#editPhoneMessage");
 
 editPhone.addEventListener("input", e => {
 
-	console.log("작동중");
 
 	const inputEditPhone = e.target.value;
 
@@ -829,7 +824,6 @@ function getNaverCookie(name) {
 
 // 사이드바
 document.addEventListener('DOMContentLoaded', function() {
-	console.log("마이페이지 사이드 메뉴 스크립트 로드됨");
 
 	// 비밀번호 검증이 필요한 페이지들
 	const pagesNeedingVerification = ['updateInfo','changePw','membershipOut'];
@@ -872,27 +866,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-// 기본 배송지 정보를 서버에서 가져오기
-async function fetchDefaultAddressFromServer() {
-	try {
-		const response = await fetch('/mypage/defaultAddress'); // 기본 배송지 API 호출
-
-		if (response.ok) {
-			const defaultAddress = await response.json(); // 기본 배송지 정보 가져오기
-
-			// 로컬스토리지에 저장
-			localStorage.setItem('defaultAddress', JSON.stringify(defaultAddress));
-			console.log('기본 배송지 정보를 로컬스토리지에 저장했습니다:', defaultAddress);
-
-		} else {
-			console.warn('기본 배송지 정보를 가져오지 못했습니다.');
-		}
-	} catch (error) {
-		console.error('기본 배송지 정보를 가져오는 중 오류:', error);
-	}
-}
-
 // 페이지 로드 시 기본 배송지 확인
 document.addEventListener('DOMContentLoaded', async function () {
 	loadAddressList(); // 기존 배송지 목록 불러오기
@@ -900,7 +873,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 	// 로컬스토리지에서 기본 배송지를 확인
 	const defaultAddress = localStorage.getItem('defaultAddress');
 	if (!defaultAddress) {
-		console.log('로컬스토리지에 기본 배송지가 없음. 서버에서 가져옵니다.');
 		await fetchDefaultAddressFromServer(); // 기본 배송지를 서버에서 가져와 로컬스토리지에 저장
 	} else {
 		console.log('로컬스토리지에서 기본 배송지 정보를 가져왔습니다:', JSON.parse(defaultAddress));

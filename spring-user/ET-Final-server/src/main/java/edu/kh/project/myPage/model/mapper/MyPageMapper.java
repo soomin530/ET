@@ -45,6 +45,12 @@ public interface MyPageMapper {
 	 * @return
 	 */
 	int changePw(Map<String, Object> paramMap);
+	
+	/** 현재 회원의 티켓 예매 내역 확인
+	 * @param memberNo
+	 * @return
+	 */
+	int countTicketBookings(int memberNo);
 
 	/** 회원 탈퇴 처리
 	 * @param memberNo
@@ -242,10 +248,6 @@ public interface MyPageMapper {
 	 * @return
 	 */
 	int checkTel(String userTel);
-
-	
-
-
 
 	
 	

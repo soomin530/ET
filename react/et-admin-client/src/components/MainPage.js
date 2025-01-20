@@ -28,23 +28,23 @@ const floatAnimation = keyframes`
 
 // 메인 컨테이너
 const DashboardContainer = styled.div`
-   min-height: 80vh;
+  min-height: 80vh;
   padding: 2rem;
-  background: ${props => {
+  background: ${(props) => {
     const hour = props.hour;
     switch (true) {
       case hour >= 5 && hour < 7: // 새벽
-        return 'linear-gradient(120deg, #646464 0%, #b5b5b5 50%, #f0d2a8 100%)';
+        return "linear-gradient(120deg, #646464 0%, #b5b5b5 50%, #f0d2a8 100%)";
       case hour >= 7 && hour < 12: // 아침
-        return 'linear-gradient(120deg, #87CEEB 0%, #B2E2F2 50%, #E6F3F8 100%)';
+        return "linear-gradient(120deg, #87CEEB 0%, #B2E2F2 50%, #E6F3F8 100%)";
       case hour >= 12 && hour < 16: // 점심
-        return 'linear-gradient(120deg, #4B9CD3 0%, #87CEEB 50%, #B2E2F2 100%)';
+        return "linear-gradient(120deg, #4B9CD3 0%, #87CEEB 50%, #B2E2F2 100%)";
       case hour >= 16 && hour < 19: // 오후
-        return 'linear-gradient(120deg, #375D81 0%, #4B9CD3 50%, #87CEEB 100%)';
+        return "linear-gradient(120deg, #375D81 0%, #4B9CD3 50%, #87CEEB 100%)";
       case hour >= 19 && hour < 21: // 저녁
-        return 'linear-gradient(120deg, #1E3F66 0%, #375D81 50%, #4B9CD3 100%)';
+        return "linear-gradient(120deg, #1E3F66 0%, #375D81 50%, #4B9CD3 100%)";
       default: // 밤
-        return 'linear-gradient(120deg, #0A1F33 0%, #1E3F66 50%, #375D81 100%)';
+        return "linear-gradient(120deg, #0A1F33 0%, #1E3F66 50%, #375D81 100%)";
     }
   }};
   background-size: 200% 200%;
@@ -54,18 +54,18 @@ const DashboardContainer = styled.div`
   overflow: hidden;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: ${props => {
+    background: ${(props) => {
       const hour = props.hour;
       if (hour >= 19 || hour < 5) {
-        return 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%)';
+        return "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%)";
       }
-      return 'none';
+      return "none";
     }};
     pointer-events: none;
   }
@@ -74,15 +74,16 @@ const DashboardContainer = styled.div`
 // 추가적으로 시간대별 분위기를 더하기 위한 장식 요소
 const SkyDecoration = styled.div`
   position: absolute;
-  top: ${props => props.top || '10%'};
-  left: ${props => props.left || '10%'};
-  width: ${props => props.size || '20px'};
-  height: ${props => props.size || '20px'};
-  opacity: ${props => props.opacity || '0.6'};
+  top: ${(props) => props.top || "10%"};
+  left: ${(props) => props.left || "10%"};
+  width: ${(props) => props.size || "20px"};
+  height: ${(props) => props.size || "20px"};
+  opacity: ${(props) => props.opacity || "0.6"};
   border-radius: 50%;
   background: white;
   filter: blur(4px);
-  animation: ${floatAnimation} ${props => props.duration || '3s'} ease-in-out infinite;
+  animation: ${floatAnimation} ${(props) => props.duration || "3s"} ease-in-out
+    infinite;
 `;
 
 // 시간 표시 컴포넌트
@@ -228,15 +229,45 @@ export default function Main() {
       {currentTime.getHours() >= 19 || currentTime.getHours() < 5 ? (
         // 밤에는 별들 추가
         <>
-          <SkyDecoration top="15%" left="20%" size="3px" opacity="0.8" duration="4s" />
-          <SkyDecoration top="45%" left="80%" size="2px" opacity="0.6" duration="5s" />
-          <SkyDecoration top="75%" left="40%" size="4px" opacity="0.7" duration="6s" />
+          <SkyDecoration
+            top="15%"
+            left="20%"
+            size="3px"
+            opacity="0.8"
+            duration="4s"
+          />
+          <SkyDecoration
+            top="45%"
+            left="80%"
+            size="2px"
+            opacity="0.6"
+            duration="5s"
+          />
+          <SkyDecoration
+            top="75%"
+            left="40%"
+            size="4px"
+            opacity="0.7"
+            duration="6s"
+          />
         </>
       ) : currentTime.getHours() >= 5 && currentTime.getHours() < 19 ? (
         // 낮에는 구름 효과 추가
         <>
-          <SkyDecoration top="10%" left="30%" size="50px" opacity="0.3" duration="20s" />
-          <SkyDecoration top="20%" left="70%" size="40px" opacity="0.2" duration="25s" />
+          <SkyDecoration
+            top="10%"
+            left="30%"
+            size="50px"
+            opacity="0.3"
+            duration="20s"
+          />
+          <SkyDecoration
+            top="20%"
+            left="70%"
+            size="40px"
+            opacity="0.2"
+            duration="25s"
+          />
         </>
       ) : null}
       <WelcomeMessage>{greeting}, 관리자님</WelcomeMessage>

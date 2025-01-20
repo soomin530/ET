@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { axiosApi } from "../api/axoisAPI";
 import { useNavigate } from "react-router-dom";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 // 페이지네이션 스타일 컴포넌트
 const PaginationContainer = styled.div`
@@ -20,20 +20,20 @@ const PageButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${props => props.active ? '#ff7f27' : '#e0e0e0'};
+  border: 1px solid ${(props) => (props.active ? "#ff7f27" : "#e0e0e0")};
   border-radius: 4px;
-  background-color: ${props => props.active ? '#ff7f27' : 'white'};
-  color: ${props => props.active ? 'white' : '#333'};
+  background-color: ${(props) => (props.active ? "#ff7f27" : "white")};
+  color: ${(props) => (props.active ? "white" : "#333")};
   font-size: 14px;
-  font-weight: ${props => props.active ? '600' : '400'};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${props => props.disabled ? '0.5' : '1'};
+  font-weight: ${(props) => (props.active ? "600" : "400")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   transition: all 0.2s ease-in-out;
 
   &:hover:not(:disabled) {
-    background-color: ${props => props.active ? '#ff7f27' : '#fff3e0'};
+    background-color: ${(props) => (props.active ? "#ff7f27" : "#fff3e0")};
     border-color: #ff7f27;
-    color: ${props => props.active ? 'white' : '#ff7f27'};
+    color: ${(props) => (props.active ? "white" : "#ff7f27")};
     transform: translateY(-1px);
   }
 
@@ -113,15 +113,20 @@ const TableCell = styled.td`
   color: #333;
   text-align: center;
   white-space: nowrap;
-  overflow: hidden;    
+  overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
 `;
 
 // 페이지네이션 컴포넌트
-const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
+const Pagination = ({
+  totalItems,
+  itemsPerPage,
+  currentPage,
+  onPageChange,
+}) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  
+
   const pageRange = 5;
   const startPage = Math.max(1, currentPage - Math.floor(pageRange / 2));
   const endPage = Math.min(totalPages, startPage + pageRange - 1);
@@ -130,17 +135,14 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
 
   return (
     <PaginationContainer>
-      <ArrowButton
-        onClick={() => onPageChange(1)}
-        disabled={currentPage === 1}
-      >
-        {'<<'}
+      <ArrowButton onClick={() => onPageChange(1)} disabled={currentPage === 1}>
+        {"<<"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        {'<'}
+        {"<"}
       </ArrowButton>
 
       {[...Array(endPage - startPage + 1)].map((_, index) => {
@@ -156,24 +158,29 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
         );
       })}
 
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        {'>'}
+        {">"}
       </ArrowButton>
-      <ArrowButton 
+      <ArrowButton
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
       >
-        {'>>'}
+        {">>"}
       </ArrowButton>
     </PaginationContainer>
   );
 };
 
 // ShowMember 컴포넌트
-const ShowMember = ({ memberList, currentPage, itemsPerPage, onPageChange }) => {
+const ShowMember = ({
+  memberList,
+  currentPage,
+  itemsPerPage,
+  onPageChange,
+}) => {
   const navigate = useNavigate();
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -195,10 +202,10 @@ const ShowMember = ({ memberList, currentPage, itemsPerPage, onPageChange }) => 
             <StyledTable>
               <thead>
                 <tr>
-                  <TableHeader style={{ width: '10%' }}>번호</TableHeader>
-                  <TableHeader style={{ width: '25%' }}>회원 이름</TableHeader>
-                  <TableHeader style={{ width: '40%' }}>회원 주소</TableHeader>
-                  <TableHeader style={{ width: '25%' }}>전화번호</TableHeader>
+                  <TableHeader style={{ width: "10%" }}>번호</TableHeader>
+                  <TableHeader style={{ width: "25%" }}>회원 이름</TableHeader>
+                  <TableHeader style={{ width: "40%" }}>회원 주소</TableHeader>
+                  <TableHeader style={{ width: "25%" }}>전화번호</TableHeader>
                 </tr>
               </thead>
               <tbody>
@@ -230,8 +237,8 @@ const ShowMember = ({ memberList, currentPage, itemsPerPage, onPageChange }) => 
 
 // 메인 UserManage 컴포넌트
 export default function UserManage() {
-  const [selectedValue, setSelectedValue] = useState('회원이름');
-  const [inputValue, setInputValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState("회원이름");
+  const [inputValue, setInputValue] = useState("");
   const [memberList, setMemberList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -241,26 +248,26 @@ export default function UserManage() {
     setSelectedValue(e.target.value);
   };
 
-  const handleInputChange = (e) => {  
+  const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSubmit(e);  
+    if (e.key === "Enter") {
+      handleSubmit(e);
     }
   };
 
   const options = [
-    { id: 1, label: '회원이름' },
-    { id: 2, label: '주소' },
-    { id: 3, label: '전화번호' },
+    { id: 1, label: "회원이름" },
+    { id: 2, label: "주소" },
+    { id: 3, label: "전화번호" },
   ];
 
-  const getShowMemberList = async() => {
+  const getShowMemberList = async () => {
     try {
       const resp = await axiosApi.get("/member/showMemberList");
-      if(resp.status === 200){
+      if (resp.status === 200) {
         setMemberList(resp.data);
       }
     } catch (error) {
@@ -273,51 +280,56 @@ export default function UserManage() {
   }, []);
 
   useEffect(() => {
-    if(memberList != null){
+    if (memberList != null) {
       setLoading(false);
     }
   }, [memberList]);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!inputValue || inputValue.trim() === ''){
+    if (!inputValue || inputValue.trim() === "") {
       alert("검색어를 입력해주세요");
       return;
     }
 
     const formData = {
       selectedValue: selectedValue,
-      inputValue: inputValue  
+      inputValue: inputValue,
     };
-    
+
     try {
-      const resp = await axiosApi.post("/member/searchShowMemberList", formData);
-  
+      const resp = await axiosApi.post(
+        "/member/searchShowMemberList",
+        formData
+      );
+
       if (resp.status === 200) {
         const getData = resp.data;
         setMemberList(getData);
         setCurrentPage(1); // 검색 후 첫 페이지로 이동
       } else {
-        throw new Error('서버 요청 실패');
+        throw new Error("서버 요청 실패");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
-  if(loading) {
+  if (loading) {
     return <h1>Loading...</h1>;
   }
 
   return (
     <div className="menu-box">
-      <TitleContainer onClick={() => {
-        getShowMemberList();
-        setCurrentPage(1);
-        setInputValue('');
-        setSelectedValue('회원이름');
-      }}>
+      <TitleContainer
+        onClick={() => {
+          getShowMemberList();
+          setCurrentPage(1);
+          setInputValue("");
+          setSelectedValue("회원이름");
+        }}
+      >
         <h4>유저관리</h4>
       </TitleContainer>
 
@@ -343,8 +355,8 @@ export default function UserManage() {
         </form>
       </div>
 
-      <div className="main-table-container" style={{ textAlign: 'center' }}>
-        <ShowMember 
+      <div className="main-table-container" style={{ textAlign: "center" }}>
+        <ShowMember
           memberList={memberList}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}

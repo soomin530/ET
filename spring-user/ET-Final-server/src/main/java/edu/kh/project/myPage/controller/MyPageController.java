@@ -1,5 +1,6 @@
 package edu.kh.project.myPage.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -274,8 +275,28 @@ public class MyPageController {
 	@GetMapping("memberInquirytList")
 	public String memberInquirytList() {
 		
-		return "mypage/memberInquirytList";
+		return "mypage/memberInquiryList";
 	}
+	
+	// 티켓 예매 내역 확인
+    @GetMapping("/checkBookingExists")
+    public ResponseEntity<Map<String, Boolean>> checkBookingExists(
+        @SessionAttribute("loginMember") Member loginMember
+    ) {
+        try {
+            // 현재 회원의 티켓 예매 내역 확인
+            boolean hasBooking = service.checkTicketBookingExists(loginMember.getMemberNo());
+            
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("hasBooking", hasBooking);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                               .body(null);
+        }
+    }
 	
 	/** 회원 탈퇴 진행
 	 * @param requestMap
@@ -595,6 +616,11 @@ public class MyPageController {
 	}
 	
 	
+	/**
+	 * @param loginMember
+	 * @author 나찬웅
+	 * @return
+	 */
 	@GetMapping("defaultAddress")
 	@ResponseBody
 	public ResponseEntity<AddressDTO> getDefaultAddress(@SessionAttribute("loginMember")Member loginMember){
@@ -602,8 +628,9 @@ public class MyPageController {
 		    
 		    if (defaultAddress != null) {
 		        return ResponseEntity.ok(defaultAddress); // 기본 배송지 반환
+		    } else  {
+		    	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		    }
-		    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
 }

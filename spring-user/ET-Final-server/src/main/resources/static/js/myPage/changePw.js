@@ -87,7 +87,6 @@ newPasswordInput.addEventListener("input", debounce(async (e) => {
 	} else {
 		// 기본 유효성 검사를 통과한 경우에만 서버 검증 수행
 		const isDuplicate = await checkPreviousPassword(password);
-		console.log(isDuplicate);
 		if (isDuplicate) {
 			passwordMessage.innerText = "이전에 사용한 비밀번호입니다. 다른 비밀번호를 입력해주세요.";
 			passwordMessage.style.color = "red";
@@ -115,6 +114,12 @@ submitBtn.addEventListener("click", async () => {
 	const confirmPassword = confirmPasswordInput.value; // 비밀번호 확인 입력값
 
 	const naverFl = getChangeCookie('naverFl');
+	
+	// 비밀번호 유효성 검사
+    if(newPassword.trim() === '' || confirmPassword.trim() === '') {
+        alert('비밀번호를 입력해주세요.');
+        return;
+    }
 
 	if (naverFl === 'Y') {
 		alert('네이버 로그인 사용자는 네이버에서 비밀번호를 변경해주세요.');

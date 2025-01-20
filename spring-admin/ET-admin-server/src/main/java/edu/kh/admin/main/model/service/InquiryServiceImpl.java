@@ -38,6 +38,10 @@ public class InquiryServiceImpl implements InquiryService{
 		return mapper.searchInquiryList(formData);
 		}
 		
+		@Override
+		public int delete(int inquiryNo) {
+		return mapper.delete(inquiryNo);
+		}
 		
 	
 }

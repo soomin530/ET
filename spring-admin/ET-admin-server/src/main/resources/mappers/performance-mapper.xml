@@ -7,7 +7,7 @@
 	<select id="showPerformanceList">
 		SELECT * FROM TB_VENUE
 		ORDER BY
-		MT10ID ASC
+		OPENDE DESC
 	</select>
 
 	<!-- 검색된 모든 공연장 조회 -->
@@ -29,7 +29,7 @@
 			</otherwise>
 		</choose>
 		ORDER BY
-		MT10ID ASC
+		OPENDE DESC
 	</select>
 
 	<insert id="insert">
@@ -45,7 +45,8 @@
 		ADRES,
 		FCLTLA,
 		FCLTLO
-		) VALUES (
+		)
+		VALUES (
 		#{MT10ID},
 		#{FCLTYNM},
 		#{MT13CNT},
@@ -75,13 +76,16 @@
 		UPDATE TB_VENUE
 		SET
 		FCLTYNM = #{FCLTYNM},
-		MT13CNT = #{MT13CNT},
+		MT13CNT =
+		#{MT13CNT},
 		FCLTYCHARTR = #{FCLTYCHARTR},
 		OPENDE = #{OPENDE},
-		SEATSCALE = #{SEATSCALE},
+		SEATSCALE =
+		#{SEATSCALE},
 		TELNO = #{TELNO},
 		RELATEURL = #{RELATEURL},
-		ADRES = #{ADRES},
+		ADRES =
+		#{ADRES},
 		FCLTLA = #{FCLTLA},
 		FCLTLO = #{FCLTLO}
 		WHERE
@@ -103,5 +107,10 @@
 		FROM TB_VENUE_SEAT_INFO
 		WHERE MT10ID = #{MT10ID}
 	</select>
+
+	<delete id="deleteGrade">
+		DELETE FROM TB_VENUE_SEAT_INFO
+		WHERE MT10ID = #{MT10ID}
+	</delete>
 
 </mapper>

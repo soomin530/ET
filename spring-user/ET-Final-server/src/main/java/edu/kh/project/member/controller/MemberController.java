@@ -1,7 +1,9 @@
 package edu.kh.project.member.controller;
 
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,11 +33,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("member")
 @SessionAttributes({ "loginMember" })
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
 	private final MemberService service;
@@ -48,6 +52,39 @@ public class MemberController {
 
 	// @Autowired
 	// private RedisTemplate<String, String> redisTemplate;
+	
+	@PostMapping("admin")
+	public String adminAuth(Member inputMember, RedirectAttributes ra) {
+
+	    // 로그인 서비스를 재사용해서 관리자 체크
+	    Member member = service.findAdminByEmail(
+	        inputMember.getMemberEmail(), 
+	        String.valueOf(inputMember.getMemberNo())
+	    );
+
+	    // 관리자가 아닌 경우
+	    if (member == null || member.getMemberAuth() != 2) {
+	        ra.addFlashAttribute("message", "관리자 권한이 없습니다.");
+	        return "redirect:/";
+	    }
+
+	    // 토큰 생성 - 기존 login 메서드에서 사용하는 방식과 동일하게
+	    TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(
+	        String.valueOf(member.getMemberNo()), 
+	        member.getMemberEmail()
+	    );
+
+	    String state = "state=" + URLEncoder.encode(Base64.getEncoder().encodeToString(
+	        String.format("{\"timestamp\":%d,\"token\":\"%s\",\"memberEmail\":\"%s\",\"memberNo\":\"%s\"}", 
+	            System.currentTimeMillis(), 
+	            tokenInfo.accessToken(),
+	            member.getMemberEmail(),
+	            member.getMemberNo()
+	        ).getBytes()
+	    ), StandardCharsets.UTF_8);
+
+	    return "redirect:https://final-project-react-individual.vercel.app/?" + state;
+	}
 
 	/**
 	 * 로그인 진행
@@ -110,7 +147,7 @@ public class MemberController {
 		Map<String, Object> responseData = new HashMap<>();
 		responseData.put("accessToken", tokenInfo.accessToken());
 		responseData.put("memberInfo", loginMember);
-
+		
 		return ResponseEntity.ok(responseData); // 로그인 성공 시 200 OK 반환
 	}
 
@@ -409,7 +446,34 @@ public class MemberController {
 			return "redirect:/member/find";
 		}
 	}
+	
+	/** 이전 비밀번호 체크
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/checkPreviousPassword")
+    public ResponseEntity<Map<String, Boolean>> checkPreviousPassword(@RequestBody Map<String, String> request) {
+        Map<String, Boolean> response = new HashMap<>();
+        
+        try {
+            String memberNo = jwtTokenUtil.getMemberNoFromToken(request.get("token"));
+            String newPassword = request.get("newPassword");
+            
+            boolean isDuplicate = service.checkPreviousPassword(memberNo, newPassword);
+            response.put("isDuplicate", isDuplicate);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("이전 비밀번호 확인 중 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
+	/** 비밀번호 변경
+	 * @param paramMap
+	 * @return
+	 */
 	@PostMapping("/resetPassword")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody Map<String, Object> paramMap) {
