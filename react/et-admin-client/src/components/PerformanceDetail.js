@@ -312,7 +312,7 @@ const PerformanceForm = () => {
     if (mt10ID) {
       // 기본 정보 로드
       axios
-        .get(`http://localhost:8081/performance/${mt10ID}`)
+        .get(`https://adminmodeunticket.store/performance/${mt10ID}`)
         .then((response) => {
           const performanceData = response.data[0];
           setFormData({
@@ -335,25 +335,64 @@ const PerformanceForm = () => {
 
       // 등급 정보 로드
       axios
-        .get(`http://localhost:8081/performance/grade/${mt10ID}`)
+        .get(`https://adminmodeunticket.store/performance/grade/${mt10ID}`)
         .then((response) => {
           const gradeData = response.data;
           if (gradeData && gradeData.length > 0) {
             setShowGrades(true); // 등급 섹션 표시
 
-            // 등급 ID를 등급 이름으로 변환하여 선택된 등급 설정
-            const selectedGradeNames = gradeData.map((item) => {
-              // GRADE_ORDER의 인덱스를 찾아 등급 이름 반환
-              return GRADE_ORDER[parseInt(item.gradeId) - 1];
-            });
-            setSelectedGrades(selectedGradeNames);
-
-            // 좌석 수 설정
+            // 객체로 매핑된 좌석 수 데이터 생성
             const seatsData = {};
             gradeData.forEach((item) => {
-              seatsData[item.gradeId] = item.seatCount;
+              seatsData[item.gradeId] = parseInt(item.seatCount);
             });
             setGradeSeats(seatsData);
+
+            // 등급 이름 목록 생성
+            const selectedGradeNames = gradeData
+              .map(
+                (item) =>
+                  // gradeId가 1부터 시작하므로 -1 해서 인덱스 맞춤
+                  GRADE_ORDER[item.gradeId - 1]
+              )
+              .sort((a, b) => GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b));
+
+            setSelectedGrades(selectedGradeNames);
+          }
+        })
+        .catch((error) => {
+          console.error("등급 정보 로드 에러:", error);
+        });
+    }
+  }, [mt10ID]);
+
+  useEffect(() => {
+    if (mt10ID) {
+      // 등급 정보 로드
+      axios
+        .get(`https://adminmodeunticket.store/performance/grade/${mt10ID}`)
+        .then((response) => {
+          const gradeData = response.data;
+          if (gradeData && gradeData.length > 0) {
+            setShowGrades(true); // 등급 섹션 표시
+
+            // 객체로 매핑된 좌석 수 데이터 생성
+            const seatsData = {};
+            gradeData.forEach((item) => {
+              seatsData[item.gradeId] = parseInt(item.seatCount);
+            });
+            setGradeSeats(seatsData);
+
+            // 등급 이름 목록 생성
+            const selectedGradeNames = gradeData
+              .map(
+                (item) =>
+                  // gradeId가 1부터 시작하므로 -1 해서 인덱스 맞춤
+                  GRADE_ORDER[item.gradeId - 1]
+              )
+              .sort((a, b) => GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b));
+
+            setSelectedGrades(selectedGradeNames);
           }
         })
         .catch((error) => {
@@ -364,14 +403,38 @@ const PerformanceForm = () => {
 
   // 등급별 좌석 수 검증
   useEffect(() => {
-    // 객석수가 없거나 0 이하인 경우 등급지정 불가
     if (!formData.SEATSCALE || parseInt(formData.SEATSCALE) <= 0) {
+      // 객석수가 비어있거나 0 이하일 때는 등급 관련 상태만 초기화
       setShowGrades(false);
       setSelectedGrades([]);
       setGradeSeats({});
       return;
     }
 
+    // 객석수가 있을 때만 유효성 검사 진행
+    if (showGrades && selectedGrades.length > 0) {
+      const totalSeats = parseInt(formData.SEATSCALE);
+      const totalGradeSeats = Object.values(gradeSeats).reduce(
+        (sum, val) => sum + (parseInt(val) || 0),
+        0
+      );
+
+      if (totalGradeSeats > totalSeats) {
+        setSeatError(
+          `총 객석수(${totalSeats})보다 등급별 좌석 합계(${totalGradeSeats})가 많습니다.`
+        );
+      } else if (totalGradeSeats < totalSeats) {
+        setSeatError(
+          `총 객석수(${totalSeats})와 등급별 좌석 합계(${totalGradeSeats})가 일치하지 않습니다.`
+        );
+      } else {
+        setSeatError("");
+      }
+    }
+  }, [formData.SEATSCALE]); // 객석수 변경시에만 실행
+
+  // 등급 좌석 검사를 위한 별도의 useEffect
+  useEffect(() => {
     if (showGrades && selectedGrades.length > 0) {
       const invalidSeats = selectedGrades.some((grade) => {
         const seatCount = gradeSeats[GRADE_MAPPING[grade]];
@@ -382,30 +445,11 @@ const PerformanceForm = () => {
         setSelectedGradeError("좌석 수는 1 이상 입력해주세요.");
       } else {
         setSelectedGradeError("");
-
-        const totalGradeSeats = Object.values(gradeSeats).reduce(
-          (sum, val) => sum + (parseInt(val) || 0),
-          0
-        );
-        const totalSeats = parseInt(formData.SEATSCALE) || 0;
-
-        if (totalGradeSeats > totalSeats) {
-          setSeatError(
-            `총 객석수(${totalSeats})보다 등급별 좌석 합계(${totalGradeSeats})가 많습니다.`
-          );
-        } else if (totalGradeSeats < totalSeats) {
-          setSeatError(
-            `총 객석수(${totalSeats})와 등급별 좌석 합계(${totalGradeSeats})가 일치하지 않습니다.`
-          );
-        } else {
-          setSeatError("");
-        }
       }
     } else {
       setSelectedGradeError("");
-      setSeatError("");
     }
-  }, [gradeSeats, selectedGrades, formData.SEATSCALE, showGrades]);
+  }, [gradeSeats, selectedGrades, showGrades]);
 
   // 지도 초기화
   useEffect(() => {
@@ -512,15 +556,37 @@ const PerformanceForm = () => {
 
   const handleGradeChange = (grade) => {
     setSelectedGrades((prev) => {
+      // 등급 제거하는 경우
       if (prev.includes(grade)) {
         const newGrades = prev.filter((g) => g !== grade);
+
+        // 등급 제거 시 해당 좌석수도 함께 제거
         setGradeSeats((seats) => {
           const newSeats = { ...seats };
           delete newSeats[GRADE_MAPPING[grade]];
+
+          // 새로운 좌석 총합 계산
+          const totalSeats = parseInt(formData.SEATSCALE);
+          const newTotalGradeSeats = Object.values(newSeats).reduce(
+            (sum, val) => sum + (parseInt(val) || 0),
+            0
+          );
+
+          // 좌석 수 검증
+          if (newTotalGradeSeats !== totalSeats) {
+            setSeatError(
+              `총 객석수(${totalSeats})와 등급별 좌석 합계(${newTotalGradeSeats})가 일치하지 않습니다.`
+            );
+          } else {
+            setSeatError("");
+          }
+
           return newSeats;
         });
         return newGrades;
       }
+
+      // 등급 추가하는 경우
       return [...prev, grade].sort(
         (a, b) => GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b)
       );
@@ -531,10 +597,34 @@ const PerformanceForm = () => {
     const gradeId = GRADE_MAPPING[grade];
     const newValue = value === "" ? "" : parseInt(value);
 
-    setGradeSeats((prev) => ({
-      ...prev,
-      [gradeId]: newValue,
-    }));
+    setGradeSeats((prev) => {
+      const newSeats = {
+        ...prev,
+        [gradeId]: newValue,
+      };
+
+      // 새로운 좌석 총합 계산
+      const totalSeats = parseInt(formData.SEATSCALE);
+      const newTotalGradeSeats = Object.values(newSeats).reduce(
+        (sum, val) => sum + (parseInt(val) || 0),
+        0
+      );
+
+      // 좌석 수 검증
+      if (newTotalGradeSeats > totalSeats) {
+        setSeatError(
+          `총 객석수(${totalSeats})보다 등급별 좌석 합계(${newTotalGradeSeats})가 많습니다.`
+        );
+      } else if (newTotalGradeSeats < totalSeats) {
+        setSeatError(
+          `총 객석수(${totalSeats})와 등급별 좌석 합계(${newTotalGradeSeats})가 일치하지 않습니다.`
+        );
+      } else {
+        setSeatError("");
+      }
+
+      return newSeats;
+    });
   };
 
   const handleInputChange = (e) => {
@@ -600,18 +690,28 @@ const PerformanceForm = () => {
       }
     }
 
+    const seatData = {};
+    if (showGrades) {
+      Object.entries(gradeSeats).forEach(([gradeId, seatCount]) => {
+        if (seatCount !== "") {
+          seatData[gradeId] = parseInt(seatCount);
+        }
+      });
+    }
+
     const submitData = {
       ...formData,
-      gradeSeats: showGrades ? gradeSeats : null,
+      gradeSeats: showGrades ? seatData : null,
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:8081/performance/update",
+        "https://adminmodeunticket.store/performance/update",
         submitData
       );
       if (response.data > 0) {
         alert("시설 정보가 변경되었습니다.");
+        window.history.back();
       } else {
         alert("변경 실패하였습니다");
       }

@@ -75,7 +75,6 @@ const TitleContainer = styled.div`
   }
 `;
 
-
 // 페이지네이션 컴포넌트
 const Pagination = ({
   totalItems,
@@ -146,11 +145,11 @@ const PerformanceList = () => {
 
   // currentPage가 변경될 때마다 상단으로 스크롤
   useEffect(() => {
-    const container = document.querySelector('.main-content');
+    const container = document.querySelector(".main-content");
     if (container) {
       container.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   }, [currentPage]);
@@ -203,10 +202,10 @@ const PerformanceList = () => {
       const response = await axiosApi.get("/seatManage/searchPerformanceList", {
         params: {
           selectedValue: selected,
-          inputValue: input
-        }
+          inputValue: input,
+        },
       });
-      
+
       if (response.status === 200) {
         setPerformances(response.data);
       }
@@ -229,9 +228,9 @@ const PerformanceList = () => {
     // URL 파라미터 업데이트
     setSearchParams({
       selectedValue: selectedValue,
-      inputValue: inputValue
+      inputValue: inputValue,
     });
-    
+
     await performSearch(selectedValue, inputValue);
   };
 
@@ -241,12 +240,15 @@ const PerformanceList = () => {
 
   return (
     <div className="menu-box">
-      <TitleContainer onClick={() => {
-        loadPerformances();
-        setCurrentPage(1);
-        setInputValue('');
-        setSelectedValue('제목');
-      }}>
+      <TitleContainer
+        onClick={() => {
+          loadPerformances();
+          setCurrentPage(1);
+          setInputValue("");
+          setSelectedValue("제목");
+          setSearchParams({}); // 쿼리스트링 초기화 추가
+        }}
+      >
         <h4>예매좌석관리</h4>
       </TitleContainer>
       <div>
@@ -271,8 +273,8 @@ const PerformanceList = () => {
           ></i>
         </form>
       </div>
-      <ShowPerformanceList 
-        performances={performances} 
+      <ShowPerformanceList
+        performances={performances}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
@@ -292,7 +294,10 @@ const ShowPerformanceList = ({ performances, currentPage, setCurrentPage }) => {
   // 현재 페이지에 해당하는 공연만 필터링하는 로직 추가
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPerformances = performances.slice(indexOfFirstItem, indexOfLastItem);
+  const currentPerformances = performances.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const StarRating = ({ rating }) => {
     const fullStars = "★".repeat(Math.floor(rating));

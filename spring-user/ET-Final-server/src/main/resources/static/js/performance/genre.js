@@ -109,8 +109,6 @@ function createPerformanceElement(performance) {
 		return `${fullStars}${emptyStars}`;
 	};
 	
-	console.log(performance);
-
 	div.innerHTML = `
         <div class="image-container"></div>
         <div class="performance-info">

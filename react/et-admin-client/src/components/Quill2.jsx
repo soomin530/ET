@@ -14,7 +14,6 @@ function Write() {
   };
 
   const [content, setContent] = useState("");
-  console.log(content);
   const [title, setTitle] = useState("");
   const [file, setFile] = useState(null);
 

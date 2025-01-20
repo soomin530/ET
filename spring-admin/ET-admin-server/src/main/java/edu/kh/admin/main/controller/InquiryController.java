@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController 
-@CrossOrigin( origins = "http://localhost:3000",
+@CrossOrigin( origins = "https://final-project-react-individual.vercel.app",
 			  allowedHeaders = "*",
 			  allowCredentials = "true",
 			  methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
@@ -77,6 +77,16 @@ public class InquiryController {
 		formData.put("inquiryNo", inquiryNo);
 		
 	    int result = service.reply(formData);
+	    if (result > 0) {
+	        return ResponseEntity.ok(result);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+	}
+	
+	@PostMapping("delete/{inquiryNo:[0-9]+}")
+	public ResponseEntity<Object> delete(@PathVariable("inquiryNo") int inquiryNo) {
+	    int result = service.delete(inquiryNo);
 	    if (result > 0) {
 	        return ResponseEntity.ok(result);
 	    } else {

@@ -31,12 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("공연 시설 ID:", facilityId);
   }
 
-   // 로컬스토리지에서 defaultAddress 가져오기
-   const defaultAddress = JSON.parse(localStorage.getItem("defaultAddress"));
-   if (!defaultAddress) {
-    alert("배송지 정보가 없습니다. 배송지를 추가해 주세요.");
-    return;
-  }
+  // 배송지 정보 가져오기
+  const defaultAddress = JSON.parse(localStorage.getItem("defaultAddress"));
+    if (!defaultAddress) {
+        alert("배송지 정보가 없습니다. 배송지를 추가해 주세요.");
+        return;
+    }
+
   // buyerAddr 생성: address + detailAddress
   const buyerAddr = `${defaultAddress.address} ${defaultAddress.detailAddress}`;
   const buyerPostcode = defaultAddress.postcode;
@@ -97,7 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
       function (rsp) {
         if (rsp.success) {
           // 결제 성공 시 처리
-          console.log("결제 성공:", rsp);
 
           alert(`결제가 성공적으로 완료되었습니다.\n고유ID: ${rsp.imp_uid}`);
 
@@ -132,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
             showDate: localStorage.getItem("selectedDate"), // 공연 날짜 추가
             showTime: localStorage.getItem("selectedTime"), // 공연 시간 추가
           };
-          console.log("전송할 결제 데이터:", paymentData);
 
           // 서버로 결제 검증 요청
           $.ajax({

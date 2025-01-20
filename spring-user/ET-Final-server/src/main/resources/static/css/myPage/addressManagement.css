@@ -409,6 +409,7 @@ body {
 	z-index: 1000;
 }
 
+
 .address-actions.show {
 	display: block;
 }
@@ -489,6 +490,7 @@ body {
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
+	
 }
 
 .edit-btn {
@@ -496,9 +498,17 @@ body {
 	color: white;
 }
 
+.edit-btn:hover {
+	background-color: #2a8b2d;
+}
+
 .delete-btn {
 	background-color: #f44336;
 	color: white;
+}
+
+.delete-btn:hover {
+	background-color: #db2a1e;
 }
 
 /* 삭제 모달 */
@@ -541,9 +551,17 @@ body {
 	color: white;
 }
 
+.cancel-btn:hover {
+	background-color: #252525;
+}
+
 .confirm-btn {
 	background-color: #f44336;
 	color: white;
+}
+
+.confirm-btn:hover {
+	background-color: #db2a1e;
 }
 
 /* 모달 헤더와 X 버튼 */

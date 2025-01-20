@@ -29,8 +29,6 @@ async function fetchFilteredTicketInfo() {
     return; // 함수 종료
   }
 
-  console.log("시작일:", startDate);
-  console.log("종료일:", endDate);
 
   // URL 구성
   let url = `/mypage/ticketInfo/data?status=${selectedStatus}`;

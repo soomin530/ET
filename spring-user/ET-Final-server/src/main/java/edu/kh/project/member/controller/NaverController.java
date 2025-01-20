@@ -11,10 +11,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +55,7 @@ public class NaverController {
 	 * 
 	 * @return
 	 */
-	@GetMapping("/login")
+	@GetMapping("login")
 	public String naverLogin() {
 		// state용 난수 생성
 		String state = UUID.randomUUID().toString();
@@ -143,13 +141,13 @@ public class NaverController {
 			// Member 객체에 매핑
 			Member naverMember = new Member();
 			naverMember.setMemberId(response.getString("id")); // 네이버 고유 ID
-			naverMember.setMemberEmail(response.getString("email")); // 네이버 이메일
+			naverMember.setMemberEmail(response.getString("email")); // 네이버 이메일(아이디로 대체)
 			naverMember.setMemberNickname(response.getString("nickname")); // 네이버 닉네임
 			naverMember.setMemberGender(response.getString("gender").toUpperCase()); // M/F
 			naverMember.setNaverFl("Y"); // 네이버 로그인 회원
 			naverMember.setMemberAuth(1); // 일반회원 권한
 			naverMember.setMemberPw("naver" + response.getString("id")); // 임의 비밀번호
-			naverMember.setMemberTel(response.getString("mobile").replaceAll("-", "")); // 기본값
+			naverMember.setMemberTel(response.getString("mobile")); // 기본값
 			naverMember.setMemberAddress(" "); // 기본값
 
 			// 프로필 이미지가 있다면 저장
@@ -206,7 +204,7 @@ public class NaverController {
 	 * @param response
 	 * @return
 	 */
-	@PostMapping("/logout")
+	@PostMapping("logout")
 	public String naverLogout(HttpSession session, SessionStatus status, HttpServletResponse response) {
 		try {
 			// Refresh Token 쿠키 삭제
@@ -231,18 +229,5 @@ public class NaverController {
 		return "redirect:/";
 	}
 
-	/**
-	 * 예외 처리
-	 * 
-	 * @param e
-	 * @param model
-	 * @return
-	 */
-	@ExceptionHandler(Exception.class)
-	public String handleException(Exception e, Model model) {
-		log.error("네이버 로그인 오류", e);
-		model.addAttribute("errorMessage", "로그인 처리 중 오류가 발생했습니다");
-		return "error/oauth";
-	}
 
 }

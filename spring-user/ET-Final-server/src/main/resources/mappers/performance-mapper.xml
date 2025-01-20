@@ -58,12 +58,12 @@
 		            </choose>
 		        </if>
 		        <if test="filter == 'upcoming'">
-		            <![CDATA[ AND p.PRFPDFROM > TRUNC(SYSDATE) ]]>
+		            <![CDATA[ AND TO_DATE(p.PRFPDFROM, 'YYYY-MM-DD') > TRUNC(SYSDATE) ]]>
 		        </if>
 		        <if test="filter == 'ongoing'">
 		            <![CDATA[ 
-		                AND p.PRFPDFROM <= TRUNC(SYSDATE)
-		                AND p.PRFPDTO >= TRUNC(SYSDATE)
+		                AND TO_DATE(p.PRFPDFROM, 'YYYY-MM-DD') <= TRUNC(SYSDATE)
+		                AND TO_DATE(p.PRFPDTO, 'YYYY-MM-DD') >= TRUNC(SYSDATE)
 		            ]]>
 		        </if>
 		    </where>

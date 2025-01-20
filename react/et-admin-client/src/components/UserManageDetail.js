@@ -181,9 +181,8 @@ const MemberUpdate = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8081/member/${memberNo}`)
+      .get(`https://adminmodeunticket.store/member/${memberNo}`)
       .then((response) => {
-        console.log("API 응답 데이터:", response.data);
         const memberData = response.data[0];
         setFormData({
           nickname: memberData.memberNickname || "",
@@ -222,7 +221,7 @@ const MemberUpdate = () => {
   const handleDelete = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:8081/member/delete/${memberNo}`
+        `https://adminmodeunticket.store/member/delete/${memberNo}`
       );
       if (response.status === 200) {
         alert("회원이 삭제되었습니다.");
@@ -249,7 +248,10 @@ const MemberUpdate = () => {
     };
 
     axios
-      .post(`http://localhost:8081/member/update/${memberNo}`, formdata)
+      .post(
+        `https://adminmodeunticket.store/member/update/${memberNo}`,
+        formdata
+      )
       .then((response) => {
         if (response.data > 0) {
           alert("회원 정보가 수정되었습니다");
