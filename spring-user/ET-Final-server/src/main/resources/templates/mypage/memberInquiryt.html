@@ -18,29 +18,30 @@
 	<div class="inquiry-container">
 		<!-- 사이드바 -->
 		<div class="sidebar">
-			<nav class="sidebar-nav">
-				<ul class="menu-list">
-					<li class="menu-item">
-						<a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
-					</li>
-					<!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
-					<li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
-						<a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link active">1:1 문의</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="memberInquirytList" class="mypage-side-menu-link nav-link">문의내역</a>
-					</li>
-					<li class="menu-item">
-						<a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
-					</li>
-				</ul>
-			</nav>
+		    <nav class="sidebar-nav">
+		        <ul class="menu-list">
+		            <!-- 네이버 로그인이 아닐 때만 회원정보수정 표시 -->
+		            <li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+		                <a href="#" data-page="updateInfo" class="mypage-side-menu-link nav-link">회원정보수정</a>
+		            </li>
+		            <!-- 네이버 로그인이 아닐 때만 비밀번호 변경 표시 -->
+		            <li class="menu-item" th:if="${session.loginMember != null && session.loginMember.naverFl != 'Y'}">
+		                <a href="#" data-page="changePw" class="mypage-side-menu-link nav-link">비밀번호변경</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="addressManagement" class="mypage-side-menu-link nav-link">배송지등록</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="memberInquiryt" class="mypage-side-menu-link nav-link">1:1 문의</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="memberInquirytList" class="mypage-side-menu-link nav-link active">문의내역</a>
+		            </li>
+		            <li class="menu-item">
+		                <a href="#" data-page="membershipOut" class="mypage-side-menu-link nav-link">회원탈퇴</a>
+		            </li>
+		        </ul>
+		    </nav>
 		</div>
 
 		<!-- 메인 컨텐츠 -->
@@ -61,7 +62,7 @@
 				</div>
 
 				<div class="form-actions">
-					<button type="button" class="cancel-btn" onclick="location.href='/inquiry/list'">취소</button>
+					<button type="button" class="cancel-btn" onclick="location.href='/mypage/memberInquirytList'">취소</button>
 					<button type="submit" class="submit-btn">등록</button>
 				</div>
 			</form>

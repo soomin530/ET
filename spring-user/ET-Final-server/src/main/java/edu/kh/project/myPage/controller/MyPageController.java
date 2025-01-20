@@ -1,5 +1,6 @@
 package edu.kh.project.myPage.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ public class MyPageController {
 
 	private final EmailService emailService;
 	private final MyPageService service;
+	
 
 	private final JwtTokenUtil jwtTokenUtil;
 
@@ -275,6 +277,26 @@ public class MyPageController {
 		return "mypage/memberInquiryList";
 	}
 	
+	// 티켓 예매 내역 확인
+    @GetMapping("/checkBookingExists")
+    public ResponseEntity<Map<String, Boolean>> checkBookingExists(
+        @SessionAttribute("loginMember") Member loginMember
+    ) {
+        try {
+            // 현재 회원의 티켓 예매 내역 확인
+            boolean hasBooking = service.checkTicketBookingExists(loginMember.getMemberNo());
+            
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("hasBooking", hasBooking);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                               .body(null);
+        }
+    }
+	
 	/** 회원 탈퇴 진행
 	 * @param requestMap
 	 * @param loginMember
@@ -363,6 +385,7 @@ public class MyPageController {
         return service.changePw(memberNo, newPassword);
 	}
 
+	
 	/**
 	 * 이메일 중복검사 (비동기 요청)(수정)
 	 * 
@@ -371,10 +394,22 @@ public class MyPageController {
 	 */
 	@ResponseBody
 	@GetMapping("verifyEmail")
-	public int verifyEmail(@RequestParam("verificationEmail") String verificationEmail) {
+	public int verifyEmail(@RequestParam("verificationEmail") String verificationEmail,
+			@RequestParam("currentEmail") String currentEmail) {
+		
+		// 현재 사용자의 이메일과 동일하면 사용 가능
+	    if (verificationEmail.equals(currentEmail)) {
+	        return 0;
+	    }
+		
 		return service.verifyEmail(verificationEmail);
 	}
+	
 
+	/** 이메일 인증번호 보내기 (수정)
+	 * @param email
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("sendEmail")
 	public int sendEmail(@RequestBody String email) {
@@ -391,6 +426,7 @@ public class MyPageController {
 		// 이메일 보내기 실패
 		return 0;
 	}
+	
 
 	/**
 	 * 닉네임 중복검사 (비동기 요청)(수정)
@@ -405,9 +441,6 @@ public class MyPageController {
 			) {
 		
 		
-		
-		
-		
 		// 입력된 닉네임이 현재 사용자의 닉네임과 같다면 사용 가능(중복 아님)
 	    if (userNickname.equals(currentNickname)) {
 	        return 0;
@@ -419,6 +452,11 @@ public class MyPageController {
 		
 	}
 
+	/** 회원정보 수정
+	 * @param member
+	 * @param loginMember
+	 * @return
+	 */
 	@PostMapping("/updateInfo")
 	@ResponseBody
 	public int updateMember(@RequestBody Member member, @SessionAttribute("loginMember") Member loginMember) {
@@ -441,6 +479,8 @@ public class MyPageController {
 
 		return result;
 	}
+	
+	
 
 	/**
 	 * 
@@ -554,6 +594,11 @@ public class MyPageController {
 	}
 	
 	
+	/**
+	 * @param loginMember
+	 * @author 나찬웅
+	 * @return
+	 */
 	@GetMapping("defaultAddress")
 	@ResponseBody
 	public ResponseEntity<AddressDTO> getDefaultAddress(@SessionAttribute("loginMember")Member loginMember){
@@ -561,8 +606,9 @@ public class MyPageController {
 		    
 		    if (defaultAddress != null) {
 		        return ResponseEntity.ok(defaultAddress); // 기본 배송지 반환
+		    } else  {
+		    	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		    }
-		    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
 }

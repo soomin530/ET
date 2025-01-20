@@ -119,7 +119,6 @@ const performLogin = () => {
 
 	// saveId 체크박스가 있다면
 	const saveIdCheckbox = document.getElementById('saveIdCheckbox');
-	console.log(saveIdCheckbox);
 	if (saveIdCheckbox && saveIdCheckbox.checked) {
 		form.append('saveId', 'on');
 	}
@@ -179,6 +178,7 @@ function logoutSession() {
 		.then(response => {
 			// localStorage에서 토큰 제거
 			localStorage.removeItem('accessToken');
+			localStorage.clear();
 
 			// 메인 페이지로 이동
 			window.location.href = "/";
@@ -188,6 +188,7 @@ function logoutSession() {
 
 			// 에러 발생시에도 토큰 제거
 			localStorage.removeItem('accessToken');
+			localStorage.clear();
 
 			alert("로그아웃 중 문제가 발생했습니다.");
 			window.location.href = "/";
@@ -205,6 +206,7 @@ function naverLogoutSession() {
 		.then(response => {
 			// localStorage에서 토큰과 관련 정보 제거
 			localStorage.removeItem('accessToken');
+			localStorage.clear();
 
 			// 쿠키에서 네이버 관련 정보 제거
 			document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -218,6 +220,7 @@ function naverLogoutSession() {
 
 			// 에러 발생시에도 토큰과 정보 제거
 			localStorage.removeItem('accessToken');
+			localStorage.clear();
 
 			// 쿠키도 삭제
 			document.cookie = 'naverFl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -772,3 +775,26 @@ signUpForm.addEventListener("submit", e => {
 	// 모든 검증을 통과했을 때만 폼을 제출합니다
 	signUpForm.submit();
 });
+
+// 메인 사이트(modeunticket.store)에서의 코드
+// 프론트엔드에서는 폼 제출방식으로 변경
+function checkAdminAndRedirect(button) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/member/admin';  // 컨텍스트 경로에 맞게 수정
+
+    const memberEmail = document.createElement('input');
+    memberEmail.type = 'hidden';
+    memberEmail.name = 'memberEmail';
+    memberEmail.value = button.getAttribute('data-email');
+
+    const memberNo = document.createElement('input');
+    memberNo.type = 'hidden';
+    memberNo.name = 'memberNo';
+    memberNo.value = button.getAttribute('data-no');
+
+    form.appendChild(memberEmail);
+    form.appendChild(memberNo);
+    document.body.appendChild(form);
+    form.submit();
+}
