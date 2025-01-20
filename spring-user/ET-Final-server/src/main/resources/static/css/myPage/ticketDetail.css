@@ -167,6 +167,20 @@ body {
   animation: spin 1s linear infinite;
 }
 
+.qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.qr-code {
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

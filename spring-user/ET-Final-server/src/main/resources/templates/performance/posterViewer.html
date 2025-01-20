@@ -1,0 +1,57 @@
+<!-- posterViewer.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공연 포스터</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .poster-container {
+            max-width: 100%;
+            padding: 20px;
+        }
+        .poster-image {
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .performance-title {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="poster-container">
+        <img id="posterImage" class="poster-image" alt="공연 포스터">
+        <div id="performanceTitle" class="performance-title"></div>
+    </div>
+	<script>
+	    document.addEventListener('DOMContentLoaded', () => {
+	        const urlParams = new URLSearchParams(window.location.search);
+	        const title = urlParams.get('title');
+	        const poster = urlParams.get('poster');
+	        
+	        if (poster) {
+	            document.getElementById('posterImage').src = decodeURIComponent(poster);
+	        }
+	        if (title) {
+	            document.getElementById('performanceTitle').textContent = decodeURIComponent(title);
+	            document.title = `${decodeURIComponent(title)} - 공연 포스터`;
+	        }
+	    });
+	</script>
+</body>
+</html>

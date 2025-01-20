@@ -141,13 +141,13 @@ public class NaverController {
 			// Member 객체에 매핑
 			Member naverMember = new Member();
 			naverMember.setMemberId(response.getString("id")); // 네이버 고유 ID
-			naverMember.setMemberEmail(response.getString("id")); // 네이버 이메일(아이디로 대체)
+			naverMember.setMemberEmail(response.getString("email")); // 네이버 이메일(아이디로 대체)
 			naverMember.setMemberNickname(response.getString("nickname")); // 네이버 닉네임
 			naverMember.setMemberGender(response.getString("gender").toUpperCase()); // M/F
 			naverMember.setNaverFl("Y"); // 네이버 로그인 회원
 			naverMember.setMemberAuth(1); // 일반회원 권한
 			naverMember.setMemberPw("naver" + response.getString("id")); // 임의 비밀번호
-			naverMember.setMemberTel("00000000000"); // 기본값
+			naverMember.setMemberTel(response.getString("mobile")); // 기본값
 			naverMember.setMemberAddress(" "); // 기본값
 
 			// 프로필 이미지가 있다면 저장
