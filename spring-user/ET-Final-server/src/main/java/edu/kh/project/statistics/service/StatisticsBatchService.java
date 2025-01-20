@@ -11,4 +11,9 @@ public interface StatisticsBatchService {
 	 */
 	List<Statistics> getStatList();
 
+	/**
+	 * 공연 평점 실시간 업데이트
+	 */
+	void updatePerformanceReviewRanks();
+
 }

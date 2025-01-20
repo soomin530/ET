@@ -184,7 +184,7 @@ public class StatisticsBatchServiceImpl implements StatisticsBatchService {
 	    }
 	}
 	
-	// StatisticsBatchServiceImpl.java에 추가할 메서드
+	// 공연 리뷰 평점 평균 업데이트
 	@Scheduled(cron = "0 0 3 * * *")
 	public void updatePerformanceReviewRanks() {
 	    try {
