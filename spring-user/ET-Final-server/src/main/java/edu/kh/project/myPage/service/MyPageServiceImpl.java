@@ -383,6 +383,17 @@ public class MyPageServiceImpl implements MyPageService {
 	public AddressDTO getDefaultAddress(int memberNo) {
 		return mapper.selectDefaultAddress(memberNo);
 	}
+
+	
+	
+	/** 전화번호 중복 검사
+	 *
+	 */
+	@Override
+	public int checkTel(String userTel) {
+		
+		return mapper.checkTel(userTel);
+	}
 	
 
 	
