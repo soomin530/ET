@@ -126,3 +126,26 @@ input{
 .btn-modify:hover {
 	background-color: #0056b3 !important;
 }
+
+.poster-upload-container {
+    position: relative;
+    display: inline-block;
+}
+
+.change-poster-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.change-poster-btn:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}

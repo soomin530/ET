@@ -81,6 +81,7 @@ footer {
     margin-top: 40px;
     padding-top: 20px;
     border-top: 1px solid #333;
+	background: #1a1a1a; /* footer와 같은 배경색 추가 */
 }
 
 .footer-bottom p {

@@ -1,9 +1,16 @@
 package edu.kh.project.perfmgr.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -42,9 +49,17 @@ public class PerfmgrController {
 
 	private final JwtTokenUtil jwtTokenUtil;
 
+	@Value("${my.performance.location}")
+	private String performanceLocation;
+
+	@Value("${my.performance.resource-handler}")
+	private String resourceHandler; // 리소스 핸들러 경로
+
 	// private final RedisService redisService;
 
-	/** 공연 관리자 로그인
+	/**
+	 * 공연 관리자 로그인
+	 * 
 	 * @param inputMember
 	 * @param request
 	 * @param saveId
@@ -53,63 +68,62 @@ public class PerfmgrController {
 	 */
 	@PostMapping("login")
 	public ResponseEntity<?> login(PerfMgr inputMember, HttpServletRequest request,
-	        @RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
+			@RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
 
-	    // 로그인 서비스 호출
-	    PerfMgr perfmgrLoginMember = service.login(inputMember);
+		// 로그인 서비스 호출
+		PerfMgr perfmgrLoginMember = service.login(inputMember);
 
-	    // 로그인 실패 시
-	    if (perfmgrLoginMember == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                .body("아이디 또는 비밀번호가 일치하지 않습니다.");
-	    }
+		// 로그인 실패 시
+		if (perfmgrLoginMember == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
+		}
 
-	    // 세션 처리
-	    HttpSession session = request.getSession();
-	    session.setAttribute("loginMember", perfmgrLoginMember);
+		// 세션 처리
+		HttpSession session = request.getSession();
+		session.setAttribute("loginMember", perfmgrLoginMember);
 
-	    // JWT 토큰 생성
-	    String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
-	    String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
+		// JWT 토큰 생성
+		String memberNo = String.valueOf(perfmgrLoginMember.getConcertManagerNo());
+		String memberEmail = perfmgrLoginMember.getConcertManagerEmail();
 
-	    // 토큰 생성 및 Redis에 저장
-	    JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
+		// 토큰 생성 및 Redis에 저장
+		JwtTokenUtil.TokenInfo tokenInfo = jwtTokenUtil.generateTokenSet(memberNo, memberEmail);
 
-	    // Access Token을 HttpOnly 쿠키에 저장
-	    Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
-	    accessTokenCookie.setHttpOnly(true);
-	    accessTokenCookie.setSecure(false); // 개발환경은 false
-	    accessTokenCookie.setPath("/");
-	    accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
-	    resp.addCookie(accessTokenCookie);
+		// Access Token을 HttpOnly 쿠키에 저장
+		Cookie accessTokenCookie = new Cookie("Access-Token", tokenInfo.accessToken());
+		accessTokenCookie.setHttpOnly(true);
+		accessTokenCookie.setSecure(false); // 개발환경은 false
+		accessTokenCookie.setPath("/");
+		accessTokenCookie.setMaxAge((int) jwtTokenUtil.getAccessTokenValidityInMilliseconds() / 1000);
+		resp.addCookie(accessTokenCookie);
 
-	    // Refresh Token을 HttpOnly 쿠키에 저장
-	    Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
-	    refreshTokenCookie.setHttpOnly(true);
-	    refreshTokenCookie.setSecure(false);
-	    refreshTokenCookie.setPath("/api/auth/refresh");
-	    refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
-	    resp.addCookie(refreshTokenCookie);
+		// Refresh Token을 HttpOnly 쿠키에 저장
+		Cookie refreshTokenCookie = new Cookie("Refresh-Token", tokenInfo.refreshToken());
+		refreshTokenCookie.setHttpOnly(true);
+		refreshTokenCookie.setSecure(false);
+		refreshTokenCookie.setPath("/api/auth/refresh");
+		refreshTokenCookie.setMaxAge((int) jwtTokenUtil.getRefreshTokenValidityInMilliseconds() / 1000);
+		resp.addCookie(refreshTokenCookie);
 
-	    // saveId 쿠키 처리
-	    if (saveId != null) {
-	        Cookie cookie = new Cookie("saveId", perfmgrLoginMember.getConcertManagerId());
-	        cookie.setPath("/");
-	        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
-	        resp.addCookie(cookie);
-	    } else {
-	        Cookie cookie = new Cookie("saveId", perfmgrLoginMember.getConcertManagerId());
-	        cookie.setPath("/");
-	        cookie.setMaxAge(0);
-	        resp.addCookie(cookie);
-	    }
+		// saveId 쿠키 처리
+		if (saveId != null) {
+			Cookie cookie = new Cookie("saveId", perfmgrLoginMember.getConcertManagerId());
+			cookie.setPath("/");
+			cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+			resp.addCookie(cookie);
+		} else {
+			Cookie cookie = new Cookie("saveId", perfmgrLoginMember.getConcertManagerId());
+			cookie.setPath("/");
+			cookie.setMaxAge(0);
+			resp.addCookie(cookie);
+		}
 
-	    // 응답 데이터 구성
-	    Map<String, Object> responseData = new HashMap<>();
-	    responseData.put("accessToken", tokenInfo.accessToken());
-	    responseData.put("memberInfo", perfmgrLoginMember);
-	    
-	    return ResponseEntity.ok(responseData);
+		// 응답 데이터 구성
+		Map<String, Object> responseData = new HashMap<>();
+		responseData.put("accessToken", tokenInfo.accessToken());
+		responseData.put("memberInfo", perfmgrLoginMember);
+
+		return ResponseEntity.ok(responseData);
 	}
 
 	/**
@@ -262,7 +276,7 @@ public class PerfmgrController {
 	 */
 	@GetMapping("/perfmgr-manager-detail/{mt20id}")
 	public String managerDetail(@PathVariable("mt20id") String mt20id, Model model) {
-		
+
 		log.info("Fetching performance details for ID: {}", mt20id);
 
 		Performance performance = service.getPerformanceById(mt20id);
@@ -277,79 +291,130 @@ public class PerfmgrController {
 		// 조회된 정보를 모델에 담아 상세 페이지로 전달
 		return "perfmgr/perfmgr-manager-detail";
 	}
-	
 
-	/** 관리자 공연 상세 페이지에서 수정 버튼 클릭 시
-     *  해당 공연 수정 페이지로 이동
-     * @param mt20id
-     * @return
-     * @author 우수민
-     */
+	/**
+	 * 관리자 공연 상세 페이지에서 수정 버튼 클릭 시 해당 공연 수정 페이지로 이동
+	 * 
+	 * @param mt20id
+	 * @return
+	 * @author 우수민
+	 */
 	@GetMapping("/perfmgr-modifyPerformance")
 	public String modifyPerformance(@RequestParam("mt20id") String mt20id, Model model) {
-	    try {
-	    	
-	        // 공연 정보 조회
-	        Performance performance = service.getPerformanceDetail(mt20id);
-	        
-	        // 모델에 공연 정보 추가
-	        model.addAttribute("performance", performance);
-	        
-	        return "perfmgr/perfmgr-modifyPerformance";
-	        
-	    } catch (Exception e) {
-	        log.error("공연 수정 페이지 로딩 중 에러 발생: ", e);
-	        return "error/error";  // 에러 페이지로 리다이렉트
-	    }
-	}
-	
+		try {
 
-	/** 수정된 내용으로 상세페이지, DB 업데이트
+			// 공연 정보 조회
+			Performance performance = service.getPerformanceDetail(mt20id);
+
+			// 모델에 공연 정보 추가
+			model.addAttribute("performance", performance);
+
+			return "perfmgr/perfmgr-modifyPerformance";
+
+		} catch (Exception e) {
+			log.error("공연 수정 페이지 로딩 중 에러 발생: ", e);
+			return "error/error"; // 에러 페이지로 리다이렉트
+		}
+	}
+
+	/**
+	 * 수정된 내용으로 상세페이지, DB 업데이트
+	 * 
 	 * @param mt20id
 	 * @param performances
 	 * @return
 	 */
 	@PostMapping("/perfmgr-modifyPerformance/{mt20id}")
-	public ResponseEntity<?> modifyPerformanceUpdate(
-	    @PathVariable("mt20id") String mt20id,
-	    @RequestBody Performance performance) {
+	public ResponseEntity<?> modifyPerformanceUpdate(@PathVariable("mt20id") String mt20id,
+			@RequestBody Performance performance) {
 
-	    Performance updateData = new Performance();
-	    updateData.setMt20id(mt20id);
-	    updateData.setPrfnm(performance.getPrfnm());
-	    updateData.setPrfruntime(performance.getPrfruntime());
-	    updateData.setPrfcast(performance.getPrfcast());
-	    updateData.setDescription(performance.getDescription());
+		try {
+			Performance updateData = new Performance();
+			updateData.setMt20id(mt20id);
+			updateData.setPrfnm(performance.getPrfnm());
+			updateData.setPrfruntime(performance.getPrfruntime());
+			updateData.setPrfcast(performance.getPrfcast());
+			updateData.setDescription(performance.getDescription());
 
-	    boolean isUpdated = service.modifyPerformanceUpdate(updateData);
+			// 포스터 이미지가 전송된 경우
+			if (performance.getPosterBase64() != null && !performance.getPosterBase64().isEmpty()) {
+				String filename = saveBase64Image(performance.getPosterBase64(), performanceLocation,
+						performance.getPosterFileName());
 
-	    if (isUpdated) {
-	    	
-	        // JSON 형식으로 응답
-	        return ResponseEntity.ok().body(Map.of("message", "수정 성공"));
-	    }
-	    
-	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                        .body(Map.of("message", "수정 실패"));
+				// 저장된 이미지의 URL 설정
+				String imageUrl = resourceHandler.replace("/**", "/") + filename;
+				updateData.setPoster(imageUrl);
+			}
+
+			boolean isUpdated = service.modifyPerformanceUpdate(updateData);
+
+			if (isUpdated) {
+				return ResponseEntity.ok().body(Map.of("message", "수정 성공"));
+			}
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "수정 실패"));
+
+		} catch (Exception e) {
+			log.error("공연 수정 중 오류 발생: ", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("message", "수정 처리 중 오류 발생: " + e.getMessage()));
+		}
 	}
-	
-    /** 관리자 상세 정보 페이지에서 삭제 버튼 누를 시
-     *  PERFORMANCE_DEL_FL 값을 'Y'로 업데이트
-     * @param mt20id
-     * @param request
-     * @return
-     * @author 우수민
-     */
-    @PostMapping("/delete/{mt20id}")
-    public ResponseEntity<String> deletePerformance(@PathVariable("mt20id") String mt20id) {
 
-        boolean updated = service.updatePerformanceDeleteFlag(mt20id);
+	// Base64 이미지 저장을 위한 메서드 추가
+	private String saveBase64Image(String base64Image, String uploadDir, String originalFilename) throws Exception {
+		// Base64 데이터에서 실제 이미지 데이터 추출
+		String[] parts = base64Image.split(",");
+		String imageData = parts.length > 1 ? parts[1] : parts[0];
 
-        if (updated) {
-            return ResponseEntity.ok("공연이 성공적으로 삭제되었습니다.");
-            
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("공연 삭제 중 오류가 발생했습니다.");
-        }
-    }
+		// 파일 확장자 추출
+		String extension = "";
+		int extensionIndex = originalFilename.lastIndexOf(".");
+		if (extensionIndex > 0) {
+			extension = originalFilename.substring(extensionIndex);
+		}
+
+		// 고유한 파일명 생성
+		String filename = UUID.randomUUID().toString() + extension;
+
+		// 업로드 디렉토리 생성
+		File directory = new File(uploadDir);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+
+		// 파일 경로 생성
+		String filePath = uploadDir + File.separator + filename;
+
+		// Base64 디코딩 및 파일 저장
+		try {
+			byte[] imageBytes = Base64.getDecoder().decode(imageData);
+			Files.write(Paths.get(filePath), imageBytes);
+		} catch (IOException e) {
+			throw new Exception("Failed to save image file", e);
+		}
+
+		return filename;
+	}
+
+	/**
+	 * 관리자 상세 정보 페이지에서 삭제 버튼 누를 시 PERFORMANCE_DEL_FL 값을 'Y'로 업데이트
+	 * 
+	 * @param mt20id
+	 * @param request
+	 * @return
+	 * @author 우수민
+	 */
+	@PostMapping("/delete/{mt20id}")
+	public ResponseEntity<String> deletePerformance(@PathVariable("mt20id") String mt20id) {
+
+		boolean updated = service.updatePerformanceDeleteFlag(mt20id);
+
+		if (updated) {
+			return ResponseEntity.ok("공연이 성공적으로 삭제되었습니다.");
+
+		} else {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("공연 삭제 중 오류가 발생했습니다.");
+		}
+	}
 }
