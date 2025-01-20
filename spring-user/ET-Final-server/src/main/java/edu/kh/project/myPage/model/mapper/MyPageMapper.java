@@ -243,6 +243,12 @@ public interface MyPageMapper {
 	 */
 	AddressDTO selectDefaultAddress(int memberNo);
 
+	/** 전화번호 중복 검사
+	 * @param userTel
+	 * @return
+	 */
+	int checkTel(String userTel);
+
 	
 	
 	

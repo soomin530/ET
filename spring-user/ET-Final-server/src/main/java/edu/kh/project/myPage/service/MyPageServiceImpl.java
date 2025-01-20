@@ -392,6 +392,17 @@ public class MyPageServiceImpl implements MyPageService {
 	}
 
 	
+	
+	/** 전화번호 중복 검사
+	 *
+	 */
+	@Override
+	public int checkTel(String userTel) {
+		
+		return mapper.checkTel(userTel);
+	}
+	
+	
 
 	
 }
