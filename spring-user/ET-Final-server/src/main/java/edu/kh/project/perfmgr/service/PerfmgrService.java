@@ -30,6 +30,12 @@ public interface PerfmgrService {
 	 * @return
 	 */
 	int checkNickname(String concertManagerNickname);
+	
+	/** 전화번호 중복검사
+	 * @param concertManagerTel
+	 * @return
+	 */
+	int checkTel(String concertManagerTel);
 
 	/** 회원 가입
 	 * @param inputMember
@@ -73,5 +79,6 @@ public interface PerfmgrService {
 	 * @author 우수민
 	 */
 	boolean updatePerformanceDeleteFlag(String mt20id);
+
 
 }

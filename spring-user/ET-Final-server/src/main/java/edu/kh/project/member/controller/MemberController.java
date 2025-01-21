@@ -339,6 +339,17 @@ public class MemberController {
 	public int checkNickname(@RequestParam("memberNickname") String memberNickname) {
 		return service.checkNickname(memberNickname);
 	}
+	
+	/** 전화번호 중복검사
+	 * @param memberTel
+	 * @return
+	 */
+	@GetMapping("/checkTel")
+	@ResponseBody
+	public ResponseEntity<Integer> checkTel(@RequestParam("memberTel") String memberTel){
+	    int result = service.checkTel(memberTel);
+	    return ResponseEntity.ok(result); // ResponseEntity로 감싸서 반환
+	}
 
 	/**
 	 * Id Pw 찾기 페이지

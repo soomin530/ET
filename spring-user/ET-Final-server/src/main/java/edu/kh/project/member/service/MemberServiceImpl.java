@@ -58,6 +58,12 @@ public class MemberServiceImpl implements MemberService {
 	public int checkNickname(String memberNickname) {
 		return mapper.checkNickname(memberNickname);
 	}
+	
+	// 전화번호 중복체크
+	@Override
+	public int checkTel(String memberTel) {
+		return mapper.checkTel(memberTel);
+	}
 
 	// 회원가입 서비스
 	@Override
@@ -157,6 +163,5 @@ public class MemberServiceImpl implements MemberService {
 
         return bcrypt.matches(newPassword, previousPasswords);
 	}
-
 
 }

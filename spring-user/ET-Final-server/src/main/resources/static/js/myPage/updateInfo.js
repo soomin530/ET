@@ -383,10 +383,9 @@ userTel.addEventListener("input", e => {
 
     // 중복 검사
     fetch(`/mypage/verifyTel?userTel=${encodeURIComponent(inputTel)}&currentTel=${encodeURIComponent(currentTel)}`)
-        .then(resp => resp.text())
+        .then(resp => resp.json())
         .then(count => {
-					console.log(count);
-            if (count === 1) {
+            if (count >= 1) {
                 updateTelMessage.innerText = "이미 사용중인 전화번호입니다.";
                 updateTelMessage.classList.add("error");
                 updateTelMessage.classList.remove("confirm");

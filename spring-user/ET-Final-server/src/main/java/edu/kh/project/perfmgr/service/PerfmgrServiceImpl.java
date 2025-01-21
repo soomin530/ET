@@ -60,6 +60,12 @@ public class PerfmgrServiceImpl implements PerfmgrService {
 	public int checkNickname(String concertManagerNickname) {
 		return mapper.checkNickname(concertManagerNickname);
 	}
+	
+	// 전화번호 중복검사
+	@Override
+	public int checkTel(String concertManagerTel) {
+		return mapper.checkTel(concertManagerTel);
+	}
 
 	// 회원가입 서비스
 	@Override
@@ -112,6 +118,7 @@ public class PerfmgrServiceImpl implements PerfmgrService {
 	public boolean updatePerformanceDeleteFlag(String mt20id) {
 		return mapper.updatePerformanceDeleteFlag(mt20id);
 	}
+
 }
 
 	

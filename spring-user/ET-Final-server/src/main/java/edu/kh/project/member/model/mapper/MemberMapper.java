@@ -33,6 +33,12 @@ public interface MemberMapper {
 	 * @return
 	 */
 	int checkNickname(String memberNickname);
+	
+	/** 전화번호 중복체크
+	 * @param memberTel
+	 * @return
+	 */
+	int checkTel(String memberTel);
 
 	/** 회원가입 서비스
 	 * @param inputMember
