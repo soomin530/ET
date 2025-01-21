@@ -450,10 +450,7 @@ const concertManagerTel = document.querySelector("#concertManagerTel");
 const managerTelMessage = document.querySelector("#managerTelMessage");
 
 concertManagerTel.addEventListener("input", e => {
-	// 입력값 업데이트
-	e.target.value = inputTel;
-
-	// 유효성 검사를 위해 하이픈 제거
+	const inputTel = e.target.value;
 	const cleanNumber = inputTel.replace(/-/g, '');
 
 	if (cleanNumber.trim().length === 0) {
@@ -474,27 +471,31 @@ concertManagerTel.addEventListener("input", e => {
 		return;
 	}
 
-	// 중복 검사 수행
-	fetch("/perfmgr/checkTel?concertManagerTel=" + cleanNumber)
-		.then(resp => resp.text())
-		.then(count => {
-			if (count == 1) { // 중복 O
+	// 중복 검사 - cleanNumber 사용
+	fetch("/perfmgr/checkTel?concertManagerTel=" + encodeURIComponent(cleanNumber))
+		.then(resp => {
+			if (!resp.ok) {
+				throw new Error('서버 응답 오류: ' + resp.status);
+			}
+			return resp.json();  // ResponseEntity로 감싸져 있으므로 json으로 파싱
+		})
+		.then(data => {
+			console.log("서버 응답:", data);  // 디버깅용 로그
+			if (data >= 1) {
 				managerTelMessage.innerText = "이미 사용중인 전화번호입니다.";
 				managerTelMessage.classList.add("error");
 				managerTelMessage.classList.remove("confirm");
 				managerCheckObj.concertManagerTel = false;
-				return;
+			} else {
+				managerTelMessage.innerText = "사용 가능한 전화번호입니다.";
+				managerTelMessage.classList.add("confirm");
+				managerTelMessage.classList.remove("error");
+				managerCheckObj.concertManagerTel = true;
 			}
-
-			// 중복 X이면서 유효한 형식인 경우
-			managerTelMessage.innerText = "사용 가능한 전화번호입니다.";
-			managerTelMessage.classList.add("confirm");
-			managerTelMessage.classList.remove("error");
-			managerCheckObj.concertManagerTel = true;
 		})
-		.catch(err => {
-			console.log(err);
-			managerTelMessage.innerText = "전화번호 중복 검사 중 오류가 발생했습니다.";
+		.catch(error => {
+			console.error("전화번호 중복 검사 중 오류:", error);
+			managerTelMessage.innerText = "중복 검사 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
 			managerTelMessage.classList.add("error");
 			managerTelMessage.classList.remove("confirm");
 			managerCheckObj.concertManagerTel = false;

@@ -17,13 +17,9 @@
 		<div class="performance-content">
 			<!-- 왼쪽: 공연 정보 -->
 			<div class="performance-info">
-				<img th:src="${performance.poster}"
-				th:alt="${performance.prfnm}"
-				class="performance-image"
-				th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'"
-				loading="lazy"
-				decoding="async"
-				onload="this.classList.add('loaded')">
+				<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image"
+					th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'" loading="lazy"
+					decoding="async" onload="this.classList.add('loaded')">
 				<!-- 탭 컨테이너 추가 -->
 				<div class="tab-container">
 					<!-- 탭 버튼들 -->
@@ -81,11 +77,12 @@
 								<tr>
 									<th>별점</th>
 									<td class="performance-rank">
-										<div class="review-stars">
-											<th:block th:with="stars=${performance.avgRating}">
-												<span class="static-stars"
-													th:text="${'★'.repeat(stars) + '☆'.repeat(5 - stars)}"></span>
-												<span class="numeric-rating" th:text="|${stars}/5|"></span>
+										<div class="star-rating">
+											<th:block th:with="rating=${performance.avgRating}">
+												<div class="stars-container" th:data-rating="${rating}">
+													<div class="stars"></div>
+													<span class="rating-number" th:text="|${rating}/5|"></span>
+												</div>
 											</th:block>
 										</div>
 									</td>
@@ -96,9 +93,10 @@
 						<!-- 상세 설명 탭 -->
 						<div class="tab-content" id="description">
 							<div class="performance-description" th:utext="${performance.description}"></div>
-							<div class="no-description" th:unless="${performance.description != null and !#strings.isEmpty(performance.description)}">
-						        <p>상세 설명 데이터가 없습니다.</p>
-						    </div>
+							<div class="no-description"
+								th:unless="${performance.description != null and !#strings.isEmpty(performance.description)}">
+								<p>상세 설명 데이터가 없습니다.</p>
+							</div>
 						</div>
 
 						<!-- 지도/위치 탭 -->
@@ -110,7 +108,7 @@
 							</div>
 							<div class="location-info mt-4">
 								<h3 class="text-lg font-bold">공연장 위치</h3>
-						        <p class="mt-2"th:text="${performance.adres}"></p>
+								<p class="mt-2" th:text="${performance.adres}"></p>
 							</div>
 						</div>
 
@@ -166,9 +164,9 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<button id="scrollToTop" class="scroll-to-top" aria-label="페이지 최상단으로 이동">
-	    <span>↑</span>
+		<span>↑</span>
 	</button>
 
 	<!-- hidden inputs -->
@@ -195,6 +193,58 @@
 			venue: /*[[${performance.fcltynm}]]*/ '',
 			schedule: /*[[${performance.schedule}]]*/ {}
 		};
+
+		document.addEventListener('DOMContentLoaded', function () {
+			const containers = document.querySelectorAll('.stars-container');
+
+			containers.forEach(container => {
+				const rating = parseFloat(container.dataset.rating);
+				const starsDiv = container.querySelector('.stars');
+				const MAX_STARS = 5;
+
+				// 별점 계산
+				const fullStars = Math.floor(rating);
+				let decimalPart = rating % 1;
+
+				// 소수점 비율 조정
+				// 0.5는 40%로 표시, 나머지는 비례적으로 조정
+				if (decimalPart > 0) {
+					if (decimalPart === 0.5) {
+						decimalPart = 0.4;
+					} else if (decimalPart < 0.5) {
+						decimalPart = decimalPart * 0.8; // 0.1~0.4는 좀 더 작게 표시
+					} else {
+						decimalPart = 0.4 + ((decimalPart - 0.5) * 1.2); // 0.6~0.9는 좀 더 크게 표시
+					}
+				}
+
+				const emptyStars = MAX_STARS - Math.ceil(rating);
+
+				let starsHtml = '';
+
+				// 채워진 별
+				for (let i = 0; i < fullStars; i++) {
+					starsHtml += '<span class="star filled">★</span>';
+				}
+
+				// 소수점 별
+				if (decimalPart > 0) {
+					starsHtml += `
+		                <span class="partial-star">
+		                    <span class="star">★</span>
+		                    <span class="star-filled" style="width: ${decimalPart * 100}%">★</span>
+		                </span>
+		            `;
+				}
+
+				// 빈 별
+				for (let i = 0; i < emptyStars; i++) {
+					starsHtml += '<span class="star">★</span>';
+				}
+
+				starsDiv.innerHTML = starsHtml;
+			});
+		});
 	</script>
 
 	<script src="/js/performance/performance-detail-calander.js"></script>

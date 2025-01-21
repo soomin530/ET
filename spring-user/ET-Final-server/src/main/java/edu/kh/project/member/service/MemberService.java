@@ -30,6 +30,12 @@ public interface MemberService {
 	 * @return
 	 */
 	int checkNickname(String memberNickname);
+	
+	/** 전화번호 중복 체크
+	 * @param memberTel
+	 * @return
+	 */
+	int checkTel(String memberTel);
 
 	/** 회원 가입
 	 * @param inputMember
@@ -75,6 +81,5 @@ public interface MemberService {
 	 * @return
 	 */
 	boolean checkPreviousPassword(String memberNo, String newPassword);
-	
 
 }

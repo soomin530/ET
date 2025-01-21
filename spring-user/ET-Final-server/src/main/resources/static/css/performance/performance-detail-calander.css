@@ -451,14 +451,49 @@ body {
 }
 
 .star-rating {
-	display: flex;
-	justify-content: flex-start;
-	font-size: 1.8rem;
-	margin-bottom: 20px;
+    display: inline-block;
 }
 
 .star-rating input {
 	display: none;
+}
+
+.stars-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stars {
+    display: flex;
+    position: relative;
+}
+
+.star {
+    color: #ddd; /* 빈 별 색상 */
+    font-size: 20px;
+}
+
+.filled {
+    color: #FFD700; /* 채워진 별 색상 */
+}
+
+.rating-number {
+    font-size: 14px;
+    color: #666;
+}
+
+.partial-star {
+    position: relative;
+    display: inline-block;
+}
+
+.partial-star .star-filled {
+    position: absolute;
+    left: 1.5px;
+    top: 3.6px;
+    color: #FFD700;
+    overflow: hidden;
 }
 
 .star-rating label {

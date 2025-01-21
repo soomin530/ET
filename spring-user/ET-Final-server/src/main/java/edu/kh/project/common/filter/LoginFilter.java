@@ -33,7 +33,8 @@ public class LoginFilter implements Filter {
             path.equals("/perfmgr/signup") ||
             path.equals("/perfmgr/checkEmail") ||
             path.equals("/perfmgr/checkId") ||
-            path.equals("/perfmgr/checkNickname")) {
+            path.equals("/perfmgr/checkNickname") ||
+        	path.equals("/perfmgr/checkTel")) {  
             chain.doFilter(request, response);
             return;
         }

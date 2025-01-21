@@ -712,27 +712,25 @@ memberTel.addEventListener("input", e => {
 		return;
 	}
 
-	// 중복 검사 수행
-	fetch("/member/checkTel?memberTel=" + cleanNumber)
-		.then(resp => resp.text())
+	// 중복 검사
+	fetch("/member/checkTel?memberTel=" + encodeURIComponent(inputTel))
+		.then(resp => resp.json())
 		.then(count => {
-			if (count == 1) { // 중복 O
+			if (count >= 1) {
 				telMessage.innerText = "이미 사용중인 전화번호입니다.";
 				telMessage.classList.add("error");
 				telMessage.classList.remove("confirm");
 				checkObj.memberTel = false;
-				return;
+			} else {
+				telMessage.innerText = "사용 가능한 전화번호입니다.";
+				telMessage.classList.add("confirm");
+				telMessage.classList.remove("error");
+				checkObj.memberTel = true;
 			}
-
-			// 중복 X이면서 유효한 형식인 경우
-			telMessage.innerText = "사용 가능한 전화번호입니다.";
-			telMessage.classList.add("confirm");
-			telMessage.classList.remove("error");
-			checkObj.memberTel = true;
 		})
-		.catch(err => {
-			console.log(err);
-			telMessage.innerText = "전화번호 중복 검사 중 오류가 발생했습니다.";
+		.catch(error => {
+			console.error("전화번호 중복 검사 중 오류 발생:", error);
+			telMessage.innerText = "중복 검사 중 오류가 발생했습니다.";
 			telMessage.classList.add("error");
 			telMessage.classList.remove("confirm");
 			checkObj.memberTel = false;

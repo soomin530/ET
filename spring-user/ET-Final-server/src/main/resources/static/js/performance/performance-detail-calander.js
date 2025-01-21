@@ -474,17 +474,9 @@ function initializeStarRating(container) {
 
 // 별점을 문자열로 변환하는 함수
 function getStarString(rating) {
-	// 정수부분 (꽉 찬 별)
-	const fullStars = Math.floor(rating);
-	// 소수부분이 0.5 이상인지 확인
-	const hasHalfStar = rating % 1 >= 0.5;
-	// 빈 별의 개수 계산
-	const emptyStars = 5 - Math.ceil(rating);
-
-	// 별점 문자열 생성
-	return '★'.repeat(fullStars) +
-		(hasHalfStar ? '★' : '') +
-		'☆'.repeat(emptyStars);
+	const fullStars = '★'.repeat(Math.floor(rating));
+    const emptyStars = '☆'.repeat(5 - Math.floor(rating));
+    return `${fullStars}${emptyStars}`;
 }
 
 /**
