@@ -73,17 +73,18 @@ public interface MemberMapper {
 	 * @return
 	 */
 	int updatePassword(Map<String, Object> paramMap);
+	
+	/** 이메일로 관리자 확인
+	 * @param memberEmail
+	 * @return
+	 */
+	Member findAdminByEmail(Map<String, Object> paramMap);
 
-	void insertVenue(Map<String, Object> venue);
+	/** 이전 비밀번호 조회
+	 * @param memberNo
+	 * @return
+	 */
+	String selectPreviousPasswords(String memberNo);
 
-	void insertPerf(Map<String, Object> perfMap);
-
-	void insertPerfTime(Map<String, Object> perfTime);
-
-	void insertTicketInto(Map<String, Object> ticketInfo);
-
-	List<Map<String, String>> performanceDetails();
-
-	void insertVenueSeat(Map<String, Object> seat);
 
 }

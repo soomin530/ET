@@ -4,7 +4,7 @@
 
 	<select id="showAnnouncementList">
 	SELECT * FROM ANNOUNCEMENT WHERE ANNOUNCEMENT.ANNOUNCE_DEL_FL ='N' 
-	ORDER BY ANNOUNCE_NO ASC
+	ORDER BY ANNOUNCE_WRITE_DATE DESC
 	</select>
 	
 	<select id="searchAnnouncementList">
@@ -21,12 +21,11 @@
 	                AND ANNOUNCE_CONTENT LIKE '%' || #{inputValue} || '%' 
 	            </when>
 	            <otherwise>
-	                AND ANNOUNCE_WRITE_DATE LIKE '%' || #{inputValue} || '%' 
+	                AND TO_CHAR(ANNOUNCE_WRITE_DATE, 'YYYY-MM-DD HH24:MI:SS') LIKE '%' || ${inputValue} || '%' 
 	            </otherwise>
 	        </choose>
-		ORDER BY 
-			ANNOUNCE_NO ASC
-		
+	ORDER BY
+	ANNOUNCE_WRITE_DATE DESC
 	</select>
 	
 	

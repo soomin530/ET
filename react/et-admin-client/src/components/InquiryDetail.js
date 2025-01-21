@@ -76,17 +76,17 @@ const Content = styled.div`
 `;
 
 const ReplyContainer = styled.div`
-   margin-top: 30px;
+  margin-top: 30px;
   padding: 20px;
   background-color: #f0f7ff;
   border-radius: 8px;
   border-left: 4px solid #007bff;
   animation: ${(props) => {
-    if (props.isEditing) return slideUpAndFade;
-    if (props.isReturning) return slideDownAndFade;
-    return "none";
-  }}
-  0.3s ease-out forwards;
+      if (props.isEditing) return slideUpAndFade;
+      if (props.isReturning) return slideDownAndFade;
+      return "none";
+    }}
+    0.3s ease-out forwards;
   opacity: 1; // 기본 opacity 추가
 `;
 
@@ -278,7 +278,7 @@ export default function InquiryDetail() {
   const fetchInquiry = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8081/inquiry/${inquiryNo}`
+        `https://adminmodeunticket.store/inquiry/${inquiryNo}`
       );
       const inquiryData = Array.isArray(response.data)
         ? response.data[0]
@@ -294,27 +294,27 @@ export default function InquiryDetail() {
   };
 
   const handleEdit = () => {
-    setIsReplyExiting(true);   // 퇴장 애니메이션 시작
+    setIsReplyExiting(true); // 퇴장 애니메이션 시작
 
     setTimeout(() => {
-      setShowReplyContainer(false);  // 애니메이션 완료 후 컨테이너 숨김
+      setShowReplyContainer(false); // 애니메이션 완료 후 컨테이너 숨김
       setReplyContent(inquiry.replyContent);
       setShowReplyForm(true);
       setIsEditing(true);
-    }, 300);  // 애니메이션 시간과 동일하게 설정
+    }, 300); // 애니메이션 시간과 동일하게 설정
   };
 
   const handleCancel = () => {
-    setIsReplyExiting(false);  // 우선 퇴장 애니메이션 초기화
-    setIsExiting(true);        // 폼 퇴장 애니메이션 시작
+    setIsReplyExiting(false); // 우선 퇴장 애니메이션 초기화
+    setIsExiting(true); // 폼 퇴장 애니메이션 시작
 
     setTimeout(() => {
       setShowReplyForm(false);
       setReplyContent("");
       setIsEditing(false);
       setIsExiting(false);
-      setShowReplyContainer(true);  // 답글 컨테이너 표시
-      setIsReplyReturning(true);    // 등장 애니메이션 시작
+      setShowReplyContainer(true); // 답글 컨테이너 표시
+      setIsReplyReturning(true); // 등장 애니메이션 시작
 
       setTimeout(() => {
         setIsReplyReturning(false); // 등장 애니메이션 완료
@@ -330,7 +330,7 @@ export default function InquiryDetail() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8081/inquiry/reply/${inquiryNo}`,
+        `https://adminmodeunticket.store/inquiry/reply/${inquiryNo}`,
         {
           replyContent: replyContent,
         }
@@ -361,7 +361,6 @@ export default function InquiryDetail() {
             setIsReplyReturning(false);
           }, 300);
         }, 300);
-
       } else {
         alert(isEditing ? "수정에 실패했습니다." : "등록에 실패했습니다.");
       }
@@ -398,7 +397,7 @@ export default function InquiryDetail() {
           <ReplyContainer
             isEditing={isReplyExiting}
             isReturning={isReplyReturning}
-            style={{ display: showReplyContainer ? 'block' : 'none' }}
+            style={{ display: showReplyContainer ? "block" : "none" }}
           >
             <ReplyTitle>답변</ReplyTitle>
             <ReplyText>{inquiry.replyContent}</ReplyText>

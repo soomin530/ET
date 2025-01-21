@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const seatData = parseData(rawData.seats || []); // seats 배열 처리
       const bookedSeats = rawData.bookedSeats || []; // bookedSeats 배열 처리
 
-      console.log("예약된 좌석 데이터 (bookedSeats):", bookedSeats);
 
       generateSeatsFromData(seatData); // 좌석렌더링
       disableBookedSeats(bookedSeats); // 예약된 좌석 비활성화
@@ -75,8 +74,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     seatMap.innerHTML = "";
 
     updateSeatGradeInfo(seatData); // `seat-grade-info` 업데이트
-
-    console.log("좌석 데이터:", seatData); // 전체 좌석 데이터 출력
 
     seatData.forEach((data) => {
       const gradeSection = document.createElement("div");
@@ -448,6 +445,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.close(); // 창 닫기
     } else if (!defaultAddress) {
       alert("주문자 정보를 확인 하려면 기본 배송지를 등록해주세요.");
+	  window.opener.location.href = '/mypage/memberInfo'; // 부모 창 위치 변경
       window.close(); // 창 닫기
     } else if (selectedSeats.size === 0) {
       alert("좌석을 선택해주세요.");
