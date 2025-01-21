@@ -44,28 +44,51 @@ public class paymentController {
 	@Value("${iamport.api.secret}")
 	private String apiSecret;
 
-	public ResponseEntity<Map<String, Object>> verifyPayment(@RequestBody Map<String, String> request) {
-		String impUid = request.get("imp_uid");
-
-		// 포트원 인증 토큰 발급
-		RestTemplate restTemplate = new RestTemplate();
-		Map<String, String> tokenRequest = new HashMap<>();
-		tokenRequest.put("imp_key", apiKey);
-		tokenRequest.put("imp_secret", apiSecret);
-
-		ResponseEntity<Map> tokenResponse = restTemplate.postForEntity("https://api.iamport.kr/users/getToken",
-				tokenRequest, Map.class);
-
-		String accessToken = (String) ((Map) tokenResponse.getBody().get("response")).get("access_token");
-
-		// 결제 정보 검증
-		ResponseEntity<Map> paymentResponse = restTemplate
-				.getForEntity("https://api.iamport.kr/payments/" + impUid + "?_token=" + accessToken, Map.class);
-
-		Map<String, Object> response = new HashMap<>();
-		response.put("success", paymentResponse.getStatusCode().is2xxSuccessful());
-		return ResponseEntity.ok(response);
-	}
+	/**
+     * 결제 검증 
+     */
+//    @PostMapping("verify-payment")
+//    public ResponseEntity<String> verifyPayment(
+//            @RequestBody Payment paymentData,
+//            @SessionAttribute("loginMember") Member loginMember) {
+//
+//        try {
+//            log.info("수신한 결제 정보: {}", paymentData);
+//
+//            // 1. 포트원 API로 결제 검증
+//            String accessToken = service.getIamportAccessToken();
+//            Payment verifiedPayment = service.getVerifiedPayment(paymentData.getImpUid(), accessToken);
+//
+//            // 2. 검증 실패 시 처리
+//            if (verifiedPayment == null || !"paid".equals(verifiedPayment.getStatus())) {
+//                log.error("결제 검증 실패: verifiedPayment={}, status={}", 
+//                          verifiedPayment, 
+//                          verifiedPayment != null ? verifiedPayment.getStatus() : "null");
+//
+//                // **로그 저장**
+//                service.logPaymentFailure(paymentData, "결제 금액 불일치");
+//
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("결제 검증 실패");
+//            }
+//
+//            // 검증된 결제 금액 확인
+//            if (verifiedPayment.getPaidAmount() != paymentData.getPaidAmount()) {
+//                log.error("결제 금액 불일치: expected={}, actual={}", 
+//                          paymentData.getPaidAmount(), verifiedPayment.getPaidAmount());
+//
+//                // **로그 저장**
+//                service.logPaymentFailure(paymentData, "결제 금액 불일치");
+//
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("결제 금액 불일치");
+//            }
+//
+//            return ResponseEntity.ok("결제가 성공적으로 검증 및 저장되었습니다.");
+//
+//        } catch (Exception e) {
+//            log.error("결제 검증 및 저장 중 오류 발생", e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 처리 중 오류 발생");
+//        }
+//    }
 
 	/**
 	 * @return

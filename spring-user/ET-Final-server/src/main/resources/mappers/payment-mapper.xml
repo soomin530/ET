@@ -44,6 +44,18 @@
   	VALUES
   	 (#{bookingDate}, #{paidAt}, #{bookingId}, #{performanceName}, #{showDateTime}, #{ticketCount}, #{cancelableUntil}, #{bookingStatus}, #{memberNo}, #{mt20id})
   </insert>
+  
+  
+  <insert id="insertPaymentLog">
+    INSERT INTO TB_PAYMENT_LOG (
+        MERCHANT_UID, PG_PROVIDER, PG_TYPE, PG_METHOD,
+        STATUS, ERROR_MSG, PAY_NO
+    ) VALUES (
+        #{merchantUid}, #{pgProvider}, #{pgType}, #{pgMethod},
+        #{status}, #{errorMsg}, PAY_NO_SEQ.NEXTVAL
+    )
+</insert>
+  
 
 
 
