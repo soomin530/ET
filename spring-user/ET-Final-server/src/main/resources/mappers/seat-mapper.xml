@@ -12,7 +12,7 @@
 		    S.GRADE_ID AS gradeId,
 		    S.GRADE_NAME AS gradeName,
 		    S.PRICE AS gradePrice,
-		    S.SEAT_COUNT - COUNT(CASE WHEN TTS.SEAT_STATUS IN ('BOOKED', 'BLOCKDE') THEN 1 END) AS availableSeatCount
+		    S.SEAT_COUNT - COUNT(CASE WHEN TTS.SEAT_STATUS IN ('BOOKED', 'BLOCKED') THEN 1 END) AS availableSeatCount
 		FROM (
 		    SELECT
 		        TPF.MT20ID,
