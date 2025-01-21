@@ -64,6 +64,7 @@ public class MyPageController {
 
 	@Autowired
 	private MyPageService myPageService;
+	
 
 	/**
 	 * 배송지 등록 하기
@@ -447,10 +448,29 @@ public class MyPageController {
 	    }
 	    
 	    // 다른 사용자의 닉네임과 중복 체크
-	    return service.updateNickname(userNickname);
-		
+	    int result = service.updateNickname(userNickname);
+	    return result;
 		
 	}
+	
+	/** 전화번호 중복 검사
+     * @param userTel : 입력한 전화번호
+     * @param currentTel : 현재 사용자의 전화번호
+     * @return 중복이면 1, 아니면 0
+     */
+	@GetMapping("/verifyTel")
+	@ResponseBody
+	public ResponseEntity<Integer> checkTel(@RequestParam("userTel") String userTel, 
+            @RequestParam("currentTel") String currentTel) {
+	    // 현재 전화번호와 동일한 경우
+	    if (userTel.equals(currentTel)) {
+	        return ResponseEntity.ok(0); // 중복 아님을 나타내는 0 반환
+	    }
+	    
+	    int result = service.checkTel(userTel);
+	    return ResponseEntity.ok(result); // ResponseEntity로 감싸서 반환
+	}
+
 
 	/** 회원정보 수정
 	 * @param member

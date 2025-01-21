@@ -222,18 +222,18 @@ class Calendar {
 	isDateAvailable(date) {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
-		
+
 		// 내일 날짜 계산
-	    const tomorrow = new Date(today);
-	    tomorrow.setDate(tomorrow.getDate() + 1);
+		const tomorrow = new Date(today);
+		tomorrow.setDate(tomorrow.getDate() + 1);
 
 		const compareDate = new Date(date);
 		compareDate.setHours(0, 0, 0, 0);
 
 		// 내일 이전의 날짜는 선택 불가
-	    if (compareDate < tomorrow) {
-	        return false;
-	    }
+		if (compareDate < tomorrow) {
+			return false;
+		}
 
 		const startDateCompare = new Date(this.startDate);
 		startDateCompare.setHours(0, 0, 0, 0);
@@ -472,6 +472,13 @@ function initializeStarRating(container) {
 	});
 }
 
+// 별점을 문자열로 변환하는 함수
+function getStarString(rating) {
+	const fullStars = '★'.repeat(Math.floor(rating));
+    const emptyStars = '☆'.repeat(5 - Math.floor(rating));
+    return `${fullStars}${emptyStars}`;
+}
+
 /**
  * 리뷰 관련 기능 초기화
  */
@@ -500,34 +507,33 @@ function initializeReviews() {
 			}
 
 			reviews.forEach((review) => {
-				const stars =
-					"★".repeat(review.reviewStar) + "☆".repeat(5 - review.reviewStar);
+				const stars = getStarString(review.reviewStar);
 				const reviewHtml = `
-	                    <div class="review-item">
-	                        <div class="review-header">
-	                            <div class="reviewer-info">
-	                                <span class="reviewer-name">${review.memberNickname
-					}</span>
-	                                <span class="review-date">${new Date(
-						review.createDate
-					).toLocaleDateString()}</span>
-	                            </div>
-	                            <div class="review-stars">${stars}</div>
-	                        </div>
-	                        <div class="review-content">
-	                            ${review.reviewContent}
-	                        </div>
-	                        ${Number(review.memberNo) === Number(currentMemberNo)
+			                <div class="review-item">
+			                    <div class="review-header">
+			                        <div class="reviewer-info">
+			                            <span class="reviewer-name">${review.memberNickname}</span>
+			                            <span class="review-date">${new Date(review.createDate).toLocaleDateString()}</span>
+			                        </div>
+			                        <div class="review-stars">
+			                            ${stars}
+			                            <span class="numeric-rating">(${review.reviewStar})</span>
+			                        </div>
+			                    </div>
+			                    <div class="review-content">
+			                        ${review.reviewContent}
+			                    </div>
+			                    ${Number(review.memberNo) === Number(currentMemberNo)
 						? `
-	                            <div class="review-actions">
-	                                <button class="review-action-btn edit-review" data-review-no="${review.reviewNo}">수정</button>
-	                                <button class="review-action-btn delete-review" data-review-no="${review.reviewNo}">삭제</button>
-	                            </div>
-	                        `
+			                            <div class="review-actions">
+			                                <button class="review-action-btn edit-review" data-review-no="${review.reviewNo}">수정</button>
+			                                <button class="review-action-btn delete-review" data-review-no="${review.reviewNo}">삭제</button>
+			                            </div>
+			                        `
 						: ""
 					}
-	                    </div>
-	                `;
+			                </div>
+			            `;
 				reviewList.append(reviewHtml);
 			});
 		});
@@ -833,7 +839,7 @@ function initializeWish() {
 					wishIcon.classList.add("far");
 					wishText.textContent = "찜하기";
 				}
-        alert(result.message);
+				alert(result.message);
 			} else {
 				alert(result.message);
 			}

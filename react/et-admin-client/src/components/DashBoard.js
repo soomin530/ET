@@ -17,7 +17,6 @@ import InquiryManage from "./InquiryManage.js";
 import InquiryDetail from "./InquiryDetail.js";
 import MainPage from "./MainPage.js";
 import styled, { keyframes } from "styled-components";
-import { axiosApi } from "../api/axoisAPI";
 import { NavLink, Route, Routes } from "react-router";
 import ManagerEnrollDetail from "./ManagerEnrollDetail.js";
 
@@ -26,21 +25,49 @@ import ManagerEnrollDetail from "./ManagerEnrollDetail.js";
 // 라우팅(router) : 사용자가 요청한 URL 경로에 따라 적절한 페이지 or 리소스 제공하는 과정
 export default function DashBoard() {
   // 스타일드 컴포넌트 정의
+  const Title = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 0 20px;
+  `;
+
   const StyledNavLink = styled(NavLink)`
     text-decoration: none;
-    color: inherit;
+    color: white;
     font-size: 2rem;
-    transition: transform 0.3s ease; /* 호버 시 부드럽게 커지는 효과 */
+    padding: 20px 20px; // 패딩값 증가
+    border-radius: 4px;
+    transition: transform 0.3s ease;
 
     &:hover {
-      transform: scale(1.2); /* 글자가 커짐 */
+      transform: scale(1.05);
     }
   `;
 
-  const Title = styled.h1`
-    text-align: center;
-    margin: 20px 0;
-    font-family: "Arial", sans-serif;
+  const BackButton = styled.a`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: #4a90e2;
+    color: white;
+    padding: 2px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    width: 32px;
+    height: 32px;
+
+    &:hover {
+      background-color: #357abd;
+    }
+
+    svg {
+      width: 30px;
+      height: 30px;
+      fill: currentColor;
+    }
   `;
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -129,6 +156,17 @@ export default function DashBoard() {
     <div className="dash-board-container">
       <Title className="dash-board-title">
         <StyledNavLink to="/">관리자 페이지</StyledNavLink>
+        <BackButton
+          href="http://modeunticket.store/"
+          onClick={() => {
+            localStorage.removeItem("adminAuth");
+            localStorage.removeItem("adminToken");
+          }}
+        >
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+        </BackButton>
       </Title>
 
       <div className="main-show-container">

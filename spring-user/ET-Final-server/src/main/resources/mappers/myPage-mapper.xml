@@ -330,7 +330,10 @@
 	<select id="selectBookingHistory" parameterType="int" resultType="edu.kh.project.myPage.model.dto.ticketInfoDTO">
 	    SELECT
 	        TO_CHAR(BOOKING_DATE, 'YYYY-MM-DD HH24:MI:SS') AS BOOKING_DATE,
-        	TO_CHAR(PAID_AT, 'YYYY-MM-DD HH24:MI:SS') AS PAID_AT,
+        	TO_CHAR(
+	            FROM_TZ(CAST(PAID_AT AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul',
+	            'YYYY-MM-DD HH24:MI:SS'
+	        ) AS PAID_AT,
 	        BOOKING_ID AS bookingId,
 	        PERFORMANCE_NAME AS performanceName,  
 	        SHOW_DATE_TIME AS showDateTime,
@@ -424,5 +427,17 @@
 		WHERE MEMBER_NO = #{memberNo}
 		AND BASIC_ADDRESS = 'Y'
 	</select>
+	
+	
+	 <!-- 전화번호 중복 검사 -->
+    <select id="checkTel" resultType="_int">
+        SELECT COUNT(*)
+        FROM "TB_MEMBER"
+        WHERE MEMBER_TEL = #{userTel}
+        AND MEMBER_DEL_FL = 'N'
+    </select>
+	
+	
+	
 	
 </mapper>

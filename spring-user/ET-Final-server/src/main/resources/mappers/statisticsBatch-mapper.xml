@@ -49,11 +49,11 @@
 	<!-- 시작된 공연 상태 업데이트 -->
 	<update id="updateStartedPerformances">
 		<![CDATA[
-		    UPDATE TB_PERFORMANCES_DETAIL 
-		    SET PRFSTATE = '공연중'
-		    WHERE TO_CHAR(TO_DATE(PRFPDFROM, 'YYYY-MM-DD'), 'YYYY-MM-DD') <= TRUNC(SYSDATE)
-		    AND TO_CHAR(TO_DATE(PRFPDTO, 'YYYY-MM-DD'), 'YYYY-MM-DD') >= TRUNC(SYSDATE)
-		    AND PRFSTATE = '공연예정'
+		    UPDATE TB_PERFORMANCES_DETAIL
+			SET PRFSTATE = '공연중'
+			WHERE TO_DATE(REPLACE(PRFPDFROM, '-', '.'), 'YYYY.MM.DD') <= TRUNC(SYSDATE)
+			AND TO_DATE(REPLACE(PRFPDTO, '-', '.'), 'YYYY.MM.DD') >= TRUNC(SYSDATE)
+			AND PRFSTATE = '공연예정'
 		]]>
 	</update>
 

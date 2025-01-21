@@ -346,7 +346,7 @@ export default function AnnouncementManage() {
           <input
             value={inputValue}
             onChange={handleInputChange}
-           onKeyDown={handleKeyPress}
+            onKeyDown={handleKeyPress}
           />
           <i
             className="fas fa-search search-icon"

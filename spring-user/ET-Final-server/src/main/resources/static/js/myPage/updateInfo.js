@@ -16,8 +16,14 @@ function loadUserInfo() {
 			document.getElementById("userId").value = data.memberId || "";
 
 			document.getElementById("userTel").value = data.memberTel || "";
+			document.getElementById("currentTel").value = data.memberTel || "";
+
 			document.getElementById("userNickname").value = data.memberNickname || "";
+			document.getElementById("currentNickname").value = data.memberNickname || "";
+
 			document.getElementById("verificationEmail").value = data.memberEmail || "";
+
+		
 
 			// 성별 설정
 			if (data.memberGender === "M") {
@@ -280,6 +286,7 @@ const updateNickMessage = document.querySelector("#updateNickMessage");
 userNickname.addEventListener("input", (e) => {
 
 	const inputNickname = e.target.value;
+	const currentNickname = document.querySelector("#currentNickname").value; // 현재 사용자의 닉네임을 저장
 
 	// 닉네임을 입력한 경우에만 검증 실행
 	if (inputNickname.trim().length > 0) {
@@ -299,32 +306,45 @@ userNickname.addEventListener("input", (e) => {
 			return;
 		}
 
-		// 3) 중복 검사 (유효한 경우)
-		fetch(`/mypage/updateNickname?userNickname=${inputNickname}&currentNickname=${document.getElementById("userNickname").value}`)
-			.then(resp => resp.text())
-			.then(count => {
-
-				if (count == 1) { // 중복 O
-					updateNickMessage.innerText = "이미 사용중인 닉네임 입니다.";
-					updateNickMessage.classList.add("error");
-					updateNickMessage.classList.remove("confirm");
-					return;
-				}
-
-				updateNickMessage.innerText = "사용 가능한 닉네임 입니다.";
-				updateNickMessage.classList.add("confirm");
-				updateNickMessage.classList.remove("error");
-				mypageCheckObj.userNickname = true;
-			});
-	} else {
-
-		// 닉네임 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
-		updateNickMessage.innerText = "";
-		mypageCheckObj.userNickname = true;
+		// 현재 닉네임과 동일한 경우 중복 검사 스킵
+		if (inputNickname === currentNickname) {
+			updateNickMessage.innerText = "현재 사용중인 닉네임입니다.";
+			updateNickMessage.classList.add("confirm");
+			updateNickMessage.classList.remove("error");
+			mypageCheckObj.userNickname = true;
+			return;
 	}
 
+		// 3) 중복 검사 (유효한 경우)
+		fetch(`/mypage/updateNickname?userNickname=
+			${encodeURIComponent(inputNickname)}&currentNickname=${encodeURIComponent(currentNickname)}`)
+		.then(resp => resp.text())
+		.then(count => {
+				if (count === "1") { // 중복인 경우
+						updateNickMessage.innerText = "이미 사용중인 닉네임입니다.";
+						updateNickMessage.classList.add("error");
+						updateNickMessage.classList.remove("confirm");
+						mypageCheckObj.userNickname = false;
+				} else { // 사용 가능한 경우
+						updateNickMessage.innerText = "사용 가능한 닉네임입니다.";
+						updateNickMessage.classList.add("confirm");
+						updateNickMessage.classList.remove("error");
+						mypageCheckObj.userNickname = true;
+				}
+		})
+		.catch(error => {
+				console.error("닉네임 중복 검사 중 오류 발생:", error);
+				updateNickMessage.innerText = "중복 검사 중 오류가 발생했습니다.";
+				updateNickMessage.classList.add("error");
+				updateNickMessage.classList.remove("confirm");
+				mypageCheckObj.userNickname = false;
+		});
+} else {
+// 닉네임 입력값이 없는 경우
+updateNickMessage.innerText = "";
+mypageCheckObj.userNickname = false; // 빈 값은 유효하지 않음
+}
 });
-
 
 // ***************************************************************************
 
@@ -333,34 +353,57 @@ const userTel = document.querySelector("#userTel");
 const updateTelMessage = document.querySelector("#updateTelMessage");
 
 userTel.addEventListener("input", e => {
+    const inputTel = e.target.value.trim();
+    const currentTel = document.querySelector("#currentTel").value;
 
-	const inputTel = e.target.value;
+    // 입력값이 없거나 현재 저장된 번호와 동일한 경우
+    if (!inputTel) {
+        updateTelMessage.innerText = "";
+        mypageCheckObj.userTel = true;
+        return;
+    }
 
-	if (inputTel.trim().length > 0) {
-		mypageCheckObj.userTel = false; // 검증 필요함을 표시
+    if (inputTel === currentTel) {
+        updateTelMessage.innerText = "현재 사용중인 전화번호입니다.";
+        updateTelMessage.classList.add("confirm");
+        updateTelMessage.classList.remove("error");
+        mypageCheckObj.userTel = true;
+        return;
+    }
 
-		const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
+    // 전화번호 형식 검사
+    const regExp = /^01[0-9]{1}[0-9]{3,4}[0-9]{4}$/;
+    if (!regExp.test(inputTel)) {
+        updateTelMessage.innerText = "전화번호는 01로 시작하는 10-11자리 숫자여야 합니다.";
+        updateTelMessage.classList.add("error");
+        updateTelMessage.classList.remove("confirm");
+        mypageCheckObj.userTel = false;
+        return;
+    }
 
-		if (!regExp.test(inputTel)) {
-			updateTelMessage.innerText = "유효하지 않은 전화번호 형식입니다.";
-			updateTelMessage.classList.add("error");
-			updateTelMessage.classList.remove("confirm");
-			mypageCheckObj.userTel = false;
-			return;
-		}
-
-		updateTelMessage.innerText = "유효한 전화번호 형식입니다.";
-		updateTelMessage.classList.add("confirm");
-		updateTelMessage.classList.remove("error");
-		mypageCheckObj.userTel = true;
-	} else {
-
-		// 전화번호 입력값이 없는 경우 메시지 초기화 및 유효성 true로 설정
-		updateTelMessage.innerText = "";
-		mypageCheckObj.userTel = true;
-
-	}
-
+    // 중복 검사
+    fetch(`/mypage/verifyTel?userTel=${encodeURIComponent(inputTel)}&currentTel=${encodeURIComponent(currentTel)}`)
+        .then(resp => resp.json())
+        .then(count => {
+            if (count >= 1) {
+                updateTelMessage.innerText = "이미 사용중인 전화번호입니다.";
+                updateTelMessage.classList.add("error");
+                updateTelMessage.classList.remove("confirm");
+                mypageCheckObj.userTel = false;
+            } else {
+                updateTelMessage.innerText = "사용 가능한 전화번호입니다.";
+                updateTelMessage.classList.add("confirm");
+                updateTelMessage.classList.remove("error");
+                mypageCheckObj.userTel = true;
+            }
+        })
+        .catch(error => {
+            console.error("전화번호 중복 검사 중 오류 발생:", error);
+            updateTelMessage.innerText = "중복 검사 중 오류가 발생했습니다.";
+            updateTelMessage.classList.add("error");
+            updateTelMessage.classList.remove("confirm");
+            mypageCheckObj.userTel = false;
+        });
 });
 
 
@@ -374,6 +417,21 @@ updateForm.addEventListener("submit", e => {
 			alert("이메일 인증이 완료되지 않았습니다. 이메일 인증 후 다시 시도해주세요.");
 			return;
 	}
+
+	// 닉네임 중복 검사 실패한 경우
+	if (document.getElementById("userNickname").value.trim() !== "" && !mypageCheckObj.userNickname) {
+		alert("닉네임이 올바르지 않습니다.");
+		document.getElementById("userNickname").focus();
+		return;
+}
+
+// 전화번호 중복 검사 실패한 경우
+if (document.getElementById("userTel").value.trim() !== "" && !mypageCheckObj.userTel) {
+	alert("전화번호가 올바르지 않습니다.");
+	document.getElementById("userTel").focus();
+	return;
+}
+
 
 	// 서버에서 최초 로드된 데이터와 비교
 	fetch("/mypage/info")

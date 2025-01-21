@@ -142,9 +142,15 @@
 				<div class="performance-content">
 					<!-- 왼쪽: 공연 정보 -->
 					<div class="performance-info">
-						<img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image"
-							th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'" loading="lazy"
-							decoding="async" onload="this.classList.add('loaded')">
+						<div class="poster-upload-container">
+					        <img th:src="${performance.poster}" th:alt="${performance.prfnm}" class="performance-image"
+					            th:onerror="'this.src=\'/images/default-poster.png\';this.onerror=null;'" 
+					            loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+					        <input type="file" id="posterUpload" accept="image/*" style="display: none">
+					        <button type="button" class="change-poster-btn" onclick="document.getElementById('posterUpload').click()">
+					            포스터 변경
+					        </button>
+					    </div>
 						<table class="info-table">
 							<tr>
 								<th>공연명</th>
@@ -225,6 +231,17 @@
 			venue: /*[[${performance.fcltynm}]]*/ '',
 			schedule: /*[[${performance.schedule}]]*/ {}
 		};
+		
+		document.getElementById('posterUpload')?.addEventListener('change', function(e) {
+		    const file = e.target.files[0];
+		    if (file) {
+		        const reader = new FileReader();
+		        reader.onload = function(e) {
+		            document.querySelector('.performance-image').src = e.target.result;
+		        };
+		        reader.readAsDataURL(file);
+		    }
+		});
 
 		$(document).ready(function () {
 			// 이미지 다이얼로그를 위한 템플릿 오버라이드

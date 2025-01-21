@@ -233,6 +233,11 @@ public interface MyPageService {
 	AddressDTO getDefaultAddress(int memberNo);
 
 
+	/** 전화번호 중복검사
+	 * @param userTel
+	 * @return
+	 */
+	int checkTel(String userTel);
 	
 	
 	
