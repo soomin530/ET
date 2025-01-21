@@ -38,5 +38,8 @@ public interface paymentMapper {
 	int insertBookingHistory(Map<String, Object> params);
 
 	
+	//void insertPaymentLog(Map<String, Object> logData);
+
+	
 
 }

@@ -19,9 +19,6 @@ public interface paymentService {
 
 	// 결제 내역 저장
 	boolean savePayment(Payment paymentData);
-
-	// 좌석 예약
-	//boolean insertTicketSeat(Map<String, Object> seatData);
 	
 	// 상세정보 조회
 	Performance getPerformanceDetail(String performanceId);
@@ -41,6 +38,15 @@ public interface paymentService {
 
 	// 예매 내역 데이터 삽입 TB_BOOKING_HISTORY
  	boolean saveBookingHistory(Payment paymentData, Member loginMember);
+
+ 	// 포트원 토큰 발급
+	//String getIamportAccessToken();
+	
+	// 결제 검증
+	//Payment getVerifiedPayment(String impUid, String accessToken);
+
+	
+	//void logPaymentFailure(Payment paymentData, String string);
 
 
 

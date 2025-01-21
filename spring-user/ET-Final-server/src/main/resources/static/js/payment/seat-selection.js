@@ -37,7 +37,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function fetchSeatData(mt20id, selectedDate, selectedTime, dayOfWeek) {
     try {
       const response = await fetch(
-        `/payment/seats?mt20id=${mt20id}&selectedDate=${selectedDate}&selectedTime=${selectedTime}&dayOfWeek=${dayOfWeek}`
+        `/payment/seats?mt20id=${mt20id}&selectedDate=${selectedDate}
+        &selectedTime=${selectedTime}&dayOfWeek=${dayOfWeek}`
       );
       if (!response.ok) throw new Error("좌석 정보 조회 실패");
 
@@ -46,8 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const bookedSeats = rawData.bookedSeats || []; // bookedSeats 배열 처리
 
 
-      generateSeatsFromData(seatData);
-      disableBookedSeats(bookedSeats);
+      generateSeatsFromData(seatData); // 좌석렌더링
+      disableBookedSeats(bookedSeats); // 예약된 좌석 비활성화
     } catch (error) {
       console.error("좌석 데이터 로드 오류:", error);
       alert("좌석 데이터를 불러올 수 없습니다.");
@@ -125,6 +126,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     element.classList.add("seat", getSeatClass(seat.gradeId));
     element.textContent = seat.seatId.split("-").pop(); // 열 번호 표시
 
+    // 기존에 서버에서 받아오는 좌석 형태를 mt20id-GRADENAME-row-col 형태로 받아옴
+    // ex) PFPF20250110142-R-2-8
     // 중복된 mt20id 방지
     const seatIdParts = seat.seatId.split("-");
     if (seatIdParts[0] === mt20id) {
