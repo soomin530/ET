@@ -118,7 +118,7 @@ function loadVenues(keyword = '') {
 					'data-seats': venue.SEATSCALE
 				}));
 			});
-		},
+		};
 		error: function() {
 			alert('공연장 목록을 불러오는데 실패했습니다.');
 		}
